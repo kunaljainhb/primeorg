@@ -17,7 +17,7 @@ export default function VendorRFPList() {
   const activeRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
   
   // Get unique categories from active RFPs
-  const categories = Array.from(new Set(activeRFPs.map(rfp => rfp.category)));
+  const categories = Array.from(new Set(activeRFPs.flatMap(rfp => rfp.category)));
 
   const toggleCategory = (category: string) => {
     setSelectedCategories(prev => 
@@ -35,7 +35,7 @@ export default function VendorRFPList() {
   const filteredRFPs = activeRFPs.filter(rfp => {
     const matchesSearch = rfp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          rfp.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(rfp.category);
+    const matchesCategory = selectedCategories.length === 0 || rfp.category.some(c => selectedCategories.includes(c));
     return matchesSearch && matchesCategory;
   });
 
@@ -168,9 +168,13 @@ export default function VendorRFPList() {
                 </div>
               </div>
               <CardDescription>
-                <Badge variant="secondary" style={{ backgroundColor: 'var(--fnrc-bg-light)', color: 'var(--fnrc-text-muted)' }}>
-                  {rfp.category}
-                </Badge>
+                <div className="flex flex-wrap gap-1">
+                  {rfp.category.map((cat, i) => (
+                    <Badge key={i} variant="secondary" style={{ backgroundColor: 'var(--fnrc-bg-light)', color: 'var(--fnrc-text-muted)' }}>
+                      {cat}
+                    </Badge>
+                  ))}
+                </div>
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4 flex-1">

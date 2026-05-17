@@ -227,7 +227,7 @@ export default function VendorRFPDetail() {
                       Category
                     </div>
                     <div className="mt-1 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {rfp.category}
+                      {rfp.category.join(', ')}
                     </div>
                   </div>
                 </div>

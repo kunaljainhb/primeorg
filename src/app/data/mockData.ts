@@ -3,7 +3,7 @@
 export interface RFP {
   id: string;
   title: string;
-  category: string;
+  category: string[];
   description: string;
   scopeOfWork: string;
   timeline: string;
@@ -110,7 +110,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-001',
     title: 'Supply of IT Hardware for HQ',
-    category: 'IT Services',
+    category: ['Information Technology', 'General Trading'],
     description: 'Procurement of 50 laptops and 20 desktop units for the new headquarters',
     scopeOfWork: 'Delivery, installation, and initial setup of hardware',
     timeline: '2 months',
@@ -123,7 +123,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-002',
     title: 'Cloud Migration Services',
-    category: 'IT Services',
+    category: ['Information Technology', 'Consulting'],
     description: 'Migration of local servers to a secure cloud environment',
     scopeOfWork: 'Audit of existing infrastructure, data migration, and staff training',
     timeline: '6 months',
@@ -136,7 +136,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-003',
     title: 'Security Guard Services',
-    category: 'Facility Management',
+    category: ['Facility Management', 'Security Services'],
     description: '24/7 security services for the corporate office buildings',
     scopeOfWork: 'Provision of 5 SIRA certified security guards and monitoring services',
     timeline: '24 months',
@@ -149,7 +149,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-004',
     title: 'EV Charging Station Network',
-    category: 'Maintenance',
+    category: ['Civil Works'],
     description: 'Establishment of EV charging points across all parking lots',
     scopeOfWork: 'Installation of 20 fast-charging points and management software',
     timeline: '5 months',
@@ -162,7 +162,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-005',
     title: 'Office Renovation Project',
-    category: 'Construction',
+    category: ['Construction', 'Civil Works', 'Furniture & Equipment'],
     description: 'Interior renovation and fit-out for 2nd floor offices',
     scopeOfWork: 'Demolition, partition installation, electrical and MEP works',
     timeline: '3 months',
@@ -175,7 +175,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-006',
     title: 'Annual Security Audit 2026',
-    category: 'IT Services',
+    category: ['Information Technology'],
     description: 'Comprehensive cybersecurity audit and penetration testing for all digital assets',
     scopeOfWork: 'Vulnerability assessment, network penetration testing, and compliance reporting',
     timeline: '2 months',
@@ -187,9 +187,51 @@ export const mockRFPs: RFP[] = [
   }
 ];
 
-// Mock Proposals for Vendor VEN-001
+// Mock Proposals
 export const mockProposals: Proposal[] = [
-  // Case 2: Submitted but not approved yet
+  // RFP-001 has 3 proposals
+  {
+    id: 'PROP-100',
+    rfpId: 'RFP-001',
+    rfpTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-001',
+    vendorName: 'TechSolutions LLC',
+    status: 'submitted',
+    submissionDate: '2026-06-01',
+    technicalProposal: 'Premium laptops and workstations',
+    commercialAmount: 420000,
+    technicalStatus: 'pending',
+    commercialStatus: 'pending'
+  },
+  {
+    id: 'PROP-101',
+    rfpId: 'RFP-001',
+    rfpTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-002',
+    vendorName: 'Modern Office Furnishings',
+    status: 'under_review',
+    submissionDate: '2026-06-02',
+    technicalProposal: 'Standard enterprise hardware package',
+    commercialAmount: 395000,
+    technicalStatus: 'under_review',
+    commercialStatus: 'pending'
+  },
+  {
+    id: 'PROP-110',
+    rfpId: 'RFP-001',
+    rfpTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-004',
+    vendorName: 'ABC Trading',
+    status: 'rejected',
+    submissionDate: '2026-06-03',
+    technicalProposal: 'Budget hardware package',
+    commercialAmount: 250000,
+    technicalStatus: 'rejected',
+    commercialStatus: 'rejected',
+    remarks: 'Hardware does not meet minimum technical specifications.'
+  },
+
+  // RFP-002 has 1 proposal
   {
     id: 'PROP-102',
     rfpId: 'RFP-002',
@@ -214,7 +256,8 @@ export const mockProposals: Proposal[] = [
     warranty: '1 year post-migration support',
     vendorContact: 'contact@techsolutions.ae'
   },
-  // Case 3: Submitted and Rejected
+
+  // RFP-003 has 1 proposal
   {
     id: 'PROP-103',
     rfpId: 'RFP-003',
@@ -239,32 +282,10 @@ export const mockProposals: Proposal[] = [
     warranty: 'Service guarantee',
     vendorContact: 'contact@techsolutions.ae'
   },
-  // Case 4: Submitted and at Commercial Review (No Tech Review/Approval needed or skipped)
-  {
-    id: 'PROP-104',
-    rfpId: 'RFP-004',
-    rfpTitle: 'EV Charging Station Network',
-    vendorId: 'VEN-001',
-    vendorName: 'TechSolutions LLC',
-    status: 'under_review',
-    submissionDate: '2026-05-15',
-    technicalProposal: 'Level 3 Fast Charging Network with App integration',
-    commercialAmount: 450000,
-    remarks: 'Technical review skipped due to standardized hardware. Proceeding with Commercial evaluation.',
-    technicalStatus: 'approved',
-    commercialStatus: 'under_review',
-    deliveryTimeline: '5 months',
-    technicalScore: 100,
-    compliance: 'Standardized equipment compliance',
-    experience: 'Established EV network provider',
-    methodology: 'Rapid deployment across parking zones',
-    resources: '8 installation crews',
-    boqSummary: '20 Fast Chargers, Central Software',
-    paymentTerms: '50/50',
-    warranty: '3 years comprehensive',
-    vendorContact: 'contact@techsolutions.ae'
-  },
-  // Case 5: Submitted and Shortlisted
+
+  // RFP-004 has 0 proposals (no entries here)
+
+  // RFP-005 has 2 proposals
   {
     id: 'PROP-105',
     rfpId: 'RFP-005',
@@ -288,6 +309,19 @@ export const mockProposals: Proposal[] = [
     paymentTerms: 'Milestone based',
     warranty: '2 years defects liability period',
     vendorContact: 'contact@techsolutions.ae'
+  },
+  {
+    id: 'PROP-106',
+    rfpId: 'RFP-005',
+    rfpTitle: 'Office Renovation Project',
+    vendorId: 'VEN-003',
+    vendorName: 'Gulf Construction Services',
+    status: 'under_review',
+    submissionDate: '2026-04-12',
+    technicalProposal: 'Standard renovation with localized materials',
+    commercialAmount: 520000,
+    technicalStatus: 'under_review',
+    commercialStatus: 'pending'
   }
 ];
 

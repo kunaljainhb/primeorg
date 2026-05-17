@@ -65,7 +65,8 @@ function AppRoutes() {
   if (path === '/admin/vendors') return <AdminLayout><AdminVendorManagement /></AdminLayout>;
   if (path.startsWith('/admin/vendors/')) return <AdminLayout><AdminVendorDetail /></AdminLayout>;
   if (path === '/admin/rfps/create') return <AdminLayout><AdminRFPCreate /></AdminLayout>;
-  if (path.startsWith('/admin/rfps/') && path !== '/admin/rfps/create') return <AdminLayout><AdminRFPDetail /></AdminLayout>;
+  if (path.startsWith('/admin/rfps/edit/')) return <AdminLayout><AdminRFPCreate /></AdminLayout>;
+  if (path.startsWith('/admin/rfps/') && path !== '/admin/rfps/create' && !path.startsWith('/admin/rfps/edit/')) return <AdminLayout><AdminRFPDetail /></AdminLayout>;
   if (path === '/admin/rfps') return <AdminLayout><AdminRFPManagement /></AdminLayout>;
   if (path.startsWith('/admin/proposals/')) return <AdminLayout><AdminProposalDetail /></AdminLayout>;
   if (path === '/admin/proposals') return <AdminLayout><AdminProposalManagement /></AdminLayout>;

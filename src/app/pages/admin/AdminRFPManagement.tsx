@@ -54,7 +54,7 @@ export default function AdminRFPManagement() {
     }
 
     // Category filter (Multi-select)
-    if (categoryFilters.length > 0 && !categoryFilters.includes(rfp.category)) {
+    if (categoryFilters.length > 0 && !rfp.category.some(c => categoryFilters.includes(c))) {
       return false;
     }
 
@@ -218,7 +218,7 @@ export default function AdminRFPManagement() {
                       {rfp.id}
                     </TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{rfp.title}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.category}</TableCell>
+                    <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.category.join(', ')}</TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
                       {rfp.createdAt ? new Date(rfp.createdAt).toLocaleDateString() : '-'}
                     </TableCell>
@@ -239,6 +239,7 @@ export default function AdminRFPManagement() {
                     <TableCell>
                       <Badge
                         variant="secondary"
+                        className="capitalize"
                         style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                       >
                         {rfp.status}
@@ -248,7 +249,13 @@ export default function AdminRFPManagement() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => navigate(`/admin/rfps/${rfp.id}`)}
+                        onClick={() => {
+                          if (rfp.status.toLowerCase() === 'draft') {
+                            navigate(`/admin/rfps/edit/${rfp.id}`);
+                          } else {
+                            navigate(`/admin/rfps/${rfp.id}`);
+                          }
+                        }}
                       >
                         Manage
                       </Button>

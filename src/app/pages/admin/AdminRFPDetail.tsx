@@ -131,21 +131,23 @@ export default function AdminRFPDetail() {
               {/* Left Column */}
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">RFP Category</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">RFP Category</Label>
                   <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-700 border-none font-bold text-[10px]">
-                      {rfp.category}
-                    </Badge>
+                    {rfp.category.map((cat, i) => (
+                      <Badge key={i} variant="secondary" className="bg-gray-100 text-gray-700 border-none font-bold text-[10px]">
+                        {cat}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Description</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Description</Label>
                   <p className="text-sm text-gray-700 leading-relaxed font-medium">
                     {rfp.description}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Eligibility Criteria</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Eligibility Criteria</Label>
                   <ul className="space-y-1.5">
                     {rfp.eligibilityCriteria.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-gray-700 font-medium">
@@ -160,13 +162,13 @@ export default function AdminRFPDetail() {
               {/* Right Column */}
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Estimated Budget</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Estimated Budget</Label>
                   <div className="text-xl font-black text-[var(--fnrc-primary-green)]">
                     AED 500,000
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Submission Deadline</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Submission Deadline</Label>
                   <div className="flex items-center gap-2 font-bold text-sm text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     {new Date(rfp.submissionDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -186,7 +188,7 @@ export default function AdminRFPDetail() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-1">
-                <Label className="text-[10px] font-bold uppercase text-muted-foreground">Scope of Work</Label>
+                <Label className="text-sm font-bold capitalize text-muted-foreground">Scope of Work</Label>
                 <p className="text-sm text-gray-700 leading-relaxed font-medium">
                   {rfp.scopeOfWork}
                 </p>
@@ -194,14 +196,14 @@ export default function AdminRFPDetail() {
 
               <div className="grid grid-cols-2 gap-8 border-t pt-6">
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Project Start Date</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Project Start Date</Label>
                   <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     01 June 2026
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-bold uppercase text-muted-foreground">Project End Date</Label>
+                  <Label className="text-sm font-bold capitalize text-muted-foreground">Project End Date</Label>
                   <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     31 Dec 2026
@@ -210,7 +212,7 @@ export default function AdminRFPDetail() {
               </div>
 
               <div className="space-y-3 pt-4">
-                <Label className="text-[10px] font-bold uppercase text-muted-foreground">Milestones</Label>
+                <Label className="text-sm font-bold capitalize text-muted-foreground">Milestones</Label>
                 <div className="grid md:grid-cols-3 gap-4">
                   {[
                     { title: 'Project Initiation', date: '15 June 2026' },
@@ -287,12 +289,12 @@ export default function AdminRFPDetail() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50/50">
-                    <TableHead className="py-4 pl-6 font-bold text-xs uppercase text-gray-600">Vendor Name</TableHead>
-                    <TableHead className="font-bold text-xs uppercase text-gray-600">Proposal ID</TableHead>
-                    <TableHead className="font-bold text-xs uppercase text-gray-600 text-center">Tech Status</TableHead>
-                    <TableHead className="font-bold text-xs uppercase text-gray-600 text-right">Commercial (AED)</TableHead>
-                    <TableHead className="font-bold text-xs uppercase text-gray-600">Status</TableHead>
-                    <TableHead className="text-right pr-6 font-bold text-xs uppercase text-gray-600">Action</TableHead>
+                    <TableHead className="py-4 pl-6 font-bold text-xs capitalize text-gray-600">Proposal ID</TableHead>
+                    <TableHead className="font-bold text-xs capitalize text-gray-600">Vendor Name</TableHead>
+                    <TableHead className="font-bold text-xs capitalize text-gray-600">Proposal Date</TableHead>
+                    <TableHead className="font-bold text-xs capitalize text-gray-600 text-right">Commercial (AED)</TableHead>
+                    <TableHead className="font-bold text-xs capitalize text-gray-600">Proposal Status</TableHead>
+                    <TableHead className="text-right pr-6 font-bold text-xs capitalize text-gray-600">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -300,22 +302,21 @@ export default function AdminRFPDetail() {
                     const statusColor = getProposalStatusColor(proposal.status);
                     return (
                       <TableRow key={proposal.id} className="hover:bg-gray-50/30">
-                        <TableCell className="py-4 pl-6">
-                          <div className="font-bold text-sm text-gray-800">{proposal.vendorName}</div>
-                          <div className="text-[10px] text-muted-foreground font-bold">{new Date(proposal.submissionDate).toLocaleDateString()}</div>
+                        <TableCell className="py-4 pl-6 text-sm font-bold text-gray-500">
+                          {proposal.id}
                         </TableCell>
-                        <TableCell className="text-sm font-bold text-gray-500">{proposal.id}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="secondary" className="bg-blue-50 text-blue-600 border-none font-black text-[9px] uppercase">
-                            {proposal.technicalStatus || 'Pending'}
-                          </Badge>
+                        <TableCell>
+                          <span className="font-bold text-sm text-gray-800">{proposal.vendorName}</span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-gray-600 font-medium">{new Date(proposal.submissionDate).toLocaleDateString()}</span>
                         </TableCell>
                         <TableCell className="text-right font-black text-sm text-[var(--fnrc-primary-green)]">
                           {proposal.commercialAmount.toLocaleString()}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="font-black text-[9px] uppercase px-2 py-0.5" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                            {proposal.status}
+                          <Badge variant="secondary" className="font-black text-[9px] capitalize px-2 py-0.5" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                            {proposal.status.replace('_', ' ')}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right pr-6">

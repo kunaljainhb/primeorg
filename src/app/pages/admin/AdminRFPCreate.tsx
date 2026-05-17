@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from '@/app/context/RouterContext';
+import { useNavigate, useParams } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/pop
 import { CalendarIcon, Plus, X, Upload, FileText, Globe, Lock, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { vendorCategories } from '@/app/data/mockData';
+import { vendorCategories, mockRFPs } from '@/app/data/mockData';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
 
@@ -28,24 +28,52 @@ interface RFPFormData {
   milestones: Array<{ title: string; date: string }>;
   attachments: Array<{ name: string; size: string }>;
   visibility: 'open' | 'restricted';
+  technicalProposalRequired: 'yes' | 'no';
+  commercialProposalRequired: 'yes' | 'no';
 }
 
 export default function AdminRFPCreate() {
   const navigate = useNavigate();
+  const { rfpId } = useParams();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<RFPFormData>({
-    title: '',
-    categories: [],
-    description: '',
-    eligibilityCriteria: '',
-    estimatedBudget: '',
-    submissionDeadline: undefined,
-    scopeOfWork: '',
-    projectStartDate: undefined,
-    projectEndDate: undefined,
-    milestones: [],
-    attachments: [],
-    visibility: 'open'
+  const [formData, setFormData] = useState<RFPFormData>(() => {
+    if (rfpId) {
+      const draft = mockRFPs.find(r => r.id === rfpId);
+      if (draft) {
+        return {
+          title: draft.title || '',
+          categories: draft.category || [],
+          description: draft.description || '',
+          eligibilityCriteria: draft.eligibilityCriteria?.join('\n') || '',
+          estimatedBudget: '',
+          submissionDeadline: draft.submissionDeadline ? new Date(draft.submissionDeadline) : undefined,
+          scopeOfWork: draft.scopeOfWork || '',
+          projectStartDate: undefined,
+          projectEndDate: undefined,
+          milestones: [],
+          attachments: draft.attachments || [],
+          visibility: 'open',
+          technicalProposalRequired: 'yes',
+          commercialProposalRequired: 'yes'
+        };
+      }
+    }
+    return {
+      title: '',
+      categories: [],
+      description: '',
+      eligibilityCriteria: '',
+      estimatedBudget: '',
+      submissionDeadline: undefined,
+      scopeOfWork: '',
+      projectStartDate: undefined,
+      projectEndDate: undefined,
+      milestones: [],
+      attachments: [],
+      visibility: 'open',
+      technicalProposalRequired: 'yes',
+      commercialProposalRequired: 'yes'
+    };
   });
 
   const updateFormData = (field: keyof RFPFormData, value: any) => {
@@ -231,6 +259,56 @@ export default function AdminRFPCreate() {
             value={formData.estimatedBudget}
             onChange={(e) => updateFormData('estimatedBudget', e.target.value)}
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <Label className="font-semibold text-sm">Technical Proposal Required *</Label>
+            <RadioGroup 
+              value={formData.technicalProposalRequired} 
+              onValueChange={(value: 'yes' | 'no') => updateFormData('technicalProposalRequired', value)}
+              className="flex gap-4"
+            >
+              <label 
+                htmlFor="tech-yes"
+                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.technicalProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+              >
+                <RadioGroupItem value="yes" id="tech-yes" />
+                <span className="font-medium text-sm w-full">Yes, Required</span>
+              </label>
+              <label
+                htmlFor="tech-no"
+                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.technicalProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+              >
+                <RadioGroupItem value="no" id="tech-no" />
+                <span className="font-medium text-sm w-full">No, Not Required</span>
+              </label>
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-3">
+            <Label className="font-semibold text-sm">Commercial Proposal Required *</Label>
+            <RadioGroup 
+              value={formData.commercialProposalRequired} 
+              onValueChange={(value: 'yes' | 'no') => updateFormData('commercialProposalRequired', value)}
+              className="flex gap-4"
+            >
+              <label
+                htmlFor="comm-yes"
+                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.commercialProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+              >
+                <RadioGroupItem value="yes" id="comm-yes" />
+                <span className="font-medium text-sm w-full">Yes, Required</span>
+              </label>
+              <label
+                htmlFor="comm-no"
+                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.commercialProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+              >
+                <RadioGroupItem value="no" id="comm-no" />
+                <span className="font-medium text-sm w-full">No, Not Required</span>
+              </label>
+            </RadioGroup>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -561,6 +639,14 @@ export default function AdminRFPCreate() {
                     {formData.submissionDeadline ? format(formData.submissionDeadline, 'PPP') : '-'}
                   </div>
                 </div>
+                <div>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Technical Prop.</span>
+                  <div className="font-medium mt-0.5 capitalize">{formData.technicalProposalRequired}</div>
+                </div>
+                <div>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Commercial Prop.</span>
+                  <div className="font-medium mt-0.5 capitalize">{formData.commercialProposalRequired}</div>
+                </div>
               </div>
               <div>
                 <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Categories</span>
@@ -705,10 +791,10 @@ export default function AdminRFPCreate() {
     <div className="space-y-6 max-w-4xl mx-auto py-8">
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          Create New RFP
+          {rfpId ? 'Edit Draft RFP' : 'Create New RFP'}
         </h1>
         <p style={{ color: 'var(--fnrc-text-muted)' }}>
-          Follow the steps to create and publish a new Request for Proposal
+          {rfpId ? 'Review and edit your draft before publishing the Request for Proposal' : 'Follow the steps to create and publish a new Request for Proposal'}
         </p>
       </div>
 
