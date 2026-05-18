@@ -17,6 +17,24 @@ import {
   TableRow,
 } from '@/app/components/ui/table';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function VendorProposalTracking() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
@@ -61,7 +79,7 @@ export default function VendorProposalTracking() {
         <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
           {proposal.rfpTitle}
         </h1>
-        <p className="text-lg" style={{ color: 'var(--fnrc-text-muted)' }}>
+        <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
           Proposal Details & Tracking
         </p>
       </div>
@@ -169,7 +187,7 @@ export default function VendorProposalTracking() {
                                 {doc.documentNumber}
                               </TableCell>
                               <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                                {new Date(doc.date).toLocaleDateString()}
+                                {formatDate(doc.date)}
                               </TableCell>
                               <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
                                 {doc.amount ? `AED ${doc.amount.toLocaleString()}` : '-'}
@@ -180,7 +198,7 @@ export default function VendorProposalTracking() {
                                   className="text-xs"
                                   style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                                 >
-                                  {doc.status}
+                                  {formatStatus(doc.status)}
                                 </Badge>
                               </TableCell>
                               <TableCell>
@@ -243,7 +261,7 @@ export default function VendorProposalTracking() {
                               </span>
                             </div>
                             <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Reviewed by {review.reviewedBy} on {new Date(review.reviewDate).toLocaleDateString()}
+                              Reviewed by {review.reviewedBy} on {formatDate(review.reviewDate)}
                             </div>
                           </div>
                           <div className="text-right ml-4">

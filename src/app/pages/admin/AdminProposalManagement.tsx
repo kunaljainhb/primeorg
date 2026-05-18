@@ -5,6 +5,24 @@ import { Card, CardContent } from '@/app/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { mockProposals } from '@/app/data/mockData';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminProposalManagement() {
   const navigate = useNavigate();
 
@@ -55,7 +73,7 @@ export default function AdminProposalManagement() {
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{proposal.rfpTitle}</TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{proposal.vendorName}</TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                      {new Date(proposal.submissionDate).toLocaleDateString()}
+                      {formatDate(proposal.submissionDate)}
                     </TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
                       AED {proposal.commercialAmount.toLocaleString()}
@@ -65,7 +83,7 @@ export default function AdminProposalManagement() {
                         variant="secondary"
                         style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                       >
-                        {proposal.status.replace('_', ' ')}
+                        {formatStatus(proposal.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">

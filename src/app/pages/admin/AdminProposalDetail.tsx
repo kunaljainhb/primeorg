@@ -10,6 +10,24 @@ import { mockProposals, mockAdminUsers, mockRFPs } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
@@ -231,12 +249,12 @@ export default function AdminProposalDetail() {
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Details</h1>
-              <Badge variant="secondary" className="font-black text-[9px] capitalize px-2 py-0.5 border-none" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                {overallStatus.replace(/_/g, ' ')}
+              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Details</h1>
+              <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                {formatStatus(overallStatus)}
               </Badge>
             </div>
-            <p className="text-xs text-gray-500 font-semibold mt-1">Vendor: {proposal.vendorName}</p>
+            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>Vendor: {proposal.vendorName}</p>
           </div>
         </div>
 
@@ -266,15 +284,15 @@ export default function AdminProposalDetail() {
             <CardHeader className="pb-3 border-b">
               <CardTitle className="flex items-center justify-between">
                 <span>{proposal.id}</span>
-                <Badge variant="secondary" className="font-black text-[9px] capitalize" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                  {overallStatus.replace(/_/g, ' ')}
+                <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                  {formatStatus(overallStatus)}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
                 <p className="font-medium text-gray-600">Proposal Date</p>
-                <p className="text-sm">{new Date(proposal.submissionDate).toLocaleDateString()}</p>
+                <p className="text-sm">{formatDate(proposal.submissionDate)}</p>
               </div>
               <div>
                 <p className="font-medium text-gray-600">Vendor Name</p>
@@ -666,18 +684,18 @@ export default function AdminProposalDetail() {
                       <TableCell className="font-semibold text-sm text-gray-800 py-3">{doc.name}</TableCell>
                       <TableCell className="font-medium text-xs text-gray-500 py-3">{doc.category}</TableCell>
                       <TableCell className="font-medium text-xs text-gray-500 py-3">
-                        {new Date(doc.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {formatDate(doc.date)}
                       </TableCell>
                       <TableCell className="py-3">
                         <Badge 
                           variant="secondary" 
-                          className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none" 
+                          className="text-[10px] font-bold px-2.5 py-0.5 border-none" 
                           style={{
                             backgroundColor: doc.status === 'approved' ? '#D1FAE5' : '#FEF3C7',
                             color: doc.status === 'approved' ? 'var(--fnrc-success)' : 'var(--fnrc-warning)'
                           }}
                         >
-                          {doc.status}
+                          {formatStatus(doc.status)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right pr-4 py-3">

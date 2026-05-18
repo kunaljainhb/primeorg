@@ -28,6 +28,24 @@ import {
 import { useState } from 'react';
 import { mockVendors } from '@/app/data/mockData';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminVendorDetail() {
   const navigate = useNavigate();
   const { vendorId } = useParams();
@@ -157,12 +175,12 @@ export default function AdminVendorDetail() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--fnrc-text-dark)' }}>Vendor File: {vendor.id}</h1>
+            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Vendor File: {vendor.id}</h1>
             <div className="flex items-center gap-2 mt-0.5">
-              <Badge variant="secondary" className="capitalize text-[10px] font-bold" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                {vendor.status.replace('_', ' ')}
+              <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                {formatStatus(vendor.status)}
               </Badge>
-              <span className="text-xs text-muted-foreground italic">Registered on {new Date(vendor.registrationDate).toLocaleDateString()}</span>
+              <span className="text-sm font-medium text-muted-foreground italic">Registered on {formatDate(vendor.registrationDate)}</span>
             </div>
           </div>
         </div>
@@ -192,7 +210,7 @@ export default function AdminVendorDetail() {
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] uppercase font-bold text-muted-foreground">Expiry Date</Label>
-              <div className="text-sm font-semibold">{new Date(vendorDetails.expiryDate).toLocaleDateString()}</div>
+              <div className="text-sm font-semibold">{formatDate(vendorDetails.expiryDate)}</div>
             </div>
           </CardContent>
         </Card>
@@ -325,13 +343,13 @@ export default function AdminVendorDetail() {
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {new Date(doc.uploadDate).toLocaleDateString('en-GB')}
+                      {formatDate(doc.uploadDate)}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {doc.issueDate ? new Date(doc.issueDate).toLocaleDateString('en-GB') : '-'}
+                      {doc.issueDate ? formatDate(doc.issueDate) : '-'}
                     </TableCell>
                     <TableCell className="text-sm text-gray-500">
-                      {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString('en-GB') : '-'}
+                      {doc.expiryDate ? formatDate(doc.expiryDate) : '-'}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">

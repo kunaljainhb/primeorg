@@ -15,6 +15,24 @@ import {
 } from "@/app/components/ui/popover";
 import { Checkbox } from "@/app/components/ui/checkbox";
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminRFPManagement() {
   const navigate = useNavigate();
 
@@ -220,10 +238,10 @@ export default function AdminRFPManagement() {
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{rfp.title}</TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.category.join(', ')}</TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                      {rfp.createdAt ? new Date(rfp.createdAt).toLocaleDateString() : '-'}
+                      {formatDate(rfp.createdAt)}
                     </TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {new Date(rfp.submissionDeadline).toLocaleDateString()}
+                      {formatDate(rfp.submissionDeadline)}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -239,10 +257,9 @@ export default function AdminRFPManagement() {
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className="capitalize"
                         style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                       >
-                        {rfp.status}
+                        {formatStatus(rfp.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">

@@ -137,7 +137,7 @@ export default function VendorRegistrationStatus() {
             <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
               Registration Status
             </h1>
-            <p style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
               Check your vendor registration status
             </p>
           </div>

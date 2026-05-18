@@ -18,6 +18,24 @@ import {
   TableRow,
 } from '@/app/components/ui/table';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function VendorRFPDetail() {
   const navigate = useNavigate();
   const { rfpId } = useParams();
@@ -102,7 +120,7 @@ export default function VendorRFPDetail() {
       <div className="flex items-start justify-between">
         <div>
           <div className="mb-2 flex items-center gap-3">
-            <h1 className="text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
               {rfp.title}
             </h1>
             <Badge style={{ backgroundColor: 'var(--fnrc-success)', color: 'white' }}>
@@ -118,7 +136,7 @@ export default function VendorRFPDetail() {
               {new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'Closed' : 'Open'}
             </Badge>
           </div>
-          <p className="text-lg" style={{ color: 'var(--fnrc-text-muted)' }}>
+          <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
             {rfp.id}
           </p>
         </div>
@@ -201,11 +219,7 @@ export default function VendorRFPDetail() {
                       Submission Deadline
                     </div>
                     <div className="mt-1 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {new Date(rfp.submissionDeadline).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
+                      {formatDate(rfp.submissionDeadline)}
                     </div>
                   </div>
                 </div>
@@ -427,7 +441,7 @@ export default function VendorRFPDetail() {
                                 {doc.documentNumber}
                               </TableCell>
                               <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                                {new Date(doc.date).toLocaleDateString()}
+                                {formatDate(doc.date)}
                               </TableCell>
                               <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
                                 {doc.amount ? `AED ${doc.amount.toLocaleString()}` : '-'}
@@ -438,7 +452,7 @@ export default function VendorRFPDetail() {
                                   className="text-xs"
                                   style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                                 >
-                                  {doc.status}
+                                  {formatStatus(doc.status)}
                                 </Badge>
                               </TableCell>
                               <TableCell>
@@ -501,7 +515,7 @@ export default function VendorRFPDetail() {
                               </span>
                             </div>
                             <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Reviewed by {review.reviewedBy} on {new Date(review.reviewDate).toLocaleDateString()}
+                              Reviewed by {review.reviewedBy} on {formatDate(review.reviewDate)}
                             </div>
                           </div>
                           <div className="text-right ml-4">

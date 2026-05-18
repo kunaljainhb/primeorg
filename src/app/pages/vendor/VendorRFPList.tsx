@@ -9,6 +9,24 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/pop
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { mockRFPs } from '@/app/data/mockData';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function VendorRFPList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -181,7 +199,7 @@ export default function VendorRFPList() {
               <div className="space-y-2 flex-1">
                 <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
                   <Calendar className="h-4 w-4" />
-                  <span>Deadline: {new Date(rfp.submissionDeadline).toLocaleDateString()}</span>
+                  <span>Deadline: {formatDate(rfp.submissionDeadline)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
                   <Clock className="h-4 w-4" />

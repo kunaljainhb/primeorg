@@ -37,6 +37,24 @@ import { Label } from '@/app/components/ui/label';
 import { Calendar } from '@/app/components/ui/calendar';
 import { Checkbox } from '@/app/components/ui/checkbox';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminRFPDetail() {
   const navigate = useNavigate();
   const { rfpId } = useParams();
@@ -214,12 +232,12 @@ export default function AdminRFPDetail() {
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--fnrc-text-dark)' }}>{rfp.title}</h1>
-              <Badge variant="secondary" className="capitalize text-[10px] font-bold" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                {rfp.status}
+              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>{rfp.title}</h1>
+              <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                {formatStatus(rfp.status)}
               </Badge>
             </div>
-            <p className="text-xs font-semibold mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.id}</p>
+            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.id}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -302,7 +320,7 @@ export default function AdminRFPDetail() {
                   <Label className="text-sm font-bold capitalize text-muted-foreground">Submission Deadline</Label>
                   <div className="flex items-center gap-2 font-bold text-sm text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    {new Date(rfp.submissionDeadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {formatDate(rfp.submissionDeadline)}
                   </div>
                 </div>
               </div>
@@ -330,14 +348,14 @@ export default function AdminRFPDetail() {
                   <Label className="text-sm font-bold capitalize text-muted-foreground">Project Start Date</Label>
                   <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    01 June 2026
+                    01/06/2026
                   </div>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-sm font-bold capitalize text-muted-foreground">Project End Date</Label>
                   <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    31 Dec 2026
+                    31/12/2026
                   </div>
                 </div>
               </div>
@@ -346,9 +364,9 @@ export default function AdminRFPDetail() {
                 <Label className="text-sm font-bold capitalize text-muted-foreground">Milestones</Label>
                 <div className="grid md:grid-cols-3 gap-4">
                   {[
-                    { title: 'Project Initiation', date: '15 June 2026' },
-                    { title: 'Intermediate Review', date: '01 Sept 2026' },
-                    { title: 'Final Handover', date: '20 Dec 2026' }
+                    { title: 'Project Initiation', date: '15/06/2026' },
+                    { title: 'Intermediate Review', date: '01/09/2026' },
+                    { title: 'Final Handover', date: '20/12/2026' }
                   ].map((m, i) => (
                     <div key={i} className="flex flex-col gap-1.5 p-3 bg-gray-50/50 border rounded-lg">
                       <span className="text-[10px] font-black text-gray-450 tracking-wide">Milestone 0{i + 1}</span>
@@ -469,7 +487,7 @@ export default function AdminRFPDetail() {
               {activeVendorId && vendorChats[activeVendorId] ? (
                 <>
                   <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold text-gray-850 flex items-center gap-2">
+                    <CardTitle className="text-sm font-bold text-gray-855 flex items-center gap-2">
                       <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                       Clarification Thread • {vendorChats[activeVendorId].vendorName}
                     </CardTitle>
@@ -489,7 +507,7 @@ export default function AdminRFPDetail() {
                             className={`p-3 rounded-2xl text-xs font-medium shadow-sm relative ${
                               msg.sender === 'admin' 
                                 ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' 
-                                : 'bg-white text-gray-850 border border-gray-100 rounded-tl-none'
+                                : 'bg-white text-gray-855 border border-gray-100 rounded-tl-none'
                             }`}
                           >
                             {msg.text}
@@ -528,7 +546,7 @@ export default function AdminRFPDetail() {
                         value={chatInputText}
                         onChange={(e) => setChatInputText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendVendorMessage()}
-                        className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-850 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white"
+                        className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-855 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white"
                       />
                       <Button 
                         onClick={handleSendVendorMessage}
@@ -568,7 +586,7 @@ export default function AdminRFPDetail() {
             ) : (
               <div className="bg-gray-50/50 border-b p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h4 className="text-xs font-bold text-gray-800">Select up to 2 vendors to compare</h4>
+                  <h4 className="text-xs font-bold text-gray-855">Select up to 2 vendors to compare</h4>
                   <p className="text-[11px] text-gray-500 font-medium">Use checkboxes to select proposals for comparison</p>
                 </div>
                 <Button
@@ -610,14 +628,14 @@ export default function AdminRFPDetail() {
                           <span className="font-bold text-sm text-gray-800">{proposal.vendorName}</span>
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm text-gray-600 font-medium">{new Date(proposal.submissionDate).toLocaleDateString()}</span>
+                          <span className="text-sm text-gray-600 font-medium">{formatDate(proposal.submissionDate)}</span>
                         </TableCell>
                         <TableCell className="text-right font-black text-sm text-[var(--fnrc-primary-green)]">
                           {proposal.commercialAmount.toLocaleString()}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="font-black text-[9px] capitalize px-2 py-0.5" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                            {proposal.status.replace('_', ' ')}
+                          <Badge variant="secondary" className="font-black text-[9px] px-2 py-0.5" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                            {formatStatus(proposal.status)}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right pr-6">
@@ -654,12 +672,12 @@ export default function AdminRFPDetail() {
                         </div>
                         <div>
                           <p className="text-[10px] font-bold text-muted-foreground tracking-wide mb-1">Proposal Date</p>
-                          <p className="text-sm font-bold text-gray-900">{new Date(proposal.submissionDate).toLocaleDateString()}</p>
+                          <p className="text-sm font-bold text-gray-900">{formatDate(proposal.submissionDate)}</p>
                         </div>
                         <div>
                           <p className="text-[10px] font-bold text-muted-foreground tracking-wide mb-1">Approved Date</p>
                           <p className="text-sm font-bold text-gray-900">
-                            {proposal.shortlistedDate ? new Date(proposal.shortlistedDate).toLocaleDateString() : new Date().toLocaleDateString()}
+                            {proposal.shortlistedDate ? formatDate(proposal.shortlistedDate) : formatDate(new Date())}
                           </p>
                         </div>
                       </div>
@@ -691,14 +709,14 @@ export default function AdminRFPDetail() {
                                 <div className="text-[10px] text-muted-foreground font-bold">{doc.documentNumber}</div>
                               </TableCell>
                               <TableCell className="text-sm text-gray-600 font-medium">
-                                {new Date(doc.date).toLocaleDateString()}
+                                {formatDate(doc.date)}
                               </TableCell>
                               <TableCell>
                                 <Badge variant="secondary" className="capitalize text-[10px] font-bold px-2 py-0.5 border-none" style={{
                                   backgroundColor: doc.status === 'approved' || doc.status === 'paid' ? '#D1FAE5' : '#FEF3C7',
                                   color: doc.status === 'approved' || doc.status === 'paid' ? 'var(--fnrc-success)' : 'var(--fnrc-warning)'
                                 }}>
-                                  {doc.status}
+                                  {formatStatus(doc.status)}
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-right pr-6">

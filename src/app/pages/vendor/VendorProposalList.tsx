@@ -11,6 +11,24 @@ import { Calendar as CalendarComponent } from '@/app/components/ui/calendar';
 import { format } from 'date-fns';
 import { mockProposals } from '@/app/data/mockData';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function VendorProposalList() {
   const navigate = useNavigate();
   const myProposals = mockProposals.filter(p => p.vendorId === 'VEN-001');
@@ -159,7 +177,7 @@ export default function VendorProposalList() {
                             proposal.status === 'rejected' ? 'var(--fnrc-error)' : 'var(--fnrc-info)'
                         }}
                       >
-                        {proposal.status === 'under_review' ? 'UnderReview' : proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
+                        {formatStatus(proposal.status)}
                       </Badge>
                     </div>
                   </div>
@@ -168,7 +186,7 @@ export default function VendorProposalList() {
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
                   <Calendar className="h-4 w-4" />
-                  <span>Submitted: {new Date(proposal.submissionDate).toLocaleDateString()}</span>
+                  <span>Submitted: {formatDate(proposal.submissionDate)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
                   <DollarSign className="h-4 w-4" />

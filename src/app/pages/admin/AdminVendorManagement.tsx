@@ -22,6 +22,24 @@ import {
 } from '@/app/components/ui/table';
 import { mockVendors } from '@/app/data/mockData';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const formatStatus = (statusStr?: string) => {
+  if (!statusStr) return '';
+  return statusStr
+    .split(/_|\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function AdminVendorManagement() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -116,14 +134,14 @@ export default function AdminVendorManagement() {
                       {vendor.category.slice(0, 2).join(', ')}
                     </TableCell>
                     <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {new Date(vendor.registrationDate).toLocaleDateString()}
+                      {formatDate(vendor.registrationDate)}
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
                         style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                       >
-                        {vendor.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        {formatStatus(vendor.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
