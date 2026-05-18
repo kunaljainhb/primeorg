@@ -1,987 +1,991 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from '@/app/context/RouterContext';
+import { useParams, useNavigate } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Separator } from '@/app/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/app/components/ui/dialog';
-import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
-import { Input } from '@/app/components/ui/input';
-import { ArrowLeft, Download, FileText, Check, XIcon, AlertCircle, Upload, UserCheck, CheckCircle2 } from 'lucide-react';
+import { Badge } from '@/app/components/ui/badge';
+import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { mockProposals, mockRFPs, mockVendors } from '@/app/data/mockData';
-
-type DecisionLog = {
-  action: string;
-  timestamp: string;
-  user: string;
-  reason?: string;
-  documentName?: string;
-};
+import { mockProposals, mockAdminUsers, mockRFPs } from '@/app/data/mockData';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 
 export default function AdminProposalDetail() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const proposalId = location.pathname.split('/').pop();
+  const { proposalId } = useParams();
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
-  
-  const rfp = mockRFPs.find(r => r.id === proposal.rfpId);
-  const vendor = mockVendors.find(v => v.id === proposal.vendorId);
+  const rfp = mockRFPs.find(r => r.id === proposal.rfpId) || mockRFPs[0];
+  const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer');
 
-  // State for decision flow
-  const [technicalStatus, setTechnicalStatus] = useState(proposal.technicalStatus || 'pending');
-  const [commercialStatus, setCommercialStatus] = useState(proposal.commercialStatus || 'pending');
-  const [isShortlisted, setIsShortlisted] = useState(proposal.status === 'shortlisted');
-  
-  const [decisionDialog, setDecisionDialog] = useState<{
-    open: boolean;
-    type: 'technical-approve' | 'technical-reject' | 'commercial-approve' | 'commercial-reject' | 'shortlist' | 'reject-final' | null;
-    reason: string;
-    fileName: string;
-  }>({ open: false, type: null, reason: '', fileName: '' });
+  const isInitiallyRejected = proposal.status === 'rejected';
+  const isInitiallyShortlisted = proposal.status === 'shortlisted';
+  const [proposalRemark, setProposalRemark] = useState(
+    isInitiallyRejected
+      ? 'The commercial proposal exceeded the allocated RFP budget limits.'
+      : isInitiallyShortlisted
+      ? 'Highly qualified vendor meeting all technical specs and commercial constraints.'
+      : ''
+  );
+  const [overallStatus, setOverallStatus] = useState(proposal.status);
+  const [qualityRating, setQualityRating] = useState<number>(5);
+  const [timelinessRating, setTimelinessRating] = useState<number>(5);
+  const [communicationRating, setCommunicationRating] = useState<number>(4);
+  const [complianceRating, setComplianceRating] = useState<number>(5);
+  const [ratingRemark, setRatingRemark] = useState(
+    isInitiallyRejected || isInitiallyShortlisted
+      ? 'Outstanding technical proposal with comprehensive documentation. Team demonstrated excellent understanding of requirements. All compliance criteria met. Recommended for shortlisting.'
+      : ''
+  );
+  const [isRatingSaved, setIsRatingSaved] = useState(isInitiallyRejected || isInitiallyShortlisted);
 
-  const [decisionLogs, setDecisionLogs] = useState<DecisionLog[]>([]);
-
-  const [auditLogs, setAuditLogs] = useState<Array<{ action: string; timestamp: string; user: string }>>([ 
-    { action: 'Proposal submitted by vendor', timestamp: new Date(proposal.submissionDate).toLocaleString(), user: proposal.vendorName },
-    { action: 'Technical evaluation initiated', timestamp: new Date().toLocaleString(), user: 'Ahmed Al Mansoori' }
-  ]);
-
-  const getStatusColor = (status?: string) => {
-    const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: '#E5E7EB', text: 'var(--fnrc-text-muted)' },
-      under_review: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' }
-    };
-    return colors[status || 'pending'] || colors.pending;
-  };
-
-  const openDecisionDialog = (type: 'technical-approve' | 'technical-reject' | 'commercial-approve' | 'commercial-reject' | 'shortlist' | 'reject-final') => {
-    setDecisionDialog({ open: true, type, reason: '', fileName: '' });
-  };
-
-  const closeDecisionDialog = () => {
-    setDecisionDialog({ open: false, type: null, reason: '', fileName: '' });
-  };
-
-  const handleDecisionConfirm = () => {
-    const { type, reason, fileName } = decisionDialog;
-
-    // Validate reason for rejection decisions
-    if ((type === 'technical-reject' || type === 'commercial-reject' || type === 'reject-final') && !reason.trim()) {
-      toast.error('Please provide a reason');
+  const handleSaveRatings = () => {
+    if (!ratingRemark.trim()) {
+      toast.error('Please enter comments or remarks before saving ratings.');
       return;
     }
+    setIsRatingSaved(true);
+    toast.success('Vendor performance ratings saved successfully!');
+  };
+  const [technicalReviewer, setTechnicalReviewer] = useState(
+    isInitiallyRejected ? 'Technical Reviewer' : (isInitiallyShortlisted ? 'Mohammed Al Zaabi' : '')
+  );
+  const [commercialReviewer, setCommercialReviewer] = useState(
+    isInitiallyRejected ? 'Commercial Reviewer' : (isInitiallyShortlisted ? 'Mohammed Al Zaabi' : '')
+  );
+  const [technicalStatus, setTechnicalStatus] = useState(
+    isInitiallyRejected ? 'approved' : (isInitiallyShortlisted ? 'approved' : (proposal.technicalStatus || 'pending'))
+  );
+  const [commercialStatus, setCommercialStatus] = useState(
+    isInitiallyRejected ? 'rejected' : (isInitiallyShortlisted ? 'approved' : (proposal.commercialStatus || 'pending'))
+  );
 
-    const timestamp = new Date().toLocaleString();
-    const user = 'Ahmed Al Mansoori';
+  const [messages, setMessages] = useState([
+    { id: 1, sender: 'vendor', text: 'Hello, we have uploaded the consolidated technical specifications. Please review and let us know if you need further clarifications.', timestamp: '10:30 AM', unread: true },
+    { id: 2, sender: 'vendor', text: 'Could you please confirm if the intermediate delivery milestone of 3 months fits the schedule?', timestamp: '11:15 AM', unread: true },
+  ]);
+  const [unreadCount, setUnreadCount] = useState(2);
+  const [newMessageText, setNewMessageText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
 
-    switch (type) {
-      case 'technical-approve':
-        setTechnicalStatus('approved');
-        const techApproveLog: DecisionLog = {
-          action: 'Technical Approved',
-          timestamp,
-          user,
-          reason: reason || 'Meets all technical requirements',
-          documentName: fileName || undefined
-        };
-        setDecisionLogs(prev => [techApproveLog, ...prev]);
-        setAuditLogs(prev => [{ action: 'Technical proposal approved', timestamp, user }, ...prev]);
-        toast.success('Technical proposal approved');
-        break;
+  const handleSendMessage = () => {
+    if (!newMessageText.trim()) return;
+    
+    setUnreadCount(0);
+    const updatedMessages = messages.map(msg => ({ ...msg, unread: false }));
 
-      case 'technical-reject':
-        setTechnicalStatus('rejected');
-        const techRejectLog: DecisionLog = {
-          action: 'Technical Rejected',
-          timestamp,
-          user,
-          reason,
-          documentName: fileName || undefined
-        };
-        setDecisionLogs(prev => [techRejectLog, ...prev]);
-        setAuditLogs(prev => [{ action: `Technical proposal rejected: ${reason}`, timestamp, user }, ...prev]);
-        toast.success('Technical proposal rejected');
-        break;
+    const userMessage = {
+      id: Date.now(),
+      sender: 'admin',
+      text: newMessageText,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      unread: false
+    };
 
-      case 'commercial-approve':
-        setCommercialStatus('approved');
-        const commApproveLog: DecisionLog = {
-          action: 'Commercial Approved',
-          timestamp,
-          user,
-          reason: reason || 'Pricing is competitive and acceptable',
-          documentName: fileName || undefined
-        };
-        setDecisionLogs(prev => [commApproveLog, ...prev]);
-        setAuditLogs(prev => [{ action: 'Commercial proposal approved', timestamp, user }, ...prev]);
-        toast.success('Commercial proposal approved');
-        break;
+    setMessages([...updatedMessages, userMessage]);
+    setNewMessageText('');
 
-      case 'commercial-reject':
-        setCommercialStatus('rejected');
-        const commRejectLog: DecisionLog = {
-          action: 'Commercial Rejected',
-          timestamp,
-          user,
-          reason,
-          documentName: fileName || undefined
-        };
-        setDecisionLogs(prev => [commRejectLog, ...prev]);
-        setAuditLogs(prev => [{ action: `Commercial proposal rejected: ${reason}`, timestamp, user }, ...prev]);
-        toast.success('Commercial proposal rejected');
-        break;
-
-      case 'shortlist':
-        setIsShortlisted(true);
-        const shortlistLog: DecisionLog = {
-          action: 'Vendor Shortlisted',
-          timestamp,
-          user,
-          reason: 'Passed both technical and commercial evaluations'
-        };
-        setDecisionLogs(prev => [shortlistLog, ...prev]);
-        setAuditLogs(prev => [{ action: 'Vendor shortlisted for final selection', timestamp, user }, ...prev]);
-        toast.success(`${proposal.vendorName} has been shortlisted`);
-        break;
-
-      case 'reject-final':
-        setIsShortlisted(false);
-        const finalRejectLog: DecisionLog = {
-          action: 'Proposal Rejected',
-          timestamp,
-          user,
-          reason,
-          documentName: fileName || undefined
-        };
-        setDecisionLogs(prev => [finalRejectLog, ...prev]);
-        setAuditLogs(prev => [{ action: `Proposal rejected: ${reason}`, timestamp, user }, ...prev]);
-        toast.success('Proposal rejected');
-        break;
-    }
-
-    closeDecisionDialog();
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      const vendorReply = {
+        id: Date.now() + 1,
+        sender: 'vendor',
+        text: 'Thank you for the update. We appreciate the fast feedback and will compile any additional documentation immediately.',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        unread: false
+      };
+      setMessages(prev => [...prev, vendorReply]);
+      toast.info('New message received from ' + proposal.vendorName);
+    }, 2000);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setDecisionDialog(prev => ({ ...prev, fileName: file.name }));
+  const handleChatFocus = () => {
+    setUnreadCount(0);
+    setMessages(prev => prev.map(msg => ({ ...msg, unread: false })));
+  };
+
+  const handleSaveTechnicalApproval = (val: string) => {
+    setTechnicalReviewer(val);
+    proposal.status = 'technical_review_started';
+    setOverallStatus('technical_review_started');
+    toast.success(`Technical reviewer ${val} assigned. Status set to Technical Review Started.`);
+  };
+
+  const handleSaveCommercialApproval = (val: string) => {
+    setCommercialReviewer(val);
+    proposal.status = 'commercial_review_started';
+    setOverallStatus('commercial_review_started');
+    toast.success(`Commercial reviewer ${val} assigned. Status set to Commercial Review Started.`);
+  };
+
+  const handleTechnicalStatusUpdate = (status: 'approved' | 'rejected') => {
+    if (status === 'rejected') {
+      setTechnicalStatus('approved');
+      setCommercialStatus('rejected');
+      proposal.status = 'rejected';
+      setOverallStatus('rejected');
+      if (!technicalReviewer.trim()) setTechnicalReviewer('Technical Reviewer');
+      if (!commercialReviewer.trim()) setCommercialReviewer('Commercial Reviewer');
+      toast.error('Proposal Rejected: Technical set to Approved, Commercial set to Rejected, Overall set to Rejected.');
+    } else {
+      setTechnicalStatus('approved');
+      proposal.status = 'technical_review_completed';
+      setOverallStatus('technical_review_completed');
+      toast.success('Technical Review Completed (Approved).');
     }
   };
 
-  const canShortlist = technicalStatus === 'approved' && commercialStatus === 'approved';
-  const isTechnicalRejected = technicalStatus === 'rejected';
-  const isCommercialRejected = commercialStatus === 'rejected';
+  const handleCommercialStatusUpdate = (status: 'approved' | 'rejected') => {
+    if (status === 'rejected') {
+      setTechnicalStatus('approved');
+      setCommercialStatus('rejected');
+      proposal.status = 'rejected';
+      setOverallStatus('rejected');
+      if (!technicalReviewer.trim()) setTechnicalReviewer('Technical Reviewer');
+      if (!commercialReviewer.trim()) setCommercialReviewer('Commercial Reviewer');
+      toast.error('Proposal Rejected: Technical set to Approved, Commercial set to Rejected, Overall set to Rejected.');
+    } else {
+      setCommercialStatus('approved');
+      proposal.status = 'commercial_review_completed';
+      setOverallStatus('commercial_review_completed');
+      toast.success('Commercial Review Completed (Approved).');
+    }
+  };
 
-  const techStatusColor = getStatusColor(technicalStatus);
-  const commStatusColor = getStatusColor(commercialStatus);
+  const handleShortlistVendor = () => {
+    proposal.status = 'shortlisted';
+    setOverallStatus('shortlisted');
+    setTechnicalReviewer('Mohammed Al Zaabi');
+    setCommercialReviewer('Mohammed Al Zaabi');
+    setTechnicalStatus('approved');
+    setCommercialStatus('approved');
+    toast.success('Vendor shortlisted successfully! ERP integration active: LPO and Invoice generated.');
+  };
+
+  const handleApproveProposalAction = () => {
+    if (!proposalRemark.trim()) {
+      toast.error('Please enter a remark or justification before approving.');
+      return;
+    }
+    proposal.status = 'shortlisted';
+    setOverallStatus('shortlisted');
+    setTechnicalReviewer('Mohammed Al Zaabi');
+    setCommercialReviewer('Mohammed Al Zaabi');
+    setTechnicalStatus('approved');
+    setCommercialStatus('approved');
+    toast.success('Proposal Approved! Status updated to Shortlisted. Remarks saved.');
+  };
+
+  const handleRejectProposalAction = () => {
+    if (!proposalRemark.trim()) {
+      toast.error('Please enter a remark or justification before rejecting.');
+      return;
+    }
+    proposal.status = 'rejected';
+    setOverallStatus('rejected');
+    setTechnicalReviewer('Technical Reviewer');
+    setCommercialReviewer('Commercial Reviewer');
+    setTechnicalStatus('approved');
+    setCommercialStatus('rejected');
+    toast.error('Proposal Rejected! Status updated to Rejected. Remarks saved.');
+  };
+  const technicalDocs = [
+    'Technical Specification.pdf',
+    'Implementation Plan.docx',
+    'System Architecture.png'
+  ];
+  const commercialBreakdown = [
+    { item: 'Hardware', amount: 250000 },
+    { item: 'Software Licenses', amount: 100000 },
+    { item: 'Installation Services', amount: 70000 }
+  ];
+  const supportingDocs = [
+    { id: 'doc1', name: 'Company Profile.pdf', category: 'Company Profile', date: '2026-05-01', status: 'approved' },
+    { id: 'doc2', name: 'Financial Statements.xlsx', category: 'Financial Statements', date: '2026-04-20', status: 'approved' },
+    { id: 'doc3', name: 'Compliance Certificate.pdf', category: 'Other', date: '2026-03-15', status: 'pending' }
+  ];
+
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, { bg: string; text: string }> = {
+      submitted: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      technical_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      shortlisted: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+    };
+    return colors[status] || colors.submitted;
+  };
+
+  const statusColor = getStatusColor(overallStatus);
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(`/admin/rfps/${proposal.rfpId}`)}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-semibold mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-            {proposal.vendorName}
-          </h1>
-          <div className="flex items-center gap-3">
-            <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-              {proposal.id}
-            </span>
-            <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>•</span>
-            <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-              Submitted {new Date(proposal.submissionDate).toLocaleDateString()}
-            </span>
-            {isShortlisted && (
-              <>
-                <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>•</span>
-                <Badge 
-                  variant="secondary" 
-                  style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}
-                >
-                  Shortlisted
-                </Badge>
-              </>
-            )}
+    <div className="space-y-6 p-4">
+      {/* Header back button */}
+      <div className="flex items-center justify-between border-b pb-4 mb-4">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/rfps/${proposal.rfpId}`)} className="rounded-full">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Details</h1>
+              <Badge variant="secondary" className="font-black text-[9px] capitalize px-2 py-0.5 border-none" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                {overallStatus.replace(/_/g, ' ')}
+              </Badge>
+            </div>
+            <p className="text-xs text-gray-500 font-semibold mt-1">Vendor: {proposal.vendorName}</p>
           </div>
         </div>
+
+        {overallStatus !== 'shortlisted' && overallStatus !== 'rejected' && (
+          <Button
+            onClick={handleShortlistVendor}
+            className="text-white h-9 px-5 font-bold text-xs shrink-0"
+            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+          >
+            <Award className="mr-2 h-4 w-4" />
+            Shortlist Vendor
+          </Button>
+        )}
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="summary" className="w-full">
-        <TabsList className="w-full justify-start" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-          <TabsTrigger 
-            value="summary"
-            className="data-[state=active]:bg-white"
-            style={{ 
-              color: 'var(--fnrc-text-muted)',
-            }}
-            data-active-style={{ color: 'var(--fnrc-primary-green)' }}
-          >
-            Proposal Summary
-          </TabsTrigger>
-          <TabsTrigger 
-            value="technical"
-            className="data-[state=active]:bg-white"
-            style={{ 
-              color: 'var(--fnrc-text-muted)',
-            }}
-          >
-            Technical Proposal
-          </TabsTrigger>
-          <TabsTrigger 
-            value="commercial"
-            className="data-[state=active]:bg-white"
-            style={{ 
-              color: 'var(--fnrc-text-muted)',
-            }}
-          >
-            Commercial Proposal
-          </TabsTrigger>
-          <TabsTrigger 
-            value="decision"
-            className="data-[state=active]:bg-white"
-            style={{ 
-              color: 'var(--fnrc-text-muted)',
-            }}
-          >
-            Final Decision
-          </TabsTrigger>
-          <TabsTrigger 
-            value="audit"
-            className="data-[state=active]:bg-white"
-            style={{ 
-              color: 'var(--fnrc-text-muted)',
-            }}
-          >
-            Audit Trail
-          </TabsTrigger>
+      <Tabs defaultValue="summary" className="space-y-6">
+        <TabsList className="mb-4">
+          <TabsTrigger value="summary">Proposal Summary</TabsTrigger>
+          <TabsTrigger value="technical">Technical Proposal</TabsTrigger>
+          <TabsTrigger value="commercial">Commercial Proposal</TabsTrigger>
+          <TabsTrigger value="supporting">Supporting Documents</TabsTrigger>
+          {rfp.status === 'published' && <TabsTrigger value="action">Proposal Action</TabsTrigger>}
         </TabsList>
 
-        {/* Tab 1: Proposal Summary */}
-        <TabsContent value="summary" className="mt-6">
+        <TabsContent value="summary" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Proposal Summary</CardTitle>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="flex items-center justify-between">
+                <span>{proposal.id}</span>
+                <Badge variant="secondary" className="font-black text-[9px] capitalize" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+                  {overallStatus.replace(/_/g, ' ')}
+                </Badge>
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-6">
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Vendor Name</div>
-                  <div className="font-medium">{proposal.vendorName}</div>
-                </div>
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Vendor ID</div>
-                  <div className="font-medium">{vendor?.id}</div>
-                </div>
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>RFP Reference</div>
-                  <div className="font-medium">{rfp?.id}</div>
-                  <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>{rfp?.title}</div>
-                </div>
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Submission Date</div>
-                  <div className="font-medium">{new Date(proposal.submissionDate).toLocaleDateString()}</div>
-                </div>
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Commercial Amount</div>
-                  <div className="text-2xl font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
-                    AED {proposal.commercialAmount.toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Overall Status</div>
-                  <div className="flex gap-2 mt-2">
-                    <Badge 
-                      variant="secondary" 
-                      style={{ backgroundColor: techStatusColor.bg, color: techStatusColor.text }}
-                    >
-                      Tech: {technicalStatus}
-                    </Badge>
-                    <Badge 
-                      variant="secondary" 
-                      style={{ backgroundColor: commStatusColor.bg, color: commStatusColor.text }}
-                    >
-                      Comm: {commercialStatus}
-                    </Badge>
-                  </div>
-                </div>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <p className="font-medium text-gray-600">Proposal Date</p>
+                <p className="text-sm">{new Date(proposal.submissionDate).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="font-medium text-gray-600">Vendor Name</p>
+                <p className="text-sm">{proposal.vendorName}</p>
+              </div>
+              <div>
+                <p className="font-medium text-gray-600">RFP ID</p>
+                <p className="text-sm">{proposal.rfpId}</p>
+              </div>
+              <div>
+                <p className="font-medium text-gray-600">RFP Title</p>
+                <p className="text-sm">{proposal.rfpTitle}</p>
+              </div>
+              <div>
+                <p className="font-medium text-gray-600">Commercial Amount (AED)</p>
+                <p className="text-sm font-bold text-[var(--fnrc-primary-green)]">{proposal.commercialAmount.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        {/* Tab 2: Technical Proposal */}
-        <TabsContent value="technical" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Technical Proposal</CardTitle>
-                  <p className="text-sm mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Review technical requirements and capabilities
-                  </p>
-                </div>
+          {/* Vendor Clarification Chat */}
+          <Card className="mt-6">
+            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <Users className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Vendor Clarifications Chat
+              </CardTitle>
+              {unreadCount > 0 && (
                 <Badge 
                   variant="secondary" 
-                  style={{ backgroundColor: techStatusColor.bg, color: techStatusColor.text }}
-                  className="text-base px-4 py-1"
+                  className="bg-red-500 text-white font-bold text-[10px] px-2.5 py-0.5 rounded-full border-none animate-pulse"
                 >
-                  {technicalStatus.replace('_', ' ').toUpperCase()}
+                  {unreadCount} Unread
                 </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Technical Summary
-                  </div>
-                  <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                    {proposal.technicalProposal}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Compliance
-                    </div>
-                    <div className="text-sm">{proposal.compliance || 'N/A'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Technical Score
-                    </div>
-                    <div className="text-lg font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
-                      {proposal.technicalScore || 'Not evaluated'}/100
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Experience
-                    </div>
-                    <div className="text-sm">{proposal.experience || 'N/A'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Methodology
-                    </div>
-                    <div className="text-sm">{proposal.methodology || 'N/A'}</div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Resources
-                  </div>
-                  <div className="text-sm">{proposal.resources || 'N/A'}</div>
-                </div>
-
-                <div>
-                  <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Technical Documents
-                  </div>
-                  <div className="space-y-2">
-                    <div 
-                      className="flex items-center justify-between rounded-lg border p-3 cursor-pointer hover:bg-gray-50"
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                        <div>
-                          <div className="text-sm font-medium">Technical_Proposal.pdf</div>
-                          <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>2.4 MB</div>
-                        </div>
-                      </div>
-                      <Download className="h-4 w-4" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    </div>
-                    <div 
-                      className="flex items-center justify-between rounded-lg border p-3 cursor-pointer hover:bg-gray-50"
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                        <div>
-                          <div className="text-sm font-medium">Technical_Specifications.pdf</div>
-                          <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>1.8 MB</div>
-                        </div>
-                      </div>
-                      <Download className="h-4 w-4" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Approval Matrix Section */}
-              <div>
-                <div className="text-sm mb-3 font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  Approval Matrix
-                </div>
-                <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                  {/* Level 1: Reviewer */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full text-xs font-semibold text-white flex-shrink-0" style={{ backgroundColor: technicalStatus === 'approved' ? 'var(--fnrc-success)' : 'var(--fnrc-primary-green)' }}>
-                      {technicalStatus === 'approved' ? <CheckCircle2 className="h-4 w-4" /> : '1'}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Level 1: Reviewer
-                      </div>
-                      <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        Mohammed Al-Rashid - Technical Reviewer
-                      </div>
-                      {technicalStatus === 'approved' && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <Badge 
-                            variant="secondary" 
-                            style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)', fontSize: '11px', padding: '2px 8px' }}
-                          >
-                            ✓ Approved
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Level 2: Manager */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full text-xs font-semibold text-white flex-shrink-0" style={{ backgroundColor: 'var(--fnrc-accent-gold)' }}>
-                      2
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Level 2: Manager
-                      </div>
-                      <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        David Martinez - Procurement Manager
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Badge 
-                          variant="secondary" 
-                          style={{ backgroundColor: '#E5E7EB', color: 'var(--fnrc-text-muted)', fontSize: '11px', padding: '2px 8px' }}
-                        >
-                          Pending
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Technical Decision Section */}
-              <div>
-                <div className="text-sm mb-3 font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  Technical Decision
-                </div>
-                {technicalStatus === 'pending' || technicalStatus === 'under_review' ? (
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => openDecisionDialog('technical-reject')}
-                      style={{ borderColor: 'var(--fnrc-error)', color: 'var(--fnrc-error)' }}
-                    >
-                      <XIcon className="mr-2 h-4 w-4" />
-                      Reject Technical
-                    </Button>
-                    <Button
-                      onClick={() => openDecisionDialog('technical-approve')}
-                      className="text-white"
-                      style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                    >
-                      <Check className="mr-2 h-4 w-4" />
-                      Approve Technical
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                    <div className="flex items-center gap-2">
-                      {technicalStatus === 'approved' ? (
-                        <>
-                          <Check className="h-5 w-5" style={{ color: 'var(--fnrc-success)' }} />
-                          <span className="font-medium" style={{ color: 'var(--fnrc-success)' }}>
-                            Technical proposal approved
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <XIcon className="h-5 w-5" style={{ color: 'var(--fnrc-error)' }} />
-                          <span className="font-medium" style={{ color: 'var(--fnrc-error)' }}>
-                            Technical proposal rejected
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Tab 3: Commercial Proposal */}
-        <TabsContent value="commercial" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Commercial Proposal</CardTitle>
-                  <p className="text-sm mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Review pricing, terms, and commercial conditions
-                  </p>
-                </div>
-                <Badge 
-                  variant="secondary" 
-                  style={{ backgroundColor: commStatusColor.bg, color: commStatusColor.text }}
-                  className="text-base px-4 py-1"
-                >
-                  {commercialStatus.replace('_', ' ').toUpperCase()}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Total Commercial Amount
-                    </div>
-                    <div className="text-3xl font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
-                      AED {proposal.commercialAmount.toLocaleString()}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Delivery Timeline
-                    </div>
-                    <div className="text-xl font-semibold">{proposal.deliveryTimeline || 'Not specified'}</div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    BOQ Summary
-                  </div>
-                  <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                    {proposal.boqSummary || 'N/A'}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Payment Terms
-                    </div>
-                    <div className="text-sm">{proposal.paymentTerms || 'N/A'}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Warranty / Support
-                    </div>
-                    <div className="text-sm">{proposal.warranty || 'N/A'}</div>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm mb-2 font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Commercial Documents
-                  </div>
-                  <div className="space-y-2">
-                    <div 
-                      className="flex items-center justify-between rounded-lg border p-3 cursor-pointer hover:bg-gray-50"
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                        <div>
-                          <div className="text-sm font-medium">Commercial_Proposal.pdf</div>
-                          <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>1.2 MB</div>
-                        </div>
-                      </div>
-                      <Download className="h-4 w-4" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    </div>
-                    <div 
-                      className="flex items-center justify-between rounded-lg border p-3 cursor-pointer hover:bg-gray-50"
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                        <div>
-                          <div className="text-sm font-medium">BOQ_Breakdown.xlsx</div>
-                          <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>450 KB</div>
-                        </div>
-                      </div>
-                      <Download className="h-4 w-4" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Approval Matrix Section */}
-              <div>
-                <div className="text-sm mb-3 font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  Approval Matrix
-                </div>
-                <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                  {/* Level 1: Reviewer */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full text-xs font-semibold text-white flex-shrink-0" style={{ backgroundColor: commercialStatus === 'approved' ? 'var(--fnrc-success)' : 'var(--fnrc-primary-green)' }}>
-                      {commercialStatus === 'approved' ? <CheckCircle2 className="h-4 w-4" /> : '1'}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Level 1: Reviewer
-                      </div>
-                      <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        Emily Chen - Contract Specialist
-                      </div>
-                      {commercialStatus === 'approved' && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <Badge 
-                            variant="secondary" 
-                            style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)', fontSize: '11px', padding: '2px 8px' }}
-                          >
-                            ✓ Approved
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Level 2: Manager */}
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full text-xs font-semibold text-white flex-shrink-0" style={{ backgroundColor: 'var(--fnrc-accent-gold)' }}>
-                      2
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Level 2: Manager
-                      </div>
-                      <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        David Martinez - Procurement Manager
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Badge 
-                          variant="secondary" 
-                          style={{ backgroundColor: '#E5E7EB', color: 'var(--fnrc-text-muted)', fontSize: '11px', padding: '2px 8px' }}
-                        >
-                          Pending
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Commercial Decision Section */}
-              <div>
-                <div className="text-sm mb-3 font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  Commercial Decision
-                </div>
-                {commercialStatus === 'pending' || commercialStatus === 'under_review' ? (
-                  <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => openDecisionDialog('commercial-reject')}
-                      style={{ borderColor: 'var(--fnrc-error)', color: 'var(--fnrc-error)' }}
-                    >
-                      <XIcon className="mr-2 h-4 w-4" />
-                      Reject Commercial
-                    </Button>
-                    <Button
-                      onClick={() => openDecisionDialog('commercial-approve')}
-                      className="text-white"
-                      style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                    >
-                      <Check className="mr-2 h-4 w-4" />
-                      Approve Commercial
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                    <div className="flex items-center gap-2">
-                      {commercialStatus === 'approved' ? (
-                        <>
-                          <Check className="h-5 w-5" style={{ color: 'var(--fnrc-success)' }} />
-                          <span className="font-medium" style={{ color: 'var(--fnrc-success)' }}>
-                            Commercial proposal approved
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <XIcon className="h-5 w-5" style={{ color: 'var(--fnrc-error)' }} />
-                          <span className="font-medium" style={{ color: 'var(--fnrc-error)' }}>
-                            Commercial proposal rejected
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Tab 4: Final Decision */}
-        <TabsContent value="decision" className="mt-6 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Final Decision</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Shortlist Controls */}
-              {!canShortlist && !isShortlisted && (
-                <div className="rounded-lg border p-4 flex items-start gap-3" style={{ borderColor: 'var(--fnrc-warning)', backgroundColor: '#FEF3C7' }}>
-                  <AlertCircle className="h-5 w-5 mt-0.5" style={{ color: 'var(--fnrc-warning)' }} />
-                  <div>
-                    <div className="font-medium mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      Prerequisites Required
-                    </div>
-                    <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Both technical and commercial approvals are required before shortlisting.
-                    </div>
-                  </div>
-                </div>
               )}
-
-              {canShortlist && !isShortlisted && (
-                <div className="rounded-lg border p-4 flex items-start gap-3" style={{ borderColor: 'var(--fnrc-success)', backgroundColor: '#D1FAE5' }}>
-                  <Check className="h-5 w-5 mt-0.5" style={{ color: 'var(--fnrc-success)' }} />
-                  <div className="flex-1">
-                    <div className="font-medium mb-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      Ready for Shortlisting
-                    </div>
-                    <div className="text-sm mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      All evaluations are complete. You can now shortlist this vendor for final selection.
-                    </div>
-                    <Button
-                      onClick={() => openDecisionDialog('shortlist')}
-                      className="text-white"
-                      style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4" onClick={handleChatFocus}>
+              {/* Message scroll container */}
+              <div className="border border-gray-100 rounded-xl bg-gray-50/30 p-4 h-[300px] overflow-y-auto space-y-3 flex flex-col scrollbar-thin scrollbar-thumb-gray-200">
+                {messages.map((msg) => (
+                  <div 
+                    key={msg.id} 
+                    className={`flex flex-col max-w-[80%] ${msg.sender === 'admin' ? 'align-end ml-auto' : 'align-start mr-auto'}`}
+                  >
+                    {/* Sender Label */}
+                    <span className={`text-[10px] font-bold mb-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
+                      {msg.sender === 'admin' ? 'Government Admin' : proposal.vendorName}
+                    </span>
+                    
+                    {/* Message Bubble */}
+                    <div 
+                      className={`p-3 rounded-2xl text-sm font-medium shadow-sm relative ${
+                        msg.sender === 'admin' 
+                          ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' 
+                          : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                      }`}
                     >
-                      Shortlist Proposal
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {isShortlisted && (
-                <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-primary-green)', backgroundColor: '#D1FAE5' }}>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-6 w-6" style={{ color: 'var(--fnrc-primary-green)' }} />
-                    <span className="text-lg font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
-                      Proposal Shortlisted
+                      {msg.text}
+                      {msg.unread && (
+                        <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Timestamp */}
+                    <span className={`text-[9px] font-semibold mt-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
+                      {msg.timestamp}
                     </span>
                   </div>
-                  <div className="text-sm mt-2" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    This vendor has been shortlisted for final selection.
-                  </div>
-                </div>
-              )}
+                ))}
 
-              {/* Decision Timeline */}
-              {decisionLogs.length > 0 && (
-                <>
-                  <Separator />
-                  <div>
-                    <div className="text-sm mb-4 font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      Decision Timeline
-                    </div>
-                    <div className="space-y-4">
-                      {decisionLogs.map((log, idx) => (
-                        <div 
-                          key={idx} 
-                          className="flex gap-4 border-l-2 pb-3 pl-4" 
-                          style={{ borderColor: idx === 0 ? 'var(--fnrc-primary-green)' : 'var(--fnrc-border-gray)' }}
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              {log.action.includes('Approved') ? (
-                                <Check className="h-4 w-4" style={{ color: 'var(--fnrc-success)' }} />
-                              ) : log.action.includes('Rejected') ? (
-                                <XIcon className="h-4 w-4" style={{ color: 'var(--fnrc-error)' }} />
-                              ) : (
-                                <Check className="h-4 w-4" style={{ color: 'var(--fnrc-primary-green)' }} />
-                              )}
-                              <span className="font-medium">{log.action}</span>
-                            </div>
-                            {log.reason && (
-                              <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                                Reason: {log.reason}
-                              </div>
-                            )}
-                            {log.documentName && (
-                              <div className="text-sm mb-1 flex items-center gap-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                                <FileText className="h-3 w-3" />
-                                Attachment: {log.documentName}
-                              </div>
-                            )}
-                            <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              By {log.user} • {log.timestamp}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                {isTyping && (
+                  <div className="flex flex-col max-w-[80%] align-start mr-auto">
+                    <span className="text-[10px] font-bold mb-1 text-gray-400">
+                      {proposal.vendorName} is typing
+                    </span>
+                    <div className="bg-white text-gray-800 border border-gray-100 p-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 bg-gray-300 rounded-full animate-bounce"></span>
+                      <span className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></span>
+                      <span className="h-1.5 w-1.5 bg-gray-500 rounded-full animate-bounce delay-200"></span>
                     </div>
                   </div>
-                </>
-              )}
+                )}
+              </div>
+
+              {/* Message Typing Area */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder={`Type a message to ${proposal.vendorName}...`}
+                  value={newMessageText}
+                  onChange={(e) => setNewMessageText(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-850 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white"
+                />
+                <Button 
+                  onClick={handleSendMessage}
+                  className="text-white h-10 px-6 font-bold text-xs rounded-xl shrink-0"
+                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                >
+                  Send
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Tab 5: Audit Trail */}
-        <TabsContent value="audit" className="mt-6">
+        <TabsContent value="technical" className="space-y-6">
+          {/* Technical Approach */}
           <Card>
-            <CardHeader>
-              <CardTitle>Audit Trail</CardTitle>
-              <p className="text-sm mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                Complete system log of all actions (read-only)
-              </p>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Technical Approach
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {auditLogs.map((log, idx) => (
-                  <div 
-                    key={idx} 
-                    className="flex gap-4 border-l-2 pb-3 pl-4" 
-                    style={{ borderColor: idx === 0 ? 'var(--fnrc-primary-green)' : 'var(--fnrc-border-gray)' }}
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">{log.action}</div>
-                      <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        By {log.user} • {log.timestamp}
+            <CardContent className="pt-4 space-y-4">
+              <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
+                <div>
+                  <h4 className="text-xs font-black text-gray-450 mb-1.5">Executive Summary & Proposal Statement</h4>
+                  <p className="text-sm font-semibold text-gray-700 leading-relaxed">
+                    {proposal.technicalProposal}
+                  </p>
+                </div>
+                {proposal.methodology && (
+                  <div className="pt-4 border-t border-gray-200/60">
+                    <h4 className="text-xs font-black text-gray-450 mb-1.5">Proposed Methodology & Deployment Strategy</h4>
+                    <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                      {proposal.methodology}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Technical Documents */}
+          <Card>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Submitted Technical Documents
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {technicalDocs.map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-[var(--fnrc-primary-green)] transition-all bg-white">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="h-4 w-4 text-blue-500" />
+                      <div>
+                        <div className="text-xs font-bold text-gray-800">{doc}</div>
+                        <div className="text-[9px] text-muted-foreground font-bold">PDF • 1.8 MB</div>
                       </div>
                     </div>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
+                      <Download className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
+
+          {/* Technical Approval Matrix */}
+          <Card>
+            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Technical Approval Matrix
+              </CardTitle>
+              <Badge 
+                variant="secondary" 
+                className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none animate-pulse-subtle"
+                style={{
+                  backgroundColor: technicalStatus === 'approved' ? '#D1FAE5' : technicalStatus === 'rejected' ? '#FEE2E2' : '#FEF3C7',
+                  color: technicalStatus === 'approved' ? 'var(--fnrc-success)' : technicalStatus === 'rejected' ? '#EF4444' : 'var(--fnrc-warning)'
+                }}
+              >
+                {technicalStatus === 'approved' ? 'Approved' : technicalStatus === 'rejected' ? 'Rejected' : 'Pending'}
+              </Badge>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-5">
+              <p className="text-xs font-medium text-gray-500">
+                Specify the Technical Reviewer responsible for evaluating this proposal. The reviewer will be notified to begin technical scoring and compliance assessment.
+              </p>
+              
+              <div className="max-w-md w-full">
+                <label className="text-xs font-bold text-gray-700 block mb-1">Technical Reviewer Name</label>
+                <Select value={technicalReviewer} onValueChange={handleSaveTechnicalApproval}>
+                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-semibold text-gray-800 bg-white">
+                    <SelectValue placeholder="Select Technical Reviewer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {reviewers.map((reviewer) => (
+                      <SelectItem key={reviewer.id} value={reviewer.name} className="font-semibold text-xs text-gray-700">
+                        {reviewer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status Decision Buttons */}
+              <div className="pt-4 border-t border-gray-200/60 space-y-3">
+                <h4 className="text-xs font-bold text-gray-700">Technical Evaluation Decision</h4>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={() => handleTechnicalStatusUpdate('approved')}
+                    className={`h-9 px-4 font-bold text-xs flex items-center gap-1.5 border transition-all ${
+                      technicalStatus === 'approved'
+                        ? 'border-transparent text-white'
+                        : 'border-green-200 text-green-700 hover:bg-green-50/50 bg-white'
+                    }`}
+                    style={{ 
+                      backgroundColor: technicalStatus === 'approved' ? 'var(--fnrc-success)' : undefined
+                    }}
+                  >
+                    <Check className={`h-4 w-4 ${technicalStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
+                    Approved
+                  </Button>
+                  <Button
+                    onClick={() => handleTechnicalStatusUpdate('rejected')}
+                    className={`h-9 px-4 font-bold text-xs flex items-center gap-1.5 border transition-all ${
+                      technicalStatus === 'rejected'
+                        ? 'border-transparent text-white'
+                        : 'border-red-200 text-red-700 hover:bg-red-50/50 bg-white'
+                    }`}
+                    style={{ 
+                      backgroundColor: technicalStatus === 'rejected' ? '#EF4444' : undefined
+                    }}
+                  >
+                    <X className={`h-4 w-4 ${technicalStatus === 'rejected' ? 'text-white' : 'text-red-500'}`} />
+                    Rejected
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
-      </Tabs>
 
-      {/* Decision Dialog */}
-      <Dialog open={decisionDialog.open} onOpenChange={(open) => !open && closeDecisionDialog()}>
-        <DialogContent aria-describedby="decision-dialog-description">
-          <DialogHeader>
-            <DialogTitle>
-              {decisionDialog.type === 'technical-approve' && 'Technical Decision'}
-              {decisionDialog.type === 'technical-reject' && 'Technical Decision'}
-              {decisionDialog.type === 'commercial-approve' && 'Commercial Decision'}
-              {decisionDialog.type === 'commercial-reject' && 'Commercial Decision'}
-              {decisionDialog.type === 'shortlist' && 'Shortlist Proposal'}
-              {decisionDialog.type === 'reject-final' && 'Reject Proposal'}
-            </DialogTitle>
-            <DialogDescription id="decision-dialog-description">
-              {decisionDialog.type === 'technical-approve' && 'Approve this proposal for technical evaluation'}
-              {decisionDialog.type === 'technical-reject' && 'Reject this proposal at technical stage'}
-              {decisionDialog.type === 'commercial-approve' && 'Approve this proposal for commercial evaluation'}
-              {decisionDialog.type === 'commercial-reject' && 'Reject this proposal at commercial stage'}
-              {decisionDialog.type === 'shortlist' && 'Add this proposal to the shortlist'}
-              {decisionDialog.type === 'reject-final' && 'Reject this proposal'}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-4">
-            {decisionDialog.type !== 'shortlist' && (
-              <>
+        <TabsContent value="commercial" className="space-y-6">
+          {/* Commercial Details Card */}
+          <Card>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Commercial Proposal
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-4">
+              <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
                 <div>
-                  <Label htmlFor="decision-type">Decision Type</Label>
-                  <Input
-                    id="decision-type"
-                    value={
-                      decisionDialog.type === 'technical-approve' ? 'Approve Technical' :
-                      decisionDialog.type === 'technical-reject' ? 'Reject Technical' :
-                      decisionDialog.type === 'commercial-approve' ? 'Approve Commercial' :
-                      'Reject Commercial'
-                    }
-                    disabled
-                    className="mt-2"
-                  />
+                  <h4 className="text-xs font-black text-gray-450 mb-1.5">Commercial Breakdown</h4>
+                  <ul className="space-y-2">
+                    {commercialBreakdown.map((entry, i) => (
+                      <li key={i} className="flex justify-between items-center text-sm font-semibold text-gray-700 bg-white p-3 rounded-lg border border-gray-100">
+                        <span>{entry.item}</span>
+                        <span className="text-[var(--fnrc-primary-green)] font-black">AED {entry.amount.toLocaleString()}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                <div>
-                  <Label htmlFor="reason">
-                    Reason {(decisionDialog.type === 'technical-reject' || decisionDialog.type === 'commercial-reject' || decisionDialog.type === 'reject-final') && '*'}
-                  </Label>
-                  <Textarea
-                    id="reason"
-                    placeholder="Enter reason for decision..."
-                    value={decisionDialog.reason}
-                    onChange={(e) => setDecisionDialog(prev => ({ ...prev, reason: e.target.value }))}
-                    className="mt-2"
-                    rows={4}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="document">Upload Supporting Document (Optional)</Label>
-                  <div className="mt-2">
-                    <label 
-                      htmlFor="document"
-                      className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 cursor-pointer hover:bg-gray-50"
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                    >
-                      <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
-                      <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                        {decisionDialog.fileName || 'Click to upload file'}
-                      </span>
-                    </label>
-                    <input
-                      id="document"
-                      type="file"
-                      className="hidden"
-                      onChange={handleFileSelect}
-                    />
+                
+                <div className="pt-4 border-t border-gray-200/60 flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100">
+                  <div className="flex items-center gap-2.5">
+                    <FileText className="h-4 w-4 text-red-500" />
+                    <div>
+                      <div className="text-xs font-bold text-gray-800">Commercial Proposal.pdf</div>
+                      <div className="text-[9px] text-muted-foreground font-bold">PDF • 3.1 MB</div>
+                    </div>
                   </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
+                    <Download className="h-4 w-4" />
+                  </Button>
                 </div>
-              </>
-            )}
-          </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={closeDecisionDialog}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleDecisionConfirm}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                <div className="pt-4 border-t border-gray-200/60">
+                  <h4 className="text-xs font-black text-gray-450 mb-1.5">Payment Terms</h4>
+                  <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                    Standard payment terms apply. Milestone-based payments of 20% advance, 40% intermediate, and 40% upon final delivery sign-off.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Commercial Approval Matrix */}
+          <Card>
+            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Commercial Approval Matrix
+              </CardTitle>
+              <Badge 
+                variant="secondary" 
+                className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none animate-pulse-subtle"
+                style={{
+                  backgroundColor: commercialStatus === 'approved' ? '#D1FAE5' : commercialStatus === 'rejected' ? '#FEE2E2' : '#FEF3C7',
+                  color: commercialStatus === 'approved' ? 'var(--fnrc-success)' : commercialStatus === 'rejected' ? '#EF4444' : 'var(--fnrc-warning)'
+                }}
+              >
+                {commercialStatus === 'approved' ? 'Approved' : commercialStatus === 'rejected' ? 'Rejected' : 'Pending'}
+              </Badge>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-5">
+              <p className="text-xs font-medium text-gray-500">
+                Specify the Commercial Reviewer responsible for evaluating this proposal. The reviewer will be notified to review pricing compliance and LPO preparation.
+              </p>
+              
+              <div className="max-w-md w-full">
+                <label className="text-xs font-bold text-gray-700 block mb-1">Commercial Reviewer Name</label>
+                <Select value={commercialReviewer} onValueChange={handleSaveCommercialApproval}>
+                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-semibold text-gray-800 bg-white">
+                    <SelectValue placeholder="Select Commercial Reviewer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {reviewers.map((reviewer) => (
+                      <SelectItem key={reviewer.id} value={reviewer.name} className="font-semibold text-xs text-gray-700">
+                        {reviewer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status Decision Buttons */}
+              <div className="pt-4 border-t border-gray-200/60 space-y-3">
+                <h4 className="text-xs font-bold text-gray-700">Commercial Evaluation Decision</h4>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={() => handleCommercialStatusUpdate('approved')}
+                    className={`h-9 px-4 font-bold text-xs flex items-center gap-1.5 border transition-all ${
+                      commercialStatus === 'approved'
+                        ? 'border-transparent text-white'
+                        : 'border-green-200 text-green-700 hover:bg-green-50/50 bg-white'
+                    }`}
+                    style={{ 
+                      backgroundColor: commercialStatus === 'approved' ? 'var(--fnrc-success)' : undefined
+                    }}
+                  >
+                    <Check className={`h-4 w-4 ${commercialStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
+                    Approved
+                  </Button>
+                  <Button
+                    onClick={() => handleCommercialStatusUpdate('rejected')}
+                    className={`h-9 px-4 font-bold text-xs flex items-center gap-1.5 border transition-all ${
+                      commercialStatus === 'rejected'
+                        ? 'border-transparent text-white'
+                        : 'border-red-200 text-red-700 hover:bg-red-50/50 bg-white'
+                    }`}
+                    style={{ 
+                      backgroundColor: commercialStatus === 'rejected' ? '#EF4444' : undefined
+                    }}
+                  >
+                    <X className={`h-4 w-4 ${commercialStatus === 'rejected' ? 'text-white' : 'text-red-500'}`} />
+                    Rejected
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="supporting" className="space-y-6">
+          <Card>
+            <CardHeader className="pb-3 border-b">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                Supporting Documents
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                    <TableHead className="font-bold text-xs text-gray-700">Document Name</TableHead>
+                    <TableHead className="font-bold text-xs text-gray-700">Document Category</TableHead>
+                    <TableHead className="font-bold text-xs text-gray-700">Upload Date</TableHead>
+                    <TableHead className="font-bold text-xs text-gray-700">Verification Status</TableHead>
+                    <TableHead className="text-right pr-4 font-bold text-xs text-gray-700">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {supportingDocs.map((doc) => (
+                    <TableRow key={doc.id} className="hover:bg-gray-50/30">
+                      <TableCell className="font-semibold text-sm text-gray-800 py-3">{doc.name}</TableCell>
+                      <TableCell className="font-medium text-xs text-gray-500 py-3">{doc.category}</TableCell>
+                      <TableCell className="font-medium text-xs text-gray-500 py-3">
+                        {new Date(doc.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </TableCell>
+                      <TableCell className="py-3">
+                        <Badge 
+                          variant="secondary" 
+                          className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none" 
+                          style={{
+                            backgroundColor: doc.status === 'approved' ? '#D1FAE5' : '#FEF3C7',
+                            color: doc.status === 'approved' ? 'var(--fnrc-success)' : 'var(--fnrc-warning)'
+                          }}
+                        >
+                          {doc.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right pr-4 py-3">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {rfp.status === 'published' && (
+          <TabsContent value="action" className="space-y-6">
+            
+            {/* CARD 1: Proposal Action Decision */}
+            <Card>
+              <CardHeader className="pb-3 border-b">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                  <Award className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                  Proposal Action Decision
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-5 space-y-4">
+                {overallStatus === 'rejected' ? (
+                  <div className="bg-red-50/50 border border-red-100 p-5 rounded-xl space-y-3.5">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-red-500 text-white font-bold text-[10px] py-1 px-3 border-none capitalize">
+                        Rejected
+                      </Badge>
+                      <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
+                      <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                        {proposalRemark || "The commercial proposal exceeded the allocated RFP budget limits."}
+                      </p>
+                    </div>
+                  </div>
+                ) : overallStatus === 'shortlisted' ? (
+                  <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-[var(--fnrc-success)] text-white font-bold text-[10px] py-1 px-3 border-none capitalize">
+                        Approved
+                      </Badge>
+                      <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
+                      <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                        {proposalRemark || "Highly qualified vendor meeting all technical specs and commercial constraints."}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-xs font-medium text-gray-500">
+                      Take a final decision on this vendor's proposal. Approving will transition the proposal to Shortlisted and generate ERP documents, while Rejecting will reject the proposal.
+                    </p>
+                    <div className="space-y-1.5">
+                      <label htmlFor="remark" className="text-xs font-bold text-gray-700 block">Remarks & Decision Comments</label>
+                      <textarea
+                        id="remark"
+                        rows={3}
+                        placeholder="Enter remarks or justification for this decision..."
+                        value={proposalRemark}
+                        onChange={(e) => setProposalRemark(e.target.value)}
+                        className="w-full p-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-855 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleApproveProposalAction}
+                        className="text-white h-9 px-6 font-bold text-xs flex items-center gap-2"
+                        style={{ backgroundColor: 'var(--fnrc-success)' }}
+                      >
+                        <Check className="h-4 w-4" />
+                        Approve Proposal
+                      </Button>
+                      <Button
+                        onClick={handleRejectProposalAction}
+                        className="text-white h-9 px-6 font-bold text-xs flex items-center gap-2"
+                        style={{ backgroundColor: '#EF4444' }}
+                      >
+                        <X className="h-4 w-4" />
+                        Reject Proposal
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* CARD 2: Vendor reviews and ratings - displayed below */}
+            <Card>
+              <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
+                <div className="space-y-1">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                    <Award className="h-5 w-5 text-amber-500" />
+                    Vendor Reviews
+                  </CardTitle>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Performance reviews from RFP agreements</p>
+                </div>
+                {isRatingSaved && (overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs font-bold border-gray-250 text-gray-600 hover:bg-gray-50 h-7"
+                    onClick={() => setIsRatingSaved(false)}
+                  >
+                    Edit Ratings
+                  </Button>
+                )}
+              </CardHeader>
+              <CardContent className="pt-5 space-y-6">
+                {isRatingSaved ? (
+                  /* Static review display matching the screenshot exactly! */
+                  <div className="bg-white border border-gray-100 rounded-xl p-6 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4">
+                      <div className="space-y-1">
+                        <div className="text-sm font-semibold text-gray-500">
+                          RFP Reference: <a href="#" className="underline font-bold text-[var(--fnrc-primary-green)] hover:opacity-85">{rfp.title}</a>
+                        </div>
+                        <div className="text-[11px] text-gray-400 font-semibold">
+                          Reviewed by Fatima Al Hammadi on 18/02/2026
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="flex items-center justify-end gap-1.5 text-amber-500 font-black text-xl">
+                          <span>★</span>
+                          <span>{((qualityRating + timelinessRating + communicationRating + complianceRating) / 4).toFixed(2)}</span>
+                        </div>
+                        <div className="text-[10px] text-gray-450 font-bold uppercase tracking-wider mt-0.5">Overall Rating</div>
+                      </div>
+                    </div>
+
+                    {/* Ratings Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {/* Quality */}
+                      <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 text-center space-y-1">
+                        <div className="text-xs font-bold text-gray-400">Quality</div>
+                        <div className="flex items-center justify-center gap-1 text-sm font-bold text-gray-700">
+                          <span className="text-amber-500">★</span>
+                          <span>{qualityRating} / 5</span>
+                        </div>
+                      </div>
+
+                      {/* Timeliness */}
+                      <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 text-center space-y-1">
+                        <div className="text-xs font-bold text-gray-400">Timeliness</div>
+                        <div className="flex items-center justify-center gap-1 text-sm font-bold text-gray-700">
+                          <span className="text-amber-500">★</span>
+                          <span>{timelinessRating} / 5</span>
+                        </div>
+                      </div>
+
+                      {/* Communication */}
+                      <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 text-center space-y-1">
+                        <div className="text-xs font-bold text-gray-400">Communication</div>
+                        <div className="flex items-center justify-center gap-1 text-sm font-bold text-gray-700">
+                          <span className="text-amber-500">★</span>
+                          <span>{communicationRating} / 5</span>
+                        </div>
+                      </div>
+
+                      {/* Compliance */}
+                      <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 text-center space-y-1">
+                        <div className="text-xs font-bold text-gray-400">Compliance</div>
+                        <div className="flex items-center justify-center gap-1 text-sm font-bold text-gray-700">
+                          <span className="text-amber-500">★</span>
+                          <span>{complianceRating} / 5</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Admin Comments */}
+                    <div className="space-y-1.5 pt-2">
+                      <h4 className="text-xs font-extrabold text-gray-750">Admin Comments</h4>
+                      <p className="text-xs font-semibold text-gray-600 leading-relaxed bg-gray-50/20 p-4 rounded-xl border border-gray-100/70">
+                        {ratingRemark || "Outstanding technical proposal with comprehensive documentation. Team demonstrated excellent understanding of requirements. All compliance criteria met. Recommended for shortlisting."}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  /* Interactive Star Rating Form */
+                  <div className="space-y-6">
+                    <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <span className="text-xs text-gray-450 font-bold block uppercase tracking-wider">RFP Target Reference</span>
+                        <span className="text-sm font-extrabold text-gray-800">{rfp.title}</span>
+                      </div>
+                      <div className="sm:text-right">
+                        <span className="text-xs text-gray-450 font-bold block uppercase tracking-wider">Proposal Reference ID</span>
+                        <Badge variant="secondary" className="font-bold text-xs text-[var(--fnrc-primary-green)] bg-green-50 border-none px-2.5 py-0.5 mt-0.5">
+                          {proposal.id}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-xs font-black text-gray-450 uppercase tracking-wider flex items-center gap-1.5">
+                        <Award className="h-4 w-4 text-amber-500" />
+                        Vendor Rating Matrix
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Quality Input */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-255 space-y-2.5">
+                          <span className="text-xs font-bold text-gray-700 block">Quality</span>
+                          <div className="flex gap-1.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setQualityRating(star)}
+                                className="focus:outline-none transition-all hover:scale-110"
+                              >
+                                <span className={`text-xl ${star <= qualityRating ? 'text-amber-500 font-bold' : 'text-gray-200'}`}>★</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Timeliness Input */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-255 space-y-2.5">
+                          <span className="text-xs font-bold text-gray-700 block">Timeliness</span>
+                          <div className="flex gap-1.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setTimelinessRating(star)}
+                                className="focus:outline-none transition-all hover:scale-110"
+                              >
+                                <span className={`text-xl ${star <= timelinessRating ? 'text-amber-500 font-bold' : 'text-gray-200'}`}>★</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Communication Input */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-255 space-y-2.5">
+                          <span className="text-xs font-bold text-gray-700 block">Communication</span>
+                          <div className="flex gap-1.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setCommunicationRating(star)}
+                                className="focus:outline-none transition-all hover:scale-110"
+                              >
+                                <span className={`text-xl ${star <= communicationRating ? 'text-amber-500 font-bold' : 'text-gray-200'}`}>★</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Compliance Input */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-255 space-y-2.5">
+                          <span className="text-xs font-bold text-gray-700 block">Compliance</span>
+                          <div className="flex gap-1.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setComplianceRating(star)}
+                                className="focus:outline-none transition-all hover:scale-110"
+                              >
+                                <span className={`text-xl ${star <= complianceRating ? 'text-amber-500 font-bold' : 'text-gray-200'}`}>★</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dedicated Remarks for Vendor Rating system */}
+                      <div className="space-y-1.5 pt-2">
+                        <label htmlFor="ratingRemarkInput" className="text-xs font-bold text-gray-700 block">Vendor Rating Comments & Justification</label>
+                        <textarea
+                          id="ratingRemarkInput"
+                          rows={3}
+                          placeholder="Enter specific remarks regarding this vendor's quality, timeliness, communication, and compliance performance..."
+                          value={ratingRemark}
+                          onChange={(e) => setRatingRemark(e.target.value)}
+                          className="w-full p-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-855 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                        />
+                      </div>
+
+                      <div className="flex justify-end pt-2">
+                        <Button
+                          onClick={handleSaveRatings}
+                          className="text-white h-9 px-6 font-bold text-xs flex items-center gap-2"
+                          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                        >
+                          <Check className="h-4 w-4" />
+                          Save Ratings
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+      </Tabs>
     </div>
   );
 }

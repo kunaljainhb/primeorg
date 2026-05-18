@@ -103,6 +103,7 @@ export interface AdminUser {
   email: string;
   role: 'super_admin' | 'procurement_admin' | 'reviewer';
   status: 'active' | 'inactive';
+  createdDate?: string;
 }
 
 // Mock RFPs
@@ -209,12 +210,13 @@ export const mockProposals: Proposal[] = [
     rfpTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-002',
     vendorName: 'Modern Office Furnishings',
-    status: 'under_review',
+    status: 'shortlisted',
     submissionDate: '2026-06-02',
+    shortlistedDate: '2026-06-15',
     technicalProposal: 'Standard enterprise hardware package',
     commercialAmount: 395000,
-    technicalStatus: 'under_review',
-    commercialStatus: 'pending'
+    technicalStatus: 'approved',
+    commercialStatus: 'approved'
   },
   {
     id: 'PROP-110',
@@ -392,21 +394,32 @@ export const mockAdminUsers: AdminUser[] = [
     name: 'Ahmed Al Mansoori',
     email: 'ahmed.almansoori@fnrc.gov.ae',
     role: 'super_admin',
-    status: 'active'
+    status: 'active',
+    createdDate: '2026-01-10'
   },
   {
     id: 'ADM-002',
     name: 'Fatima Al Hammadi',
     email: 'fatima.alhammadi@fnrc.gov.ae',
     role: 'procurement_admin',
-    status: 'active'
+    status: 'active',
+    createdDate: '2026-02-15'
   },
   {
     id: 'ADM-003',
     name: 'Mohammed Al Zaabi',
     email: 'mohammed.alzaabi@fnrc.gov.ae',
     role: 'reviewer',
-    status: 'active'
+    status: 'active',
+    createdDate: '2026-03-01'
+  },
+  {
+    id: 'ADM-004',
+    name: 'Sarah Al Hosani',
+    email: 'sarah.alhosani@fnrc.gov.ae',
+    role: 'reviewer',
+    status: 'active',
+    createdDate: '2026-03-15'
   }
 ];
 
@@ -475,6 +488,28 @@ export const mockERPDocuments: ERPDocument[] = [
     date: '2026-05-05',
     amount: 150000,
     status: 'paid',
+    fileUrl: '#'
+  },
+  {
+    id: 'DOC-003',
+    rfpId: 'RFP-001',
+    vendorId: 'VEN-002',
+    documentType: 'LPO',
+    documentNumber: 'LPO-2026-001',
+    date: '2026-06-18',
+    amount: 395000,
+    status: 'approved',
+    fileUrl: '#'
+  },
+  {
+    id: 'DOC-004',
+    rfpId: 'RFP-001',
+    vendorId: 'VEN-002',
+    documentType: 'Invoice',
+    documentNumber: 'INV-2026-002',
+    date: '2026-06-25',
+    amount: 395000,
+    status: 'pending',
     fileUrl: '#'
   }
 ];

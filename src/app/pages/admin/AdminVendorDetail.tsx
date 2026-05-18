@@ -367,9 +367,21 @@ export default function AdminVendorDetail() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right pr-6">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-green-600">
-                        <Download className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        {(vendor.status === 'pending' || vendor.status === 'draft') && (
+                          <>
+                            <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-green-200 text-green-700 hover:bg-green-50">
+                              Verify
+                            </Button>
+                            <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-red-200 text-red-700 hover:bg-red-50">
+                              Not Verified
+                            </Button>
+                          </>
+                        )}
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-green-600">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
