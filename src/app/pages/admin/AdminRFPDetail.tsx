@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from '@/app/context/RouterContext';
+import { useNavigate, useParams, useLocation } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
@@ -17,7 +17,9 @@ import {
   Globe,
   Lock,
   Eye,
-  Briefcase
+  Briefcase,
+  Brain,
+  Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { mockRFPs, mockProposals, mockERPDocuments } from '@/app/data/mockData';
@@ -58,7 +60,9 @@ const formatStatus = (statusStr?: string) => {
 export default function AdminRFPDetail() {
   const navigate = useNavigate();
   const { rfpId } = useParams();
+  const location = useLocation();
   const rfp = mockRFPs.find(r => r.id === rfpId) || mockRFPs[0];
+  const defaultTab = location.pathname.includes('tab=chats') ? 'chats' : 'overview';
 
   const relatedProposals = mockProposals.filter(p => p.rfpId === rfp.id);
   const shortlistedProposals = relatedProposals.filter(p => p.status === 'shortlisted');
@@ -67,6 +71,16 @@ export default function AdminRFPDetail() {
   const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
   const [newDeadline, setNewDeadline] = useState<Date | undefined>(new Date(rfp.submissionDeadline));
   const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
+  const [showAIComparisonDialog, setShowAIComparisonDialog] = useState(false);
+  const [isAIAnalyzing, setIsAIAnalyzing] = useState(false);
+
+  const handleAIComparison = () => {
+    if (selectedProposals.length === 2) {
+      setShowAIComparisonDialog(true);
+      setIsAIAnalyzing(true);
+      setTimeout(() => setIsAIAnalyzing(false), 2500); // Simulate AI loading
+    }
+  };
 
   // Chat database state for 2-3 vendors
   const [vendorChats, setVendorChats] = useState<Record<string, {
@@ -252,7 +266,7 @@ export default function AdminRFPDetail() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview">
+      <Tabs defaultValue={defaultTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="chats" className="flex items-center gap-1.5">
@@ -575,13 +589,16 @@ export default function AdminRFPDetail() {
                 <span className="text-sm font-bold text-blue-800">
                   {selectedProposals.length} proposal{selectedProposals.length > 1 ? 's' : ''} selected for comparison
                 </span>
-                <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold h-8 text-xs transition-all"
-                  disabled={selectedProposals.length < 2}
-                  onClick={() => toast.success(`Comparing proposals: ${selectedProposals.join(', ')}`)}
-                >
-                  Compare Selected Proposals
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-8 text-xs transition-all gap-1.5 shadow-md shadow-purple-500/20"
+                    disabled={selectedProposals.length !== 2}
+                    onClick={handleAIComparison}
+                  >
+                    <Brain className="h-3.5 w-3.5" />
+                    AI Comparison
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="bg-gray-50/50 border-b p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -593,7 +610,7 @@ export default function AdminRFPDetail() {
                   className="bg-gray-200 text-gray-400 font-bold h-8 text-xs cursor-not-allowed border border-gray-300"
                   disabled
                 >
-                  Compare Selected Proposals
+                  AI Comparison
                 </Button>
               </div>
             )}
@@ -776,6 +793,126 @@ export default function AdminRFPDetail() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDeadlineDialog(false)}>Cancel</Button>
             <Button className="text-white" style={{ backgroundColor: 'var(--fnrc-primary-green)' }} onClick={handleChangeDeadline}>Update</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Comparison Dialog */}
+      <Dialog open={showAIComparisonDialog} onOpenChange={setShowAIComparisonDialog}>
+        <DialogContent className="sm:max-w-[1000px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-purple-900">
+              <Brain className="h-6 w-6 text-purple-600" />
+              AI Proposal Analysis & Comparison
+            </DialogTitle>
+          </DialogHeader>
+
+          {isAIAnalyzing ? (
+            <div className="py-20 flex flex-col items-center justify-center space-y-6">
+              <div className="relative">
+                <Brain className="h-16 w-16 text-purple-600 animate-pulse" />
+                <Sparkles className="h-6 w-6 text-amber-400 absolute -top-2 -right-2 animate-bounce" />
+              </div>
+              <div className="space-y-2 text-center">
+                <h3 className="text-lg font-bold text-purple-900">AI is analyzing proposals...</h3>
+                <p className="text-sm font-medium text-gray-500 max-w-sm">Extracting commercial details, verifying technical compliance, and calculating weighted scores.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-2 gap-6">
+                {/* Vendor 1 Analysis */}
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-lg text-gray-800">TechCorp Solutions</h4>
+                      <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-none">Score: 88/100</Badge>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-4">AED 1,250,000</div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Technical Highlights</h5>
+                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-green-500">
+                          <li>Fully compliant with core requirements</li>
+                          <li>Offers 24/7 localized support</li>
+                          <li>Implementation timeline: 45 days</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Commercial Differences</h5>
+                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-blue-500">
+                          <li>Highest upfront cost</li>
+                          <li>Includes 3-year extended warranty</li>
+                          <li>Favorable payment terms (30% advance)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vendor 2 Analysis */}
+                <div className="space-y-4">
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
+                    <div className="absolute -top-3 -right-3">
+                      <Badge className="bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 font-bold shadow-sm">
+                        <Sparkles className="h-3 w-3 inline mr-1" /> AI Recommended
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-lg text-gray-800">Global InfraGroup</h4>
+                      <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-none">Score: 92/100</Badge>
+                    </div>
+                    <div className="text-2xl font-bold text-green-600 mb-4">AED 1,120,000</div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Technical Highlights</h5>
+                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-green-500">
+                          <li>Exceeds performance benchmarks by 15%</li>
+                          <li>Cloud-native modern architecture</li>
+                          <li>Implementation timeline: 60 days</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Commercial Differences</h5>
+                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-blue-500">
+                          <li>Most cost-effective solution (10% cheaper)</li>
+                          <li>Standard 1-year warranty</li>
+                          <li>Strict payment terms (50% advance)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Recommendation Summary */}
+              <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                <h4 className="font-bold text-purple-900 mb-2 flex items-center gap-2">
+                  <Brain className="h-4 w-4" /> AI Recommendation Summary
+                </h4>
+                <p className="text-sm font-medium text-purple-800 leading-relaxed">
+                  Based on the predefined evaluation criteria (60% Technical / 40% Commercial), <strong>Global InfraGroup</strong> is the most suitable vendor for shortlisting. Although their implementation timeline is slightly longer (60 days vs 45 days) and warranty is shorter, their architectural approach exceeds requirements and provides a significantly better TCO (Total Cost of Ownership). TechCorp Solutions is a strong runner-up if immediate implementation is the strict priority.
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="border-t pt-4">
+            <Button variant="outline" onClick={() => setShowAIComparisonDialog(false)}>
+              Close
+            </Button>
+            {!isAIAnalyzing && (
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white font-bold"
+                onClick={() => {
+                  toast.success("Global InfraGroup successfully shortlisted based on AI recommendation.");
+                  setShowAIComparisonDialog(false);
+                }}
+              >
+                Shortlist Recommended Vendor
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { mockProposals, mockAdminUsers, mockRFPs } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -76,6 +77,25 @@ export default function AdminProposalDetail() {
   const [commercialStatus, setCommercialStatus] = useState(
     isInitiallyRejected ? 'rejected' : (isInitiallyShortlisted ? 'approved' : (proposal.commercialStatus || 'pending'))
   );
+
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  useEffect(() => {
+    const savedExternalRating = localStorage.getItem(`external_rating_${proposal.id}`);
+    if (savedExternalRating) {
+      try {
+        const data = JSON.parse(savedExternalRating);
+        setQualityRating(data.qualityRating);
+        setTimelinessRating(data.timelinessRating);
+        setCommunicationRating(data.communicationRating);
+        setComplianceRating(data.complianceRating);
+        setRatingRemark(data.comments);
+        setIsRatingSaved(true);
+      } catch (e) {
+        console.error("Error parsing external rating", e);
+      }
+    }
+  }, [proposal.id]);
 
   const [messages, setMessages] = useState([
     { id: 1, sender: 'vendor', text: 'Hello, we have uploaded the consolidated technical specifications. Please review and let us know if you need further clarifications.', timestamp: '10:30 AM', unread: true },
@@ -802,16 +822,27 @@ export default function AdminProposalDetail() {
                   </CardTitle>
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Performance reviews from RFP agreements</p>
                 </div>
-                {isRatingSaved && (overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                <div className="flex items-center gap-2">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="text-xs font-bold border-gray-250 text-gray-600 hover:bg-gray-50 h-7"
-                    onClick={() => setIsRatingSaved(false)}
+                    className="text-xs font-bold border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-7 flex items-center gap-1.5"
+                    onClick={() => setShowShareModal(true)}
                   >
-                    Edit Ratings
+                    <Award className="h-3.5 w-3.5" />
+                    Generate Rating Link
                   </Button>
-                )}
+                  {isRatingSaved && (overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs font-bold border-gray-250 text-gray-600 hover:bg-gray-50 h-7"
+                      onClick={() => setIsRatingSaved(false)}
+                    >
+                      Edit Ratings
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="pt-5 space-y-6">
                 {isRatingSaved ? (
@@ -1004,6 +1035,60 @@ export default function AdminProposalDetail() {
           </TabsContent>
         )}
       </Tabs>
+
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-gray-800">
+              <Award className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              Generate Rating Link
+            </DialogTitle>
+            <DialogDescription className="text-xs text-gray-500">
+              Generate a secure departmental evaluation link to share with other FNRC departments.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 text-xs space-y-2">
+              <div className="flex justify-between">
+                <span className="font-bold text-gray-400">VENDOR</span>
+                <span className="font-extrabold text-gray-700">{proposal.vendorName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-bold text-gray-400">RFP TITLE</span>
+                <span className="font-extrabold text-gray-700 truncate max-w-[200px]">{proposal.rfpTitle}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-bold text-gray-400">PROPOSAL REF</span>
+                <span className="font-semibold text-[var(--fnrc-primary-green)]">{proposal.id}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-700 block">Departmental Rating Link</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&rfpId=${proposal.rfpId}`}
+                  className="w-full px-3 py-2 border rounded-lg text-xs font-semibold text-gray-600 bg-gray-50/50 focus:outline-none"
+                />
+                <Button
+                  size="sm"
+                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                  className="text-white text-xs font-bold shrink-0"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&rfpId=${proposal.rfpId}`);
+                    toast.success('Rating link copied to clipboard successfully!');
+                  }}
+                >
+                  Copy Link
+                </Button>
+              </div>
+            </div>
+          </div>
+
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

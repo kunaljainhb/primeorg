@@ -3,8 +3,9 @@ import {
   ArrowLeft, CheckCircle, XCircle, FileText, Award, Star, Ban, Pause, 
   RotateCcw, AlertTriangle, Building2, Globe, Phone, Mail, MapPin, 
   Landmark, UserCircle, Briefcase, Info, Check, X, Calendar, Clock,
-  Shield, Download
+  Shield, Download, History
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
@@ -53,6 +54,7 @@ export default function AdminVendorDetail() {
   
   const [remarks, setRemarks] = useState('');
   const [error, setError] = useState('');
+  const [showAuditHistory, setShowAuditHistory] = useState(false);
 
   if (!vendor) {
     return <div className="p-8 text-center font-bold">Vendor not found</div>;
@@ -184,6 +186,10 @@ export default function AdminVendorDetail() {
             </div>
           </div>
         </div>
+        <Button variant="outline" className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-10 font-bold" onClick={() => setShowAuditHistory(true)}>
+          <History className="h-4 w-4" />
+          Audit History
+        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -500,6 +506,48 @@ export default function AdminVendorDetail() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Audit History Dialog */}
+      <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
+        <DialogContent className="sm:max-w-[950px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
+          <DialogHeader className="border-b pb-4 mb-4">
+            <DialogTitle className="flex items-center gap-2 text-xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+              <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              Vendor Audit History
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/50">
+                  <TableHead className="font-bold text-xs text-gray-600">Date & Time</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">Name</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">Role</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">What Changed</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[
+                  { date: '10/05/2026 14:30', name: 'Ahmed Al Mansoori', role: 'Super Admin', change: 'Vendor application status changed from Pending to Approved. Trade License verified.' },
+                  { date: '08/05/2026 09:15', name: 'Fatima Al Hammadi', role: 'Procurement Admin', change: 'Requested correction for Tax Registration Certificate.' },
+                  { date: '01/05/2026 11:20', name: 'System', role: 'System', change: 'Initial vendor registration submitted.' }
+                ].map((audit, i) => (
+                  <TableRow key={i} className="hover:bg-gray-50/30">
+                    <TableCell className="text-xs font-semibold text-gray-500 whitespace-nowrap">{audit.date}</TableCell>
+                    <TableCell className="text-sm font-bold text-gray-800">{audit.name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-[10px] bg-gray-100 text-gray-600 font-bold border-none">
+                        {audit.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-600 whitespace-normal break-words max-w-[400px] leading-relaxed">{audit.change}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

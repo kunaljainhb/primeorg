@@ -187,7 +187,7 @@ export function ProposalDetailView({
       {/* SECTION 1: PROPOSAL SUMMARY (Always show in both) */}
       <Card style={{ borderColor: isRejected ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
         <CardContent className="pt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div>
               <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Proposal ID</div>
               <div 
@@ -219,10 +219,6 @@ export function ProposalDetailView({
               >
                 {proposal.status === 'under_review' ? 'UnderReview' : proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
               </Badge>
-            </div>
-            <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Version</div>
-              <div className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>v1</div>
             </div>
           </div>
           <Separator className="my-4" />

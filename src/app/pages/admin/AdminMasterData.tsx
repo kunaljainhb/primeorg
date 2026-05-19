@@ -9,6 +9,7 @@ import { Label } from '@/app/components/ui/label';
 import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { toast } from 'sonner';
 
 export default function AdminMasterData() {
@@ -22,6 +23,43 @@ export default function AdminMasterData() {
     description: '',
     status: 'active'
   });
+
+  const mockDeclarations = [
+    {
+      id: 'D001',
+      title: 'Vendor Registration Declaration',
+      type: 'Registration',
+      lastUpdated: '10/05/2026',
+      status: 'Active',
+      content: 'I hereby declare that all information provided in this vendor registration form is true and accurate. I understand that any false information may lead to rejection or blacklisting.'
+    },
+    {
+      id: 'D002',
+      title: 'RFP Submission Terms & Conditions',
+      type: 'RFP',
+      lastUpdated: '01/03/2026',
+      status: 'Active',
+      content: 'By submitting this proposal, the vendor agrees to abide by the terms set forth in the RFP document, including pricing validity and timeline commitments.'
+    },
+    {
+      id: 'D003',
+      title: 'Anti-Bribery & Corruption Declaration',
+      type: 'Compliance',
+      lastUpdated: '15/01/2026',
+      status: 'Active',
+      content: 'The vendor confirms compliance with all anti-bribery and corruption laws applicable in the UAE and the internal policies of FNRC.'
+    }
+  ];
+
+  const [showDeclarationDialog, setShowDeclarationDialog] = useState(false);
+  const [activeDeclaration, setActiveDeclaration] = useState(mockDeclarations[0]);
+
+  const handleEditDeclaration = (declaration: any) => {
+    setActiveDeclaration(declaration);
+    setShowDeclarationDialog(true);
+  };
+
+
 
   const [docTypeForm, setDocTypeForm] = useState({
     name: '',
@@ -56,9 +94,9 @@ export default function AdminMasterData() {
     setShowEditDialog(true);
   };
 
-  const handleEditDocType = (docType: string) => {
-    setEditingItem({ type: 'doctype', value: docType });
-    setDocTypeForm({ name: docType, mandatory: 'no', applicableTo: 'vendor', status: 'active' });
+  const handleEditDocType = (docType: any) => {
+    setEditingItem({ type: 'doctype', value: docType.name });
+    setDocTypeForm({ name: docType.name, mandatory: docType.mandatory.toLowerCase(), applicableTo: docType.type.toLowerCase(), status: docType.status.toLowerCase() });
     setShowEditDialog(true);
   };
 
@@ -97,19 +135,32 @@ export default function AdminMasterData() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {vendorCategories.map((category) => (
-              <Badge
-                key={category}
-                variant="secondary"
-                className="cursor-pointer px-3 py-1.5"
-                style={{ backgroundColor: 'var(--fnrc-bg-light)', color: 'var(--fnrc-text-dark)' }}
-                onClick={() => handleEditCategory(category)}
-              >
-                {category}
-              </Badge>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Category Name</TableHead>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Status</TableHead>
+                <TableHead className="text-right font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {vendorCategories.map((category, idx) => (
+                <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <TableCell className="font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>{category}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}>
+                      Active
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors" onClick={() => handleEditCategory(category)}>
+                      Edit Category
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
@@ -128,67 +179,84 @@ export default function AdminMasterData() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {documentTypes.map((docType) => (
-              <Badge
-                key={docType}
-                variant="secondary"
-                className="cursor-pointer px-3 py-1.5"
-                style={{ backgroundColor: 'var(--fnrc-bg-light)', color: 'var(--fnrc-text-dark)' }}
-                onClick={() => handleEditDocType(docType)}
-              >
-                {docType}
-              </Badge>
-            ))}
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Type</TableHead>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Name</TableHead>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Mandatory</TableHead>
+                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Status</TableHead>
+                <TableHead className="text-right font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {documentTypes.map((doc, idx) => (
+                <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <TableCell className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>{doc.type}</TableCell>
+                  <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{doc.name}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" style={{ backgroundColor: doc.mandatory === 'Yes' ? '#FEF3C7' : '#E5E7EB', color: doc.mandatory === 'Yes' ? 'var(--fnrc-warning)' : 'var(--fnrc-text-muted)' }}>
+                      {doc.mandatory}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" style={{ backgroundColor: doc.status === 'Active' ? '#D1FAE5' : '#FEE2E2', color: doc.status === 'Active' ? 'var(--fnrc-success)' : 'var(--fnrc-error)' }}>
+                      {doc.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors" onClick={() => handleEditDocType(doc)}>
+                      Edit Action
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
-      {/* Status Masters */}
+      {/* Declaration Contexts */}
       <Card>
-        <CardHeader>
-          <CardTitle>Status Masters</CardTitle>
-          <CardDescription>System status definitions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="mb-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                Vendor Status
-              </div>
-              <div className="flex gap-2">
-                <Badge style={{ backgroundColor: '#FEF3C7', color: 'var(--fnrc-warning)' }}>Pending</Badge>
-                <Badge style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}>Approved</Badge>
-                <Badge style={{ backgroundColor: '#FEE2E2', color: 'var(--fnrc-error)' }}>Rejected</Badge>
-                <Badge style={{ backgroundColor: '#E5E7EB', color: 'var(--fnrc-text-muted)' }}>Suspended</Badge>
-              </div>
-            </div>
-            <div>
-              <div className="mb-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                RFP Status
-              </div>
-              <div className="flex gap-2">
-                <Badge style={{ backgroundColor: '#E5E7EB', color: 'var(--fnrc-text-muted)' }}>Draft</Badge>
-                <Badge style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}>Published</Badge>
-                <Badge style={{ backgroundColor: '#FEE2E2', color: 'var(--fnrc-error)' }}>Closed</Badge>
-                <Badge style={{ backgroundColor: '#FEE2E2', color: 'var(--fnrc-error)' }}>Cancelled</Badge>
-              </div>
-            </div>
-            <div>
-              <div className="mb-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                Proposal Status
-              </div>
-              <div className="flex gap-2">
-                <Badge style={{ backgroundColor: '#DBEAFE', color: 'var(--fnrc-info)' }}>Submitted</Badge>
-                <Badge style={{ backgroundColor: '#FEF3C7', color: 'var(--fnrc-warning)' }}>Under Review</Badge>
-                <Badge style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}>Shortlisted</Badge>
-                <Badge style={{ backgroundColor: '#D1FAE5', color: 'var(--fnrc-success)' }}>Selected</Badge>
-                <Badge style={{ backgroundColor: '#FEE2E2', color: 'var(--fnrc-error)' }}>Rejected</Badge>
-              </div>
-            </div>
+        <CardHeader className="flex flex-row items-center justify-between pb-2 border-b">
+          <div className="space-y-1">
+            <CardTitle>Declaration Contexts</CardTitle>
+            <CardDescription>Manage legal texts and declarations for vendors</CardDescription>
           </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                <TableHead className="font-bold text-gray-700">Declaration Title</TableHead>
+                <TableHead className="font-bold text-gray-700">Last Updated</TableHead>
+                <TableHead className="font-bold text-gray-700">Status</TableHead>
+                <TableHead className="text-right font-bold text-gray-700">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockDeclarations.map((decl, idx) => (
+                <TableRow key={idx} className="hover:bg-gray-50/30">
+                  <TableCell className="font-bold text-gray-800">{decl.title}</TableCell>
+                  <TableCell className="text-sm font-medium text-gray-500">{decl.lastUpdated}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" style={{ backgroundColor: decl.status === 'Active' ? '#D1FAE5' : '#FEE2E2', color: decl.status === 'Active' ? 'var(--fnrc-success)' : 'var(--fnrc-error)' }}>
+                      {decl.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors" onClick={() => handleEditDeclaration(decl)}>
+                      Edit Context
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
+
+
 
       {/* Add Category Dialog */}
       <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
@@ -206,16 +274,7 @@ export default function AdminMasterData() {
                 onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="category-desc">Description</Label>
-              <Textarea
-                id="category-desc"
-                placeholder="Enter category description"
-                rows={3}
-                value={categoryForm.description}
-                onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-              />
-            </div>
+
             <div className="space-y-2">
               <Label htmlFor="category-status">Status *</Label>
               <Select value={categoryForm.status} onValueChange={(value) => setCategoryForm({ ...categoryForm, status: value })}>
@@ -331,16 +390,7 @@ export default function AdminMasterData() {
                     onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-category-desc">Description</Label>
-                  <Textarea
-                    id="edit-category-desc"
-                    placeholder="Enter category description"
-                    rows={3}
-                    value={categoryForm.description}
-                    onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                  />
-                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="edit-category-status">Status *</Label>
                   <Select value={categoryForm.status} onValueChange={(value) => setCategoryForm({ ...categoryForm, status: value })}>
@@ -413,6 +463,62 @@ export default function AdminMasterData() {
               onClick={handleSaveEdit}
               className="text-white"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            >
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Declaration Dialog */}
+      <Dialog open={showDeclarationDialog} onOpenChange={setShowDeclarationDialog}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>Edit Declaration Context</DialogTitle>
+            <DialogDescription>Modify the legal text presented to vendors</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <Label className="font-bold text-xs uppercase text-gray-500">Declaration Title</Label>
+              <Input value={activeDeclaration.title} onChange={(e) => setActiveDeclaration({...activeDeclaration, title: e.target.value})} />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="font-bold text-sm text-gray-700 flex items-center justify-between">
+                Declaration Context
+                <span className="text-xs font-medium text-gray-400">Rich text editor</span>
+              </Label>
+              <Textarea 
+                className="min-h-[250px] leading-relaxed text-sm resize-none font-medium text-gray-800" 
+                value={activeDeclaration.content} 
+                onChange={(e) => setActiveDeclaration({...activeDeclaration, content: e.target.value})}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="font-bold text-xs uppercase text-gray-500">Status</Label>
+              <Select value={activeDeclaration.status.toLowerCase()} onValueChange={(val) => setActiveDeclaration({...activeDeclaration, status: val === 'active' ? 'Active' : 'Inactive'})}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="border-t pt-4">
+            <Button variant="outline" onClick={() => setShowDeclarationDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="text-white font-bold px-8"
+              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              onClick={() => {
+                toast.success('Declaration context updated successfully');
+                setShowDeclarationDialog(false);
+              }}
             >
               Save Changes
             </Button>

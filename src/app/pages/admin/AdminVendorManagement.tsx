@@ -149,7 +149,7 @@ export default function AdminVendorManagement() {
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/vendors/${vendor.id}`)}
-                        style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+                        className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors"
                       >
                         View Details
                       </Button>

@@ -12,8 +12,8 @@ export default function RoleSelection() {
         {/* Header */}
         <div className="mb-12 text-center">
           <div className="mb-4 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}>
-              <Building2 className="h-10 w-10 text-white" />
+            <div className="flex h-32 w-32 items-center justify-center">
+              <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
             </div>
           </div>
           <h1 className="mb-3 text-4xl font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
@@ -29,8 +29,9 @@ export default function RoleSelection() {
           {/* Vendor Portal */}
           <Card className="border-2 transition-all hover:shadow-lg" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
             <CardHeader className="space-y-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}>
-                <Building2 className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-xl overflow-hidden">
+                <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
+                <Building2 className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
               </div>
               <CardTitle className="text-2xl">Vendor Portal</CardTitle>
               <CardDescription className="text-base">
@@ -57,8 +58,9 @@ export default function RoleSelection() {
           {/* Admin Portal */}
           <Card className="border-2 transition-all hover:shadow-lg" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
             <CardHeader className="space-y-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl" style={{ backgroundColor: 'var(--fnrc-accent-gold)', opacity: 0.1 }}>
-                <Shield className="h-8 w-8" style={{ color: 'var(--fnrc-accent-gold)' }} />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-xl overflow-hidden">
+                <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-accent-gold)', opacity: 0.1 }}></div>
+                <Shield className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-accent-gold)' }} />
               </div>
               <CardTitle className="text-2xl">FNRC Admin Portal</CardTitle>
               <CardDescription className="text-base">
@@ -73,9 +75,8 @@ export default function RoleSelection() {
                 <p>• Generate reports and audit logs</p>
               </div>
               <Button 
-                className="w-full"
-                variant="outline"
-                style={{ borderColor: 'var(--fnrc-accent-gold)', color: 'var(--fnrc-accent-gold)' }}
+                className="w-full text-white"
+                style={{ backgroundColor: 'var(--fnrc-accent-gold)' }}
                 onClick={() => navigate('/admin/login')}
               >
                 Continue as Admin

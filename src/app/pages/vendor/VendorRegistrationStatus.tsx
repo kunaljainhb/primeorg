@@ -189,10 +189,9 @@ export default function VendorRegistrationStatus() {
                 </div>
                 {status === 'correction' && (
                   <Button 
-                    variant="outline" 
                     size="sm" 
                     onClick={() => navigate('/vendor/profile-setup')}
-                    className="border-amber-200 text-amber-700 hover:bg-amber-50"
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold border-none transition-colors"
                   >
                     Edit & Resubmit
                   </Button>
@@ -255,15 +254,17 @@ export default function VendorRegistrationStatus() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-center gap-4">
-            <Button
-              className="text-white px-8"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-              onClick={() => navigate('/vendor/dashboard')}
-            >
-              Go to Dashboard
-            </Button>
-          </div>
+          {status === 'approved' && (
+            <div className="flex justify-center gap-4">
+              <Button
+                className="text-white px-8"
+                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                onClick={() => navigate('/vendor/dashboard')}
+              >
+                Go to Dashboard
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

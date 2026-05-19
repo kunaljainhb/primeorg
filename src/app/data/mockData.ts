@@ -438,13 +438,13 @@ export const vendorCategories = [
 ];
 
 export const documentTypes = [
-  'Trade License',
-  'Tax Registration Certificate',
-  'Company Profile',
-  'ISO Certifications',
-  'Bank Guarantee',
-  'Previous Project References',
-  'Insurance Certificate'
+  { name: 'Trade License', type: 'Vendor', mandatory: 'Yes', status: 'Active' },
+  { name: 'Tax Registration Certificate', type: 'Vendor', mandatory: 'Yes', status: 'Active' },
+  { name: 'Company Profile', type: 'Vendor', mandatory: 'No', status: 'Active' },
+  { name: 'ISO Certifications', type: 'Proposal', mandatory: 'No', status: 'Active' },
+  { name: 'Bank Guarantee', type: 'RFP', mandatory: 'Yes', status: 'Active' },
+  { name: 'Previous Project References', type: 'Proposal', mandatory: 'No', status: 'Active' },
+  { name: 'Insurance Certificate', type: 'Vendor', mandatory: 'Yes', status: 'Inactive' }
 ];
 
 // Roles and Permissions

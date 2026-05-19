@@ -1,5 +1,5 @@
 import { useNavigate } from '@/app/context/RouterContext';
-import { FileText, Send, Bell, User, TrendingUp, Clock } from 'lucide-react';
+import { FileText, Send, Bell, User, TrendingUp, Clock, MountainSnow } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
@@ -12,13 +12,13 @@ export default function VendorDashboard() {
   const myProposals = mockProposals.filter(p => p.vendorId === 'VEN-001');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
             Vendor Dashboard
           </h1>
-          <p style={{ color: 'var(--fnrc-text-muted)' }}>
+          <p className="text-muted-foreground font-medium">
             Welcome back, TechSolutions LLC
           </p>
         </div>
@@ -26,35 +26,39 @@ export default function VendorDashboard() {
 
       {/* KPI Cards */}
       <div className="grid gap-6 md:grid-cols-4">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => navigate('/vendor/rfps')}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-              Active RFPs
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Active Tenders
             </CardTitle>
-            <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+            <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10 group-hover:bg-[var(--fnrc-primary-green)]/20 transition-colors">
+              <MountainSnow className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <div className="text-4xl font-bold text-foreground">
               {activeRFPs.length}
             </div>
-            <p className="mt-1 text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="mt-1 text-sm font-medium text-muted-foreground">
               Available opportunities
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => navigate('/vendor/proposals')}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               My Proposals
             </CardTitle>
-            <Send className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
+            <div className="p-2 rounded-full bg-[var(--fnrc-accent-gold)]/10 group-hover:bg-[var(--fnrc-accent-gold)]/20 transition-colors">
+              <Send className="h-5 w-5 text-[var(--fnrc-accent-gold)]" strokeWidth={1.5} />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <div className="text-4xl font-bold text-foreground">
               {myProposals.length}
             </div>
-            <p className="mt-1 text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="mt-1 text-sm font-medium text-muted-foreground">
               Submitted proposals
             </p>
           </CardContent>
@@ -62,16 +66,18 @@ export default function VendorDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Under Review
             </CardTitle>
-            <Clock className="h-5 w-5" style={{ color: 'var(--fnrc-info)' }} />
+            <div className="p-2 rounded-full bg-[var(--fnrc-info)]/10">
+              <Clock className="h-5 w-5 text-[var(--fnrc-info)]" strokeWidth={1.5} />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <div className="text-4xl font-bold text-foreground">
               1
             </div>
-            <p className="mt-1 text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="mt-1 text-sm font-medium text-muted-foreground">
               Being evaluated
             </p>
           </CardContent>
@@ -79,16 +85,18 @@ export default function VendorDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Success Rate
             </CardTitle>
-            <TrendingUp className="h-5 w-5" style={{ color: 'var(--fnrc-success)' }} />
+            <div className="p-2 rounded-full bg-[var(--fnrc-success)]/10">
+              <TrendingUp className="h-5 w-5 text-[var(--fnrc-success)]" strokeWidth={1.5} />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <div className="text-4xl font-bold text-foreground">
               50%
             </div>
-            <p className="mt-1 text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="mt-1 text-sm font-medium text-muted-foreground">
               Proposal win rate
             </p>
           </CardContent>
@@ -100,20 +108,20 @@ export default function VendorDashboard() {
         {/* Active RFPs */}
         <Card>
           <CardHeader>
-            <CardTitle>Active RFPs</CardTitle>
-            <CardDescription>Recently published opportunities</CardDescription>
+            <CardTitle>Active Tenders</CardTitle>
+            <CardDescription>Recently published resource opportunities</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {activeRFPs.slice(0, 3).map((rfp) => {
                 const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
                 return (
-                  <div key={rfp.id} className="flex items-start justify-between border-b pb-4 last:border-0" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div key={rfp.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-border">
                     <div className="space-y-1">
-                      <div className="font-medium flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <div className="font-semibold text-base text-foreground flex items-center gap-2">
                         {rfp.title}
                         <Badge 
-                          className="text-[10px] h-4 px-1.5" 
+                          className="text-[10px] h-4 px-1.5 uppercase font-bold tracking-wider" 
                           style={{ 
                             backgroundColor: isClosed ? 'var(--fnrc-border-gray)' : 'var(--fnrc-success)',
                             color: 'white'
@@ -122,7 +130,7 @@ export default function VendorDashboard() {
                           {isClosed ? 'Closed' : 'Open'}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                         <span>{rfp.id}</span>
                         <span>•</span>
                         <span>Due: {new Date(rfp.submissionDeadline).toLocaleDateString()}</span>
@@ -132,7 +140,7 @@ export default function VendorDashboard() {
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/vendor/rfps/${rfp.id}`)}
-                      style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+                      className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10"
                     >
                       View
                     </Button>
@@ -140,12 +148,11 @@ export default function VendorDashboard() {
                 );
               })}
               <Button
-                variant="link"
-                className="w-full"
-                style={{ color: 'var(--fnrc-primary-green)' }}
+                variant="ghost"
+                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5"
                 onClick={() => navigate('/vendor/rfps')}
               >
-                View All RFPs →
+                View All Tenders →
               </Button>
             </div>
           </CardContent>
@@ -167,27 +174,28 @@ export default function VendorDashboard() {
                 
                 const getStatusStyles = (status: string) => {
                   switch (status) {
-                    case 'shortlisted': return { bg: '#D1FAE5', text: 'var(--fnrc-success)' };
-                    case 'under_review': return { bg: '#FFEDD5', text: '#EA580C' }; // Orange
-                    case 'rejected': return { bg: '#FEE2E2', text: 'var(--fnrc-error)' }; // Red
-                    case 'submitted': return { bg: '#DBEAFE', text: 'var(--fnrc-info)' };
-                    default: return { bg: '#F3F4F6', text: 'var(--fnrc-text-muted)' };
+                    case 'shortlisted': return { bg: 'var(--fnrc-success)', text: '#ffffff' };
+                    case 'under_review': return { bg: 'var(--fnrc-warning)', text: '#ffffff' };
+                    case 'rejected': return { bg: 'var(--fnrc-error)', text: '#ffffff' };
+                    case 'submitted': return { bg: 'var(--fnrc-info)', text: '#ffffff' };
+                    default: return { bg: 'var(--fnrc-border-gray)', text: 'var(--fnrc-text-dark)' };
                   }
                 };
 
                 const styles = getStatusStyles(proposal.status);
                 
                 return (
-                  <div key={proposal.id} className="flex items-start justify-between border-b pb-4 last:border-0" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div key={proposal.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-border">
                     <div className="space-y-1">
-                      <div className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <div className="font-semibold text-base text-foreground">
                         {proposal.rfpTitle}
                       </div>
-                      <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                         <span>{proposal.id}</span>
                         <span>•</span>
                         <Badge
                           variant="secondary"
+                          className="font-medium tracking-wide"
                           style={{
                             backgroundColor: styles.bg,
                             color: styles.text
@@ -208,9 +216,8 @@ export default function VendorDashboard() {
                 );
               })}
               <Button
-                variant="link"
-                className="w-full"
-                style={{ color: 'var(--fnrc-primary-green)' }}
+                variant="ghost"
+                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5"
                 onClick={() => navigate('/vendor/proposals')}
               >
                 View All Proposals →
@@ -226,26 +233,28 @@ export default function VendorDashboard() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-              <CardTitle>Recent Portal News</CardTitle>
+              <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10">
+                <Bell className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
+              </div>
+              <CardTitle>Recent Portal Alerts</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-success)' }}>
-                <div className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Shortlisted!</div>
-                <p className="text-xs mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>Your proposal for <span className="font-medium">RFP-2026-005 (Office Renovation)</span> has been shortlisted for technical review.</p>
-                <span className="text-[10px] uppercase font-bold" style={{ color: 'var(--fnrc-success)' }}>Update</span>
+                <div className="text-sm font-semibold text-foreground">Proposal Shortlisted!</div>
+                <p className="text-sm mt-1 text-muted-foreground">Your proposal for <span className="font-semibold text-foreground">RFP-2026-005 (Office Renovation)</span> has been shortlisted for technical review.</p>
+                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-success)' }}>Update</span>
               </div>
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-info)' }}>
-                <div className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>New RFP Published: HVAC Systems</div>
-                <p className="text-xs mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>FNRC has published a new RFP for Annual Maintenance of HVAC Systems. Check eligibility now.</p>
-                <span className="text-[10px] uppercase font-bold" style={{ color: 'var(--fnrc-info)' }}>New RFP</span>
+                <div className="text-sm font-semibold text-foreground">New Tender Published: HVAC Systems</div>
+                <p className="text-sm mt-1 text-muted-foreground">FNRC has published a new RFP for Annual Maintenance of HVAC Systems. Check eligibility now.</p>
+                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-info)' }}>New RFP</span>
               </div>
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-error)' }}>
-                <div className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Status Update</div>
-                <p className="text-xs mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>A decision has been finalized for <span className="font-medium">RFP-2026-003</span>. Please check your tracking page.</p>
-                <span className="text-[10px] uppercase font-bold" style={{ color: 'var(--fnrc-error)' }}>Alert</span>
+                <div className="text-sm font-semibold text-foreground">Proposal Status Update</div>
+                <p className="text-sm mt-1 text-muted-foreground">A decision has been finalized for <span className="font-semibold text-foreground">RFP-2026-003</span>. Please check your tracking page.</p>
+                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-error)' }}>Alert</span>
               </div>
             </div>
           </CardContent>

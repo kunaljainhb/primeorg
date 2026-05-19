@@ -13,6 +13,16 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/app/components/u
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { toast } from 'sonner';
 
+const formatDate = (dateStr?: string | Date) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return String(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export default function AdminUserManagement() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -113,15 +123,7 @@ export default function AdminUserManagement() {
                     </Badge>
                   </TableCell>
                   <TableCell className="font-medium text-gray-600 text-xs">
-                    {user.createdDate ? new Date(user.createdDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    }) : new Date().toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
+                    {formatDate(user.createdDate || new Date())}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -434,11 +436,7 @@ export default function AdminUserManagement() {
                       <div>
                         <div className="text-[10px] font-bold text-gray-400">Created Date</div>
                         <div className="text-xs font-semibold text-gray-700">
-                          {selectedUser.createdDate ? new Date(selectedUser.createdDate).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          }) : 'Jan 10, 2026'}
+                          {formatDate(selectedUser.createdDate || '2026-01-10')}
                         </div>
                       </div>
                     </div>
@@ -450,11 +448,7 @@ export default function AdminUserManagement() {
                       <div>
                         <div className="text-[10px] font-bold text-gray-400">Last Active Session</div>
                         <div className="text-xs font-semibold text-gray-700">
-                          {new Date().toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })} • Active
+                          {formatDate(new Date())} • Active
                         </div>
                       </div>
                     </div>

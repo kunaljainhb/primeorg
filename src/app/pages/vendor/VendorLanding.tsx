@@ -72,8 +72,9 @@ export default function VendorLanding() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <div className="mb-4 flex justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}>
-                    <Users className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full overflow-hidden">
+                    <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
+                    <Users className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
                   </div>
                 </div>
                 <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
@@ -88,8 +89,9 @@ export default function VendorLanding() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <div className="mb-4 flex justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}>
-                    <CheckCircle className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full overflow-hidden">
+                    <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
+                    <CheckCircle className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
                   </div>
                 </div>
                 <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
@@ -104,8 +106,9 @@ export default function VendorLanding() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <div className="mb-4 flex justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}>
-                    <FileText className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full overflow-hidden">
+                    <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
+                    <FileText className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
                   </div>
                 </div>
                 <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
@@ -120,8 +123,9 @@ export default function VendorLanding() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <div className="mb-4 flex justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}>
-                    <Building2 className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full overflow-hidden">
+                    <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
+                    <Building2 className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
                   </div>
                 </div>
                 <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>

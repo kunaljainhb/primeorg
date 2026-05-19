@@ -33,6 +33,7 @@ import AdminUserManagement from '@/app/pages/admin/AdminUserManagement';
 import AdminMasterData from '@/app/pages/admin/AdminMasterData';
 import AdminReports from '@/app/pages/admin/AdminReports';
 import AdminConfig from '@/app/pages/admin/AdminConfig';
+import AdminExternalRating from '@/app/pages/admin/AdminExternalRating';
 
 function AppRoutes() {
   const location = useLocation();
@@ -40,6 +41,9 @@ function AppRoutes() {
 
   // Root path
   if (path === '/') return <RoleSelection />;
+
+  // Standalone public routes
+  if (path.startsWith('/rating/external-review')) return <AdminExternalRating />;
 
   // Vendor routes without layout
   if (path === '/vendor/landing') return <VendorLanding />;

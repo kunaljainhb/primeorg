@@ -194,7 +194,7 @@ export default function VendorProposalList() {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-full mt-4"
+                  className="w-full mt-4 hover:bg-transparent hover:text-[var(--fnrc-primary-green)] hover:border-[var(--fnrc-primary-green)]"
                   style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
                   onClick={(e) => {
                     e.stopPropagation();

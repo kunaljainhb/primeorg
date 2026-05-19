@@ -82,19 +82,26 @@ export default function VendorRegister() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-      <div className="w-full max-w-xl space-y-8">
-        <Card className="border-none shadow-xl shadow-gray-200/50">
-          <CardHeader className="space-y-2 pb-6 border-b border-gray-50">
+    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background">
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 25 50 50 T 100 50' fill='none' stroke='%23000000' stroke-width='1'/%3E%3Cpath d='M0 70 Q 25 45 50 70 T 100 70' fill='none' stroke='%23000000' stroke-width='1'/%3E%3C/svg%3E")`,
+          backgroundSize: '100px 100px'
+        }}
+      />
+      <div className="w-full max-w-xl space-y-8 relative z-10">
+        <Card className="border-none shadow-xl shadow-black/5">
+          <CardHeader className="space-y-2 pb-6 border-b border-border">
             <div className="flex justify-center mb-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-                <Building2 className="h-8 w-8" style={{ color: 'var(--fnrc-primary-green)' }} />
+              <div className="flex h-24 w-24 items-center justify-center">
+                <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
               </div>
             </div>
-            <CardTitle className="text-center text-2xl font-bold tracking-tight" style={{ color: 'var(--fnrc-text-dark)' }}>
-              Vendor Registration
+            <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
+              FNRC Vendor Registration
             </CardTitle>
-            <CardDescription className="text-center text-base" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <CardDescription className="text-center text-base font-medium text-muted-foreground">
               Create your enterprise account to access FNRC procurement portal
             </CardDescription>
           </CardHeader>
@@ -108,25 +115,20 @@ export default function VendorRegister() {
                     placeholder="Enter official company name"
                     value={formData.companyName}
                     onChange={(e) => handleChange('companyName', e.target.value)}
-                    className="h-12 bg-gray-50/50 border-gray-100 focus:bg-white transition-all"
+                    className="h-12 bg-gray-50/50 focus:bg-white transition-all"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="identifier" className="text-sm font-semibold opacity-70">Email Address or Mobile Number</Label>
-                  <div className="relative">
-                    <Input
-                      id="identifier"
-                      placeholder="e.g. contact@company.ae or +971..."
-                      value={formData.identifier}
-                      onChange={(e) => handleChange('identifier', e.target.value)}
-                      className="h-12 bg-gray-50/50 border-gray-100 focus:bg-white transition-all pl-10"
-                      required
-                    />
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex gap-1 text-gray-400">
-                      <Mail className="h-4 w-4" />
-                    </div>
-                  </div>
+                  <Input
+                    id="identifier"
+                    placeholder="e.g. contact@company.ae or +971..."
+                    value={formData.identifier}
+                    onChange={(e) => handleChange('identifier', e.target.value)}
+                    className="h-12 bg-gray-50/50 focus:bg-white transition-all"
+                    required
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -150,7 +152,7 @@ export default function VendorRegister() {
                         placeholder="••••••••"
                         value={formData.password}
                         onChange={(e) => handleChange('password', e.target.value)}
-                        className="h-12 bg-gray-50/50 border-gray-100 focus:bg-white transition-all pr-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pr-10"
                         required
                       />
                       <Button
@@ -189,7 +191,7 @@ export default function VendorRegister() {
                         placeholder="••••••••"
                         value={formData.confirmPassword}
                         onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                        className="h-12 bg-gray-50/50 border-gray-100 focus:bg-white transition-all pr-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pr-10"
                         required
                       />
                       <Button
@@ -234,7 +236,7 @@ export default function VendorRegister() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 border-2 hover:bg-gray-50 transition-all font-semibold"
+                className="w-full h-12 border-2 hover:bg-gray-50 text-foreground hover:text-foreground transition-all font-semibold"
                 onClick={handleUAEPassClick}
                 style={{ borderColor: 'var(--fnrc-border-gray)' }}
               >
@@ -378,12 +380,12 @@ function AuthFooter() {
         <a href="#" className="hover:underline hover:text-green-700 transition-colors">Privacy Policy</a>
       </div>
       <div className="flex items-center justify-center gap-4">
-        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all">
+        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900 transition-all">
           <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[9px] font-bold">EN</span>
           <span className="text-xs font-semibold">English</span>
         </Button>
         <span className="text-gray-300">|</span>
-        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-transparent hover:border-gray-200 transition-all">
+        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all">
           <span className="text-xs font-semibold">العربية</span>
         </Button>
       </div>

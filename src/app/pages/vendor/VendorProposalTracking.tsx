@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from '@/app/context/RouterContext';
-import { ArrowLeft, FileText, Download, Award, Star } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Award, Star, History } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Separator } from '@/app/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { mockProposals, mockERPDocuments, mockVendorReviews } from '@/app/data/mockData';
 import { ProposalDetailView } from '@/app/components/vendor/ProposalDetailView';
@@ -41,6 +42,7 @@ export default function VendorProposalTracking() {
   const proposal = mockProposals.find(p => p.id === proposalId);
   
   const [activeTab, setActiveTab] = useState('status');
+  const [showAuditHistory, setShowAuditHistory] = useState(false);
 
   if (!proposal) {
     return <div>Proposal not found</div>;
@@ -75,13 +77,19 @@ export default function VendorProposalTracking() {
         Back to Proposals
       </Button>
 
-      <div>
-        <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          {proposal.rfpTitle}
-        </h1>
-        <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-          Proposal Details & Tracking
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            {proposal.rfpTitle}
+          </h1>
+          <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
+            Proposal Details & Tracking
+          </p>
+        </div>
+        <Button variant="outline" className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-10 font-bold" onClick={() => setShowAuditHistory(true)}>
+          <History className="h-4 w-4" />
+          Audit History
+        </Button>
       </div>
 
       {/* Tab Structure */}
@@ -362,6 +370,48 @@ export default function VendorProposalTracking() {
           </TabsContent>
         )}
       </Tabs>
+
+      {/* Audit History Dialog */}
+      <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
+        <DialogContent className="sm:max-w-[950px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
+          <DialogHeader className="border-b pb-4 mb-4">
+            <DialogTitle className="flex items-center gap-2 text-xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+              <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              Proposal Audit History
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/50">
+                  <TableHead className="font-bold text-xs text-gray-600">Date & Time</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">Name</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">Role</TableHead>
+                  <TableHead className="font-bold text-xs text-gray-600">What Changed</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[
+                  { date: '12/05/2026 10:15', name: 'System', role: 'System', change: 'Proposal status updated to Technical Review.' },
+                  { date: '11/05/2026 15:45', name: 'Vendor User', role: 'Vendor', change: 'Commercial document uploaded.' },
+                  { date: '10/05/2026 09:30', name: 'Vendor User', role: 'Vendor', change: 'Initial proposal submitted.' }
+                ].map((audit, i) => (
+                  <TableRow key={i} className="hover:bg-gray-50/30">
+                    <TableCell className="text-xs font-semibold text-gray-500 whitespace-nowrap">{audit.date}</TableCell>
+                    <TableCell className="text-sm font-bold text-gray-800">{audit.name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="text-[10px] bg-gray-100 text-gray-600 font-bold border-none">
+                        {audit.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-600 whitespace-normal break-words max-w-[400px] leading-relaxed">{audit.change}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
