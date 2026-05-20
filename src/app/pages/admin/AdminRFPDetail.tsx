@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
@@ -62,6 +62,14 @@ export default function AdminRFPDetail() {
   const { rfpId } = useParams();
   const location = useLocation();
   const rfp = mockRFPs.find(r => r.id === rfpId) || mockRFPs[0];
+
+  // Redirect to edit/create page if in draft status
+  useEffect(() => {
+    if (rfp && rfp.status.toLowerCase() === 'draft') {
+      navigate(`/admin/rfps/edit/${rfp.id}`);
+    }
+  }, [rfp, navigate]);
+
   const defaultTab = location.pathname.includes('tab=chats') ? 'chats' : 'overview';
 
   const relatedProposals = mockProposals.filter(p => p.rfpId === rfp.id);

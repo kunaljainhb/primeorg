@@ -133,11 +133,57 @@ export default function AdminRFPCreate() {
   };
 
   const handleSaveDraft = () => {
+    const rfpData = {
+      title: formData.title || 'Untitled RFP',
+      category: formData.categories.length > 0 ? formData.categories : ['General'],
+      description: formData.description,
+      eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
+      submissionDeadline: formData.submissionDeadline ? format(formData.submissionDeadline, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+      scopeOfWork: formData.scopeOfWork,
+      timeline: '3 months',
+      status: 'draft' as const,
+      attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
+      createdAt: format(new Date(), 'yyyy-MM-dd'),
+    };
+
+    if (rfpId) {
+      const idx = mockRFPs.findIndex(r => r.id === rfpId);
+      if (idx !== -1) {
+        mockRFPs[idx] = { ...mockRFPs[idx], ...rfpData };
+      }
+    } else {
+      const newId = `RFP-00${mockRFPs.length + 1}`;
+      mockRFPs.push({ id: newId, ...rfpData });
+    }
+
     toast.success('RFP saved as draft successfully');
     navigate('/admin/rfps');
   };
 
   const handlePublish = () => {
+    const rfpData = {
+      title: formData.title || 'Untitled RFP',
+      category: formData.categories.length > 0 ? formData.categories : ['General'],
+      description: formData.description,
+      eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
+      submissionDeadline: formData.submissionDeadline ? format(formData.submissionDeadline, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+      scopeOfWork: formData.scopeOfWork,
+      timeline: '3 months',
+      status: 'published' as const,
+      attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
+      createdAt: format(new Date(), 'yyyy-MM-dd'),
+    };
+
+    if (rfpId) {
+      const idx = mockRFPs.findIndex(r => r.id === rfpId);
+      if (idx !== -1) {
+        mockRFPs[idx] = { ...mockRFPs[idx], ...rfpData };
+      }
+    } else {
+      const newId = `RFP-00${mockRFPs.length + 1}`;
+      mockRFPs.push({ id: newId, ...rfpData });
+    }
+
     toast.success('RFP published successfully');
     navigate('/admin/rfps');
   };

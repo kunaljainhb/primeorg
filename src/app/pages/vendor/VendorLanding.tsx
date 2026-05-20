@@ -33,6 +33,7 @@ export default function VendorLanding() {
               <Button 
                 size="lg"
                 variant="outline"
+                className="hover:bg-green-50 hover:text-[var(--fnrc-primary-green)]"
                 style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
                 onClick={() => navigate('/vendor/login')}
               >
