@@ -69,6 +69,9 @@ function extractParams(path: string): Record<string, string> {
   const proposalMatch = path.match(/\/proposals\/([^/]+)(?:\/|$)/);
   if (proposalMatch) params.proposalId = proposalMatch[1];
   
+  const itemMatch = path.match(/\/items\/([^/]+)(?:\/|$)/);
+  if (itemMatch) params.proposalId = itemMatch[1];
+  
   const vendorMatch = path.match(/\/vendors\/([^/]+)(?:\/|$)/);
   if (vendorMatch) params.vendorId = vendorMatch[1];
   

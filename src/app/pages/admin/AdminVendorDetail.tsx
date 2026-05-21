@@ -65,7 +65,9 @@ export default function AdminVendorDetail() {
     companyNameAr: 'تيك سوليوشنز ذ.م.م',
     expiryDate: '2026-12-31',
     country: 'United Arab Emirates',
+    stateEmirate: 'Dubai',
     city: 'Dubai',
+    fax: '+971 4 123 4568',
     website: 'www.techsolutions.ae',
     primaryContact: {
       name: 'John Doe',
@@ -74,8 +76,11 @@ export default function AdminVendorDetail() {
       email: 'john.doe@techsolutions.ae'
     },
     financialInfo: {
+      accountNumber: '100234567890',
       bankAccountNumber: 'AE12 3456 7890 1234 5678 901',
       bankName: 'Emirates NBD',
+      accountHolderName: 'TechSolutions LLC',
+      swiftCode: 'EBILAEADXXX',
       vatNumber: vendor.taxNumber || '100012345600003'
     }
   };
@@ -177,19 +182,21 @@ export default function AdminVendorDetail() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Vendor File: {vendor.id}</h1>
+            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>{vendor.id} : {vendor.companyName}</h1>
             <div className="flex items-center gap-2 mt-0.5">
-              <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                {formatStatus(vendor.status)}
-              </Badge>
               <span className="text-sm font-medium text-muted-foreground italic">Registered on {formatDate(vendor.registrationDate)}</span>
             </div>
           </div>
         </div>
-        <Button variant="outline" className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-10 font-bold" onClick={() => setShowAuditHistory(true)}>
-          <History className="h-4 w-4" />
-          Audit History
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-10 font-bold" onClick={() => setShowAuditHistory(true)}>
+            <History className="h-4 w-4" />
+            Audit History
+          </Button>
+          <Badge variant="secondary" className="text-xs px-3 py-1.5 h-10 flex items-center font-semibold" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
+            {formatStatus(vendor.status)}
+          </Badge>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -234,22 +241,37 @@ export default function AdminVendorDetail() {
               <Label className="text-[10px] uppercase font-bold text-muted-foreground">Address</Label>
               <div className="text-sm font-semibold">{vendor.address}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Country</Label>
-              <div className="text-sm font-semibold">{vendorDetails.country}</div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Country</Label>
+                <div className="text-sm font-semibold">{vendorDetails.country}</div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">State/Emirate</Label>
+                <div className="text-sm font-semibold">{vendorDetails.stateEmirate}</div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">City</Label>
+                <div className="text-sm font-semibold">{vendorDetails.city}</div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">City</Label>
-              <div className="text-sm font-semibold">{vendorDetails.city}</div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Phone Number</Label>
+                <div className="text-sm font-semibold">+971 4 123 4567</div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Fax Number</Label>
+                <div className="text-sm font-semibold">{vendorDetails.fax}</div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Email ID</Label>
+                <div className="text-sm font-semibold">{vendor.email}</div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Phone Number</Label>
-              <div className="text-sm font-semibold">+971 4 123 4567</div>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Email ID</Label>
-              <div className="text-sm font-semibold">{vendor.email}</div>
-            </div>
+
             <div className="space-y-1 md:col-span-2">
               <Label className="text-[10px] uppercase font-bold text-muted-foreground">Website</Label>
               <div className="text-sm font-semibold">{vendorDetails.website}</div>
@@ -294,18 +316,36 @@ export default function AdminVendorDetail() {
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4">
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Bank Details (Account Number)</Label>
-              <div className="text-sm font-mono font-bold bg-gray-50 p-2 rounded border border-gray-100">{vendorDetails.financialInfo.bankAccountNumber}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label className="text-[10px] uppercase font-bold text-muted-foreground">Bank Name</Label>
                 <div className="text-sm font-semibold">{vendorDetails.financialInfo.bankName}</div>
               </div>
               <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Account Holder Name</Label>
+                <div className="text-sm font-semibold">{vendorDetails.financialInfo.accountHolderName}</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Account Number</Label>
+                <div className="text-sm font-mono font-bold bg-gray-50 p-2 rounded border border-gray-100">{vendorDetails.financialInfo.accountNumber}</div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">IBAN</Label>
+                <div className="text-sm font-mono font-bold bg-gray-50 p-2 rounded border border-gray-100">{vendorDetails.financialInfo.bankAccountNumber}</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <Label className="text-[10px] uppercase font-bold text-muted-foreground">Swift Code</Label>
+                <div className="text-sm font-semibold font-mono bg-gray-50 p-2 rounded border border-gray-100">{vendorDetails.financialInfo.swiftCode}</div>
+              </div>
+              <div className="space-y-1">
                 <Label className="text-[10px] uppercase font-bold text-muted-foreground">VAT Registration Number</Label>
-                <div className="text-sm font-semibold">{vendorDetails.financialInfo.vatNumber}</div>
+                <div className="text-sm font-semibold bg-gray-50 p-2 rounded border border-gray-100">{vendorDetails.financialInfo.vatNumber}</div>
               </div>
             </div>
           </CardContent>
@@ -416,96 +456,91 @@ export default function AdminVendorDetail() {
       </Card>
 
       {/* Inline Administrative Action Card */}
-      <Card className="border-2 border-gray-100 shadow-sm">
-        <CardHeader className="pb-2">
-          <div className="flex items-center gap-2">
-            <Info className="h-4 w-4 text-amber-500" />
-            <CardTitle className="text-base font-bold">Administrative Review Panel</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="remarks" className="font-bold text-sm flex items-center justify-between">
-                Administrative Remarks
-                <span className="text-[9px] text-red-500 font-black uppercase">Required for any action</span>
-              </Label>
-              <Textarea
-                id="remarks"
-                placeholder="Enter detailed remarks for the vendor regarding this decision..."
-                className={`min-h-[100px] resize-none ${error ? 'border-red-500 ring-red-100 focus-visible:ring-red-200' : ''}`}
-                value={remarks}
-                onChange={(e) => {
-                  setRemarks(e.target.value);
-                  if (e.target.value.trim()) setError('');
-                }}
-              />
-              {error && <p className="text-xs font-bold text-red-500">{error}</p>}
+      {vendor.status !== 'rejected' && vendor.status !== 'blacklisted' && (
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <Info className="h-4 w-4 text-amber-500" />
+              <CardTitle className="text-base font-bold">Administrative Review Panel</CardTitle>
             </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="remarks" className="font-bold text-sm flex items-center justify-between">
+                  Administrative Remarks
+                  <span className="text-[9px] text-red-500 font-black uppercase">Required for any action</span>
+                </Label>
+                <Textarea
+                  id="remarks"
+                  placeholder="Enter detailed remarks for the vendor regarding this decision..."
+                  className={`min-h-[100px] resize-none ${error ? 'border-red-500 ring-red-100 focus-visible:ring-red-200' : ''}`}
+                  value={remarks}
+                  onChange={(e) => {
+                    setRemarks(e.target.value);
+                    if (e.target.value.trim()) setError('');
+                  }}
+                />
+                {error && <p className="text-xs font-bold text-red-500">{error}</p>}
+              </div>
 
-            <div className="flex justify-end gap-3 pt-2">
-              {/* Actions for Pending Status */}
-              {vendor.status === 'pending' && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 h-10 font-bold"
-                    onClick={() => handleAction('correction')}
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    Correction Requested
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-red-200 text-red-700 hover:bg-red-50 h-10 font-bold"
-                    onClick={() => handleAction('reject')}
-                  >
-                    <XCircle className="h-4 w-4" />
-                    Reject Application
-                  </Button>
-                  <Button
-                    className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10"
-                    style={{ backgroundColor: 'var(--fnrc-success)' }}
-                    onClick={() => handleAction('approve')}
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    Approve Vendor
-                  </Button>
-                </>
-              )}
+              <div className="flex justify-end gap-3 pt-2 border-t border-gray-50">
+                {/* Actions for Pending Status */}
+                {vendor.status === 'pending' && (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-300 h-10 font-bold transition-all"
+                      onClick={() => handleAction('correction')}
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Correction Requested
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800 hover:border-red-300 h-10 font-bold transition-all"
+                      onClick={() => handleAction('reject')}
+                    >
+                      <XCircle className="h-4 w-4" />
+                      Reject Application
+                    </Button>
+                    <Button
+                      className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all"
+                      style={{ backgroundColor: 'var(--fnrc-success)' }}
+                      onClick={() => handleAction('approve')}
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      Approve Vendor
+                    </Button>
+                  </>
+                )}
 
-              {/* Actions for Approved Status */}
-              {vendor.status === 'approved' && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 h-10 font-bold"
-                    onClick={() => handleAction('suspend')}
-                  >
-                    <Pause className="h-4 w-4" />
-                    Suspend Account
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-red-200 text-red-700 hover:bg-red-50 h-10 font-bold"
-                    onClick={() => handleAction('blacklist')}
-                  >
-                    <Ban className="h-4 w-4" />
-                    Blacklist Vendor
-                  </Button>
-                </>
-              )}
-
-              {/* Finalized Status Info */}
-              {(vendor.status === 'rejected' || vendor.status === 'blacklisted') && (
-                <div className="w-full text-center py-4 text-sm font-bold opacity-30 uppercase tracking-[0.2em] bg-gray-50 rounded-lg">
-                  Application Finalized • View Only Mode
-                </div>
-              )}
+                {/* Actions for Approved Status */}
+                {vendor.status === 'approved' && (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-300 h-10 font-bold transition-all"
+                      onClick={() => handleAction('suspend')}
+                    >
+                      <Pause className="h-4 w-4" />
+                      Suspend Account
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800 hover:border-red-300 h-10 font-bold transition-all"
+                      onClick={() => handleAction('blacklist')}
+                    >
+                      <Ban className="h-4 w-4" />
+                      Blacklist Vendor
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Audit History Dialog */}
       <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>

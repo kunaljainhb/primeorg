@@ -190,16 +190,13 @@ export default function AdminRFPCreate() {
 
   const renderStepIndicator = () => {
     const steps = [
-      { number: 1, label: 'Basic Information' },
-      { number: 2, label: 'Scope of Work' },
-      { number: 3, label: 'Attachments' },
-      { number: 4, label: 'Tender Visibility' },
-      { number: 5, label: 'Review & Publish' }
+      { number: 1, label: 'RFP Details' },
+      { number: 2, label: 'Visibility & Publish' }
     ];
 
     return (
-      <div className="mb-8">
-        <div className="flex items-center justify-center">
+      <div className="mb-8 flex items-end justify-between">
+        <div className="flex items-center">
           {steps.map((s, idx) => (
             <div key={s.number} className="flex items-center">
               <div className="flex flex-col items-center">
@@ -222,7 +219,7 @@ export default function AdminRFPCreate() {
                   {s.label}
                 </div>
               </div>
-              {idx < 4 && (
+              {idx < 1 && (
                 <div
                   className={`mx-4 h-0.5 w-16 mb-6 ${
                     step > s.number ? 'bg-[var(--fnrc-primary-green)]' : 'bg-gray-300'
@@ -231,6 +228,40 @@ export default function AdminRFPCreate() {
               )}
             </div>
           ))}
+        </div>
+        
+        <div className="flex items-center gap-3 pb-2">
+          {step === 1 ? (
+            <Button variant="outline" onClick={() => navigate('/admin/rfps')}>
+              Cancel
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setStep(1)}>
+              Back
+            </Button>
+          )}
+          
+          <Button variant="outline" onClick={handleSaveDraft}>
+            Save as Draft
+          </Button>
+          
+          {step === 1 ? (
+            <Button
+              onClick={() => setStep(2)}
+              className="text-white"
+              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              onClick={handlePublish}
+              className="text-white"
+              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            >
+              Publish RFP
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -297,14 +328,39 @@ export default function AdminRFPCreate() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="budget">Estimated Budget (Optional)</Label>
-          <Input
-            id="budget"
-            placeholder="e.g., AED 500,000"
-            value={formData.estimatedBudget}
-            onChange={(e) => updateFormData('estimatedBudget', e.target.value)}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="budget">Estimated Budget (Optional)</Label>
+            <Input
+              id="budget"
+              placeholder="e.g., AED 500,000"
+              value={formData.estimatedBudget}
+              onChange={(e) => updateFormData('estimatedBudget', e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Submission Deadline *</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.submissionDeadline ? format(formData.submissionDeadline, 'PPP') : 'Pick a date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={formData.submissionDeadline}
+                  onSelect={(date) => updateFormData('submissionDeadline', date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -357,46 +413,7 @@ export default function AdminRFPCreate() {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Submission Deadline *</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-start text-left font-normal"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.submissionDeadline ? format(formData.submissionDeadline, 'PPP') : 'Pick a date'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={formData.submissionDeadline}
-                onSelect={(date) => updateFormData('submissionDeadline', date)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
 
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={() => navigate('/admin/rfps')}>
-            Cancel
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save as Draft
-            </Button>
-            <Button
-              onClick={() => setStep(2)}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
@@ -499,23 +516,7 @@ export default function AdminRFPCreate() {
           ))}
         </div>
 
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={() => setStep(1)}>
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save as Draft
-            </Button>
-            <Button
-              onClick={() => setStep(3)}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   );
@@ -579,23 +580,7 @@ export default function AdminRFPCreate() {
           )}
         </div>
 
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={() => setStep(2)}>
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save as Draft
-            </Button>
-            <Button
-              onClick={() => setStep(4)}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   );
@@ -639,23 +624,7 @@ export default function AdminRFPCreate() {
           </div>
         </RadioGroup>
 
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={() => setStep(3)}>
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save as Draft
-            </Button>
-            <Button
-              onClick={() => setStep(5)}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   );
@@ -806,18 +775,7 @@ export default function AdminRFPCreate() {
           </div>
         </div>
 
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={() => setStep(4)}>
-            Back
-          </Button>
-          <Button
-            onClick={handlePublish}
-            className="text-white"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-          >
-            Publish RFP
-          </Button>
-        </div>
+
       </CardContent>
     </Card>
   );
@@ -834,7 +792,7 @@ export default function AdminRFPCreate() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto py-8">
+    <div className="space-y-6">
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
           {rfpId ? 'Edit Draft RFP' : 'Create New RFP'}
@@ -846,11 +804,20 @@ export default function AdminRFPCreate() {
 
       {renderStepIndicator()}
 
-      {step === 1 && renderStep1()}
-      {step === 2 && renderStep2()}
-      {step === 3 && renderStep3()}
-      {step === 4 && renderStep4()}
-      {step === 5 && renderStep5()}
+      {step === 1 && (
+        <div className="space-y-6">
+          {renderStep1()}
+          {renderStep2()}
+          {renderStep3()}
+        </div>
+      )}
+      {step === 2 && (
+        <div className="space-y-6">
+          {renderStep4()}
+          {renderStep5()}
+        </div>
+      )}
+
     </div>
   );
 }

@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from '@/app/context/RouterContext';
-import { ArrowLeft, FileText, Download, Award, Star, History } from 'lucide-react';
+import { ArrowLeft, FileText, Download, Award, Star, History, RefreshCw, AlertTriangle, UploadCloud, Trash2, Paperclip, Plus } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Separator } from '@/app/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { mockProposals, mockERPDocuments, mockVendorReviews } from '@/app/data/mockData';
+import { mockProposals, mockERPDocuments, saveProposalsToStorage, mockVendorReviews } from '@/app/data/mockData';
 import { ProposalDetailView } from '@/app/components/vendor/ProposalDetailView';
+import { toast } from 'sonner';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
 import {
   Table,
   TableBody,
@@ -30,6 +33,7 @@ const formatDate = (dateStr?: string | Date) => {
 
 const formatStatus = (statusStr?: string) => {
   if (!statusStr) return '';
+  if (statusStr === 'technical_correction_requested') return 'Technical Correction Requested';
   return statusStr
     .split(/_|\s+/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -39,20 +43,102 @@ const formatStatus = (statusStr?: string) => {
 export default function VendorProposalTracking() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
-  const proposal = mockProposals.find(p => p.id === proposalId);
+  
+  // Wrap proposal in React state to ensure UI updates instantly on resubmit or simulation
+  const [proposal, setProposal] = useState(() => {
+    return mockProposals.find(p => p.id === proposalId);
+  });
   
   const [activeTab, setActiveTab] = useState('status');
   const [showAuditHistory, setShowAuditHistory] = useState(false);
+
+  // States for Vendor Supporting Documents Upload
+  const [docRemarks, setDocRemarks] = useState('');
+  const [selectedDocFile, setSelectedDocFile] = useState<File | null>(null);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync state if proposalId changes
+  useEffect(() => {
+    const found = mockProposals.find(p => p.id === proposalId);
+    setProposal(found);
+  }, [proposalId]);
+
+  const handleProposalUpdate = (updatedProposal: any) => {
+    setProposal(updatedProposal);
+  };
+
+  const handleStatusSimulate = (newStatus: 'technical_correction_requested' | 'technical_review') => {
+    const targetIdx = mockProposals.findIndex(p => p.id === proposalId);
+    if (targetIdx !== -1) {
+      mockProposals[targetIdx].status = newStatus;
+      if (newStatus === 'technical_correction_requested') {
+        mockProposals[targetIdx].remarks = 'Technical proposal is missing detail about multi-zone failover mechanisms. Please provide specific redundant architecture details and update the technical document.';
+        mockProposals[targetIdx].technicalProposal = 'Hybrid cloud solution using Azure Stack Hub'; // Reset to initial state
+        mockProposals[targetIdx].technicalStatus = 'correction_requested';
+      } else {
+        mockProposals[targetIdx].remarks = undefined;
+        mockProposals[targetIdx].technicalStatus = 'under_review';
+      }
+      saveProposalsToStorage(mockProposals);
+      setProposal({ ...mockProposals[targetIdx] });
+      toast.success(`Proposal status simulated to: ${newStatus === 'technical_correction_requested' ? 'Technical Correction Requested' : 'Technical Review'}`);
+    }
+  };
+
+  const handleUploadSupportingDoc = () => {
+    if (!selectedDocFile) {
+      toast.error('Please select a document file to upload.');
+      return;
+    }
+    
+    setIsUploadingDoc(true);
+    
+    // Simulate API upload & saving delay
+    setTimeout(() => {
+      const targetIdx = mockProposals.findIndex(p => p.id === proposal.id);
+      if (targetIdx !== -1) {
+        const currentUploadedDocs = mockProposals[targetIdx].uploadedDocuments || [];
+        
+        const newDoc = {
+          name: selectedDocFile.name,
+          url: '#',
+          remarks: docRemarks.trim() || 'No remarks provided.',
+          uploadedDate: new Date().toISOString().split('T')[0]
+        };
+        
+        const updatedDocs = [...currentUploadedDocs, newDoc];
+        mockProposals[targetIdx].uploadedDocuments = updatedDocs;
+        
+        // Save back to localStorage
+        saveProposalsToStorage(mockProposals);
+        
+        // Update local React states
+        const updatedProposal = { ...mockProposals[targetIdx] };
+        setProposal(updatedProposal);
+        
+        toast.success(`Supporting document "${selectedDocFile.name}" uploaded successfully!`);
+        
+        // Reset form
+        setSelectedDocFile(null);
+        setDocRemarks('');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } else {
+        toast.error('Failed to find proposal.');
+      }
+      setIsUploadingDoc(false);
+    }, 1500);
+  };
 
   if (!proposal) {
     return <div>Proposal not found</div>;
   }
 
   // Check if vendor is shortlisted or rejected to show additional tabs
-  const isShortlisted = proposal.status === 'shortlisted';
-  const showReviews = isShortlisted || proposal.status === 'rejected';
-  
-  // Filter ERP documents and reviews for this vendor and RFP
+  const isShortlisted = proposal.status === 'shortlisted' || proposal.status === 'selected';
+  // Filter ERP documents for this vendor and RFP
   const erpDocuments = mockERPDocuments.filter(doc => doc.rfpId === proposal.rfpId && doc.vendorId === proposal.vendorId);
   const vendorReviews = mockVendorReviews.filter(review => review.rfpId === proposal.rfpId && review.vendorId === proposal.vendorId);
 
@@ -77,19 +163,57 @@ export default function VendorProposalTracking() {
         Back to Proposals
       </Button>
 
+      {proposal.id === 'PROP-102' && (
+        <div 
+          className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border bg-white shadow-sm"
+          style={{ borderColor: 'var(--fnrc-border-gray)' }}
+        >
+          <div className="flex gap-3">
+            <div className="p-2 rounded-lg bg-orange-50 text-orange-600 shrink-0">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div className="space-y-1">
+              <div className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Demo Simulator Tool</div>
+              <p className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
+                Easily simulate review decisions and test the Technical Correction and resubmission workflow.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              size="sm"
+              variant={proposal.status === 'technical_correction_requested' ? 'default' : 'outline'}
+              onClick={() => handleStatusSimulate('technical_correction_requested')}
+              style={proposal.status === 'technical_correction_requested' ? { backgroundColor: '#F59E0B', color: 'white' } : { borderColor: '#F59E0B', color: '#D97706' }}
+              className="h-8 text-xs px-3 font-semibold transition-all hover:opacity-90"
+            >
+              Set to Technical Correction Requested
+            </Button>
+            <Button 
+              size="sm"
+              variant={proposal.status === 'technical_review' ? 'default' : 'outline'}
+              onClick={() => handleStatusSimulate('technical_review')}
+              style={proposal.status === 'technical_review' ? { backgroundColor: 'var(--fnrc-primary-green)', color: 'white' } : { borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+              className="h-8 text-xs px-3 font-semibold transition-all hover:opacity-90"
+            >
+              Set to Under Review (Technical)
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-            {proposal.rfpTitle}
+            {proposal.id}
           </h1>
           <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
             Proposal Details & Tracking
           </p>
         </div>
-        <Button variant="outline" className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-10 font-bold" onClick={() => setShowAuditHistory(true)}>
-          <History className="h-4 w-4" />
-          Audit History
-        </Button>
+        <Badge variant="secondary" className="px-5 py-2 text-sm font-bold border-none" style={{ backgroundColor: getStatusColor(proposal.status).bg, color: getStatusColor(proposal.status).text }}>
+          {formatStatus(proposal.status)}
+        </Badge>
       </div>
 
       {/* Tab Structure */}
@@ -129,18 +253,17 @@ export default function VendorProposalTracking() {
               Documents
             </TabsTrigger>
           )}
-          {showReviews && (
-            <TabsTrigger 
-              value="reviews" 
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-              style={{ 
-                borderBottomColor: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'transparent',
-                color: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-              }}
-            >
-              Reviews
-            </TabsTrigger>
-          )}
+
+          <TabsTrigger 
+            value="reviews" 
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
+            style={{ 
+              borderBottomColor: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'transparent',
+              color: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
+            }}
+          >
+            Reviews
+          </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: PROPOSAL DETAILS */}
@@ -149,6 +272,7 @@ export default function VendorProposalTracking() {
             proposal={proposal}
             showBackButton={false}
             viewMode="submitted"
+            onProposalUpdate={handleProposalUpdate}
           />
         </TabsContent>
 
@@ -158,15 +282,20 @@ export default function VendorProposalTracking() {
             proposal={proposal}
             showBackButton={false}
             viewMode="status"
+            onProposalUpdate={handleProposalUpdate}
           />
         </TabsContent>
 
         {/* TAB 2: DOCUMENTS (Only visible if shortlisted) */}
         {isShortlisted && (
-          <TabsContent value="documents" className="mt-6">
+          <TabsContent value="documents" className="mt-6 space-y-6">
+            {/* ERP Synced Documents Card */}
             <Card>
               <CardHeader>
-                <CardTitle>ERP Documents</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  ERP Documents
+                </CardTitle>
                 <CardDescription>LPO, Invoices, and other ERP synced documents (Read-only)</CardDescription>
               </CardHeader>
               <CardContent>
@@ -234,184 +363,236 @@ export default function VendorProposalTracking() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-        )}
 
-        {/* TAB 3: REVIEWS (Only visible if shortlisted or rejected) */}
-        {showReviews && (
-          <TabsContent value="reviews" className="mt-6">
+            {/* Vendor Supporting Documents Upload Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                  Performance Reviews
+                  <UploadCloud className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  Vendor Supporting Documents
                 </CardTitle>
-                <CardDescription>Reviews from FNRC procurement team (Read-only)</CardDescription>
+                <CardDescription>
+                  Upload supporting files such as Bank Guarantee, signed contracts, security clearances, or extra clarifications.
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                {vendorReviews.length > 0 ? (
-                  <div className="space-y-4">
-                    {vendorReviews.map((review) => (
-                      <div 
-                        key={review.id} 
-                        className="rounded-lg border p-6" 
-                        style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}
-                      >
-                        {/* Header with RFP Reference and Overall Rating */}
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                                RFP Reference:
-                              </span>
-                              <span className="font-semibold" style={{ color: 'var(--fnrc-primary-green)' }}>
-                                {review.rfpTitle}
-                              </span>
-                            </div>
-                            <div className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Reviewed by {review.reviewedBy} on {formatDate(review.reviewDate)}
-                            </div>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="flex items-center gap-1 mb-1">
-                              <Star className="h-5 w-5 fill-current" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                              <span className="text-2xl font-bold" style={{ color: 'var(--fnrc-accent-gold)' }}>
-                                {review.overallRating.toFixed(2)}
-                              </span>
-                            </div>
-                            <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Overall Rating
-                            </div>
-                          </div>
-                        </div>
+              <CardContent className="space-y-6">
+                {/* List of uploaded supporting documents */}
+                <div>
+                  <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--fnrc-text-dark)' }}>
+                    Uploaded Supporting Documents
+                  </h3>
+                  
+                  {proposal.uploadedDocuments && proposal.uploadedDocuments.length > 0 ? (
+                    <div className="rounded-lg border" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                      <Table>
+                        <TableHeader>
+                          <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                            <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Name</TableHead>
+                            <TableHead className="font-semibold animate-pulse-once" style={{ color: 'var(--fnrc-text-dark)' }}>Uploaded Date</TableHead>
+                            <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Remarks</TableHead>
+                            <TableHead className="font-semibold text-right" style={{ color: 'var(--fnrc-text-dark)' }}>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {proposal.uploadedDocuments.map((doc, idx) => (
+                            <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                              <TableCell className="font-medium flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+                                <Paperclip className="h-4 w-4" style={{ color: 'var(--fnrc-primary-green)' }} />
+                                <span>{doc.name}</span>
+                              </TableCell>
+                              <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
+                                {formatDate(doc.uploadedDate)}
+                              </TableCell>
+                              <TableCell className="text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+                                {doc.remarks}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button size="sm" variant="outline" className="h-8 gap-1">
+                                  <Download className="h-3 w-3" />
+                                  Download
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="py-8 text-center rounded-lg border border-dashed" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                      <Paperclip className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">
+                        No supporting documents uploaded yet
+                      </p>
+                    </div>
+                  )}
+                </div>
 
-                        <Separator className="my-4" />
+                <Separator />
 
-                        {/* Category-wise Ratings */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'white' }}>
-                            <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Quality
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                              <Star className="h-4 w-4 fill-current" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                              <span className="font-semibold text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>
-                                {review.qualityRating}
-                              </span>
-                              <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>/5</span>
-                            </div>
-                          </div>
-                          
-                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'white' }}>
-                            <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Timeliness
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                              <Star className="h-4 w-4 fill-current" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                              <span className="font-semibold text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>
-                                {review.timelinessRating}
-                              </span>
-                              <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>/5</span>
-                            </div>
-                          </div>
-                          
-                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'white' }}>
-                            <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Communication
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                              <Star className="h-4 w-4 fill-current" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                              <span className="font-semibold text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>
-                                {review.communicationRating}
-                              </span>
-                              <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>/5</span>
-                            </div>
-                          </div>
-                          
-                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'white' }}>
-                            <div className="text-sm mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-                              Compliance
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                              <Star className="h-4 w-4 fill-current" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                              <span className="font-semibold text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>
-                                {review.complianceRating}
-                              </span>
-                              <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>/5</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Admin Comments */}
-                        <div>
-                          <div className="text-sm font-medium mb-2" style={{ color: 'var(--fnrc-text-muted)' }}>
-                            Admin Comments
-                          </div>
-                          <div className="text-sm leading-relaxed" style={{ color: 'var(--fnrc-text-dark)' }}>
-                            {review.comments}
-                          </div>
-                        </div>
+                {/* Upload Section */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                    Upload New Supporting Document
+                  </h3>
+                  
+                  {/* Dashed Drag/Drop File Upload Area */}
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50/50 transition-all flex flex-col items-center justify-center gap-2 group" 
+                    style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                  >
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setSelectedDocFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    <UploadCloud className="h-10 w-10 text-muted-foreground group-hover:scale-110 transition-transform" style={{ color: 'var(--fnrc-primary-green)' }} />
+                    {selectedDocFile ? (
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-gray-800 flex items-center justify-center gap-1">
+                          <Paperclip className="h-4 w-4" /> {selectedDocFile.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{(selectedDocFile.size / 1024 / 1024).toFixed(2)} MB</p>
                       </div>
-                    ))}
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                          Click to choose a supporting document
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PDF, DOCX, XLSX, JPG, or PNG up to 10MB
+                        </p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    <Award className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--fnrc-border-gray)' }} />
-                    <p className="text-lg font-medium mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      No reviews yet
-                    </p>
-                    <p className="text-sm">
-                      Reviews from FNRC will appear here once your performance is evaluated
-                    </p>
+
+                  {/* Remarks input */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Remarks / Explanations
+                    </label>
+                    <Textarea 
+                      placeholder="Add remarks explaining this upload (e.g. 'Bank Guarantee for Proposal PROP-101', 'NDA Signed Agreement')" 
+                      value={docRemarks} 
+                      onChange={(e) => setDocRemarks(e.target.value)}
+                      className="min-h-[80px]"
+                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                    />
                   </div>
-                )}
+
+                  {/* Submit Upload Button */}
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={handleUploadSupportingDoc} 
+                      disabled={isUploadingDoc || !selectedDocFile}
+                      className="gap-2 font-bold text-white transition-all duration-300"
+                      style={{ 
+                        backgroundColor: (isUploadingDoc || !selectedDocFile) ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)',
+                        cursor: (isUploadingDoc || !selectedDocFile) ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {isUploadingDoc ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4" />
+                          Upload Document
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
         )}
+
+
+      {/* TAB 3: REVIEWS */}
+      <TabsContent value="reviews" className="mt-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
+              Performance Reviews
+            </CardTitle>
+            <CardDescription>Reviews from FNRC procurement team (Read-only)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {vendorReviews.length > 0 ? (
+              <div className="space-y-6">
+                {vendorReviews.map((review) => (
+                  <div 
+                    key={review.id} 
+                    className="rounded-lg border p-6 bg-white" 
+                    style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                  >
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+                      <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">
+                        Reviewed by {review.reviewedBy} on {formatDate(review.reviewDate)}
+                      </div>
+                    </div>
+
+                    {/* Questions & Answers List */}
+                    <div className="space-y-4">
+                      {[
+                        { 
+                          label: "How would you rate the vendor's technical capability?", 
+                          value: "Vendor demonstrated strong technical capability and adherence to the RFP technical requirements." 
+                        },
+                        { 
+                          label: "Does the vendor have relevant experience in the required domain?", 
+                          value: "Yes, the vendor has extensive previous experience completing similar projects successfully." 
+                        },
+                        { 
+                          label: "Rate the vendor's financial stability.", 
+                          value: "Financially stable and capable of handling the proposed project scale without advanced payments." 
+                        }
+                      ].map((q, i) => (
+                        <div key={i} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 flex flex-col gap-2">
+                          <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                          <span className="text-sm font-semibold text-gray-600">{q.value}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Dedicated Remarks */}
+                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                      <label className="text-xs font-bold text-gray-700 block uppercase tracking-wider">Vendor Rating Comments & Justification</label>
+                      <div className="p-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 bg-gray-50">
+                        {review.comments}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
+                <Award className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--fnrc-border-gray)' }} />
+                <p className="text-lg font-medium mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+                  No reviews yet
+                </p>
+                <p className="text-sm">
+                  Reviews from FNRC will appear here once your performance is evaluated
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
       </Tabs>
 
-      {/* Audit History Dialog */}
-      <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
-        <DialogContent className="sm:max-w-[950px] max-h-[80vh] overflow-y-auto overflow-x-hidden">
-          <DialogHeader className="border-b pb-4 mb-4">
-            <DialogTitle className="flex items-center gap-2 text-xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-              <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Proposal Audit History
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50/50">
-                  <TableHead className="font-bold text-xs text-gray-600">Date & Time</TableHead>
-                  <TableHead className="font-bold text-xs text-gray-600">Name</TableHead>
-                  <TableHead className="font-bold text-xs text-gray-600">Role</TableHead>
-                  <TableHead className="font-bold text-xs text-gray-600">What Changed</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[
-                  { date: '12/05/2026 10:15', name: 'System', role: 'System', change: 'Proposal status updated to Technical Review.' },
-                  { date: '11/05/2026 15:45', name: 'Vendor User', role: 'Vendor', change: 'Commercial document uploaded.' },
-                  { date: '10/05/2026 09:30', name: 'Vendor User', role: 'Vendor', change: 'Initial proposal submitted.' }
-                ].map((audit, i) => (
-                  <TableRow key={i} className="hover:bg-gray-50/30">
-                    <TableCell className="text-xs font-semibold text-gray-500 whitespace-nowrap">{audit.date}</TableCell>
-                    <TableCell className="text-sm font-bold text-gray-800">{audit.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="text-[10px] bg-gray-100 text-gray-600 font-bold border-none">
-                        {audit.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-600 whitespace-normal break-words max-w-[400px] leading-relaxed">{audit.change}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </DialogContent>
-      </Dialog>
+
+
     </div>
   );
 }

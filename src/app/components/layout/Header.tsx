@@ -38,7 +38,7 @@ export function Header({ role, userName }: HeaderProps) {
               FNRC
             </div>
             <div className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--fnrc-primary-green)' }}>
-              Vendor Portal
+              {role === 'admin' ? 'Admin Portal' : 'Vendor Portal'}
             </div>
           </div>
         </Link>

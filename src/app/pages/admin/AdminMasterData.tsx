@@ -59,6 +59,42 @@ export default function AdminMasterData() {
     setShowDeclarationDialog(true);
   };
 
+  const [ratingQueries, setRatingQueries] = useState([
+    { id: 'Q1', question: "How would you rate the vendor's technical capability?", status: 'Active' },
+    { id: 'Q2', question: 'Does the vendor have relevant experience in the required domain?', status: 'Active' },
+    { id: 'Q3', question: "Rate the vendor's financial stability.", status: 'Active' },
+  ]);
+  const [showQueryDialog, setShowQueryDialog] = useState(false);
+  const [queryForm, setQueryForm] = useState({ id: '', question: '', status: 'Active' });
+  const [isEditingQuery, setIsEditingQuery] = useState(false);
+
+  const handleEditQuery = (query: any) => {
+    setQueryForm(query);
+    setIsEditingQuery(true);
+    setShowQueryDialog(true);
+  };
+
+  const handleAddQuery = () => {
+    setQueryForm({ id: `Q${ratingQueries.length + 1}`, question: '', status: 'Active' });
+    setIsEditingQuery(false);
+    setShowQueryDialog(true);
+  };
+
+  const handleSaveQuery = () => {
+    if (!queryForm.question) {
+      toast.error('Please enter the question');
+      return;
+    }
+    if (isEditingQuery) {
+      setRatingQueries(ratingQueries.map(q => q.id === queryForm.id ? queryForm : q));
+      toast.success('Question updated successfully');
+    } else {
+      setRatingQueries([...ratingQueries, queryForm]);
+      toast.success('Question added successfully');
+    }
+    setShowQueryDialog(false);
+  };
+
 
 
   const [docTypeForm, setDocTypeForm] = useState({
@@ -256,7 +292,49 @@ export default function AdminMasterData() {
         </CardContent>
       </Card>
 
-
+      {/* Vendor Rating System Queries */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2 border-b">
+          <div className="space-y-1">
+            <CardTitle>Vendor Rating System Queries</CardTitle>
+            <CardDescription>Manage questions asked from the FNRC department for vendor rating</CardDescription>
+          </div>
+          <Button size="sm" style={{ backgroundColor: 'var(--fnrc-primary-green)', color: 'white' }} onClick={handleAddQuery}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Question
+          </Button>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                <TableHead className="font-bold text-gray-700 w-16">ID</TableHead>
+                <TableHead className="font-bold text-gray-700">Question</TableHead>
+                <TableHead className="font-bold text-gray-700 w-32">Status</TableHead>
+                <TableHead className="text-right font-bold text-gray-700 w-32">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {ratingQueries.map((query, idx) => (
+                <TableRow key={idx} className="hover:bg-gray-50/30">
+                  <TableCell className="font-bold text-gray-800">{query.id}</TableCell>
+                  <TableCell className="font-medium text-gray-800">{query.question}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" style={{ backgroundColor: query.status === 'Active' ? '#D1FAE5' : '#FEE2E2', color: query.status === 'Active' ? 'var(--fnrc-success)' : 'var(--fnrc-error)' }}>
+                      {query.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors" onClick={() => handleEditQuery(query)}>
+                      Edit
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Add Category Dialog */}
       <Dialog open={showCategoryDialog} onOpenChange={setShowCategoryDialog}>
@@ -521,6 +599,51 @@ export default function AdminMasterData() {
               }}
             >
               Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Query Dialog */}
+      <Dialog open={showQueryDialog} onOpenChange={setShowQueryDialog}>
+        <DialogContent aria-describedby="query-dialog-description">
+          <DialogHeader>
+            <DialogTitle>{isEditingQuery ? 'Edit Question' : 'Add Question'}</DialogTitle>
+          </DialogHeader>
+          <div id="query-dialog-description" className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="query-question">Question *</Label>
+              <Textarea
+                id="query-question"
+                placeholder="Enter rating question"
+                value={queryForm.question}
+                onChange={(e) => setQueryForm({ ...queryForm, question: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="query-status">Status *</Label>
+              <Select value={queryForm.status.toLowerCase()} onValueChange={(value) => setQueryForm({ ...queryForm, status: value === 'active' ? 'Active' : 'Inactive' })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowQueryDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveQuery}
+              className="text-white"
+              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            >
+              Save
             </Button>
           </DialogFooter>
         </DialogContent>

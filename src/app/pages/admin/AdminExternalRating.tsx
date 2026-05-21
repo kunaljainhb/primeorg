@@ -12,10 +12,9 @@ export default function AdminExternalRating() {
 
   const proposal = mockProposals.find(p => p.id === proposalId);
 
-  const [qualityRating, setQualityRating] = useState(0);
-  const [timelinessRating, setTimelinessRating] = useState(0);
-  const [communicationRating, setCommunicationRating] = useState(0);
-  const [complianceRating, setComplianceRating] = useState(0);
+  const [q1Remark, setQ1Remark] = useState('');
+  const [q2Remark, setQ2Remark] = useState('');
+  const [q3Remark, setQ3Remark] = useState('');
   const [comments, setComments] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,8 +42,8 @@ export default function AdminExternalRating() {
   }
 
   const handleSubmit = () => {
-    if (!qualityRating || !timelinessRating || !communicationRating || !complianceRating) {
-      alert('Please rate all evaluation criteria before submitting.');
+    if (!q1Remark.trim() || !q2Remark.trim() || !q3Remark.trim()) {
+      alert('Please enter remarks for all evaluation queries before submitting.');
       return;
     }
     if (!comments.trim()) {
@@ -53,10 +52,9 @@ export default function AdminExternalRating() {
     }
 
     const ratingData = {
-      qualityRating,
-      timelinessRating,
-      communicationRating,
-      complianceRating,
+      q1Remark,
+      q2Remark,
+      q3Remark,
       comments,
       submittedBy: 'FNRC IT Department',
       submittedAt: new Date().toISOString()
@@ -67,27 +65,7 @@ export default function AdminExternalRating() {
     setSubmitted(true);
   };
 
-  const StarSelector = ({ label, value, onChange }: { label: string, value: number, onChange: (val: number) => void }) => {
-    return (
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
-        <span className="text-sm font-bold text-gray-700 mb-2 sm:mb-0">{label}</span>
-        <div className="flex items-center gap-1.5">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onClick={() => onChange(star)}
-              className="text-2xl transition-all duration-150 hover:scale-125 focus:outline-none"
-              style={{ color: star <= value ? 'var(--fnrc-accent-gold)' : 'var(--fnrc-border-gray)' }}
-            >
-              ★
-            </button>
-          ))}
-          <span className="text-xs font-black text-gray-400 ml-2 w-8">({value}/5)</span>
-        </div>
-      </div>
-    );
-  };
+
 
   if (submitted) {
     return (
@@ -119,7 +97,7 @@ export default function AdminExternalRating() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 flex flex-col items-center">
       {/* Premium Header */}
-      <div className="max-w-2xl w-full mb-8 text-center space-y-2">
+      <div className="max-w-2xl w-full mb-8 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-1">
           <Award className="h-7 w-7 text-[var(--fnrc-primary-green)]" />
           <span className="text-lg font-black text-gray-800 tracking-wide uppercase">Federal National Council</span>
@@ -127,9 +105,16 @@ export default function AdminExternalRating() {
         <h1 className="text-2xl font-black text-gray-800">
           Departmental Vendor Evaluation
         </h1>
-        <p className="text-xs text-gray-450 font-bold uppercase tracking-widest">
-          Procurement & Vendor Rating System
-        </p>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 text-sm font-medium">
+          <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <span className="text-gray-500 mr-2">RFP Name:</span>
+            <span className="text-gray-800 font-bold">{proposal.rfpTitle}</span>
+          </div>
+          <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <span className="text-gray-500 mr-2">Proposal ID:</span>
+            <span className="text-[var(--fnrc-primary-green)] font-black">{proposal.id}</span>
+          </div>
+        </div>
       </div>
 
       <Card className="max-w-2xl w-full border border-gray-150 shadow-2xl bg-white rounded-2xl">
@@ -159,29 +144,25 @@ export default function AdminExternalRating() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Scorecard Criteria</h3>
+            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Vendor Rating Queries</h3>
             
-            <div className="space-y-3">
-              <StarSelector
-                label="Quality of Service & Deliverables"
-                value={qualityRating}
-                onChange={setQualityRating}
-              />
-              <StarSelector
-                label="Timeliness & Schedule Adherence"
-                value={timelinessRating}
-                onChange={setTimelinessRating}
-              />
-              <StarSelector
-                label="Communication & Responsiveness"
-                value={communicationRating}
-                onChange={setCommunicationRating}
-              />
-              <StarSelector
-                label="Contract Compliance & SLA Adherence"
-                value={complianceRating}
-                onChange={setComplianceRating}
-              />
+            <div className="space-y-4">
+              {[
+                { label: "How would you rate the vendor's technical capability?", value: q1Remark, setter: setQ1Remark },
+                { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, setter: setQ2Remark },
+                { label: "Rate the vendor's financial stability.", value: q3Remark, setter: setQ3Remark }
+              ].map((q, i) => (
+                <div key={i} className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 block">{q.label}</label>
+                  <Textarea
+                    placeholder="Enter your remarks here..."
+                    value={q.value}
+                    onChange={(e) => q.setter(e.target.value)}
+                    className="w-full p-3 rounded-xl border text-sm font-medium focus-visible:ring-[var(--fnrc-primary-green)] bg-white resize-none"
+                    rows={2}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 

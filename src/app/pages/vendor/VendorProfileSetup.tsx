@@ -104,26 +104,41 @@ export default function VendorProfileSetup() {
                   <Label htmlFor="address">Address</Label>
                   <Textarea id="address" placeholder="Building, Street, Area..." rows={2} required />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  <Input id="country" placeholder="United Arab Emirates" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" placeholder="Dubai" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="phone" className="pl-10" placeholder="+971 4 123 4567" required />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="country">Country</Label>
+                    <Input id="country" placeholder="United Arab Emirates" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stateEmirate">State/Emirate</Label>
+                    <Input id="stateEmirate" placeholder="Dubai / Abu Dhabi" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input id="city" placeholder="Dubai" required />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emailId">Email ID</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="emailId" type="email" className="pl-10" placeholder="info@company.com" required />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
+                      <Input id="phone" className="pl-10" placeholder="+971 4 123 4567" required />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="fax">Fax Number</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
+                      <Input id="fax" className="pl-10" placeholder="+971 4 123 4568" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="emailId">Email ID</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
+                      <Input id="emailId" type="email" className="pl-10" placeholder="info@company.com" required />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2 md:col-span-2">
@@ -193,10 +208,22 @@ export default function VendorProfileSetup() {
                   <Input id="bankName" placeholder="Emirates NBD" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountNumber">Bank Details (Account Number)</Label>
-                  <Input id="accountNumber" placeholder="AE12 3456 7890 1234 5678" required />
+                  <Label htmlFor="accountHolderName">Account Holder Name</Label>
+                  <Input id="accountHolderName" placeholder="TechSolutions LLC" required />
                 </div>
-                <div className="space-y-2 md:col-span-2">
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber">Account Number</Label>
+                  <Input id="accountNumber" placeholder="100234567890" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="iban">IBAN</Label>
+                  <Input id="iban" placeholder="AE12 3456 7890 1234 5678 901" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="swiftCode">Swift Code</Label>
+                  <Input id="swiftCode" placeholder="EBILAEADXXX" required />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="vatNumber">VAT Registration Number</Label>
                   <Input id="vatNumber" placeholder="100234567890003" required />
                 </div>

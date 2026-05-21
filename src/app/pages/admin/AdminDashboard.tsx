@@ -17,7 +17,7 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
-          Admin Dashboard
+          FNRC Admin Portal
         </h1>
         <p className="text-muted-foreground font-medium">
           FNRC Procurement Management System

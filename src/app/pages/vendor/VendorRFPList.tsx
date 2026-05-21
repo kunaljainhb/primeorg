@@ -7,6 +7,7 @@ import { Input } from '@/app/components/ui/input';
 import { Badge } from '@/app/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/app/components/ui/select';
 import { mockRFPs } from '@/app/data/mockData';
 
 const formatDate = (dateStr?: string | Date) => {
@@ -31,6 +32,7 @@ export default function VendorRFPList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [rfpStatusFilter, setRfpStatusFilter] = useState<'all' | 'open' | 'closed'>('all');
 
   const activeRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
   
@@ -48,13 +50,20 @@ export default function VendorRFPList() {
   const clearFilters = () => {
     setSelectedCategories([]);
     setSearchQuery('');
+    setRfpStatusFilter('all');
   };
 
   const filteredRFPs = activeRFPs.filter(rfp => {
     const matchesSearch = rfp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          rfp.id.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategories.length === 0 || rfp.category.some(c => selectedCategories.includes(c));
-    return matchesSearch && matchesCategory;
+    
+    const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
+    const matchesStatus = rfpStatusFilter === 'all' ||
+                          (rfpStatusFilter === 'open' && !isClosed) ||
+                          (rfpStatusFilter === 'closed' && isClosed);
+                          
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
 
@@ -83,7 +92,7 @@ export default function VendorRFPList() {
                   className="pl-9"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap items-center gap-3">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="gap-2">
@@ -132,17 +141,26 @@ export default function VendorRFPList() {
                   </PopoverContent>
                 </Popover>
 
-                {(searchQuery || selectedCategories.length > 0) && (
-                  <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-1 text-xs">
-                    <X className="h-3 w-3" />
-                    Reset
-                  </Button>
-                )}
+                <div style={{ width: '160px' }}>
+                  <Select 
+                    value={rfpStatusFilter} 
+                    onValueChange={(val) => setRfpStatusFilter(val as 'all' | 'open' | 'closed')}
+                  >
+                    <SelectTrigger className="h-10 w-full">
+                      <SelectValue placeholder="RFP Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="open">Published</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
             {/* Active Filter Badges */}
-            {selectedCategories.length > 0 && (
+            {(selectedCategories.length > 0 || rfpStatusFilter !== 'all') && (
               <div className="flex flex-wrap gap-2 pt-2 border-t" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                 {selectedCategories.map(cat => (
                   <Badge key={cat} variant="secondary" className="gap-1 pr-1">
@@ -153,6 +171,15 @@ export default function VendorRFPList() {
                     />
                   </Badge>
                 ))}
+                {rfpStatusFilter !== 'all' && (
+                  <Badge variant="secondary" className="gap-1 pr-1 font-medium">
+                    Status: {rfpStatusFilter === 'open' ? 'Published' : 'Closed'}
+                    <X 
+                      className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                      onClick={() => setRfpStatusFilter('all')}
+                    />
+                  </Badge>
+                )}
               </div>
             )}
           </div>
@@ -177,7 +204,7 @@ export default function VendorRFPList() {
                         color: 'white'
                       }}
                     >
-                      {new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'Closed' : 'Open'}
+                      {new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'Closed' : 'Published'}
                     </Badge>
                     <Badge variant="outline" style={{ color: 'var(--fnrc-text-muted)' }}>
                       {rfp.id}

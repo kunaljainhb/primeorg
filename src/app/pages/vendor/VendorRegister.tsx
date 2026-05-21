@@ -109,7 +109,7 @@ export default function VendorRegister() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyName" className="text-sm font-semibold opacity-70">Company Name</Label>
+                  <Label htmlFor="companyName" className="text-sm font-semibold opacity-70">Company Name (as per Trade License)</Label>
                   <Input
                     id="companyName"
                     placeholder="Enter official company name"

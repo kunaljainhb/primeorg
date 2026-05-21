@@ -25,13 +25,13 @@ export default function VendorProposalSubmit() {
   const rfp = mockRFPs.find(r => r.id === rfpId);
   const [showSuccess, setShowSuccess] = useState(false);
   const [costItems, setCostItems] = useState([
-    { id: '1', description: 'Core Services & Implementation', amount: 0 },
+    { id: '1', description: 'Core Services & Implementation', unitPrice: 0, quantity: 1, amount: 0 },
   ]);
 
   const addCostItem = () => {
     setCostItems([
       ...costItems,
-      { id: Date.now().toString(), description: '', amount: 0 }
+      { id: Date.now().toString(), description: '', unitPrice: 0, quantity: 1, amount: 0 }
     ]);
   };
 
@@ -41,13 +41,23 @@ export default function VendorProposalSubmit() {
     }
   };
 
-  const updateCostItem = (id: string, field: 'description' | 'amount', value: string | number) => {
-    setCostItems(costItems.map(item => 
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+  const updateCostItem = (id: string, field: 'description' | 'unitPrice' | 'quantity', value: any) => {
+    setCostItems(costItems.map(item => {
+      if (item.id === id) {
+        const updatedItem = { ...item, [field]: value };
+        
+        // Recalculate amount if unitPrice or quantity changes
+        const price = field === 'unitPrice' ? Number(value) : Number(item.unitPrice || 0);
+        const qty = field === 'quantity' ? Number(value) : Number(item.quantity || 0);
+        updatedItem.amount = price * qty;
+        
+        return updatedItem;
+      }
+      return item;
+    }));
   };
 
-  const totalAmount = costItems.reduce((sum, item) => sum + item.amount, 0);
+  const totalAmount = costItems.reduce((sum, item) => sum + (item.amount || 0), 0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,8 +150,11 @@ export default function VendorProposalSubmit() {
                     <Table>
                       <TableHeader>
                         <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-                          <TableHead className="w-[70%]">Description</TableHead>
-                          <TableHead className="text-right">Amount (AED)</TableHead>
+                          <TableHead className="w-[40%]">Description</TableHead>
+                          <TableHead className="text-right w-[18%]">Unit Price (AED)</TableHead>
+                          <TableHead className="text-right w-[12%]">Quantity</TableHead>
+                          <TableHead className="text-right w-[20%]">Amount (AED)</TableHead>
+                          <TableHead className="w-[10%]"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -149,39 +162,64 @@ export default function VendorProposalSubmit() {
                           <TableRow key={item.id}>
                             <TableCell>
                               <Input 
-                                placeholder="Enter description (e.g. Licensing, Hardware...)"
+                                placeholder="e.g. Licensing, Hardware, Services..."
                                 value={item.description}
                                 onChange={(e) => updateCostItem(item.id, 'description', e.target.value)}
                                 required
                               />
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Input 
-                                  type="number" 
-                                  className="text-right" 
-                                  placeholder="0.00"
-                                  value={item.amount || ''}
-                                  onChange={(e) => updateCostItem(item.id, 'amount', parseFloat(e.target.value) || 0)}
-                                  required
-                                />
-                                {costItems.length > 1 && (
-                                  <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 text-red-500 hover:text-red-700"
-                                    onClick={() => removeCostItem(item.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
+                              <Input 
+                                type="number"
+                                className="text-right"
+                                placeholder="0.00"
+                                min={0}
+                                value={item.unitPrice || ''}
+                                onChange={(e) => updateCostItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                                required
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input 
+                                type="number"
+                                className="text-right"
+                                placeholder="1"
+                                min={1}
+                                step={1}
+                                value={item.quantity || ''}
+                                onChange={(e) => updateCostItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                                required
+                              />
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div 
+                                className="inline-flex items-center justify-end h-9 px-3 rounded-md text-sm font-semibold min-w-[100px]"
+                                style={{ 
+                                  backgroundColor: 'var(--fnrc-bg-light)', 
+                                  color: item.amount > 0 ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)',
+                                  border: '1px solid var(--fnrc-border-gray)'
+                                }}
+                              >
+                                {item.amount > 0 ? item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}
                               </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {costItems.length > 1 && (
+                                <Button 
+                                  type="button" 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  onClick={() => removeCostItem(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
                         <TableRow className="hover:bg-transparent">
-                          <TableCell colSpan={2} className="pt-4">
+                          <TableCell colSpan={5} className="pt-3 pb-3">
                             <Button
                               type="button"
                               variant="outline"
@@ -195,11 +233,14 @@ export default function VendorProposalSubmit() {
                             </Button>
                           </TableCell>
                         </TableRow>
-                        <TableRow className="bg-gray-50 border-t-2">
-                          <TableCell className="font-bold">Total Proposal Amount</TableCell>
-                          <TableCell className="text-right font-bold text-lg pr-12">
-                            AED {totalAmount.toLocaleString()}
+                        <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)', borderTop: '2px solid var(--fnrc-border-gray)' }}>
+                          <TableCell colSpan={3} className="font-bold text-right" style={{ color: 'var(--fnrc-text-dark)' }}>
+                            Total Proposal Amount
                           </TableCell>
+                          <TableCell className="text-right font-bold text-lg" style={{ color: 'var(--fnrc-primary-green)' }}>
+                            AED {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </TableCell>
+                          <TableCell />
                         </TableRow>
                       </TableBody>
                     </Table>

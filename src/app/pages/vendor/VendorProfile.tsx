@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
-import { CheckCircle, Download, FileText, Shield, AlertTriangle, Building2 } from 'lucide-react';
-import { ComplianceNotificationIcon } from '@/app/components/vendor/ComplianceNotificationIcon';
+import { CheckCircle, Download, FileText, Shield, AlertTriangle, Building2, Info } from 'lucide-react';
 import { mockVendorDocuments } from '@/app/data/mockData';
 import {
   Table,
@@ -41,8 +40,10 @@ export default function VendorProfile() {
     licenseExpiry: '2026-12-31',
     address: 'Dubai Silicon Oasis, Dubai, UAE',
     country: 'United Arab Emirates',
+    stateEmirate: 'Dubai',
     city: 'Dubai',
     phone: '+971 4 123 4567',
+    fax: '+971 4 123 4568',
     email: 'contact@techsolutions.ae',
     website: 'www.techsolutions.ae',
     categories: ['Information Technology', 'Consulting'],
@@ -53,8 +54,11 @@ export default function VendorProfile() {
       email: 'john.doe@techsolutions.ae'
     },
     financialInfo: {
+      accountNumber: '100234567890',
       bankAccount: 'AE12 3456 7890 1234 5678 901',
       bankName: 'Emirates NBD',
+      accountHolderName: 'TechSolutions LLC',
+      swiftCode: 'EBILAEADXXX',
       vatNumber: '100012345600003'
     }
   });
@@ -86,6 +90,7 @@ export default function VendorProfile() {
 
   const handleSave = () => {
     setIsEditing(false);
+    setRegistrationStatus('Correction Requested');
     // In a real app, you would call an API here
   };
 
@@ -105,46 +110,13 @@ export default function VendorProfile() {
     );
   };
 
-  const getExpiryAlert = (expiryDate?: string) => {
-    if (!expiryDate) return null;
 
+
+  const getExpiryDays = (expiryDate?: string) => {
+    if (!expiryDate) return null;
     const today = new Date('2026-02-20');
     const expiry = new Date(expiryDate);
-    const daysRemaining = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-    // Only show alert if document is expired or expiring within 30 days
-    if (daysRemaining <= 30) {
-      let alertColor, tooltipMessage;
-
-      if (daysRemaining < 0) {
-        alertColor = 'var(--fnrc-error)';
-        tooltipMessage = `Expired ${Math.abs(daysRemaining)} day${Math.abs(daysRemaining) !== 1 ? 's' : ''} ago`;
-      } else if (daysRemaining <= 15) {
-        alertColor = '#EA580C';
-        tooltipMessage = `Expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`;
-      } else {
-        alertColor = 'var(--fnrc-warning)';
-        tooltipMessage = `Expires in ${daysRemaining} days`;
-      }
-
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <AlertTriangle 
-                className="h-4 w-4 cursor-help" 
-                style={{ color: alertColor }} 
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{tooltipMessage}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    }
-
-    return null;
+    return Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   };
 
   return (
@@ -181,12 +153,12 @@ export default function VendorProfile() {
             </Button>
             <Button 
               size="sm"
-              variant={registrationStatus === 'Correction Required' ? 'default' : 'outline'}
-              onClick={() => setRegistrationStatus('Correction Required')}
-              style={registrationStatus === 'Correction Required' ? { backgroundColor: '#F59E0B', color: 'white' } : {}}
+              variant={registrationStatus === 'Correction Requested' ? 'default' : 'outline'}
+              onClick={() => setRegistrationStatus('Correction Requested')}
+              style={registrationStatus === 'Correction Requested' ? { backgroundColor: '#F59E0B', color: 'white' } : {}}
               className="h-8"
             >
-              Correction Required
+              Correction Requested
             </Button>
           </div>
         </div>
@@ -208,7 +180,6 @@ export default function VendorProfile() {
         <TabsContent value="company" className="space-y-6 mt-6">
           <div className="flex justify-end mb-4">
             <div className="flex items-center gap-3">
-              <ComplianceNotificationIcon vendorId="VEN-001" />
               {isEditing ? (
                 <div className="flex gap-2">
                   <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
@@ -241,9 +212,9 @@ export default function VendorProfile() {
                         <AlertTriangle className="mr-1 h-3 w-3" /> Application Rejected
                       </Badge>
                     )}
-                    {registrationStatus === 'Correction Required' && (
+                    {registrationStatus === 'Correction Requested' && (
                       <Badge variant="secondary" style={{ backgroundColor: '#FEF3C7', color: '#F59E0B' }}>
-                        <AlertTriangle className="mr-1 h-3 w-3" /> Correction Required
+                        <AlertTriangle className="mr-1 h-3 w-3" /> Correction Requested
                       </Badge>
                     )}
                     <span className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>ID: VEN-001</span>
@@ -357,39 +328,59 @@ export default function VendorProfile() {
                         <div className="font-medium text-dark">{vendorData.address}</div>
                       )}
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">Country</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.country} onChange={(e) => setVendorData({...vendorData, country: e.target.value})} />
-                      ) : (
-                        <div className="font-medium text-dark">{vendorData.country}</div>
-                      )}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">Country</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.country} onChange={(e) => setVendorData({...vendorData, country: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark">{vendorData.country}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">State / Emirate</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.stateEmirate} onChange={(e) => setVendorData({...vendorData, stateEmirate: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark">{vendorData.stateEmirate}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">City</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.city} onChange={(e) => setVendorData({...vendorData, city: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark">{vendorData.city}</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">City</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.city} onChange={(e) => setVendorData({...vendorData, city: e.target.value})} />
-                      ) : (
-                        <div className="font-medium text-dark">{vendorData.city}</div>
-                      )}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">Phone Number</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.phone} onChange={(e) => setVendorData({...vendorData, phone: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground animate-pulse" /> {vendorData.phone}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">Fax Number</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.fax} onChange={(e) => setVendorData({...vendorData, fax: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> {vendorData.fax}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider">Email ID</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.email} onChange={(e) => setVendorData({...vendorData, email: e.target.value})} />
+                        ) : (
+                          <div className="font-medium text-dark flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> {vendorData.email}</div>
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">Phone Number</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.phone} onChange={(e) => setVendorData({...vendorData, phone: e.target.value})} />
-                      ) : (
-                        <div className="font-medium text-dark flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> {vendorData.phone}</div>
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">Email ID</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.email} onChange={(e) => setVendorData({...vendorData, email: e.target.value})} />
-                      ) : (
-                        <div className="font-medium text-dark flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> {vendorData.email}</div>
-                      )}
-                    </div>
-                    <div className="space-y-1">
+                    <div className="space-y-1 md:col-span-2">
                       <Label className="text-xs text-muted-foreground uppercase tracking-wider">Website</Label>
                       {isEditing ? (
                         <Input value={vendorData.website} onChange={(e) => setVendorData({...vendorData, website: e.target.value})} />
@@ -466,11 +457,35 @@ export default function VendorProfile() {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Bank Account (IBAN)</Label>
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Account Holder Name</Label>
+                    {isEditing ? (
+                      <Input value={vendorData.financialInfo.accountHolderName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, accountHolderName: e.target.value}})} />
+                    ) : (
+                      <div className="font-medium text-dark">{vendorData.financialInfo.accountHolderName}</div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Account Number</Label>
+                    {isEditing ? (
+                      <Input value={vendorData.financialInfo.accountNumber} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, accountNumber: e.target.value}})} />
+                    ) : (
+                      <div className="font-mono text-sm font-medium text-dark">{vendorData.financialInfo.accountNumber}</div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">IBAN</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.bankAccount} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankAccount: e.target.value}})} />
                     ) : (
                       <div className="font-mono text-sm font-medium text-dark">{vendorData.financialInfo.bankAccount}</div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">Swift Code</Label>
+                    {isEditing ? (
+                      <Input value={vendorData.financialInfo.swiftCode} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, swiftCode: e.target.value}})} />
+                    ) : (
+                      <div className="font-medium text-dark">{vendorData.financialInfo.swiftCode}</div>
                     )}
                   </div>
                   <div className="space-y-1">
@@ -537,7 +552,38 @@ export default function VendorProfile() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {getStatusBadge(doc.status)}
-                            {getExpiryAlert(doc.expiryDate)}
+                            {doc.expiryDate && (() => {
+                              const daysRemaining = getExpiryDays(doc.expiryDate);
+                              if (daysRemaining === null || daysRemaining >= 30) return null;
+                              
+                              let iconColor = 'text-blue-500';
+                              if (daysRemaining < 0) {
+                                iconColor = 'text-red-600 animate-pulse';
+                              } else if (daysRemaining <= 15) {
+                                iconColor = 'text-orange-500';
+                              } else {
+                                iconColor = 'text-amber-500';
+                              }
+
+                              return (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="cursor-help">
+                                        <Info className={`h-4 w-4 ${iconColor}`} />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs font-bold">
+                                        {daysRemaining < 0 
+                                          ? `Expired ${Math.abs(daysRemaining)} day${Math.abs(daysRemaining) !== 1 ? 's' : ''} ago` 
+                                          : `Document expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
+                            })()}
                           </div>
                         </TableCell>
                         <TableCell className="text-right">

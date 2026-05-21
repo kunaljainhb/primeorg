@@ -76,6 +76,7 @@ export default function AdminRFPDetail() {
   const shortlistedProposals = relatedProposals.filter(p => p.status === 'shortlisted');
 
   const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
   const [newDeadline, setNewDeadline] = useState<Date | undefined>(new Date(rfp.submissionDeadline));
   const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
@@ -83,7 +84,7 @@ export default function AdminRFPDetail() {
   const [isAIAnalyzing, setIsAIAnalyzing] = useState(false);
 
   const handleAIComparison = () => {
-    if (selectedProposals.length === 2) {
+    if (selectedProposals.length >= 2 && selectedProposals.length <= 3) {
       setShowAIComparisonDialog(true);
       setIsAIAnalyzing(true);
       setTimeout(() => setIsAIAnalyzing(false), 2500); // Simulate AI loading
@@ -194,8 +195,8 @@ export default function AdminRFPDetail() {
 
   const handleSelectProposal = (proposalId: string, checked: boolean) => {
     if (checked) {
-      if (selectedProposals.length >= 2) {
-        toast.error('You can only select up to 2 proposals for comparison.');
+      if (selectedProposals.length >= 3) {
+        toast.error('You can only select up to 3 proposals for comparison.');
         return;
       }
       setSelectedProposals([...selectedProposals, proposalId]);
@@ -233,6 +234,12 @@ export default function AdminRFPDetail() {
     navigate('/admin/rfps');
   };
 
+  const handleCancelRFP = () => {
+    toast.success('RFP cancelled successfully');
+    setShowCancelDialog(false);
+    navigate('/admin/rfps');
+  };
+
   const handleChangeDeadline = () => {
     if (newDeadline) {
       toast.success('Submission deadline updated successfully');
@@ -263,14 +270,22 @@ export default function AdminRFPDetail() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50 h-9 font-bold text-xs" onClick={() => setShowDeadlineDialog(true)}>
-            <Clock className="mr-2 h-3.5 w-3.5" />
-            Change Deadline
-          </Button>
-          <Button className="text-white h-9 px-6 font-bold text-xs" style={{ backgroundColor: 'var(--fnrc-primary-green)' }} onClick={() => setShowCloseDialog(true)}>
-            <Check className="mr-2 h-3.5 w-3.5" />
-            Close RFP
-          </Button>
+          {(rfp.status !== 'closed' && rfp.status !== 'cancelled') && (
+            <>
+              <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 h-9 font-bold text-xs" onClick={() => setShowCancelDialog(true)}>
+                <XIcon className="mr-2 h-3.5 w-3.5" />
+                Cancel RFP
+              </Button>
+              <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50 h-9 font-bold text-xs" onClick={() => setShowDeadlineDialog(true)}>
+                <Clock className="mr-2 h-3.5 w-3.5" />
+                Change Deadline
+              </Button>
+              <Button className="text-white h-9 px-6 font-bold text-xs" style={{ backgroundColor: 'var(--fnrc-primary-green)' }} onClick={() => setShowCloseDialog(true)}>
+                <Check className="mr-2 h-3.5 w-3.5" />
+                Close RFP
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -600,7 +615,7 @@ export default function AdminRFPDetail() {
                 <div className="flex items-center gap-3">
                   <Button
                     className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-8 text-xs transition-all gap-1.5 shadow-md shadow-purple-500/20"
-                    disabled={selectedProposals.length !== 2}
+                    disabled={selectedProposals.length < 2 || selectedProposals.length > 3}
                     onClick={handleAIComparison}
                   >
                     <Brain className="h-3.5 w-3.5" />
@@ -611,8 +626,9 @@ export default function AdminRFPDetail() {
             ) : (
               <div className="bg-gray-50/50 border-b p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h4 className="text-xs font-bold text-gray-855">Select up to 2 vendors to compare</h4>
-                  <p className="text-[11px] text-gray-500 font-medium">Use checkboxes to select proposals for comparison</p>
+                  <h4 className="text-xs font-bold text-gray-855">Select 3 vendors proposal for AI comparison</h4>
+                  <p className="text-[11px] text-gray-500 font-medium">
+                    {selectedProposals.length} proposal{selectedProposals.length > 1 ? 's' : ''} selected for comparison</p>
                 </div>
                 <Button
                   className="bg-gray-200 text-gray-400 font-bold h-8 text-xs cursor-not-allowed border border-gray-300"
@@ -790,6 +806,19 @@ export default function AdminRFPDetail() {
         </AlertDialogContent>
       </AlertDialog>
 
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel RFP?</AlertDialogTitle>
+            <AlertDialogDescription>Cancelling the RFP will notify all participating vendors and halt the process. This action is irreversible.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Go Back</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelRFP} className="bg-red-600 hover:bg-red-700 text-white">Confirm Cancel</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Dialog open={showDeadlineDialog} onOpenChange={setShowDeadlineDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -828,71 +857,70 @@ export default function AdminRFPDetail() {
             </div>
           ) : (
             <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Vendor 1 Analysis */}
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-lg text-gray-800">TechCorp Solutions</h4>
-                      <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-none">Score: 88/100</Badge>
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-4">AED 1,250,000</div>
-                    
-                    <div className="space-y-3">
-                      <div>
-                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Technical Highlights</h5>
-                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-green-500">
-                          <li>Fully compliant with core requirements</li>
-                          <li>Offers 24/7 localized support</li>
-                          <li>Implementation timeline: 45 days</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Commercial Differences</h5>
-                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-blue-500">
-                          <li>Highest upfront cost</li>
-                          <li>Includes 3-year extended warranty</li>
-                          <li>Favorable payment terms (30% advance)</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Vendor 2 Analysis */}
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
-                    <div className="absolute -top-3 -right-3">
-                      <Badge className="bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 font-bold shadow-sm">
-                        <Sparkles className="h-3 w-3 inline mr-1" /> AI Recommended
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-lg text-gray-800">Global InfraGroup</h4>
-                      <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-none">Score: 92/100</Badge>
-                    </div>
-                    <div className="text-2xl font-bold text-green-600 mb-4">AED 1,120,000</div>
-                    
-                    <div className="space-y-3">
-                      <div>
-                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Technical Highlights</h5>
-                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-green-500">
-                          <li>Exceeds performance benchmarks by 15%</li>
-                          <li>Cloud-native modern architecture</li>
-                          <li>Implementation timeline: 60 days</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h5 className="text-xs font-bold uppercase text-gray-500 mb-1">Commercial Differences</h5>
-                        <ul className="text-sm font-medium text-gray-700 space-y-1 pl-4 list-disc marker:text-blue-500">
-                          <li>Most cost-effective solution (10% cheaper)</li>
-                          <li>Standard 1-year warranty</li>
-                          <li>Strict payment terms (50% advance)</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="overflow-x-auto border rounded-xl border-gray-200 shadow-sm">
+                <Table className="min-w-[800px]">
+                  <TableHeader className="bg-gray-50/80">
+                    <TableRow>
+                      <TableHead className="font-bold text-gray-700 w-1/4 align-bottom pb-4">Comparison Parameters</TableHead>
+                      {selectedProposals.map((id, index) => {
+                         const proposal = relatedProposals.find(p => p.id === id);
+                         return (
+                           <TableHead key={id} className="font-bold text-gray-900 w-1/4 text-center">
+                             <div className="flex flex-col items-center">
+                               {index === 0 && <Badge className="mb-2 bg-amber-100 text-amber-700 border border-amber-200"><Sparkles className="h-3 w-3 inline mr-1" /> AI Recommended</Badge>}
+                               <span className="text-sm">{proposal?.vendorName || `Vendor ${index + 1}`}</span>
+                               <span className="text-xs font-normal text-gray-500 mt-1">Score: {92 - (index * 4)}/100</span>
+                             </div>
+                           </TableHead>
+                         );
+                      })}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-semibold text-gray-600 bg-gray-50/30">Commercial (AED)</TableCell>
+                      {selectedProposals.map((id) => {
+                         const proposal = relatedProposals.find(p => p.id === id);
+                         return <TableCell key={id} className="text-center font-bold text-green-600">{proposal?.commercialAmount.toLocaleString()}</TableCell>;
+                      })}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-semibold text-gray-600 bg-gray-50/30">Technical Highlights</TableCell>
+                      {selectedProposals.map((id, index) => (
+                         <TableCell key={id} className="text-sm">
+                           <ul className="list-disc pl-4 text-left space-y-1 marker:text-purple-500">
+                             {index === 0 ? (
+                               <><li>Exceeds performance benchmarks</li><li>Cloud-native architecture</li></>
+                             ) : index === 1 ? (
+                               <><li>Fully compliant with core reqs</li><li>Offers 24/7 localized support</li></>
+                             ) : (
+                               <><li>Meets basic requirements</li><li>Standard architecture</li></>
+                             )}
+                           </ul>
+                         </TableCell>
+                      ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-semibold text-gray-600 bg-gray-50/30">Timeline & Warranty</TableCell>
+                      {selectedProposals.map((id, index) => (
+                         <TableCell key={id} className="text-sm text-center">
+                           <div className="space-y-1">
+                             <div className="font-medium">{60 - index * 15} days</div>
+                             <div className="text-gray-500 text-xs">{index + 1}-year warranty</div>
+                           </div>
+                         </TableCell>
+                      ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-semibold text-gray-600 bg-gray-50/30">Payment Terms</TableCell>
+                      {selectedProposals.map((id, index) => (
+                         <TableCell key={id} className="text-sm text-center font-medium">
+                           {50 - index * 20}% advance
+                         </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </div>
 
               {/* AI Recommendation Summary */}
@@ -901,7 +929,7 @@ export default function AdminRFPDetail() {
                   <Brain className="h-4 w-4" /> AI Recommendation Summary
                 </h4>
                 <p className="text-sm font-medium text-purple-800 leading-relaxed">
-                  Based on the predefined evaluation criteria (60% Technical / 40% Commercial), <strong>Global InfraGroup</strong> is the most suitable vendor for shortlisting. Although their implementation timeline is slightly longer (60 days vs 45 days) and warranty is shorter, their architectural approach exceeds requirements and provides a significantly better TCO (Total Cost of Ownership). TechCorp Solutions is a strong runner-up if immediate implementation is the strict priority.
+                  Based on the predefined evaluation criteria (60% Technical / 40% Commercial), <strong>{relatedProposals.find(p => p.id === selectedProposals[0])?.vendorName || "the recommended vendor"}</strong> is the most suitable vendor. Their architectural approach exceeds requirements and provides a significantly better TCO (Total Cost of Ownership).
                 </p>
               </div>
             </div>
@@ -910,17 +938,6 @@ export default function AdminRFPDetail() {
             <Button variant="outline" onClick={() => setShowAIComparisonDialog(false)}>
               Close
             </Button>
-            {!isAIAnalyzing && (
-              <Button
-                className="bg-green-600 hover:bg-green-700 text-white font-bold"
-                onClick={() => {
-                  toast.success("Global InfraGroup successfully shortlisted based on AI recommendation.");
-                  setShowAIComparisonDialog(false);
-                }}
-              >
-                Shortlist Recommended Vendor
-              </Button>
-            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

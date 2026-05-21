@@ -120,16 +120,6 @@ export default function VendorLogin() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Label htmlFor="password" title="Password" className="text-sm font-semibold opacity-70">Password</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent side="top">
-                              <p className="max-w-[200px]">Strong password recommendation: Minimum 8 characters, including uppercase, lowercase, numbers, and special characters.</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
                       </div>
                       <Button 
                         type="button"

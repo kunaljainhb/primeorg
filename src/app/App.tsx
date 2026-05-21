@@ -27,6 +27,8 @@ import AdminVendorDetail from '@/app/pages/admin/AdminVendorDetail';
 import AdminRFPManagement from '@/app/pages/admin/AdminRFPManagement';
 import AdminRFPCreate from '@/app/pages/admin/AdminRFPCreate';
 import AdminRFPDetail from '@/app/pages/admin/AdminRFPDetail';
+import AdminItemManagement from '@/app/pages/admin/AdminItemManagement';
+import AdminItemDetail from '@/app/pages/admin/AdminItemDetail';
 import AdminProposalManagement from '@/app/pages/admin/AdminProposalManagement';
 import AdminProposalDetail from '@/app/pages/admin/AdminProposalDetail';
 import AdminUserManagement from '@/app/pages/admin/AdminUserManagement';
@@ -72,6 +74,8 @@ function AppRoutes() {
   if (path.startsWith('/admin/rfps/edit/')) return <AdminLayout><AdminRFPCreate /></AdminLayout>;
   if (path.startsWith('/admin/rfps/') && path !== '/admin/rfps/create' && !path.startsWith('/admin/rfps/edit/')) return <AdminLayout><AdminRFPDetail /></AdminLayout>;
   if (path === '/admin/rfps') return <AdminLayout><AdminRFPManagement /></AdminLayout>;
+  if (path.startsWith('/admin/items/')) return <AdminLayout><AdminItemDetail /></AdminLayout>;
+  if (path === '/admin/items') return <AdminLayout><AdminItemManagement /></AdminLayout>;
   if (path.startsWith('/admin/proposals/')) return <AdminLayout><AdminProposalDetail /></AdminLayout>;
   if (path === '/admin/proposals') return <AdminLayout><AdminProposalManagement /></AdminLayout>;
   if (path === '/admin/users') return <AdminLayout><AdminUserManagement /></AdminLayout>;

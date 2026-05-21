@@ -17,6 +17,8 @@ const formatDate = (dateStr?: string | Date) => {
 
 const formatStatus = (statusStr?: string) => {
   if (!statusStr) return '';
+  if (statusStr === 'technical_correction_requested') return 'Technical Correction Requested';
+  if (statusStr === 'commercial_correction_requested') return 'Commercial Correction Requested';
   return statusStr
     .split(/_|\s+/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -29,10 +31,23 @@ export default function AdminProposalManagement() {
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
       submitted: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      technical_review: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      technical_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      technical_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      technical_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      technical_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
       under_review: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      commercial_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      commercial_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      commercial_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
+      correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
+      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
       shortlisted: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' }
+      selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' }
     };
     return colors[status] || colors.submitted;
   };

@@ -32,14 +32,14 @@ export interface Proposal {
   rfpTitle: string;
   vendorId: string;
   vendorName: string;
-  status: 'submitted' | 'under_review' | 'shortlisted' | 'selected' | 'rejected';
+  status: 'submitted' | 'under_review' | 'shortlisted' | 'selected' | 'rejected' | 'technical_review' | 'technical_correction_requested' | 'technical_review_started' | 'commercial_review_started' | 'technical_review_completed' | 'commercial_review_completed' | 'correction_requested' | 'commercial_correction_requested' | 'technical_review_rejected' | 'commercial_review_rejected';
   submissionDate: string;
   technicalProposal: string;
   commercialAmount: number;
   remarks?: string;
   // Enhanced fields for comparison
-  technicalStatus?: 'pending' | 'under_review' | 'approved' | 'rejected';
-  commercialStatus?: 'pending' | 'under_review' | 'approved' | 'rejected';
+  technicalStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested';
+  commercialStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested';
   deliveryTimeline?: string;
   technicalScore?: number;
   compliance?: string;
@@ -55,6 +55,9 @@ export interface Proposal {
   email?: string;
   phone?: string;
   shortlistedDate?: string;
+  technicalReviewer?: string;
+  commercialReviewer?: string;
+  uploadedDocuments?: { name: string; url: string; remarks: string; uploadedDate: string }[];
 }
 
 export interface ERPDocument {
@@ -185,11 +188,24 @@ export const mockRFPs: RFP[] = [
     status: 'draft',
     eligibilityCriteria: ['CREST certified', 'Proven track record in financial sector'],
     attachments: []
+  },
+  {
+    id: 'RFP-007',
+    title: 'Closed RFP Sample',
+    category: ['Information Technology'],
+    description: 'Sample closed RFP for testing.',
+    scopeOfWork: 'N/A',
+    timeline: 'N/A',
+    submissionDeadline: '2026-05-01',
+    createdAt: '2026-04-01',
+    status: 'closed',
+    eligibilityCriteria: [],
+    attachments: []
   }
 ];
 
-// Mock Proposals
-export const mockProposals: Proposal[] = [
+// Initial default proposals
+const initialProposals: Proposal[] = [
   // RFP-001 has 3 proposals
   {
     id: 'PROP-100',
@@ -197,12 +213,14 @@ export const mockProposals: Proposal[] = [
     rfpTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
-    status: 'submitted',
+    status: 'commercial_review_completed',
     submissionDate: '2026-06-01',
     technicalProposal: 'Premium laptops and workstations',
     commercialAmount: 420000,
-    technicalStatus: 'pending',
-    commercialStatus: 'pending'
+    technicalStatus: 'approved',
+    commercialStatus: 'approved',
+    technicalReviewer: 'Mohammed Al Zaabi',
+    commercialReviewer: 'Sarah Al Hosani'
   },
   {
     id: 'PROP-101',
@@ -216,7 +234,15 @@ export const mockProposals: Proposal[] = [
     technicalProposal: 'Standard enterprise hardware package',
     commercialAmount: 395000,
     technicalStatus: 'approved',
-    commercialStatus: 'approved'
+    commercialStatus: 'approved',
+    uploadedDocuments: [
+      {
+        name: 'Bank_Guarantee_v1.pdf',
+        url: '#',
+        remarks: 'Initial Bank Guarantee submission as requested in the shortlist notification.',
+        uploadedDate: '2026-06-16'
+      }
+    ]
   },
   {
     id: 'PROP-110',
@@ -240,12 +266,12 @@ export const mockProposals: Proposal[] = [
     rfpTitle: 'Cloud Migration Services',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
-    status: 'submitted',
+    status: 'technical_correction_requested',
     submissionDate: '2026-05-10',
     technicalProposal: 'Hybrid cloud solution using Azure Stack Hub',
     commercialAmount: 850000,
-    remarks: 'Under initial technical screening',
-    technicalStatus: 'pending',
+    remarks: 'Technical proposal is missing detail about multi-zone failover mechanisms. Please provide specific redundant architecture details and update the technical document.',
+    technicalStatus: 'correction_requested',
     commercialStatus: 'pending',
     deliveryTimeline: '6 months',
     technicalScore: 0,
@@ -285,7 +311,22 @@ export const mockProposals: Proposal[] = [
     vendorContact: 'contact@techsolutions.ae'
   },
 
-  // RFP-004 has 0 proposals (no entries here)
+  // RFP-004 has 1 proposal
+  {
+    id: 'PROP-104',
+    rfpId: 'RFP-004',
+    rfpTitle: 'EV Charging Station Network',
+    vendorId: 'VEN-002',
+    vendorName: 'Modern Office Furnishings',
+    status: 'shortlisted',
+    submissionDate: '2026-05-18',
+    shortlistedDate: '2026-05-25',
+    technicalProposal: 'Complete installation of 20 fast-charging units',
+    commercialAmount: 850000,
+    technicalStatus: 'approved',
+    commercialStatus: 'approved',
+    remarks: 'Shortlisted for final rollout.'
+  },
 
   // RFP-005 has 2 proposals
   {
@@ -310,7 +351,15 @@ export const mockProposals: Proposal[] = [
     boqSummary: 'Partitioning, Flooring, Electrical works, HVAC ducting',
     paymentTerms: 'Milestone based',
     warranty: '2 years defects liability period',
-    vendorContact: 'contact@techsolutions.ae'
+    vendorContact: 'contact@techsolutions.ae',
+    uploadedDocuments: [
+      {
+        name: 'Trade_License_Update.pdf',
+        url: '#',
+        remarks: 'Updated trade license showing current validity.',
+        uploadedDate: '2026-04-15'
+      }
+    ]
   },
   {
     id: 'PROP-106',
@@ -324,8 +373,60 @@ export const mockProposals: Proposal[] = [
     commercialAmount: 520000,
     technicalStatus: 'under_review',
     commercialStatus: 'pending'
+  },
+  {
+    id: 'PROP-107',
+    rfpId: 'RFP-001',
+    rfpTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-002',
+    vendorName: 'Modern Office Furnishings',
+    status: 'submitted',
+    submissionDate: '2026-04-14',
+    technicalProposal: 'Premium office furniture setup and ergonomic design',
+    commercialAmount: 480000,
+    technicalStatus: 'pending',
+    commercialStatus: 'pending'
   }
 ];
+
+export const saveProposalsToStorage = (proposals: Proposal[]) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('mock_proposals', JSON.stringify(proposals));
+  }
+};
+
+export const mockProposals: Proposal[] = (() => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('mock_proposals');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as Proposal[];
+        const p100 = parsed.find(p => p.id === 'PROP-100');
+        let needsSave = false;
+        if (p100 && p100.status !== 'commercial_review_completed') {
+          p100.status = 'commercial_review_completed';
+          p100.technicalStatus = 'approved';
+          p100.commercialStatus = 'approved';
+          p100.technicalReviewer = 'Mohammed Al Zaabi';
+          p100.commercialReviewer = 'Sarah Al Hosani';
+          needsSave = true;
+        }
+        const newProps = initialProposals.filter(ip => !parsed.find(p => p.id === ip.id));
+        if (newProps.length > 0) {
+          parsed.push(...newProps);
+          needsSave = true;
+        }
+        if (needsSave) {
+          localStorage.setItem('mock_proposals', JSON.stringify(parsed));
+        }
+        return parsed;
+      } catch (e) {
+        console.error("Failed parsing mock_proposals", e);
+      }
+    }
+  }
+  return initialProposals;
+})();
 
 // Mock Vendors
 export const mockVendors: Vendor[] = [
@@ -541,7 +642,7 @@ export const mockVendorDocuments: VendorDocument[] = [
     name: 'Trade License',
     documentType: 'Trade License',
     uploadDate: '2023-12-15',
-    expiryDate: '2026-05-20', // Expires in 5 days
+    expiryDate: '2026-03-02', // Expires in 10 days relative to 2026-02-20
     status: 'verified',
     fileSize: '2.4 MB',
     isRegulatory: true
@@ -563,7 +664,7 @@ export const mockVendorDocuments: VendorDocument[] = [
     name: 'ISO 27001 Certification',
     documentType: 'ISO Certifications',
     uploadDate: '2024-01-20',
-    expiryDate: '2026-06-05', // Expires in 21 days
+    expiryDate: '2026-03-12', // Expires in 20 days relative to 2026-02-20
     status: 'verified',
     fileSize: '1.2 MB',
     isRegulatory: true
@@ -584,7 +685,7 @@ export const mockVendorDocuments: VendorDocument[] = [
     name: 'Insurance Certificate',
     documentType: 'Insurance Certificate',
     uploadDate: '2024-02-01',
-    expiryDate: '2026-05-10', // Already expired
+    expiryDate: '2026-02-10', // Expired 10 days ago relative to 2026-02-20
     status: 'expired',
     fileSize: '1.9 MB',
     isRegulatory: true

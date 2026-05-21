@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/app/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/app/components/ui/select';
 import { mockRFPs, mockProposals, vendorCategories } from '@/app/data/mockData';
 import { Search, Calendar, Filter, X, Check } from 'lucide-react';
 import { useState } from 'react';
@@ -39,6 +40,7 @@ export default function AdminRFPManagement() {
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string>('');
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
 
@@ -87,14 +89,15 @@ export default function AdminRFPManagement() {
       if (rfpDate > toDate) return false;
     }
 
+    if (statusFilter && statusFilter !== 'all' && rfp.status !== statusFilter) {
+      return false;
+    }
     return true;
   });
 
   const clearFilters = () => {
     setSearchQuery('');
     setCategoryFilters([]);
-    setDateFrom('');
-    setDateTo('');
   };
 
   return (
@@ -137,7 +140,7 @@ export default function AdminRFPManagement() {
                 </div>
               </div>
 
-              {/* Category Filter (Multi-select) */}
+              {/* Service Category Filter */}
               <div style={{ width: '230px' }}>
                 <Label className="mb-2 block">Service Category</Label>
                 <Popover>
@@ -170,40 +173,46 @@ export default function AdminRFPManagement() {
                 </Popover>
               </div>
 
+              {/* Status Filter */}
+              <div style={{ width: '150px' }}>
+                <Label className="mb-2 block">Status</Label>
+                <Select value={statusFilter || "all"} onValueChange={(val) => setStatusFilter(val === "all" ? "" : val)}>
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="closed">Closed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Submission Deadline Group */}
               <div>
                 <Label className="mb-2 block">Submission Deadline</Label>
                 <div className="flex items-center gap-3">
-                  <div className="relative" style={{ width: '170px' }}>
+                  <div className="relative" style={{ width: '150px' }}>
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: 'var(--fnrc-text-muted)' }} />
                     <Input
                       type="date"
                       value={dateFrom}
                       onChange={(e) => setDateFrom(e.target.value)}
-                      className="h-10 pl-10"
+                      className="h-10 pl-10 text-sm"
                     />
                   </div>
                   <span style={{ color: 'var(--fnrc-text-muted)' }}>—</span>
-                  <div className="relative" style={{ width: '170px' }}>
+                  <div className="relative" style={{ width: '150px' }}>
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: 'var(--fnrc-text-muted)' }} />
                     <Input
                       type="date"
                       value={dateTo}
                       onChange={(e) => setDateTo(e.target.value)}
-                      className="h-10 pl-10"
+                      className="h-10 pl-10 text-sm"
                     />
                   </div>
                 </div>
-              </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={clearFilters} className="h-10">Clear</Button>
-                <Button 
-                  className="h-10 text-white px-6"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                >
-                  Search
-                </Button>
               </div>
             </div>
           </div>

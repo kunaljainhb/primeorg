@@ -23,6 +23,12 @@ const formatDate = (dateStr?: string | Date) => {
   return `${day}/${month}/${year}`;
 };
 
+const mockEmployees = [
+  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@fnrc.gov.ae' },
+  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@fnrc.gov.ae' },
+  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@fnrc.gov.ae' }
+];
+
 export default function AdminUserManagement() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -31,6 +37,7 @@ export default function AdminUserManagement() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    employeeId: '',
     role: '',
     status: 'active'
   });
@@ -42,7 +49,7 @@ export default function AdminUserManagement() {
     }
     toast.success('Admin user created successfully');
     setShowCreateDialog(false);
-    setFormData({ name: '', email: '', role: '', status: 'active' });
+    setFormData({ name: '', email: '', employeeId: '', role: '', status: 'active' });
   };
 
   const handleEditUser = (user: any) => {
@@ -50,6 +57,7 @@ export default function AdminUserManagement() {
     setFormData({
       name: user.name,
       email: user.email,
+      employeeId: user.employeeId || '',
       role: user.role,
       status: user.status
     });
@@ -59,7 +67,7 @@ export default function AdminUserManagement() {
   const handleUpdateUser = () => {
     toast.success('User updated successfully');
     setShowEditDialog(false);
-    setFormData({ name: '', email: '', role: '', status: 'active' });
+    setFormData({ name: '', email: '', employeeId: '', role: '', status: 'active' });
   };
 
   const handleViewDetails = (user: any) => {
@@ -104,6 +112,7 @@ export default function AdminUserManagement() {
           <Table>
             <TableHeader>
               <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                <TableHead className="font-semibold">Employee Code</TableHead>
                 <TableHead className="font-semibold">Name</TableHead>
                 <TableHead className="font-semibold">Email</TableHead>
                 <TableHead className="font-semibold">Role</TableHead>
@@ -115,11 +124,12 @@ export default function AdminUserManagement() {
             <TableBody>
               {mockAdminUsers.map((user) => (
                 <TableRow key={user.id} className="hover:bg-gray-50/50 cursor-pointer" onClick={() => handleViewDetails(user)}>
+                  <TableCell className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>{user.id}</TableCell>
                   <TableCell className="font-medium">{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-                      {user.role.replace('_', ' ')}
+                      {user.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                     </Badge>
                   </TableCell>
                   <TableCell className="font-medium text-gray-600 text-xs">
@@ -128,6 +138,7 @@ export default function AdminUserManagement() {
                   <TableCell>
                     <Badge
                       variant="secondary"
+                      className="capitalize"
                       style={{
                         backgroundColor: user.status === 'active' ? '#D1FAE5' : '#FEE2E2',
                         color: user.status === 'active' ? 'var(--fnrc-success)' : 'var(--fnrc-error)'
@@ -189,12 +200,40 @@ export default function AdminUserManagement() {
           </DialogHeader>
           <DialogDescription id="create-user-dialog-description" className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name *</Label>
+              <Label htmlFor="name">Select Employee *</Label>
+              <Select 
+                value={formData.employeeId} 
+                onValueChange={(value) => {
+                  const emp = mockEmployees.find(e => e.id === value);
+                  if (emp) {
+                    setFormData({
+                      ...formData,
+                      employeeId: emp.id,
+                      name: emp.name,
+                      email: emp.email
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an employee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockEmployees.map((emp) => (
+                    <SelectItem key={emp.id} value={emp.id}>
+                      {emp.name} ({emp.id})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="employeeId">Employee ID</Label>
               <Input
-                id="name"
-                placeholder="Enter full name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                id="employeeId"
+                placeholder="Auto-filled"
+                value={formData.employeeId}
+                disabled
               />
             </div>
             <div className="space-y-2">
@@ -202,9 +241,9 @@ export default function AdminUserManagement() {
               <Input
                 id="email"
                 type="email"
-                placeholder="user@fnrc.gov.ae"
+                placeholder="Auto-filled"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                disabled
               />
             </div>
             <div className="space-y-2">

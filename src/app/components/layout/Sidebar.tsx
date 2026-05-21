@@ -35,6 +35,7 @@ const adminNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Vendor Management', href: '/admin/vendors', icon: Users },
   { name: 'RFP Management', href: '/admin/rfps', icon: FileText },
+  { name: 'Item Management', href: '/admin/items', icon: ClipboardList },
   { name: 'User & Roles', href: '/admin/users', icon: Shield },
   { name: 'Master Data', href: '/admin/master-data', icon: Database },
   { name: 'Reports', href: '/admin/reports', icon: BarChart3 },

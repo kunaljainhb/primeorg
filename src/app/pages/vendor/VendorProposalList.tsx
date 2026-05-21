@@ -8,6 +8,7 @@ import { Label } from '@/app/components/ui/label';
 import { Search, Calendar, DollarSign, FileText } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/app/components/ui/calendar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { format } from 'date-fns';
 import { mockProposals } from '@/app/data/mockData';
 
@@ -23,6 +24,8 @@ const formatDate = (dateStr?: string | Date) => {
 
 const formatStatus = (statusStr?: string) => {
   if (!statusStr) return '';
+  if (statusStr === 'technical_correction_requested') return 'Technical Correction Requested';
+  if (statusStr === 'commercial_correction_requested') return 'Commercial Correction Requested';
   return statusStr
     .split(/_|\s+/)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -34,18 +37,52 @@ export default function VendorProposalList() {
   const myProposals = mockProposals.filter(p => p.vendorId === 'VEN-001');
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  });
+
+  // Dynamically extract statuses present in the vendor's proposals list
+  const availableStatuses = Array.from(
+    new Set(myProposals.map(p => p.status))
+  );
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
       submitted: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      technical_review: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      technical_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      technical_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      technical_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      technical_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
       under_review: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
+      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      commercial_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      commercial_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      commercial_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
+      correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
+      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
       shortlisted: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' }
+      selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' }
     };
     return colors[status] || colors.submitted;
+  };
+
+  const formatDateRangeText = () => {
+    if (dateRange.from && dateRange.to) {
+      return `${format(dateRange.from, 'LLL dd, yyyy')} - ${format(dateRange.to, 'LLL dd, yyyy')}`;
+    }
+    if (dateRange.from) {
+      return `${format(dateRange.from, 'LLL dd, yyyy')} - Select to date`;
+    }
+    if (dateRange.to) {
+      return `Select from date - ${format(dateRange.to, 'LLL dd, yyyy')}`;
+    }
+    return 'Select date range';
   };
 
   const filteredProposals = myProposals.filter(proposal => {
@@ -53,10 +90,25 @@ export default function VendorProposalList() {
                          proposal.rfpTitle.toLowerCase().includes(searchQuery.toLowerCase());
     
     const submissionDate = new Date(proposal.submissionDate);
-    const matchesDateFrom = !dateFrom || submissionDate >= dateFrom;
-    const matchesDateTo = !dateTo || submissionDate <= dateTo;
+    submissionDate.setHours(0, 0, 0, 0);
+
+    let matchesDateFrom = true;
+    if (dateRange.from) {
+      const fromLimit = new Date(dateRange.from);
+      fromLimit.setHours(0, 0, 0, 0);
+      matchesDateFrom = submissionDate >= fromLimit;
+    }
     
-    return matchesSearch && matchesDateFrom && matchesDateTo;
+    let matchesDateTo = true;
+    if (dateRange.to) {
+      const toLimit = new Date(dateRange.to);
+      toLimit.setHours(0, 0, 0, 0);
+      matchesDateTo = submissionDate <= toLimit;
+    }
+    
+    const matchesStatus = statusFilter === 'all' || proposal.status === statusFilter;
+    
+    return matchesSearch && matchesDateFrom && matchesDateTo && matchesStatus;
   });
 
   return (
@@ -88,59 +140,77 @@ export default function VendorProposalList() {
               </div>
             </div>
 
-            {/* Date From */}
+            {/* Date Range Picker */}
             <div className="space-y-2">
-              <Label>From Date</Label>
+              <Label>Date Range</Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {dateFrom ? format(dateFrom, 'PPP') : 'Select date'}
+                  <Button variant="outline" className="w-full justify-start text-left font-normal border-2 h-9 bg-white">
+                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground animate-pulse-subtle" />
+                    <span className="text-sm font-semibold text-gray-700">{formatDateRangeText()}</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dateFrom}
-                    onSelect={setDateFrom}
-                    initialFocus
-                  />
+                <PopoverContent className="w-auto p-4 bg-white border shadow-xl rounded-xl" align="start">
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    {/* From Date Selector */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider text-center border-b pb-1">From Date</div>
+                      <CalendarComponent
+                        mode="single"
+                        selected={dateRange.from}
+                        onSelect={(date) => setDateRange(prev => ({ ...prev, from: date }))}
+                        initialFocus
+                      />
+                    </div>
+                    
+                    {/* Vertical Divider */}
+                    <div className="hidden sm:block w-px bg-gray-100 self-stretch"></div>
+                    
+                    {/* To Date Selector */}
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider text-center border-b pb-1">To Date</div>
+                      <CalendarComponent
+                        mode="single"
+                        selected={dateRange.to}
+                        onSelect={(date) => setDateRange(prev => ({ ...prev, to: date }))}
+                        initialFocus
+                      />
+                    </div>
+                  </div>
                 </PopoverContent>
               </Popover>
             </div>
 
-            {/* Date To */}
+            {/* Status Filter */}
             <div className="space-y-2">
-              <Label>To Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {dateTo ? format(dateTo, 'PPP') : 'Select date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dateTo}
-                    onSelect={setDateTo}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <Label>Status Filter</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full h-9 border-2 text-sm font-semibold text-gray-750 bg-white">
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="font-semibold text-xs text-gray-700">All Statuses</SelectItem>
+                  {availableStatuses.map(status => (
+                    <SelectItem key={status} value={status} className="font-semibold text-xs text-gray-700">
+                      {formatStatus(status)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
           {/* Clear Filters */}
-          {(searchQuery || dateFrom || dateTo) && (
+          {(searchQuery || dateRange.from || dateRange.to || statusFilter !== 'all') && (
             <div className="mt-4">
               <Button
                 variant="ghost"
                 size="sm"
+                className="font-bold text-xs text-gray-500 hover:text-gray-900 border border-transparent hover:border-gray-200 hover:bg-gray-50 rounded-lg px-3 h-8 transition-all"
                 onClick={() => {
                   setSearchQuery('');
-                  setDateFrom(undefined);
-                  setDateTo(undefined);
+                  setDateRange({ from: undefined, to: undefined });
+                  setStatusFilter('all');
                 }}
               >
                 Clear Filters
@@ -167,14 +237,8 @@ export default function VendorProposalList() {
                       <Badge
                         variant="secondary"
                         style={{
-                          backgroundColor: 
-                            proposal.status === 'shortlisted' ? '#D1FAE5' : 
-                            proposal.status === 'under_review' ? '#FFEDD5' : 
-                            proposal.status === 'rejected' ? '#FEE2E2' : '#DBEAFE',
-                          color: 
-                            proposal.status === 'shortlisted' ? 'var(--fnrc-success)' : 
-                            proposal.status === 'under_review' ? '#EA580C' : 
-                            proposal.status === 'rejected' ? 'var(--fnrc-error)' : 'var(--fnrc-info)'
+                          backgroundColor: statusColor.bg,
+                          color: statusColor.text
                         }}
                       >
                         {formatStatus(proposal.status)}
