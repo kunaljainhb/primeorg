@@ -68,21 +68,21 @@ export default function VendorProfileSetup() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="legalNameEn">Company Legal Name (English)</Label>
+                  <Label htmlFor="legalNameEn">Company Legal Name (English) *</Label>
                   <Input id="legalNameEn" placeholder="TechSolutions LLC" required />
                 </div>
                 <div className="space-y-2 text-right">
-                  <Label htmlFor="legalNameAr">Company Legal Name (Arabic)</Label>
+                  <Label htmlFor="legalNameAr">Company Legal Name (Arabic) *</Label>
                   <Input id="legalNameAr" placeholder="تك سوليوشنز ذ.م.م" className="text-right" dir="rtl" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tradeLicense">Trade Licensee Number</Label>
+                  <Label htmlFor="tradeLicense">Trade Licensee Number *</Label>
                   <Input id="tradeLicense" placeholder="TL-123456" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="expiryDate">Expiry Date</Label>
                   <div className="relative">
-                    <Input id="expiryDate" type="date" required />
+                    <Input id="expiryDate" type="date" />
                   </div>
                 </div>
               </div>
@@ -101,26 +101,26 @@ export default function VendorProfileSetup() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address">Address *</Label>
                   <Textarea id="address" placeholder="Building, Street, Area..." rows={2} required />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
                   <div className="space-y-2">
-                    <Label htmlFor="country">Country</Label>
+                    <Label htmlFor="country">Country *</Label>
                     <Input id="country" placeholder="United Arab Emirates" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="stateEmirate">State/Emirate</Label>
+                    <Label htmlFor="stateEmirate">State/Emirate *</Label>
                     <Input id="stateEmirate" placeholder="Dubai / Abu Dhabi" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="city">City *</Label>
                     <Input id="city" placeholder="Dubai" required />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
                       <Input id="phone" className="pl-10" placeholder="+971 4 123 4567" required />
@@ -134,7 +134,7 @@ export default function VendorProfileSetup() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emailId">Email ID</Label>
+                    <Label htmlFor="emailId">Email ID *</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
                       <Input id="emailId" type="email" className="pl-10" placeholder="info@company.com" required />
@@ -164,25 +164,25 @@ export default function VendorProfileSetup() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="contactName">Name</Label>
+                  <Label htmlFor="contactName">Name *</Label>
                   <Input id="contactName" placeholder="John Doe" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="jobTitle">Job Title</Label>
+                  <Label htmlFor="jobTitle">Job Title *</Label>
                   <div className="relative">
                     <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
                     <Input id="jobTitle" className="pl-10" placeholder="Procurement Manager" required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="mobileNumber">Mobile Number</Label>
+                  <Label htmlFor="mobileNumber">Mobile Number *</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
                     <Input id="mobileNumber" className="pl-10" placeholder="+971 50 123 4567" required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Email</Label>
+                  <Label htmlFor="contactEmail">Email *</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
                     <Input id="contactEmail" type="email" className="pl-10" placeholder="john.doe@company.com" required />
@@ -204,27 +204,27 @@ export default function VendorProfileSetup() {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="bankName">Bank Name</Label>
+                  <Label htmlFor="bankName">Bank Name *</Label>
                   <Input id="bankName" placeholder="Emirates NBD" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountHolderName">Account Holder Name</Label>
+                  <Label htmlFor="accountHolderName">Account Holder Name *</Label>
                   <Input id="accountHolderName" placeholder="TechSolutions LLC" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountNumber">Account Number</Label>
+                  <Label htmlFor="accountNumber">Account Number *</Label>
                   <Input id="accountNumber" placeholder="100234567890" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="iban">IBAN</Label>
+                  <Label htmlFor="iban">IBAN *</Label>
                   <Input id="iban" placeholder="AE12 3456 7890 1234 5678 901" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="swiftCode">Swift Code</Label>
+                  <Label htmlFor="swiftCode">Swift Code *</Label>
                   <Input id="swiftCode" placeholder="EBILAEADXXX" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vatNumber">VAT Registration Number</Label>
+                  <Label htmlFor="vatNumber">VAT Registration Number *</Label>
                   <Input id="vatNumber" placeholder="100234567890003" required />
                 </div>
               </div>
@@ -284,12 +284,12 @@ export default function VendorProfileSetup() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 flex-1">
                     <div className="space-y-2">
-                      <Label htmlFor="tlIssueDate" className="text-xs text-muted-foreground">Issue Date</Label>
+                      <Label htmlFor="tlIssueDate" className="text-xs text-muted-foreground">Issue Date *</Label>
                       <Input id="tlIssueDate" type="date" required className="h-9 text-sm" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="tlExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="tlExpiryDate" type="date" required className="h-9 text-sm" />
+                      <Input id="tlExpiryDate" type="date" className="h-9 text-sm" />
                     </div>
                   </div>
                 </div>
@@ -307,12 +307,12 @@ export default function VendorProfileSetup() {
                   </div>
                   <div className="grid grid-cols-2 gap-4 flex-1">
                     <div className="space-y-2">
-                      <Label htmlFor="taxIssueDate" className="text-xs text-muted-foreground">Issue Date</Label>
+                      <Label htmlFor="taxIssueDate" className="text-xs text-muted-foreground">Issue Date *</Label>
                       <Input id="taxIssueDate" type="date" required className="h-9 text-sm" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="taxExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="taxExpiryDate" type="date" required className="h-9 text-sm" />
+                      <Input id="taxExpiryDate" type="date" className="h-9 text-sm" />
                     </div>
                   </div>
                 </div>
