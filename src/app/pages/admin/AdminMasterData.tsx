@@ -60,12 +60,12 @@ export default function AdminMasterData() {
   };
 
   const [ratingQueries, setRatingQueries] = useState([
-    { id: 'Q1', question: "How would you rate the vendor's technical capability?", status: 'Active' },
-    { id: 'Q2', question: 'Does the vendor have relevant experience in the required domain?', status: 'Active' },
-    { id: 'Q3', question: "Rate the vendor's financial stability.", status: 'Active' },
+    { id: 'Q1', sequence: 1, question: "How would you rate the vendor's technical capability?", status: 'Active' },
+    { id: 'Q2', sequence: 2, question: 'Does the vendor have relevant experience in the required domain?', status: 'Active' },
+    { id: 'Q3', sequence: 3, question: "Rate the vendor's financial stability.", status: 'Active' },
   ]);
   const [showQueryDialog, setShowQueryDialog] = useState(false);
-  const [queryForm, setQueryForm] = useState({ id: '', question: '', status: 'Active' });
+  const [queryForm, setQueryForm] = useState({ id: '', sequence: 1, question: '', status: 'Active' });
   const [isEditingQuery, setIsEditingQuery] = useState(false);
 
   const handleEditQuery = (query: any) => {
@@ -75,7 +75,7 @@ export default function AdminMasterData() {
   };
 
   const handleAddQuery = () => {
-    setQueryForm({ id: `Q${ratingQueries.length + 1}`, question: '', status: 'Active' });
+    setQueryForm({ id: `Q${ratingQueries.length + 1}`, sequence: ratingQueries.length + 1, question: '', status: 'Active' });
     setIsEditingQuery(false);
     setShowQueryDialog(true);
   };
@@ -309,15 +309,17 @@ export default function AdminMasterData() {
             <TableHeader>
               <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
                 <TableHead className="font-bold text-gray-700 w-16">ID</TableHead>
+                <TableHead className="font-bold text-gray-700 w-24">Sequence</TableHead>
                 <TableHead className="font-bold text-gray-700">Question</TableHead>
                 <TableHead className="font-bold text-gray-700 w-32">Status</TableHead>
                 <TableHead className="text-right font-bold text-gray-700 w-32">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ratingQueries.map((query, idx) => (
+              {ratingQueries.sort((a,b) => a.sequence - b.sequence).map((query, idx) => (
                 <TableRow key={idx} className="hover:bg-gray-50/30">
                   <TableCell className="font-bold text-gray-800">{query.id}</TableCell>
+                  <TableCell className="font-medium text-gray-800">{query.sequence}</TableCell>
                   <TableCell className="font-medium text-gray-800">{query.question}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" style={{ backgroundColor: query.status === 'Active' ? '#D1FAE5' : '#FEE2E2', color: query.status === 'Active' ? 'var(--fnrc-success)' : 'var(--fnrc-error)' }}>
@@ -618,6 +620,17 @@ export default function AdminMasterData() {
                 placeholder="Enter rating question"
                 value={queryForm.question}
                 onChange={(e) => setQueryForm({ ...queryForm, question: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="query-sequence">Sequence *</Label>
+              <Input
+                id="query-sequence"
+                type="number"
+                placeholder="Enter sequence number"
+                value={queryForm.sequence}
+                onChange={(e) => setQueryForm({ ...queryForm, sequence: parseInt(e.target.value) || 0 })}
               />
             </div>
 
