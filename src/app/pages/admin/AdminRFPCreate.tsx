@@ -29,7 +29,6 @@ interface RFPFormData {
   attachments: Array<{ name: string; size: string }>;
   visibility: 'open' | 'restricted';
   technicalProposalRequired: 'yes' | 'no';
-  commercialProposalRequired: 'yes' | 'no';
 }
 
 export default function AdminRFPCreate() {
@@ -53,8 +52,7 @@ export default function AdminRFPCreate() {
           milestones: [],
           attachments: draft.attachments || [],
           visibility: 'open',
-          technicalProposalRequired: 'yes',
-          commercialProposalRequired: 'yes'
+          technicalProposalRequired: 'yes'
         };
       }
     }
@@ -71,8 +69,7 @@ export default function AdminRFPCreate() {
       milestones: [],
       attachments: [],
       visibility: 'open',
-      technicalProposalRequired: 'yes',
-      commercialProposalRequired: 'yes'
+      technicalProposalRequired: 'yes'
     };
   });
 
@@ -388,29 +385,7 @@ export default function AdminRFPCreate() {
             </RadioGroup>
           </div>
 
-          <div className="space-y-3">
-            <Label className="font-semibold text-sm">Commercial Proposal Required *</Label>
-            <RadioGroup 
-              value={formData.commercialProposalRequired} 
-              onValueChange={(value: 'yes' | 'no') => updateFormData('commercialProposalRequired', value)}
-              className="flex gap-4"
-            >
-              <label
-                htmlFor="comm-yes"
-                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.commercialProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
-              >
-                <RadioGroupItem value="yes" id="comm-yes" />
-                <span className="font-medium text-sm w-full">Yes, Required</span>
-              </label>
-              <label
-                htmlFor="comm-no"
-                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.commercialProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
-              >
-                <RadioGroupItem value="no" id="comm-no" />
-                <span className="font-medium text-sm w-full">No, Not Required</span>
-              </label>
-            </RadioGroup>
-          </div>
+
         </div>
 
 
@@ -658,10 +633,7 @@ export default function AdminRFPCreate() {
                   <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Technical Prop.</span>
                   <div className="font-medium mt-0.5 capitalize">{formData.technicalProposalRequired}</div>
                 </div>
-                <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Commercial Prop.</span>
-                  <div className="font-medium mt-0.5 capitalize">{formData.commercialProposalRequired}</div>
-                </div>
+
               </div>
               <div>
                 <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Categories</span>

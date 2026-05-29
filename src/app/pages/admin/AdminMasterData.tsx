@@ -153,14 +153,14 @@ export default function AdminMasterData() {
         </p>
       </div>
 
-      {/* Vendor Categories */}
+      {/* Vendor Service Categories */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Database className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Vendor Categories
+                Vendor Service Categories
               </CardTitle>
               <CardDescription>Service categories for vendor classification</CardDescription>
             </div>
