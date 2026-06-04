@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { Badge } from '@/app/components/ui/badge';
-import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X, History, Plus } from 'lucide-react';
+import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X, History, Plus, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { mockProposals, mockAdminUsers, mockRFPs, saveProposalsToStorage } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Input } from '@/app/components/ui/input';
+import { StatusBadge } from '@/app/components/ui/status-badge';
+import { ProgressTimeline } from '@/app/components/ui/progress-timeline';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -20,7 +22,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${month}/${day}/${year}`;
 };
 
 const formatStatus = (statusStr?: string) => {
@@ -52,12 +54,26 @@ export default function AdminProposalDetail() {
   const [q1Remark, setQ1Remark] = useState<string>('');
   const [q2Remark, setQ2Remark] = useState<string>('');
   const [q3Remark, setQ3Remark] = useState<string>('');
-  const [ratingRemark, setRatingRemark] = useState(
-    isInitiallyRejected || isInitiallyShortlisted
-      ? 'Outstanding technical proposal with comprehensive documentation. Team demonstrated excellent understanding of requirements. All compliance criteria met. Recommended for shortlisting.'
-      : ''
-  );
-  const [isRatingSaved, setIsRatingSaved] = useState(isInitiallyRejected || isInitiallyShortlisted);
+  const [q1Rating, setQ1Rating] = useState<number>(0);
+  const [q2Rating, setQ2Rating] = useState<number>(0);
+  const [q3Rating, setQ3Rating] = useState<number>(0);
+  const [overallRating, setOverallRating] = useState<number>(0);
+  const [ratingRemark, setRatingRemark] = useState('');
+  const [isRatingSaved, setIsRatingSaved] = useState(false);
+
+  useEffect(() => {
+    let sum = 0;
+    let count = 0;
+    if (q1Rating > 0) { sum += q1Rating; count++; }
+    if (q2Rating > 0) { sum += q2Rating; count++; }
+    if (q3Rating > 0) { sum += q3Rating; count++; }
+    
+    if (count > 0) {
+      setOverallRating(Math.round(sum / count));
+    } else {
+      setOverallRating(0);
+    }
+  }, [q1Rating, q2Rating, q3Rating]);
 
   const handleSaveRatings = () => {
     if (!ratingRemark.trim()) {
@@ -65,9 +81,10 @@ export default function AdminProposalDetail() {
       return;
     }
     const ratingData = {
-      q1Remark,
-      q2Remark,
-      q3Remark,
+      q1Remark, q1Rating,
+      q2Remark, q2Rating,
+      q3Remark, q3Rating,
+      overallRating,
       comments: ratingRemark,
       submittedBy: 'Admin',
       submittedAt: new Date().toISOString()
@@ -402,6 +419,29 @@ export default function AdminProposalDetail() {
     });
   }
 
+  const timelineStages = [
+    { key: 'submitted', label: 'Submitted', description: 'Proposal submitted' },
+    { key: 'technical_review', label: 'Tech Review', description: 'Technical evaluation' },
+    { key: 'commercial_review', label: 'Comm Review', description: 'Commercial evaluation' },
+    { key: 'decision', label: 'Final Decision', description: 'Procurement award' },
+  ];
+
+  const currentStageKey = ['approved', 'shortlisted', 'rejected', 'correction_requested'].includes(overallStatus)
+    ? 'decision'
+    : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
+    ? 'commercial_review'
+    : ['technical_review_started', 'technical_review_completed', 'technical_correction_requested'].includes(overallStatus) || technicalStatus !== 'pending'
+    ? 'technical_review'
+    : 'submitted';
+
+  const completedStageKeys = ['approved', 'shortlisted', 'rejected', 'correction_requested'].includes(overallStatus)
+    ? ['submitted', 'technical_review', 'commercial_review']
+    : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
+    ? ['submitted', 'technical_review']
+    : ['technical_review_started', 'technical_review_completed', 'technical_correction_requested'].includes(overallStatus) || technicalStatus !== 'pending'
+    ? ['submitted']
+    : [];
+
   return (
     <div className="space-y-6 p-4">
       {/* Header back button */}
@@ -413,9 +453,7 @@ export default function AdminProposalDetail() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Details</h1>
-              <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                {formatStatus(overallStatus)}
-              </Badge>
+              <StatusBadge status={overallStatus} />
             </div>
             <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>Vendor: {proposal.vendorName}</p>
           </div>
@@ -430,12 +468,22 @@ export default function AdminProposalDetail() {
         </Button>
       </div>
 
+      {/* Progress Timeline */}
+      <Card className="p-4">
+        <ProgressTimeline 
+          stages={timelineStages}
+          currentStageKey={currentStageKey}
+          completedStageKeys={completedStageKeys}
+        />
+      </Card>
+
       <Tabs defaultValue="summary" className="space-y-6">
         <TabsList className="mb-4">
           <TabsTrigger value="summary">Proposal Summary</TabsTrigger>
           <TabsTrigger value="technical">Technical Proposal</TabsTrigger>
           <TabsTrigger value="commercial">Commercial Proposal</TabsTrigger>
           <TabsTrigger value="supporting">Supporting Documents</TabsTrigger>
+          <TabsTrigger value="feedback">Vendor Feedback</TabsTrigger>
           {(rfp.status === 'published') && (
             <TabsTrigger 
               value="action"
@@ -452,9 +500,7 @@ export default function AdminProposalDetail() {
             <CardHeader className="pb-3 border-b">
               <CardTitle className="flex items-center justify-between">
                 <span>{proposal.id}</span>
-                <Badge variant="secondary" style={{ backgroundColor: statusColor.bg, color: statusColor.text }}>
-                  {formatStatus(overallStatus)}
-                </Badge>
+                <StatusBadge status={overallStatus} />
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -578,16 +624,7 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 Technical Approach
               </CardTitle>
-              <Badge 
-                variant="secondary" 
-                className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none animate-pulse-subtle"
-                style={{
-                  backgroundColor: technicalStatus === 'approved' ? '#D1FAE5' : technicalStatus === 'rejected' ? '#FEE2E2' : technicalStatus === 'correction_requested' ? '#FEF3C7' : '#FEF3C7',
-                  color: technicalStatus === 'approved' ? 'var(--fnrc-success)' : technicalStatus === 'rejected' ? '#EF4444' : technicalStatus === 'correction_requested' ? '#F59E0B' : 'var(--fnrc-warning)'
-                }}
-              >
-                {technicalStatus === 'approved' ? 'Approved' : technicalStatus === 'rejected' ? 'Rejected' : technicalStatus === 'correction_requested' ? 'Correction Requested' : 'Pending'}
-              </Badge>
+              <StatusBadge status={technicalStatus} />
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -745,16 +782,7 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 Commercial Proposal
               </CardTitle>
-              <Badge 
-                variant="secondary" 
-                className="capitalize text-[10px] font-bold px-2.5 py-0.5 border-none animate-pulse-subtle"
-                style={{
-                  backgroundColor: commercialStatus === 'approved' ? '#D1FAE5' : commercialStatus === 'rejected' ? '#FEE2E2' : commercialStatus === 'correction_requested' ? '#FEF3C7' : '#FEF3C7',
-                  color: commercialStatus === 'approved' ? 'var(--fnrc-success)' : commercialStatus === 'rejected' ? '#EF4444' : commercialStatus === 'correction_requested' ? '#F59E0B' : 'var(--fnrc-warning)'
-                }}
-              >
-                {commercialStatus === 'approved' ? 'Approved' : commercialStatus === 'rejected' ? 'Rejected' : commercialStatus === 'correction_requested' ? 'Correction Requested' : 'Pending'}
-              </Badge>
+              <StatusBadge status={commercialStatus} />
             </CardHeader>
             <CardContent className="pt-4 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -989,9 +1017,7 @@ export default function AdminProposalDetail() {
                 {overallStatus === 'rejected' ? (
                   <div className="bg-red-50/50 border border-red-100 p-5 rounded-xl space-y-3.5">
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-red-500 text-white font-bold text-[10px] py-1 px-3 border-none capitalize">
-                        Rejected
-                      </Badge>
+                      <StatusBadge status="rejected" />
                       <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
                     </div>
                     <div className="space-y-1">
@@ -1004,9 +1030,7 @@ export default function AdminProposalDetail() {
                 ) : overallStatus === 'shortlisted' ? (
                   <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-[var(--fnrc-success)] text-white font-bold text-[10px] py-1 px-3 border-none capitalize">
-                        Approved
-                      </Badge>
+                      <StatusBadge status="approved" />
                       <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
                     </div>
                     <div className="space-y-1">
@@ -1020,9 +1044,7 @@ export default function AdminProposalDetail() {
                   // Approved — now offer Shortlist option
                   <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-4">
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-[var(--fnrc-success)] text-white font-bold text-[10px] py-1 px-3 border-none">
-                        Approved
-                      </Badge>
+                      <StatusBadge status="approved" />
                       <span className="text-[10px] text-gray-500 font-bold">Proposal approved — proceed to shortlisting</span>
                     </div>
                     <div className="space-y-1">
@@ -1140,21 +1162,33 @@ export default function AdminProposalDetail() {
                     {/* Ratings List */}
                     <div className="space-y-4">
                       {[
-                        { label: "How would you rate the vendor's technical capability?", value: q1Remark },
-                        { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark },
-                        { label: "Rate the vendor's financial stability.", value: q3Remark }
+                        { label: "How would you rate the vendor's technical capability?", value: q1Remark, rating: q1Rating },
+                        { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, rating: q2Rating },
+                        { label: "Rate the vendor's financial stability.", value: q3Remark, rating: q3Rating }
                       ].map((q, i) => (
                         <div key={i} className="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl space-y-2">
-                          <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                            <div className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">
+                              <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                              <span className="text-sm font-black text-gray-800">{q.rating || '-'} / 5</span>
+                            </div>
+                          </div>
                           <span className="text-sm font-medium text-gray-600 bg-white p-3 rounded-md border border-gray-100">{q.value || "No remarks provided."}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Admin Comments */}
-                    <div className="space-y-1.5 pt-2">
-                      <h4 className="text-xs font-extrabold text-gray-750">Admin Comments</h4>
-                      <p className="text-xs font-semibold text-gray-600 leading-relaxed bg-gray-50/20 p-4 rounded-xl border border-gray-100/70">
+                    <div className="space-y-2 pt-4 border-t border-gray-100">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="text-xs font-extrabold text-gray-750">Overall Comments & Rating</h4>
+                        <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                          <span className="text-sm font-black text-amber-700">{overallRating || '-'} / 5</span>
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium text-gray-600 leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100">
                         {ratingRemark || "Outstanding technical proposal with comprehensive documentation. Team demonstrated excellent understanding of requirements. All compliance criteria met. Recommended for shortlisting."}
                       </p>
                     </div>
@@ -1170,26 +1204,51 @@ export default function AdminProposalDetail() {
                       
                       <div className="space-y-4">
                         {[
-                          { label: "How would you rate the vendor's technical capability?", value: q1Remark, setter: setQ1Remark },
-                          { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, setter: setQ2Remark },
-                          { label: "Rate the vendor's financial stability.", value: q3Remark, setter: setQ3Remark }
+                          { label: "How would you rate the vendor's technical capability?", value: q1Remark, setter: setQ1Remark, rating: q1Rating, setRating: setQ1Rating },
+                          { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, setter: setQ2Remark, rating: q2Rating, setRating: setQ2Rating },
+                          { label: "Rate the vendor's financial stability.", value: q3Remark, setter: setQ3Remark, rating: q3Rating, setRating: setQ3Rating }
                         ].map((q, i) => (
-                          <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 flex flex-col gap-2">
-                            <span className="text-sm font-bold text-gray-700">{q.label}</span>
-                            <Textarea
-                              placeholder="Enter your remarks here..."
-                              value={q.value}
-                              onChange={(e) => q.setter(e.target.value)}
-                              className="w-full text-sm resize-none focus-visible:ring-[var(--fnrc-primary-green)]"
-                              rows={2}
-                            />
+                          <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 flex flex-col gap-4">
+                            <span className="text-sm font-extrabold text-gray-800">{q.label}</span>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Answer</label>
+                              <Textarea
+                                placeholder="Enter your answer here..."
+                                value={q.value}
+                                onChange={(e) => q.setter(e.target.value)}
+                                className="w-full text-sm resize-none focus-visible:ring-[var(--fnrc-primary-green)]"
+                                rows={2}
+                              />
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Rating (out of 5)</label>
+                              <Select value={q.rating ? q.rating.toString() : ''} onValueChange={(val) => q.setRating(Number(val))}>
+                                <SelectTrigger className="w-32 h-9 border-gray-200 font-bold focus:ring-[var(--fnrc-primary-green)] text-gray-800">
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {[1, 2, 3, 4, 5].map(num => (
+                                    <SelectItem key={num} value={num.toString()} className="font-bold">{num} / 5</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
                         ))}
                       </div>
 
                       {/* Dedicated Remarks for Vendor Rating system */}
-                      <div className="space-y-1.5 pt-4">
-                        <label htmlFor="ratingRemarkInput" className="text-xs font-bold text-gray-700 block">Vendor Rating Comments & Justification</label>
+                      <div className="space-y-3 pt-6 border-t border-gray-100">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                          <label htmlFor="ratingRemarkInput" className="text-xs font-bold text-gray-700 block">Overall Vendor Rating & Justification</label>
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold text-gray-600">Calculated Overall Rating:</span>
+                            <div className="flex items-center gap-1.5 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200 shadow-sm">
+                               <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                               <span className="text-sm font-black text-amber-700">{overallRating > 0 ? overallRating : '-'} / 5</span>
+                            </div>
+                          </div>
+                        </div>
                         <textarea
                           id="ratingRemarkInput"
                           rows={3}
@@ -1217,6 +1276,152 @@ export default function AdminProposalDetail() {
             </Card>
           </TabsContent>
         )}
+
+        <TabsContent value="feedback" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-base font-bold text-gray-800">
+                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
+                Historical Vendor Feedback
+              </CardTitle>
+              <div className="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                <span className="text-xs font-bold text-amber-800 uppercase">Overall Average</span>
+                <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-amber-200 shadow-sm">
+                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                  <span className="text-sm font-black text-amber-600">3 / 5</span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-6">
+                <div className="border border-gray-100 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  <div className="bg-gray-50/80 p-5 border-b border-gray-100 flex justify-between items-center">
+                    <div>
+                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">RFP-2025-089: Office IT Equipment Supply</h4>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
+                        <span>RFP Date: 12 Jan 2025</span>
+                        <span>Proposal Number: PROP-2025-089-A</span>
+                        <span>Proposal Date: 02 Feb 2025</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                      <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                      <span className="text-xs font-bold text-gray-800">4 / 5</span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-6">
+                    {/* User 1 */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">AA</div>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-gray-800">Ahmed Al Mansoori</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">Technical Evaluator • Rated on 16/03/2025</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed font-medium mb-3">
+                        "Vendor delivered all IT equipment on time and as per the technical specifications. Minor delays in providing the user manuals, but overall excellent service and highly competitive pricing."
+                      </p>
+                      <div className="bg-gray-50/50 p-3.5 rounded-lg border border-gray-100">
+                        <div className="space-y-2.5">
+                          <div className="flex justify-between items-center text-xs text-gray-600">
+                            <span className="font-medium">How would you rate the vendor's technical capability?</span>
+                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 5</span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs text-gray-600">
+                            <span className="font-medium">Did the vendor deliver on time?</span>
+                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 4</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-100"></div>
+
+                    {/* User 2 */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-7 w-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">SH</div>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-gray-800">Sarah Al Hashmi</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">Commercial Evaluator • Rated on 17/03/2025</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 leading-relaxed font-medium mb-3">
+                        "Financial documentation was spotless. The vendor was very responsive during the negotiation phase. Highly recommend for future procurements."
+                      </p>
+                      <div className="bg-gray-50/50 p-3.5 rounded-lg border border-gray-100">
+                        <div className="space-y-2.5">
+                          <div className="flex justify-between items-center text-xs text-gray-600">
+                            <span className="font-medium">Rate the vendor's communication and responsiveness.</span>
+                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 5</span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs text-gray-600">
+                            <span className="font-medium">Rate the vendor's financial stability.</span>
+                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 4</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-gray-100 rounded-xl p-5 bg-gray-50/50 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">RFP-2024-112: Network Security Audit</h4>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
+                        <span>RFP Date: 05 Sep 2024</span>
+                        <span>Proposal Number: PROP-2024-112-C</span>
+                        <span>Proposal Date: 20 Sep 2024</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                      <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                      <span className="text-xs font-bold text-gray-800">2 / 5</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                    "The vendor was unprofessional and unresponsive throughout the project. They missed several critical deadlines and the final audit report was incomplete. Would not recommend for future engagements."
+                  </p>
+                  <div className="mt-4 border-t border-gray-100 pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="h-7 w-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">MK</div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-gray-800">Mohammed Khalid</span>
+                        <span className="text-[10px] text-gray-400 font-semibold">Security Consultant • Rated on 12/11/2024</span>
+                      </div>
+                    </div>
+                    <h5 className="text-xs font-bold text-gray-700 mb-3">Detailed Evaluation</h5>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
+                        <span className="font-medium">How would you rate the vendor's technical capability?</span>
+                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
+                        <span className="font-medium">Did the vendor deliver on time?</span>
+                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 1</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
+                        <span className="font-medium">Rate the vendor's communication and responsiveness.</span>
+                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 1</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
+                        <span className="font-medium">How satisfied are you with the quality of deliverables?</span>
+                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
+                        <span className="font-medium">Rate the vendor's adherence to project scope and requirements.</span>
+                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
@@ -1249,9 +1454,7 @@ export default function AdminProposalDetail() {
                       <TableCell className="text-xs font-bold text-gray-800">{log.action}</TableCell>
                       <TableCell className="text-xs font-semibold text-gray-600">{log.name}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary" className={`text-[10px] px-2 py-0 font-bold border-none ${log.status === 'approved' || log.status === 'shortlisted' ? 'bg-green-100 text-green-700' : log.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {formatStatus(log.status)}
-                        </Badge>
+                        <StatusBadge status={log.status} />
                       </TableCell>
                       <TableCell className="text-xs text-gray-500 max-w-[200px] truncate" title={log.remarks}>{log.remarks}</TableCell>
                     </TableRow>

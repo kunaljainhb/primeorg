@@ -5,16 +5,12 @@ import { Card, CardContent } from '@/app/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/app/components/ui/select';
 import { mockRFPs, mockProposals, vendorCategories } from '@/app/data/mockData';
-import { Search, Calendar, Filter, X, Check } from 'lucide-react';
+import { Calendar, ArrowRight, Plus, Pencil } from 'lucide-react';
 import { useState } from 'react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/app/components/ui/popover";
-import { Checkbox } from "@/app/components/ui/checkbox";
+import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
+import { StatusBadge } from '@/app/components/ui/status-badge';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -23,15 +19,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const formatStatus = (statusStr?: string) => {
-  if (!statusStr) return '';
-  return statusStr
-    .split(/_|\s+/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+  return `${month}/${day}/${year}`;
 };
 
 export default function AdminRFPManagement() {
@@ -44,41 +32,18 @@ export default function AdminRFPManagement() {
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, { bg: string; text: string }> = {
-      draft: { bg: '#E5E7EB', text: 'var(--fnrc-text-muted)' },
-      published: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      closed: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
-      cancelled: { bg: '#FEE2E2', text: 'var(--fnrc-error)' }
-    };
-    return colors[status] || colors.draft;
-  };
-
   const getProposalCount = (rfpId: string) => {
     return mockProposals.filter(p => p.rfpId === rfpId).length;
   };
 
-  const toggleCategory = (category: string) => {
-    setCategoryFilters(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category) 
-        : [...prev, category]
-    );
-  };
-
   // Filter RFPs based on selected filters
   const filteredRFPs = mockRFPs.filter(rfp => {
-    // Search filter
-    if (searchQuery && !rfp.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+    if (searchQuery && !rfp.title.toLowerCase().includes(searchQuery.toLowerCase()) && !rfp.id.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
-
-    // Category filter (Multi-select)
     if (categoryFilters.length > 0 && !rfp.category.some(c => categoryFilters.includes(c))) {
       return false;
     }
-
-    // Date range filter (Submission Deadline)
     const rfpDate = new Date(rfp.submissionDeadline);
     if (dateFrom) {
       const fromDate = new Date(dateFrom);
@@ -88,216 +53,198 @@ export default function AdminRFPManagement() {
       const toDate = new Date(dateTo);
       if (rfpDate > toDate) return false;
     }
-
-    if (statusFilter && statusFilter !== 'all' && rfp.status !== statusFilter) {
+    if (statusFilter && rfp.status !== statusFilter) {
       return false;
     }
     return true;
   });
 
-  const clearFilters = () => {
+  const filters = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { label: 'All Statuses', value: 'all' },
+        { label: 'Draft', value: 'draft' },
+        { label: 'Published', value: 'published' },
+        { label: 'Closed', value: 'closed' },
+      ],
+      selectedValue: statusFilter || 'all',
+      onChange: (val: string) => setStatusFilter(val === 'all' ? '' : val)
+    },
+    {
+      key: 'category',
+      label: 'Category',
+      options: [
+        { label: 'All Categories', value: 'all' },
+        ...vendorCategories.map(cat => ({ label: cat, value: cat }))
+      ],
+      selectedValue: categoryFilters[0] || 'all',
+      onChange: (val: string) => setCategoryFilters(val === 'all' ? [] : [val])
+    }
+  ];
+
+  const activeChips: any[] = [];
+  if (statusFilter) {
+    activeChips.push({
+      label: `Status: ${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`,
+      onRemove: () => setStatusFilter('')
+    });
+  }
+  if (categoryFilters.length > 0) {
+    activeChips.push({
+      label: `Category: ${categoryFilters[0]}`,
+      onRemove: () => setCategoryFilters([])
+    });
+  }
+  if (dateFrom) {
+    activeChips.push({
+      label: `Deadline From: ${formatDate(dateFrom)}`,
+      onRemove: () => setDateFrom('')
+    });
+  }
+  if (dateTo) {
+    activeChips.push({
+      label: `Deadline To: ${formatDate(dateTo)}`,
+      onRemove: () => setDateTo('')
+    });
+  }
+
+  const handleClearAll = () => {
     setSearchQuery('');
     setCategoryFilters([]);
+    setStatusFilter('');
+    setDateFrom('');
+    setDateTo('');
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
-          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
             RFP Management
           </h1>
-          <p style={{ color: 'var(--fnrc-text-muted)' }}>
-            Create and manage Request for Proposals
-          </p>
         </div>
         <Button
           onClick={() => navigate('/admin/rfps/create')}
-          className="text-white"
+          className="text-white gap-2 shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
           style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
         >
+          <Plus className="h-4 w-4" />
           Create New RFP
         </Button>
       </div>
 
-      {/* Filter Section - Reverted to Original Style */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-end justify-between gap-6">
-              {/* Search Bar */}
-              <div className="flex-1">
-                <Label htmlFor="search" className="mb-2 block">Search RFP Name</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                  <Input
-                    id="search"
-                    placeholder="Search by RFP title..."
-                    className="pl-10 h-10"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
+      <div className="space-y-4">
+        {/* Modern Search and Filter Bar */}
+        <SearchFilterBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder="Search by RFP title or ID..."
+          filters={filters}
+          activeChips={activeChips}
+          onClearAll={handleClearAll}
+        />
 
-              {/* Service Category Filter */}
-              <div style={{ width: '230px' }}>
-                <Label className="mb-2 block">Service Category</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-10 w-full justify-between font-normal">
-                      <div className="flex items-center gap-2 truncate">
-                        {categoryFilters.length === 0 ? "All Categories" : `${categoryFilters.length} Selected`}
-                      </div>
-                      <Filter className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[230px] p-2" align="start">
-                    <div className="max-h-[250px] overflow-y-auto space-y-1">
-                      {vendorCategories.map((cat) => (
-                        <div 
-                          key={cat} 
-                          className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded cursor-pointer transition-colors"
-                          onClick={() => toggleCategory(cat)}
-                        >
-                          <Checkbox 
-                            id={`list-cat-${cat}`} 
-                            checked={categoryFilters.includes(cat)}
-                            onCheckedChange={() => {}}
-                          />
-                          <label className="text-sm cursor-pointer flex-1">{cat}</label>
-                        </div>
-                      ))}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Status Filter */}
-              <div style={{ width: '150px' }}>
-                <Label className="mb-2 block">Status</Label>
-                <Select value={statusFilter || "all"} onValueChange={(val) => setStatusFilter(val === "all" ? "" : val)}>
-                  <SelectTrigger className="h-10 w-full">
-                    <SelectValue placeholder="All Statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Submission Deadline Group */}
-              <div>
-                <Label className="mb-2 block">Submission Deadline</Label>
-                <div className="flex items-center gap-3">
-                  <div className="relative" style={{ width: '150px' }}>
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    <Input
-                      type="date"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
-                      className="h-10 pl-10 text-sm"
-                    />
-                  </div>
-                  <span style={{ color: 'var(--fnrc-text-muted)' }}>—</span>
-                  <div className="relative" style={{ width: '150px' }}>
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    <Input
-                      type="date"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
-                      className="h-10 pl-10 text-sm"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Date Range Sub-Bar */}
+        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-lg border border-gray-200/60 shadow-sm w-max">
+          <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+          <span className="text-sm font-semibold text-gray-700">Deadline Range:</span>
+          <div className="flex items-center gap-2 ml-2">
+            <Input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              className="h-8 text-xs rounded-md border-gray-200 w-[130px]"
+            />
+            <span className="text-xs text-gray-400 font-medium px-1">to</span>
+            <Input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              className="h-8 text-xs rounded-md border-gray-200 w-[130px]"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Table Section - Reverted to Original Style */}
-      <Card>
+      {/* Table Section */}
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)', borderColor: 'var(--fnrc-border-gray)' }}>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>RFP ID</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Title</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Category</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Created Date</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Deadline</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposals</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Status</TableHead>
-                <TableHead className="text-right font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredRFPs.map((rfp) => {
-                const statusColor = getStatusColor(rfp.status);
-                const proposalCount = getProposalCount(rfp.id);
-                return (
-                  <TableRow key={rfp.id} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                    <TableCell className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>
-                      {rfp.id}
-                    </TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{rfp.title}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.category.join(', ')}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                      {formatDate(rfp.createdAt)}
-                    </TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {formatDate(rfp.submissionDeadline)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        style={{ 
-                          backgroundColor: proposalCount > 0 ? '#E0F2FE' : '#F3F4F6',
-                          color: proposalCount > 0 ? '#0369A1' : 'var(--fnrc-text-muted)'
-                        }}
-                      >
-                        {proposalCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
-                      >
-                        {formatStatus(rfp.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          if (rfp.status.toLowerCase() === 'draft') {
-                            navigate(`/admin/rfps/edit/${rfp.id}`);
-                          } else {
-                            navigate(`/admin/rfps/${rfp.id}`);
-                          }
-                        }}
-                      >
-                        Manage
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {filteredRFPs.length === 0 && (
+          {filteredRFPs.length > 0 ? (
+            <Table>
+              <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableCell colSpan={8} className="h-32 text-center text-muted-foreground italic">
-                    No RFPs found matching your search criteria.
-                  </TableCell>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">RFP ID</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Title</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Categories</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Created Date</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Submission Deadline</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Bids Count</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
+                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">Action</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredRFPs.map((rfp) => {
+                  const proposalCount = getProposalCount(rfp.id);
+                  return (
+                    <TableRow key={rfp.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                      <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
+                        {rfp.id}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-800">{rfp.title}</TableCell>
+                      <TableCell className="text-gray-500 font-medium text-xs max-w-[200px] truncate">
+                        {rfp.category.join(', ')}
+                      </TableCell>
+                      <TableCell className="text-gray-500 font-medium">
+                        {formatDate(rfp.createdAt)}
+                      </TableCell>
+                      <TableCell className="text-gray-800 font-medium">
+                        {formatDate(rfp.submissionDeadline)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="secondary"
+                          className={proposalCount > 0 ? "bg-sky-50 text-sky-700 font-bold border border-sky-100 rounded-md" : "bg-gray-50 text-gray-400 border border-gray-100 rounded-md"}
+                        >
+                          {proposalCount} Bids
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={rfp.status} />
+                      </TableCell>
+                      <TableCell className="text-right py-3 pr-4">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            if (rfp.status.toLowerCase() === 'draft') {
+                              navigate(`/admin/rfps/edit/${rfp.id}`);
+                            } else {
+                              navigate(`/admin/rfps/${rfp.id}`);
+                            }
+                          }}
+                          className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
+                          title="Manage RFP"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          ) : (
+            <EmptyState
+              title="No RFPs Found"
+              description="No RFP campaigns matched your search or filters. Clear active filters to view all entries."
+              actionLabel="Clear Filters"
+              onAction={handleClearAll}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

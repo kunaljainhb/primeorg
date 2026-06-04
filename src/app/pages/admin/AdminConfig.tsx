@@ -2,55 +2,52 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { Switch } from '@/app/components/ui/switch';
-import { Separator } from '@/app/components/ui/separator';
 import { Bell } from 'lucide-react';
-
-
+import { toast } from 'sonner';
 
 export default function AdminConfig() {
+  const handleSave = () => {
+    toast.success('System configuration saved successfully');
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          System Configuration
-        </h1>
-        <p style={{ color: 'var(--fnrc-text-muted)' }}>
-          Configure system settings and preferences
-        </p>
+    <div className="space-y-8 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            System Configuration
+          </h1>
+        </div>
       </div>
 
       {/* Document Expiry Highlights */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-            Document Expiry Highlights
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden max-w-2xl">
+        <CardHeader className="border-b border-gray-50 pb-5">
+          <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+            <Bell className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+            Document Expiry Thresholds
           </CardTitle>
-          <CardDescription>Configure notifications and visual highlights prior to document expiration dates</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="max-w-md">
-            <div className="space-y-2">
-              <Label htmlFor="expiryAlert" className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-amber-500"></span>
-                Document Expiry Alert Threshold (Days)
-              </Label>
-              <Input id="expiryAlert" type="number" defaultValue="30" />
-              <p className="text-xs text-muted-foreground font-medium">Set the number of days prior to document expiration to trigger notifications and dashboard highlights</p>
-            </div>
-          </div>
 
+        </CardHeader>
+        <CardContent className="pt-6 space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="expiryAlert" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-amber-500"></span>
+              Document Expiry Alert Threshold (Days) *
+            </Label>
+            <Input id="expiryAlert" type="number" defaultValue="30" className="rounded-xl border-gray-200 h-10 w-full sm:w-48 text-sm" />
+            <p className="text-xs text-gray-400 font-medium leading-relaxed">
+              Define the number of warning days before document expiration to automatically trigger email notifications to the vendor, alert the procurement board, and paint warning highlights in the admin ledger.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-
-
-
       {/* Save Button */}
-      <div className="flex justify-end">
+      <div className="flex justify-end max-w-2xl pt-2">
         <Button
-          className="text-white"
+          onClick={handleSave}
+          className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-xl hover:-translate-y-0.5"
           style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
         >
           Save Configuration

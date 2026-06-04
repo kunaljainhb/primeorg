@@ -64,114 +64,129 @@ export default function VendorProposalSubmit() {
     setShowSuccess(true);
   };
 
-  const handleSuccessClose = () => {
-    setShowSuccess(false);
-    navigate('/vendor/proposals');
-  };
-
   if (!rfp) {
     return <div>RFP not found</div>;
   }
 
   return (
-    <div className="space-y-6">
-      <Button
-        variant="ghost"
-        onClick={() => navigate(`/vendor/rfps/${rfpId}`)}
-        className="gap-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to RFP Details
-      </Button>
+    <div className="space-y-8 font-sans">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(`/vendor/rfps/${rfpId}`)}
+          className="gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to RFP Details
+        </Button>
+      </div>
 
-      <div>
-        <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          Submit Proposal
+      <div className="bg-white p-8 rounded-card shadow-card border border-gray-100/50">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-2">
+          Submit Proposal Bid
         </h1>
-        <p style={{ color: 'var(--fnrc-text-muted)' }}>
+        <p className="text-sm font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
           {rfp.title} ({rfp.id})
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-8">
         <Tabs defaultValue="technical" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="technical">Technical Proposal</TabsTrigger>
-            <TabsTrigger value="commercial">Commercial Proposal</TabsTrigger>
-            <TabsTrigger value="documents">Supporting Documents</TabsTrigger>
+          <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-xl">
+            <TabsTrigger 
+              value="technical"
+              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            >
+              Technical Specification
+            </TabsTrigger>
+            <TabsTrigger 
+              value="commercial"
+              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            >
+              Commercial Specification
+            </TabsTrigger>
+            <TabsTrigger 
+              value="documents"
+              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            >
+              Supporting Files
+            </TabsTrigger>
           </TabsList>
 
           {/* Technical Proposal */}
-          <TabsContent value="technical" className="space-y-6">
+          <TabsContent value="technical" className="space-y-6 focus:outline-none">
             <Card>
-              <CardHeader>
-                <CardTitle>Technical Proposal</CardTitle>
-                <CardDescription>
-                  Provide detailed technical approach and methodology
-                </CardDescription>
+              <CardHeader className="border-b border-gray-50 pb-5">
+                <CardTitle className="text-lg font-bold text-gray-900">Technical Methodology</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="technicalDescription">Technical Approach</Label>
+                  <Label htmlFor="technicalDescription" className="text-sm font-bold text-gray-700">Methodology & Approach *</Label>
                   <Textarea
                     id="technicalDescription"
                     rows={8}
-                    placeholder="Describe your technical solution, methodology, and implementation plan..."
+                    className="rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 resize-none text-sm p-4"
+                    placeholder="Describe your step-by-step methodology, project milestones, quality assurance practices, and how your team aligns with FNRC expectations..."
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="technicalDoc">Technical Proposal Document (PDF)</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="technicalDoc" type="file" accept=".pdf" required />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+                  <Label htmlFor="technicalDoc" className="text-sm font-bold text-gray-700">Detailed Technical Document (PDF) *</Label>
+                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-8 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+                    <input 
+                      id="technicalDoc" 
+                      type="file" 
+                      accept=".pdf" 
+                      required 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="h-12 w-12 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
+                      <Upload className="h-6 w-6" />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">Upload your technical file</span>
+                    <span className="text-xs text-gray-400 mt-1">PDF format (Maximum file size: 10MB)</span>
                   </div>
-                  <p className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Upload detailed technical proposal (max 10MB)
-                  </p>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Commercial Proposal */}
-          <TabsContent value="commercial" className="space-y-6">
+          <TabsContent value="commercial" className="space-y-6 focus:outline-none">
             <Card>
-              <CardHeader>
-                <CardTitle>Commercial Proposal</CardTitle>
-                <CardDescription>
-                  Provide pricing and commercial terms
-                </CardDescription>
+              <CardHeader className="border-b border-gray-50 pb-5">
+                <CardTitle className="text-lg font-bold text-gray-900">Commercial Specifications</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="pt-6 space-y-6">
                 <div>
-                  <Label className="text-base font-semibold mb-3 block">Cost Breakdown</Label>
-                  <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <Label className="text-sm font-bold text-gray-700 mb-4 block">Itemized Cost Breakdown (AED) *</Label>
+                  <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
                     <Table>
-                      <TableHeader>
-                        <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-                          <TableHead className="w-[40%]">Description</TableHead>
-                          <TableHead className="text-right w-[18%]">Unit Price (AED)</TableHead>
-                          <TableHead className="text-right w-[12%]">Quantity</TableHead>
-                          <TableHead className="text-right w-[20%]">Amount (AED)</TableHead>
-                          <TableHead className="w-[10%]"></TableHead>
+                      <TableHeader className="bg-gray-50">
+                        <TableRow>
+                          <TableHead className="w-[45%] font-bold text-gray-800 text-sm py-4">Description</TableHead>
+                          <TableHead className="text-right w-[20%] font-bold text-gray-800 text-sm py-4">Unit Price (AED)</TableHead>
+                          <TableHead className="text-right w-[12%] font-bold text-gray-800 text-sm py-4">Quantity</TableHead>
+                          <TableHead className="text-right w-[18%] font-bold text-gray-800 text-sm py-4">Amount (AED)</TableHead>
+                          <TableHead className="w-[5%]"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {costItems.map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
+                          <TableRow key={item.id} className="hover:bg-gray-50/20">
+                            <TableCell className="py-3">
                               <Input 
-                                placeholder="e.g. Licensing, Hardware, Services..."
+                                placeholder="e.g. Core Hardware, Service Integration..."
                                 value={item.description}
                                 onChange={(e) => updateCostItem(item.id, 'description', e.target.value)}
+                                className="h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
                                 required
                               />
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="py-3">
                               <Input 
                                 type="number"
-                                className="text-right"
+                                className="text-right h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
                                 placeholder="0.00"
                                 min={0}
                                 value={item.unitPrice || ''}
@@ -179,10 +194,10 @@ export default function VendorProposalSubmit() {
                                 required
                               />
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="py-3">
                               <Input 
                                 type="number"
-                                className="text-right"
+                                className="text-right h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
                                 placeholder="1"
                                 min={1}
                                 step={1}
@@ -191,19 +206,12 @@ export default function VendorProposalSubmit() {
                                 required
                               />
                             </TableCell>
-                            <TableCell className="text-right">
-                              <div 
-                                className="inline-flex items-center justify-end h-9 px-3 rounded-md text-sm font-semibold min-w-[100px]"
-                                style={{ 
-                                  backgroundColor: 'var(--fnrc-bg-light)', 
-                                  color: item.amount > 0 ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)',
-                                  border: '1px solid var(--fnrc-border-gray)'
-                                }}
-                              >
+                            <TableCell className="py-3 text-right">
+                              <span className="text-sm font-semibold text-gray-800 pr-2">
                                 {item.amount > 0 ? item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—'}
-                              </div>
+                              </span>
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="py-3 text-center">
                               {costItems.length > 1 && (
                                 <Button 
                                   type="button" 
@@ -219,25 +227,25 @@ export default function VendorProposalSubmit() {
                           </TableRow>
                         ))}
                         <TableRow className="hover:bg-transparent">
-                          <TableCell colSpan={5} className="pt-3 pb-3">
+                          <TableCell colSpan={5} className="py-4 px-4 bg-gray-50/20">
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="gap-2"
+                              className="gap-2 font-semibold hover:-translate-y-0.5 transition-transform"
                               onClick={addCostItem}
                               style={{ color: 'var(--fnrc-primary-green)', borderColor: 'var(--fnrc-primary-green)' }}
                             >
                               <Plus className="h-4 w-4" />
-                              Add Row
+                              Add Service Row
                             </Button>
                           </TableCell>
                         </TableRow>
-                        <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)', borderTop: '2px solid var(--fnrc-border-gray)' }}>
-                          <TableCell colSpan={3} className="font-bold text-right" style={{ color: 'var(--fnrc-text-dark)' }}>
-                            Total Proposal Amount
+                        <TableRow className="bg-gray-50 border-t border-gray-100 hover:bg-gray-50">
+                          <TableCell colSpan={3} className="font-bold text-right text-gray-900 py-4" style={{ color: 'var(--fnrc-text-dark)' }}>
+                            Total Quote Sum (Exclusive of VAT)
                           </TableCell>
-                          <TableCell className="text-right font-bold text-lg" style={{ color: 'var(--fnrc-primary-green)' }}>
+                          <TableCell className="text-right font-extrabold text-base text-[var(--fnrc-primary-green)] py-4 pr-2">
                             AED {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </TableCell>
                           <TableCell />
@@ -247,25 +255,33 @@ export default function VendorProposalSubmit() {
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-gray-100" />
 
                 <div className="space-y-2">
-                  <Label htmlFor="commercialDoc">Commercial Proposal Document (PDF)</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="commercialDoc" type="file" accept=".pdf" required />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+                  <Label htmlFor="commercialDoc" className="text-sm font-bold text-gray-700">Detailed Commercial Document (PDF) *</Label>
+                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-8 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+                    <input 
+                      id="commercialDoc" 
+                      type="file" 
+                      accept=".pdf" 
+                      required 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="h-12 w-12 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
+                      <Upload className="h-6 w-6" />
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">Upload your commercial/BOQ file</span>
+                    <span className="text-xs text-gray-400 mt-1">PDF format (Maximum file size: 10MB)</span>
                   </div>
-                  <p className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    Upload detailed commercial proposal with BOQ (max 10MB)
-                  </p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="paymentTerms">Payment Terms</Label>
+                  <Label htmlFor="paymentTerms" className="text-sm font-bold text-gray-700">Payment Milestones & Terms *</Label>
                   <Textarea
                     id="paymentTerms"
                     rows={3}
-                    placeholder="Specify payment milestones and terms..."
+                    className="rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 resize-none text-sm p-4"
+                    placeholder="Specify project stage payments (e.g. 20% on Mobilization, 40% on Delivery...)"
                     required
                   />
                 </div>
@@ -274,41 +290,36 @@ export default function VendorProposalSubmit() {
           </TabsContent>
 
           {/* Supporting Documents */}
-          <TabsContent value="documents" className="space-y-6">
+          <TabsContent value="documents" className="space-y-6 focus:outline-none">
             <Card>
-              <CardHeader>
-                <CardTitle>Supporting Documents</CardTitle>
-                <CardDescription>
-                  Upload additional documents to support your proposal
-                </CardDescription>
+              <CardHeader className="border-b border-gray-50 pb-5">
+                <CardTitle className="text-lg font-bold text-gray-900">Supporting Records</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="companyProfile">Company Profile</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="companyProfile" type="file" accept=".pdf" />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+              <CardContent className="pt-6 space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyProfile" className="text-sm font-bold text-gray-700">Company Overview Brochure</Label>
+                    <div className="flex items-center gap-2">
+                      <Input id="companyProfile" type="file" accept=".pdf" className="rounded-xl border-gray-200" />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="previousProjects">Previous Project References</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="previousProjects" type="file" accept=".pdf" />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+                  <div className="space-y-2">
+                    <Label htmlFor="previousProjects" className="text-sm font-bold text-gray-700">Past Project Case Studies</Label>
+                    <div className="flex items-center gap-2">
+                      <Input id="previousProjects" type="file" accept=".pdf" className="rounded-xl border-gray-200" />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="certifications">ISO/Industry Certifications</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="certifications" type="file" accept=".pdf" multiple />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+                  <div className="space-y-2">
+                    <Label htmlFor="certifications" className="text-sm font-bold text-gray-700">ISO/Quality Credentials</Label>
+                    <div className="flex items-center gap-2">
+                      <Input id="certifications" type="file" accept=".pdf" multiple className="rounded-xl border-gray-200" />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="otherDocs">Other Documents (Optional)</Label>
-                  <div className="flex items-center gap-2">
-                    <Input id="otherDocs" type="file" accept=".pdf" multiple />
-                    <Upload className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
+                  <div className="space-y-2">
+                    <Label htmlFor="otherDocs" className="text-sm font-bold text-gray-700">Other Appendices</Label>
+                    <div className="flex items-center gap-2">
+                      <Input id="otherDocs" type="file" accept=".pdf" multiple className="rounded-xl border-gray-200" />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -317,49 +328,51 @@ export default function VendorProposalSubmit() {
         </Tabs>
 
         {/* Submit Actions */}
-        <div className="flex justify-end gap-3 mt-6">
+        <div className="flex justify-end gap-3 pt-4">
           <Button
             type="button"
             variant="outline"
+            className="h-11 font-semibold"
             onClick={() => navigate(`/vendor/rfps/${rfpId}`)}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            size="lg"
-            className="text-white"
+            className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-xl hover:-translate-y-0.5"
             style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
           >
-            Submit Proposal
+            Submit Formal Bid
           </Button>
         </div>
       </form>
 
       {/* Success Dialog */}
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
-        <DialogContent aria-describedby="success-dialog-description">
+        <DialogContent className="sm:max-w-md p-8" aria-describedby="success-dialog-description">
           <DialogHeader>
-            <DialogTitle>Proposal Submitted Successfully</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold text-gray-900">Bid Submitted Successfully</DialogTitle>
           </DialogHeader>
-          <div id="success-dialog-description" className="space-y-4 py-4">
-            <div className="text-center">
-              <CheckCircle2 className="mx-auto mb-4 h-12 w-12" style={{ color: 'var(--fnrc-success)' }} />
-              <p style={{ color: 'var(--fnrc-text-muted)' }}>
-                Your proposal has been successfully submitted and is now under review.
+          <div id="success-dialog-description" className="space-y-4 py-6">
+            <div className="text-center flex flex-col items-center">
+              <div className="h-16 w-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                <CheckCircle2 className="h-10 w-10" />
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+                Your proposal has been officially registered in the FNRC system. The procurement panel will begin technical evaluation reviews.
               </p>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="sm:justify-center">
             <Button
               onClick={() => {
                 setShowSuccess(false);
                 navigate('/vendor/proposals');
               }}
-              className="text-white w-full"
+              className="text-white w-full h-11 font-semibold shadow-md"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              View My Proposals
+              Go to Proposal Panel
             </Button>
           </DialogFooter>
         </DialogContent>

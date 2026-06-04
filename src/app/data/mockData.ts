@@ -114,7 +114,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-001',
     title: 'Supply of IT Hardware for HQ',
-    category: ['Information Technology', 'General Trading'],
+    category: ['IT Hardware & Software', 'Equipment & Machinery'],
     description: 'Procurement of 50 laptops and 20 desktop units for the new headquarters',
     scopeOfWork: 'Delivery, installation, and initial setup of hardware',
     timeline: '2 months',
@@ -127,7 +127,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-002',
     title: 'Cloud Migration Services',
-    category: ['Information Technology', 'Consulting'],
+    category: ['IT Hardware & Software', 'Consultancy & Training'],
     description: 'Migration of local servers to a secure cloud environment',
     scopeOfWork: 'Audit of existing infrastructure, data migration, and staff training',
     timeline: '6 months',
@@ -140,7 +140,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-003',
     title: 'Security Guard Services',
-    category: ['Facility Management', 'Security Services'],
+    category: ['Cleaning & Hospitality', 'Security Services'],
     description: '24/7 security services for the corporate office buildings',
     scopeOfWork: 'Provision of 5 SIRA certified security guards and monitoring services',
     timeline: '24 months',
@@ -153,7 +153,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-004',
     title: 'EV Charging Station Network',
-    category: ['Civil Works'],
+    category: ['Contracting & Maintenance'],
     description: 'Establishment of EV charging points across all parking lots',
     scopeOfWork: 'Installation of 20 fast-charging points and management software',
     timeline: '5 months',
@@ -166,7 +166,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-005',
     title: 'Office Renovation Project',
-    category: ['Construction', 'Civil Works', 'Furniture & Equipment'],
+    category: ['Contracting & Maintenance', 'Building Materials', 'Equipment & Machinery'],
     description: 'Interior renovation and fit-out for 2nd floor offices',
     scopeOfWork: 'Demolition, partition installation, electrical and MEP works',
     timeline: '3 months',
@@ -179,7 +179,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-006',
     title: 'Annual Security Audit 2026',
-    category: ['Information Technology'],
+    category: ['IT Hardware & Software'],
     description: 'Comprehensive cybersecurity audit and penetration testing for all digital assets',
     scopeOfWork: 'Vulnerability assessment, network penetration testing, and compliance reporting',
     timeline: '2 months',
@@ -192,7 +192,7 @@ export const mockRFPs: RFP[] = [
   {
     id: 'RFP-007',
     title: 'Closed RFP Sample',
-    category: ['Information Technology'],
+    category: ['IT Hardware & Software'],
     description: 'Sample closed RFP for testing.',
     scopeOfWork: 'N/A',
     timeline: 'N/A',
@@ -434,7 +434,7 @@ export const mockVendors: Vendor[] = [
     id: 'VEN-001',
     companyName: 'TechSolutions LLC',
     email: 'contact@techsolutions.ae',
-    category: ['Information Technology', 'Consulting'],
+    category: ['IT Hardware & Software', 'Consultancy & Training'],
     status: 'approved',
     registrationDate: '2025-11-15',
     tradeLicense: 'TL-123456',
@@ -445,7 +445,7 @@ export const mockVendors: Vendor[] = [
     id: 'VEN-002',
     companyName: 'Modern Office Furnishings',
     email: 'info@modernoffice.ae',
-    category: ['Furniture & Equipment'],
+    category: ['Equipment & Machinery'],
     status: 'approved',
     registrationDate: '2025-12-01',
     tradeLicense: 'TL-234567',
@@ -456,7 +456,7 @@ export const mockVendors: Vendor[] = [
     id: 'VEN-003',
     companyName: 'Gulf Construction Services',
     email: 'sales@gulfconst.ae',
-    category: ['Construction', 'Civil Works'],
+    category: ['Contracting & Maintenance'],
     status: 'pending',
     registrationDate: '2026-01-20',
     tradeLicense: 'TL-345678',
@@ -467,7 +467,7 @@ export const mockVendors: Vendor[] = [
     id: 'VEN-004',
     companyName: 'ABC Trading',
     email: 'info@abctrading.ae',
-    category: ['General Trading'],
+    category: ['Equipment & Machinery'],
     status: 'rejected',
     registrationDate: '2025-10-10',
     tradeLicense: 'TL-456789',
@@ -479,7 +479,7 @@ export const mockVendors: Vendor[] = [
     id: 'VEN-005',
     companyName: 'Global Logistics Hub',
     email: 'info@globallogistics.ae',
-    category: ['Catering Services', 'General Trading'],
+    category: ['Cleaning & Hospitality', 'Equipment & Machinery'],
     status: 'correction_requested',
     registrationDate: '2026-02-10',
     tradeLicense: 'TL-567890',
@@ -526,16 +526,24 @@ export const mockAdminUsers: AdminUser[] = [
 
 // Categories
 export const vendorCategories = [
-  'Information Technology',
-  'Construction',
-  'Civil Works',
-  'Furniture & Equipment',
-  'Facility Management',
-  'Consulting',
-  'General Trading',
+  'Stationery',
+  'Advertising & Publications',
+  'Cleaning & Hospitality',
+  'Building Materials',
+  'Equipment & Machinery',
+  'Vehicle Supply & Maintenance',
+  'Fuel Supply',
+  'Travel Agencies',
+  'Event Management',
+  'Hotels',
+  'Consultancy & Training',
+  'Translation Services',
+  'Contracting & Maintenance',
+  'IT Hardware & Software',
   'Security Services',
-  'Cleaning Services',
-  'Catering Services'
+  'Geology Services',
+  'Banking & Auditing',
+  'Government Agencies'
 ];
 
 export const documentTypes = [

@@ -1,22 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from '@/app/context/RouterContext';
-import { Calendar, Clock, FileText, Download, ArrowLeft, Send, MessageSquare, Award, Star } from 'lucide-react';
+import { Calendar, Clock, FileText, Download, ArrowLeft, Send, MessageSquare, ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
 import { Separator } from '@/app/components/ui/separator';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { mockRFPs, mockProposals } from '@/app/data/mockData';
 import { ProposalDetailView } from '@/app/components/vendor/ProposalDetailView';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/app/components/ui/table';
+import { StatusBadge } from '@/app/components/ui/status-badge';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -25,15 +17,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const formatStatus = (statusStr?: string) => {
-  if (!statusStr) return '';
-  return statusStr
-    .split(/_|\s+/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+  return `${month}/${day}/${year}`;
 };
 
 export default function VendorRFPDetail() {
@@ -44,7 +28,6 @@ export default function VendorRFPDetail() {
   // Check if there's a proposal for this RFP
   const existingProposal = mockProposals.find(p => p.rfpId === rfpId && p.vendorId === 'VEN-001');
   
-
   const [activeTab, setActiveTab] = useState('details');
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<any[]>(
@@ -60,9 +43,17 @@ export default function VendorRFPDetail() {
   );
 
   if (!rfp) {
-    return <div>Vendor not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 bg-white rounded-card shadow-card">
+        <ShieldAlert className="h-16 w-16 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-gray-800">RFP Not Found</h2>
+        <p className="text-sm text-gray-500 mt-1 mb-6">The RFP you are looking for does not exist.</p>
+        <Button onClick={() => navigate('/vendor/rfps')} style={{ backgroundColor: 'var(--fnrc-primary-green)' }} className="text-white">
+          Back to RFPs
+        </Button>
+      </div>
+    );
   }
-
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -88,171 +79,154 @@ export default function VendorRFPDetail() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      paid: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
-      delivered: { bg: '#E0E7FF', text: '#6366F1' }
-    };
-    return colors[status] || colors.pending;
-  };
+  const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
 
   return (
-    <div className="space-y-6">
-      <Button
-        variant="ghost"
-        onClick={() => navigate('/vendor/rfps')}
-        className="gap-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to RFPs
-      </Button>
-
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="mb-2 flex items-center gap-3">
-            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-              {rfp.title}
-            </h1>
-            <Badge style={{ backgroundColor: 'var(--fnrc-success)', color: 'white' }}>
-              Published
-            </Badge>
-            <Badge 
-              className="px-2 py-0.5" 
-              style={{ 
-                backgroundColor: new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)',
-                color: 'white'
-              }}
-            >
-              {new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'Closed' : 'Open'}
-            </Badge>
-          </div>
-          <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-            {rfp.id}
-          </p>
-        </div>
+    <div className="space-y-8 font-sans">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/vendor/rfps')}
+          className="gap-2 text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to RFPs
+        </Button>
       </div>
 
-      {/* Clean Tab Structure */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+      {/* Title & Status */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-card shadow-card border border-gray-100/50">
+        <div>
+          <div className="flex flex-wrap items-center gap-3 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
+              {rfp.id.replace('-', ' - ')} {rfp.title}
+            </h1>
+            <StatusBadge status={isClosed ? "closed" : "published"} />
+          </div>
+        </div>
+
+        {!existingProposal && !isClosed && (
+          <Button
+            size="lg"
+            className="text-white shadow-md hover:shadow-lg shadow-[var(--fnrc-primary-green)]/15 transition-all duration-200 hover:-translate-y-0.5"
+            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            onClick={() => navigate(`/vendor/rfps/${rfp.id}/submit`)}
+          >
+            Submit Proposal
+          </Button>
+        )}
+      </div>
+
+      {/* Tab Navigation */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-md">
           <TabsTrigger 
             value="details" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'details' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'details' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
             RFP Details
           </TabsTrigger>
           <TabsTrigger 
             value="messages" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'messages' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'messages' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
-            Chat
+            Vendor Chat
           </TabsTrigger>
           <TabsTrigger 
             value="proposal" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'proposal' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'proposal' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
-            Proposal
+            My Proposal
           </TabsTrigger>
-          
-
-
         </TabsList>
 
         {/* TAB 1: RFP DETAILS */}
-        <TabsContent value="details" className="space-y-6 mt-6">
+        <TabsContent value="details" className="space-y-6 focus:outline-none">
           {/* Key Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Key Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 md:grid-cols-3">
-                <div className="flex items-start gap-3">
-                  <Calendar className="mt-1 h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Submission Deadline
-                    </div>
-                    <div className="mt-1 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {formatDate(rfp.submissionDeadline)}
-                    </div>
-                  </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="hover:shadow-card-hover transition-all duration-200">
+              <CardContent className="p-6 flex items-start gap-4">
+                <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <Calendar className="h-5 w-5" />
                 </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="mt-1 h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Project Timeline
-                    </div>
-                    <div className="mt-1 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {rfp.timeline}
-                    </div>
-                  </div>
+                <div>
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
+                    Submission Deadline
+                  </span>
+                  <span className="text-base font-bold text-gray-800 mt-1 block">
+                    {formatDate(rfp.submissionDeadline)}
+                  </span>
                 </div>
-                <div className="flex items-start gap-3">
-                  <FileText className="mt-1 h-5 w-5" style={{ color: 'var(--fnrc-info)' }} />
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      Category
-                    </div>
-                    <div className="mt-1 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      {rfp.category.join(', ')}
-                    </div>
-                  </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-card-hover transition-all duration-200">
+              <CardContent className="p-6 flex items-start gap-4">
+                <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                  <Clock className="h-5 w-5" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <div>
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
+                    Project Timeline
+                  </span>
+                  <span className="text-base font-bold text-gray-800 mt-1 block">
+                    {rfp.timeline}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-card-hover transition-all duration-200">
+              <CardContent className="p-6 flex items-start gap-4">
+                <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <FileText className="h-5 w-5" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
+                    Category Sector
+                  </span>
+                  <span className="text-base font-bold text-gray-800 mt-1 block truncate max-w-[200px]">
+                    {rfp.category.join(', ')}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* RFP Overview */}
           <Card>
-            <CardHeader>
-              <CardTitle>RFP Overview</CardTitle>
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="text-lg font-bold text-gray-900">RFP Overview</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="pt-6 space-y-6">
               <div>
-                <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <h3 className="text-sm font-bold text-gray-900 mb-2 tracking-wide">
                   Description
                 </h3>
-                <p style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.description}</p>
+                <p className="text-sm text-gray-500 leading-relaxed">{rfp.description}</p>
               </div>
-              <Separator />
+              <Separator className="bg-gray-100" />
               <div>
-                <h3 className="mb-2 font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <h3 className="text-sm font-bold text-gray-900 mb-2 tracking-wide">
                   Scope of Work
                 </h3>
-                <p style={{ color: 'var(--fnrc-text-muted)' }}>{rfp.scopeOfWork}</p>
+                <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-line">{rfp.scopeOfWork}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Eligibility Criteria */}
           <Card>
-            <CardHeader>
-              <CardTitle>Eligibility Criteria</CardTitle>
-              <CardDescription>Requirements for submission</CardDescription>
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="text-lg font-bold text-gray-900">Eligibility Criteria</CardTitle>
+              <CardDescription>Minimum qualifications required for proposal submission</CardDescription>
             </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
+            <CardContent className="pt-6">
+              <ul className="space-y-3">
                 {rfp.eligibilityCriteria.map((criteria, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}></div>
-                    <span style={{ color: 'var(--fnrc-text-dark)' }}>{criteria}</span>
+                  <li key={index} className="flex items-start gap-3 text-sm text-gray-600">
+                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0" />
+                    <span>{criteria}</span>
                   </li>
                 ))}
               </ul>
@@ -261,57 +235,57 @@ export default function VendorRFPDetail() {
 
           {/* Attachments */}
           <Card>
-            <CardHeader>
-              <CardTitle>Attachments</CardTitle>
-              <CardDescription>Download RFP documents</CardDescription>
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="text-lg font-bold text-gray-900">RFP Attachments</CardTitle>
+              <CardDescription>Download official tender packages and guidelines</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {rfp.attachments.map((attachment, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between rounded-lg border p-3"
-                    style={{ borderColor: 'var(--fnrc-border-gray)' }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />
-                      <span style={{ color: 'var(--fnrc-text-dark)' }}>{attachment.name}</span>
+            <CardContent className="pt-6 space-y-3">
+              {rfp.attachments.map((attachment, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                      <FileText className="h-5 w-5" />
                     </div>
-                    <Button size="sm" variant="outline">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download
-                    </Button>
+                    <div>
+                      <span className="text-sm font-bold text-gray-800 block">{attachment.name}</span>
+                      <span className="text-xs text-gray-400 block">PDF Document</span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <Button size="sm" variant="outline" className="gap-2 font-semibold">
+                    <Download className="h-4 w-4" />
+                    Download
+                  </Button>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
 
-
-        {/* TAB 2: CHAT */}
-        <TabsContent value="messages" className="mt-6">
+        {/* TAB 2: CLARIFICATION CHAT */}
+        <TabsContent value="messages" className="focus:outline-none">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                RFP Chat
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <MessageSquare className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                RFP Discussion Thread
               </CardTitle>
-              <CardDescription>Direct communication with FNRC procurement team</CardDescription>
+              <CardDescription>Clarify specifications directly with FNRC procurement experts</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col h-[500px]">
+            <CardContent className="pt-6">
+              <div className="flex flex-col h-[520px]">
                 {/* Chat Messages */}
-                <div className="flex-1 space-y-4 overflow-y-auto p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                <div className="flex-1 space-y-4 overflow-y-auto p-6 rounded-2xl mb-4 bg-gray-50/60 border border-gray-100">
                   {chatMessages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.isVendor ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[70%] rounded-lg p-3 ${msg.isVendor ? 'rounded-br-none' : 'rounded-bl-none'}`}
-                           style={{ backgroundColor: msg.isVendor ? 'var(--fnrc-primary-green)' : 'white', color: msg.isVendor ? 'white' : 'var(--fnrc-text-dark)' }}>
-                        <p className="text-xs font-medium mb-1" style={{ opacity: 0.9 }}>
+                      <div className={`max-w-[70%] rounded-2xl p-4 shadow-sm ${msg.isVendor ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'}`}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">
                           {msg.sender}
                         </p>
-                        <p className="text-sm">{msg.text}</p>
-                        <p className="text-xs mt-1" style={{ opacity: 0.7 }}>
+                        <p className="text-sm leading-relaxed">{msg.text}</p>
+                        <p className="text-[10px] mt-2 text-right opacity-60">
                           {msg.time}
                         </p>
                       </div>
@@ -320,26 +294,28 @@ export default function VendorRFPDetail() {
                 </div>
 
                 {/* Message Input */}
-                <div className="flex gap-2">
-                  <Textarea
-                    placeholder="Type your message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                    rows={2}
-                    className="flex-1"
-                  />
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1 relative">
+                    <Textarea
+                      placeholder="Type your clarification question here..."
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      rows={2}
+                      className="resize-none rounded-xl pr-12 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 border-gray-200"
+                    />
+                  </div>
                   <Button
                     onClick={handleSendMessage}
-                    className="text-white"
+                    className="text-white h-12 w-12 rounded-xl flex items-center justify-center p-0 shrink-0 shadow-md shadow-[var(--fnrc-primary-green)]/10"
                     style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                   >
-                    <Send className="h-4 w-4" />
+                    <Send className="h-5 w-5" />
                   </Button>
                 </div>
               </div>
@@ -347,26 +323,34 @@ export default function VendorRFPDetail() {
           </Card>
         </TabsContent>
 
-        {/* TAB 4: PROPOSAL */}
-        <TabsContent value="proposal" className="mt-6">
+        {/* TAB 3: PROPOSAL STATUS */}
+        <TabsContent value="proposal" className="focus:outline-none">
           {!existingProposal ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <FileText className="mx-auto h-16 w-16 mb-4" style={{ color: 'var(--fnrc-text-muted)' }} />
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  No Proposal Submitted Yet
+            <Card className="border border-dashed border-gray-200">
+              <CardContent className="py-16 text-center max-w-xl mx-auto flex flex-col items-center">
+                <div className="h-16 w-16 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center mb-6">
+                  <FileText className="h-8 w-8" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  No Proposal Submitted
                 </h3>
-                <p className="mb-6" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  You haven't submitted a proposal for this RFP. Click below to submit your proposal.
+                <p className="text-sm text-gray-500 leading-relaxed mb-8">
+                  You haven't submitted a technical or commercial bid for this tender campaign. Review the scope of work and complete your draft before the submission deadline.
                 </p>
-                <Button
-                  size="lg"
-                  className="text-white"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                  onClick={() => navigate(`/vendor/rfps/${rfpId}/submit`)}
-                >
-                  Submit Proposal
-                </Button>
+                {isClosed ? (
+                  <Button disabled size="lg" className="w-full sm:w-auto font-semibold">
+                    Submission Period Ended
+                  </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    className="text-white w-full sm:w-auto font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15"
+                    style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                    onClick={() => navigate(`/vendor/rfps/${rfp.id}/submit`)}
+                  >
+                    Start Bid Submission
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -377,9 +361,6 @@ export default function VendorRFPDetail() {
             />
           )}
         </TabsContent>
-
-
-
       </Tabs>
     </div>
   );

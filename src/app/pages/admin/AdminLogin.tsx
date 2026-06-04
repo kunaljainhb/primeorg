@@ -52,7 +52,7 @@ export default function AdminLogin() {
           </CardTitle>
           <CardDescription className="text-center text-base font-medium">
             {isForgotPassword 
-              ? 'Enter your registered email address to receive a reset link' 
+              ? 'Enter your registered email address' 
               : 'Secure access for FNRC procurement team'}
           </CardDescription>
         </CardHeader>
@@ -79,7 +79,7 @@ export default function AdminLogin() {
                 className="w-full text-white font-bold h-11"
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
               >
-                Send Reset Link
+                Submit
               </Button>
               <div className="text-center pt-2">
                 <button

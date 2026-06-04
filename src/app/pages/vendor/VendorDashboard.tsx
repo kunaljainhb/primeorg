@@ -3,6 +3,7 @@ import { FileText, Send, Bell, User, TrendingUp, Clock, MountainSnow } from 'luc
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
+import { StatusBadge } from '@/app/components/ui/status-badge';
 import { mockRFPs, mockProposals } from '@/app/data/mockData';
 import { DocumentComplianceAlert } from '@/app/components/vendor/DocumentComplianceAlert';
 
@@ -15,90 +16,86 @@ export default function VendorDashboard() {
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="mb-2 text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
             Vendor Dashboard
           </h1>
-          <p className="text-muted-foreground font-medium">
-            Welcome back, TechSolutions LLC
+          <p className="text-sm font-medium text-gray-500">
+            Welcome back, <span className="text-gray-700 font-semibold">TechSolutions LLC</span>
           </p>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => navigate('/vendor/rfps')}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Active Tenders
-            </CardTitle>
-            <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10 group-hover:bg-[var(--fnrc-primary-green)]/20 transition-colors">
-              <MountainSnow className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/vendor/rfps')}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Active Tenders
+                </span>
+                <div className="text-3xl font-bold text-gray-800">
+                  {activeRFPs.length}
+                </div>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-primary-green)]/15 to-[var(--fnrc-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
+                <MountainSnow className="h-6 w-6 text-[var(--fnrc-primary-green)] animate-pulse" strokeWidth={1.5} style={{ animationDuration: '3s' }} />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-foreground">
-              {activeRFPs.length}
-            </div>
-            <p className="mt-1 text-sm font-medium text-muted-foreground">
-              Available opportunities
-            </p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow group" onClick={() => navigate('/vendor/proposals')}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              My Proposals
-            </CardTitle>
-            <div className="p-2 rounded-full bg-[var(--fnrc-accent-gold)]/10 group-hover:bg-[var(--fnrc-accent-gold)]/20 transition-colors">
-              <Send className="h-5 w-5 text-[var(--fnrc-accent-gold)]" strokeWidth={1.5} />
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/vendor/proposals')}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  My Proposals
+                </span>
+                <div className="text-3xl font-bold text-gray-800">
+                  {myProposals.length}
+                </div>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-accent-gold)]/15 to-[var(--fnrc-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Send className="h-5 w-5 text-[var(--fnrc-accent-gold)]" strokeWidth={1.5} />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-foreground">
-              {myProposals.length}
-            </div>
-            <p className="mt-1 text-sm font-medium text-muted-foreground">
-              Submitted proposals
-            </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Under Review
-            </CardTitle>
-            <div className="p-2 rounded-full bg-[var(--fnrc-info)]/10">
-              <Clock className="h-5 w-5 text-[var(--fnrc-info)]" strokeWidth={1.5} />
+        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Under Review
+                </span>
+                <div className="text-3xl font-bold text-gray-800">
+                  1
+                </div>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-royal-blue)]/15 to-[var(--fnrc-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Clock className="h-5 w-5 text-[var(--fnrc-royal-blue)]" strokeWidth={1.5} />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-foreground">
-              1
-            </div>
-            <p className="mt-1 text-sm font-medium text-muted-foreground">
-              Being evaluated
-            </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Success Rate
-            </CardTitle>
-            <div className="p-2 rounded-full bg-[var(--fnrc-success)]/10">
-              <TrendingUp className="h-5 w-5 text-[var(--fnrc-success)]" strokeWidth={1.5} />
+        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Success Rate
+                </span>
+                <div className="text-3xl font-bold text-gray-800">
+                  50%
+                </div>
+              </div>
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 group-hover:scale-105 transition-transform duration-200">
+                <TrendingUp className="h-5 w-5 text-emerald-600" strokeWidth={1.5} />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-foreground">
-              50%
-            </div>
-            <p className="mt-1 text-sm font-medium text-muted-foreground">
-              Proposal win rate
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -106,31 +103,22 @@ export default function VendorDashboard() {
       {/* Main Content Row 1 */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Active RFPs */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Tenders</CardTitle>
-            <CardDescription>Recently published resource opportunities</CardDescription>
+        <Card className="shadow-card">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-gray-800">Active Tenders</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {activeRFPs.slice(0, 3).map((rfp) => {
                 const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
                 return (
-                  <div key={rfp.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-border">
+                  <div key={rfp.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-gray-100">
                     <div className="space-y-1">
-                      <div className="font-semibold text-base text-foreground flex items-center gap-2">
+                      <div className="font-semibold text-[15px] text-gray-800 flex items-center gap-2">
                         {rfp.title}
-                        <Badge 
-                          className="text-[10px] h-4 px-1.5 uppercase font-bold tracking-wider" 
-                          style={{ 
-                            backgroundColor: isClosed ? 'var(--fnrc-border-gray)' : 'var(--fnrc-success)',
-                            color: 'white'
-                          }}
-                        >
-                          {isClosed ? 'Closed' : 'Open'}
-                        </Badge>
+                        <StatusBadge status={isClosed ? 'closed' : 'published'} />
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                      <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                         <span>{rfp.id}</span>
                         <span>•</span>
                         <span>Due: {new Date(rfp.submissionDeadline).toLocaleDateString()}</span>
@@ -140,7 +128,7 @@ export default function VendorDashboard() {
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/vendor/rfps/${rfp.id}`)}
-                      className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10"
+                      className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button"
                     >
                       View
                     </Button>
@@ -149,7 +137,7 @@ export default function VendorDashboard() {
               })}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5"
+                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
                 onClick={() => navigate('/vendor/rfps')}
               >
                 View All Tenders →
@@ -159,56 +147,30 @@ export default function VendorDashboard() {
         </Card>
 
         {/* My Proposals */}
-        <Card>
-          <CardHeader>
-            <CardTitle>My Proposals</CardTitle>
-            <CardDescription>Track your submission status</CardDescription>
+        <Card className="shadow-card">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-gray-800">My Proposals</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {myProposals.map((proposal) => {
-                const getCamelStatus = (status: string) => {
-                  if (status === 'under_review') return 'UnderReview';
-                  return status.charAt(0).toUpperCase() + status.slice(1);
-                };
-                
-                const getStatusStyles = (status: string) => {
-                  switch (status) {
-                    case 'shortlisted': return { bg: 'var(--fnrc-success)', text: '#ffffff' };
-                    case 'under_review': return { bg: 'var(--fnrc-warning)', text: '#ffffff' };
-                    case 'rejected': return { bg: 'var(--fnrc-error)', text: '#ffffff' };
-                    case 'submitted': return { bg: 'var(--fnrc-info)', text: '#ffffff' };
-                    default: return { bg: 'var(--fnrc-border-gray)', text: 'var(--fnrc-text-dark)' };
-                  }
-                };
-
-                const styles = getStatusStyles(proposal.status);
-                
                 return (
-                  <div key={proposal.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-border">
-                    <div className="space-y-1">
-                      <div className="font-semibold text-base text-foreground">
+                  <div key={proposal.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-gray-100">
+                    <div className="space-y-1.5 flex flex-col items-start">
+                      <div className="font-semibold text-[15px] text-gray-800">
                         {proposal.rfpTitle}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                      <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                         <span>{proposal.id}</span>
                         <span>•</span>
-                        <Badge
-                          variant="secondary"
-                          className="font-medium tracking-wide"
-                          style={{
-                            backgroundColor: styles.bg,
-                            color: styles.text
-                          }}
-                        >
-                          {getCamelStatus(proposal.status)}
-                        </Badge>
+                        <StatusBadge status={proposal.status} />
                       </div>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/vendor/proposals/${proposal.id}`)}
+                      className="rounded-button text-xs"
                     >
                       Track
                     </Button>
@@ -217,7 +179,7 @@ export default function VendorDashboard() {
               })}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5"
+                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
                 onClick={() => navigate('/vendor/proposals')}
               >
                 View All Proposals →

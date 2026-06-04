@@ -8,6 +8,8 @@ import { Separator } from '@/app/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/app/components/ui/collapsible';
 import { toast } from 'sonner';
 import { mockProposals, saveProposalsToStorage } from '@/app/data/mockData';
+import { ProgressTimeline, TimelineStage } from '@/app/components/ui/progress-timeline';
+import { StatusBadge } from '@/app/components/ui/status-badge';
 import { Input } from '@/app/components/ui/input';
 import {
   Table,
@@ -462,26 +464,12 @@ export function ProposalDetailView({
               </div>
             </div>
             <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>RFP Title</div>
-              <div className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>{proposalState.rfpTitle}</div>
+              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>RFP Number - RFP Title</div>
+              <div className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>{proposalState.rfpId} - {proposalState.rfpTitle}</div>
             </div>
             <div>
               <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Status</div>
-              <Badge 
-                variant="secondary"
-                style={{ 
-                  backgroundColor: statusColor.bg,
-                  color: statusColor.text
-                }}
-              >
-                {proposalState.status === 'technical_correction_requested' 
-                  ? 'Technical Correction Requested' 
-                  : proposalState.status === 'technical_review'
-                  ? 'Technical Review'
-                  : proposalState.status === 'under_review'
-                  ? 'Under Review'
-                  : proposalState.status.charAt(0).toUpperCase() + proposalState.status.slice(1)}
-              </Badge>
+              <StatusBadge status={proposalState.status} />
             </div>
           </div>
           <Separator className="my-4" />
@@ -712,56 +700,42 @@ export function ProposalDetailView({
                   {/* Live Cost Breakdown Preview */}
                   <div>
                     <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>Updated Cost Breakdown Preview</h4>
-                    <div className="border rounded-lg overflow-hidden bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                       <Table>
-                        <TableHeader className="bg-gray-50/80">
-                          <TableRow className="border-b hover:bg-gray-50/80" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider w-[40%]">Description</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Unit Price (AED)</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Quantity</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-right w-[20%] pr-4">Amount (AED)</TableHead>
+                        <TableHeader className="bg-gray-50/60 backdrop-blur-xs">
+                          <TableRow className="border-b" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 pl-6 w-[40%]">Description</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%]">Unit Price (AED)</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-center w-[20%]">Quantity</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%] pr-6">Amount (AED)</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody className="divide-y divide-gray-100">
                           {[
                             { desc: 'Core Services & Implementation (70%)', amt: editedAmount * 0.7 },
                             { desc: 'Support & Maintenance (Annual) (20%)', amt: editedAmount * 0.2 },
                             { desc: 'Contingency & Other Expenses (10%)', amt: editedAmount * 0.1 }
                           ].map((item, i) => (
-                            <TableRow key={i} className="border-b bg-white hover:bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value={item.desc} 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm focus-visible:ring-0 cursor-default" 
-                                />
+                            <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
+                              <TableCell className="py-4 pl-6 font-medium text-sm text-gray-800">
+                                {item.desc}
                               </TableCell>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value={(item.amt / 1).toFixed(2)} 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-right focus-visible:ring-0 cursor-default" 
-                                />
+                              <TableCell className="py-4 text-right text-sm text-gray-600 tabular-nums">
+                                {item.amt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </TableCell>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value="1" 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-center focus-visible:ring-0 cursor-default" 
-                                />
+                              <TableCell className="py-4 text-center text-sm text-gray-600 font-medium">
+                                1
                               </TableCell>
-                              <TableCell className="p-3 text-right">
-                                <div className="h-9 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-end px-3 text-gray-500 text-sm shadow-inner">
-                                  {item.amt.toFixed(2)}
-                                </div>
+                              <TableCell className="py-4 text-right pr-6 font-semibold text-sm text-gray-800 tabular-nums">
+                                {item.amt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                      <div className="p-4 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                        <span className="font-bold text-sm text-gray-700">Total Proposal Amount</span>
-                        <span className="font-bold text-lg text-[var(--fnrc-primary-green)]">
+                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                        <span className="font-bold text-sm text-gray-600">Total Proposal Amount</span>
+                        <span className="font-extrabold text-xl text-[var(--fnrc-primary-green)] tracking-tight">
                           AED {editedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -822,56 +796,42 @@ export function ProposalDetailView({
                   
                   <div>
                     <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>Cost Breakdown</h4>
-                    <div className="border rounded-lg overflow-hidden bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                       <Table>
-                        <TableHeader className="bg-gray-50/80">
-                          <TableRow className="border-b hover:bg-gray-50/80" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider w-[40%]">Description</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Unit Price (AED)</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Quantity</TableHead>
-                            <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-right w-[20%] pr-4">Amount (AED)</TableHead>
+                        <TableHeader className="bg-gray-50/60 backdrop-blur-xs">
+                          <TableRow className="border-b" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 pl-6 w-[40%]">Description</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%]">Unit Price (AED)</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-center w-[20%]">Quantity</TableHead>
+                            <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%] pr-6">Amount (AED)</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody>
+                        <TableBody className="divide-y divide-gray-100">
                           {[
                             { desc: 'Core Services & Implementation', amt: proposalState.commercialAmount * 0.7 },
                             { desc: 'Support & Maintenance (Annual)', amt: proposalState.commercialAmount * 0.2 },
                             { desc: 'Contingency & Other Expenses', amt: proposalState.commercialAmount * 0.1 }
                           ].map((item, i) => (
-                            <TableRow key={i} className="border-b bg-white hover:bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value={item.desc} 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm focus-visible:ring-0 cursor-default" 
-                                />
+                            <TableRow key={i} className="hover:bg-gray-50/50 transition-colors">
+                              <TableCell className="py-4 pl-6 font-medium text-sm text-gray-800">
+                                {item.desc}
                               </TableCell>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value={(item.amt / 1).toFixed(2)} 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-right focus-visible:ring-0 cursor-default" 
-                                />
+                              <TableCell className="py-4 text-right text-sm text-gray-600 tabular-nums">
+                                {item.amt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </TableCell>
-                              <TableCell className="p-3">
-                                <Input 
-                                  value="1" 
-                                  readOnly 
-                                  className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-center focus-visible:ring-0 cursor-default" 
-                                />
+                              <TableCell className="py-4 text-center text-sm text-gray-600 font-medium">
+                                1
                               </TableCell>
-                              <TableCell className="p-3 text-right">
-                                <div className="h-9 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-end px-3 text-gray-500 text-sm shadow-inner">
-                                  {item.amt.toFixed(2)}
-                                </div>
+                              <TableCell className="py-4 text-right pr-6 font-semibold text-sm text-gray-800 tabular-nums">
+                                {item.amt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                      <div className="p-4 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                        <span className="font-bold text-sm text-gray-700">Total Proposal Amount</span>
-                        <span className="font-bold text-lg text-[var(--fnrc-primary-green)]">
+                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                        <span className="font-bold text-sm text-gray-600">Total Proposal Amount</span>
+                        <span className="font-extrabold text-xl text-[var(--fnrc-primary-green)] tracking-tight">
                           AED {proposalState.commercialAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -934,117 +894,40 @@ export function ProposalDetailView({
           </CardHeader>
           <CardContent>
             {/* Step-based Progress Tracker */}
-            <div className="relative">
-              {/* Progress bar background */}
-              <div className="absolute top-5 left-0 right-0 h-1" style={{ backgroundColor: 'var(--fnrc-border-gray)' }}></div>
-              {/* Progress bar fill */}
-              <div 
-                className="absolute top-5 left-0 h-1 transition-all duration-500" 
-                style={{ 
-                  backgroundColor: 'var(--fnrc-success)', 
-                  width: proposalState.status === 'submitted' ? '0%' : `${(currentStepIndex / (progressSteps.length - 1)) * 100}%`
-                }}
-              ></div>
+            {(() => {
+              const stages: TimelineStage[] = [
+                { key: 'submitted', label: 'Submitted', description: 'Proposal submitted' },
+                { key: 'technical', label: 'Technical Review', description: 'Approach evaluation' },
+                { key: 'commercial', label: 'Commercial Review', description: 'Pricing evaluation' },
+                { key: 'final', label: 'Final Decision', description: 'Award decision' }
+              ];
 
-              {/* Steps */}
-              <div className="relative flex justify-between">
-                {progressSteps.map((step) => {
-                  // Determine premium theme colors and icons dynamically per step status
-                  const getStepTheme = (status: 'completed' | 'current' | 'warning' | 'error' | 'pending') => {
-                    switch (status) {
-                      case 'completed':
-                        return {
-                          bg: 'var(--fnrc-success)',
-                          border: 'var(--fnrc-success)',
-                          icon: <CheckCircle className="h-5 w-5 text-white" />,
-                          glow: 'none',
-                          labelColor: 'var(--fnrc-text-dark)',
-                          descColor: 'var(--fnrc-success)',
-                          opacity: 1
-                        };
-                      case 'current':
-                        return {
-                          bg: '#EFF6FF',
-                          border: 'var(--fnrc-info)',
-                          icon: <Clock className="h-5 w-5" style={{ color: 'var(--fnrc-info)' }} />,
-                          glow: '0 0 0 4px rgba(59, 130, 246, 0.15)',
-                          labelColor: 'var(--fnrc-text-dark)',
-                          descColor: 'var(--fnrc-info)',
-                          opacity: 1
-                        };
-                      case 'warning':
-                        return {
-                          bg: '#FFFBEB',
-                          border: '#F59E0B',
-                          icon: <AlertTriangle className="h-5 w-5 text-[#D97706]" />,
-                          glow: '0 0 0 4px rgba(245, 158, 11, 0.25)',
-                          labelColor: 'var(--fnrc-text-dark)',
-                          descColor: '#D97706',
-                          opacity: 1
-                        };
-                      case 'error':
-                        return {
-                          bg: '#FEE2E2',
-                          border: '#EF4444',
-                          icon: <AlertCircle className="h-5 w-5 text-[#DC2626]" />,
-                          glow: '0 0 0 4px rgba(239, 68, 68, 0.25)',
-                          labelColor: 'var(--fnrc-text-dark)',
-                          descColor: '#DC2626',
-                          opacity: 1
-                        };
-                      case 'pending':
-                      default:
-                        return {
-                          bg: 'white',
-                          border: 'var(--fnrc-border-gray)',
-                          icon: <Clock className="h-5 w-5" style={{ color: 'var(--fnrc-text-muted)' }} />,
-                          glow: 'none',
-                          labelColor: 'var(--fnrc-text-muted)',
-                          descColor: 'var(--fnrc-text-muted)',
-                          opacity: 0.6
-                        };
-                    }
-                  };
+              let currentStageKey = 'submitted';
+              let completedStageKeys: string[] = [];
 
-                  const theme = getStepTheme(step.status);
+              const normStatus = proposalState.status;
+              if (normStatus === 'submitted') {
+                currentStageKey = 'submitted';
+                completedStageKeys = [];
+              } else if (['technical_review', 'technical_review_started', 'under_review', 'technical_correction_requested', 'correction_requested'].includes(normStatus)) {
+                currentStageKey = 'technical';
+                completedStageKeys = ['submitted'];
+              } else if (['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'technical_review_completed'].includes(normStatus)) {
+                currentStageKey = 'commercial';
+                completedStageKeys = ['submitted', 'technical'];
+              } else if (['shortlisted', 'selected', 'approved', 'rejected'].includes(normStatus)) {
+                currentStageKey = 'final';
+                completedStageKeys = ['submitted', 'technical', 'commercial'];
+              }
 
-                  return (
-                    <div key={step.index} className="flex flex-col items-center" style={{ flex: 1 }}>
-                      {/* Step circle */}
-                      <div
-                        className="flex h-10 w-10 items-center justify-center rounded-full border-2 z-10 transition-all duration-300"
-                        style={{
-                          backgroundColor: theme.bg,
-                          borderColor: theme.border,
-                          boxShadow: theme.glow
-                        }}
-                      >
-                        {theme.icon}
-                      </div>
-                      {/* Step label & description */}
-                      <div className="mt-2 text-center max-w-[120px]" style={{ opacity: theme.opacity }}>
-                        <div 
-                          className="text-[11px] font-semibold leading-snug"
-                          style={{ 
-                            color: theme.labelColor
-                          }}
-                        >
-                          {step.label}
-                        </div>
-                        <div 
-                          className="text-[9px] mt-0.5 leading-tight font-medium"
-                          style={{ 
-                            color: theme.descColor
-                          }}
-                        >
-                          {step.desc}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+              return (
+                <ProgressTimeline 
+                  stages={stages} 
+                  currentStageKey={currentStageKey} 
+                  completedStageKeys={completedStageKeys} 
+                />
+              );
+            })()}
 
             {/* Latest Evaluation Remarks integrated here */}
             {proposalState.remarks && (

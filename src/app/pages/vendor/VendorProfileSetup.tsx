@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
-import { Upload, AlertCircle, Building, MapPin, User, Landmark, Calendar, Globe, Phone, Mail, Briefcase, ListFilter, FileText, ClipboardCheck, CheckCircle2 } from 'lucide-react';
+import { Upload, AlertCircle, Building, MapPin, User, Landmark, Phone, Mail, Briefcase, ListFilter, FileText, ClipboardCheck, CheckCircle2, Globe } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
@@ -28,62 +28,57 @@ export default function VendorProfileSetup() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Check if all declarations are agreed
     if (!codeOfConductAgreed || !conflictOfInterestAgreed || !antiBriberyAgreed) {
       alert('Please agree to all declarations before submitting.');
       return;
     }
     
-    // Show success message
     setIsSubmitted(true);
     
-    // Redirect after a delay
     setTimeout(() => {
       navigate('/vendor/registration-status');
-    }, 3000);
+    }, 2500);
   };
 
   return (
-    <div className="min-h-screen p-8" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-            Complete Your Profile
+    <div className="min-h-screen bg-[#F7F9FC] py-12 px-6 sm:px-8 font-sans">
+      <div className="mx-auto max-w-4xl space-y-8">
+        <div className="bg-white p-8 rounded-card shadow-card border border-gray-100/50">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-2">
+            Complete Your Supplier Profile
           </h1>
-          <p style={{ color: 'var(--fnrc-text-muted)' }}>
-            Provide company details and upload required documents
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Provide legal, contact, and financial details to complete your official registration with Fujairah Natural Resources Corporation.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Company Details */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <Building className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
                 Company Details
               </CardTitle>
-              <CardDescription>Legal and registration information</CardDescription>
+              <CardDescription>Legal registration and trade classification</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className="pt-6 space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="legalNameEn">Company Legal Name (English) *</Label>
-                  <Input id="legalNameEn" placeholder="TechSolutions LLC" required />
+                  <Label htmlFor="legalNameEn" className="text-sm font-bold text-gray-700">Company Legal Name (English) *</Label>
+                  <Input id="legalNameEn" placeholder="TechSolutions LLC" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2 text-right">
-                  <Label htmlFor="legalNameAr">Company Legal Name (Arabic) *</Label>
-                  <Input id="legalNameAr" placeholder="تك سوليوشنز ذ.م.م" className="text-right" dir="rtl" required />
+                  <Label htmlFor="legalNameAr" className="text-sm font-bold text-gray-700 block">Company Legal Name (Arabic) *</Label>
+                  <Input id="legalNameAr" placeholder="تك سوليوشنز ذ.م.م" className="text-right rounded-xl border-gray-200" dir="rtl" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tradeLicense">Trade Licensee Number *</Label>
-                  <Input id="tradeLicense" placeholder="TL-123456" required />
+                  <Label htmlFor="tradeLicense" className="text-sm font-bold text-gray-700">Trade License Number *</Label>
+                  <Input id="tradeLicense" placeholder="TL-123456" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Expiry Date</Label>
-                  <div className="relative">
-                    <Input id="expiryDate" type="date" />
-                  </div>
+                  <Label htmlFor="expiryDate" className="text-sm font-bold text-gray-700">License Expiry Date *</Label>
+                  <Input id="expiryDate" type="date" className="rounded-xl border-gray-200" required />
                 </div>
               </div>
             </CardContent>
@@ -91,61 +86,61 @@ export default function VendorProfileSetup() {
 
           {/* Contact Information */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <MapPin className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
                 Contact Information
               </CardTitle>
-              <CardDescription>Company contact and location details</CardDescription>
+              <CardDescription>Official business address and endpoints</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className="pt-6 space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="address">Address *</Label>
-                  <Textarea id="address" placeholder="Building, Street, Area..." rows={2} required />
+                  <Label htmlFor="address" className="text-sm font-bold text-gray-700">Address *</Label>
+                  <Textarea id="address" placeholder="Building, Street, Office number, Area..." rows={2} className="rounded-xl border-gray-200 resize-none text-sm p-3" required />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
                   <div className="space-y-2">
-                    <Label htmlFor="country">Country *</Label>
-                    <Input id="country" placeholder="United Arab Emirates" required />
+                    <Label htmlFor="country" className="text-sm font-bold text-gray-700">Country *</Label>
+                    <Input id="country" placeholder="United Arab Emirates" className="rounded-xl border-gray-200" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="stateEmirate">State/Emirate *</Label>
-                    <Input id="stateEmirate" placeholder="Dubai / Abu Dhabi" required />
+                    <Label htmlFor="stateEmirate" className="text-sm font-bold text-gray-700">State/Emirate *</Label>
+                    <Input id="stateEmirate" placeholder="Fujairah" className="rounded-xl border-gray-200" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="city">City *</Label>
-                    <Input id="city" placeholder="Dubai" required />
+                    <Label htmlFor="city" className="text-sm font-bold text-gray-700">City *</Label>
+                    <Input id="city" placeholder="Fujairah" className="rounded-xl border-gray-200" required />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone" className="text-sm font-bold text-gray-700">Phone Number *</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                      <Input id="phone" className="pl-10" placeholder="+971 4 123 4567" required />
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                      <Input id="phone" className="pl-10 rounded-xl border-gray-200" placeholder="+971 9 223 4567" required />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="fax">Fax Number</Label>
+                    <Label htmlFor="fax" className="text-sm font-bold text-gray-700">Fax Number</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                      <Input id="fax" className="pl-10" placeholder="+971 4 123 4568" />
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                      <Input id="fax" className="pl-10 rounded-xl border-gray-200" placeholder="+971 9 223 4568" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emailId">Email ID *</Label>
+                    <Label htmlFor="emailId" className="text-sm font-bold text-gray-700">Business Email ID *</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                      <Input id="emailId" type="email" className="pl-10" placeholder="info@company.com" required />
+                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                      <Input id="emailId" type="email" className="pl-10 rounded-xl border-gray-200" placeholder="info@techsolutions.ae" required />
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="website">Website</Label>
+                  <Label htmlFor="website" className="text-sm font-bold text-gray-700">Website URL</Label>
                   <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="website" className="pl-10" placeholder="https://www.company.com" />
+                    <Globe className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                    <Input id="website" className="pl-10 rounded-xl border-gray-200" placeholder="https://www.techsolutions.ae" />
                   </div>
                 </div>
               </div>
@@ -154,38 +149,38 @@ export default function VendorProfileSetup() {
 
           {/* Primary Contact */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Primary Contact
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <User className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Primary Contact Partner
               </CardTitle>
-              <CardDescription>Details of the person managing the portal</CardDescription>
+              <CardDescription>The main coordinator for communications and bids</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className="pt-6 space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="contactName">Name *</Label>
-                  <Input id="contactName" placeholder="John Doe" required />
+                  <Label htmlFor="contactName" className="text-sm font-bold text-gray-700">Full Name *</Label>
+                  <Input id="contactName" placeholder="Ahmed Al-Mansoori" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="jobTitle">Job Title *</Label>
+                  <Label htmlFor="jobTitle" className="text-sm font-bold text-gray-700">Job Title *</Label>
                   <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="jobTitle" className="pl-10" placeholder="Procurement Manager" required />
+                    <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                    <Input id="jobTitle" className="pl-10 rounded-xl border-gray-200" placeholder="Commercial Manager" required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="mobileNumber">Mobile Number *</Label>
+                  <Label htmlFor="mobileNumber" className="text-sm font-bold text-gray-700">Mobile Number *</Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="mobileNumber" className="pl-10" placeholder="+971 50 123 4567" required />
+                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                    <Input id="mobileNumber" className="pl-10 rounded-xl border-gray-200" placeholder="+971 50 123 4567" required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactEmail">Email *</Label>
+                  <Label htmlFor="contactEmail" className="text-sm font-bold text-gray-700">Direct Email *</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-                    <Input id="contactEmail" type="email" className="pl-10" placeholder="john.doe@company.com" required />
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
+                    <Input id="contactEmail" type="email" className="pl-10 rounded-xl border-gray-200" placeholder="ahmed@techsolutions.ae" required />
                   </div>
                 </div>
               </div>
@@ -194,38 +189,38 @@ export default function VendorProfileSetup() {
 
           {/* Financial Info */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Landmark className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Financial Info
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <Landmark className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Financial & Banking Info
               </CardTitle>
-              <CardDescription>Bank and tax registration details</CardDescription>
+              <CardDescription>Required bank routing parameters for contract award disbursement</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className="pt-6 space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="bankName">Bank Name *</Label>
-                  <Input id="bankName" placeholder="Emirates NBD" required />
+                  <Label htmlFor="bankName" className="text-sm font-bold text-gray-700">Beneficiary Bank Name *</Label>
+                  <Input id="bankName" placeholder="National Bank of Fujairah" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountHolderName">Account Holder Name *</Label>
-                  <Input id="accountHolderName" placeholder="TechSolutions LLC" required />
+                  <Label htmlFor="accountHolderName" className="text-sm font-bold text-gray-700">Account Holder Title *</Label>
+                  <Input id="accountHolderName" placeholder="TechSolutions LLC" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountNumber">Account Number *</Label>
-                  <Input id="accountNumber" placeholder="100234567890" required />
+                  <Label htmlFor="accountNumber" className="text-sm font-bold text-gray-700">Account Number *</Label>
+                  <Input id="accountNumber" placeholder="100234567890" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="iban">IBAN *</Label>
-                  <Input id="iban" placeholder="AE12 3456 7890 1234 5678 901" required />
+                  <Label htmlFor="iban" className="text-sm font-bold text-gray-700">IBAN *</Label>
+                  <Input id="iban" placeholder="AE12 3456 7890 1234 5678 901" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="swiftCode">Swift Code *</Label>
-                  <Input id="swiftCode" placeholder="EBILAEADXXX" required />
+                  <Label htmlFor="swiftCode" className="text-sm font-bold text-gray-700">SWIFT / BIC Code *</Label>
+                  <Input id="swiftCode" placeholder="NBFXAEADXXX" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vatNumber">VAT Registration Number *</Label>
-                  <Input id="vatNumber" placeholder="100234567890003" required />
+                  <Label htmlFor="vatNumber" className="text-sm font-bold text-gray-700">VAT TRN (Tax Registration Number) *</Label>
+                  <Input id="vatNumber" placeholder="100234567890003" className="rounded-xl border-gray-200" required />
                 </div>
               </div>
             </CardContent>
@@ -233,26 +228,26 @@ export default function VendorProfileSetup() {
 
           {/* Service Categories */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ListFilter className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Service Categories
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <ListFilter className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Technical Capabilities & Sectors
               </CardTitle>
-              <CardDescription>Select all categories that apply to your business</CardDescription>
+              <CardDescription>Select business activities to receive customized tender matches</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid gap-3 md:grid-cols-2">
+            <CardContent className="pt-6">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {vendorCategories.map((category) => (
-                  <div key={category} className="flex items-center space-x-2">
+                  <div key={category} className="flex items-center space-x-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50/50 transition-colors">
                     <Checkbox
                       id={category}
                       checked={selectedCategories.includes(category)}
                       onCheckedChange={() => handleCategoryToggle(category)}
+                      className="rounded-md"
                     />
                     <label
                       htmlFor={category}
-                      className="cursor-pointer text-sm"
-                      style={{ color: 'var(--fnrc-text-dark)' }}
+                      className="cursor-pointer text-sm font-semibold text-gray-700 flex-1"
                     >
                       {category}
                     </label>
@@ -264,101 +259,81 @@ export default function VendorProfileSetup() {
 
           {/* Document Uploads */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Document Upload
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Required Legal Documents
               </CardTitle>
-              <CardDescription>Upload required company documents (PDF, max 5MB each)</CardDescription>
+              <CardDescription>Upload files in PDF format (Maximum file size: 5MB per document)</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="pt-6 space-y-6">
               {/* Trade License */}
-              <div className="space-y-4 pb-6 border-b border-gray-50 last:border-0 last:pb-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor="tradeLicenseDoc" className="font-semibold">Trade License *</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="tradeLicenseDoc" type="file" accept=".pdf" required className="bg-gray-50/50" />
-                      <Upload className="h-5 w-5 shrink-0" style={{ color: 'var(--fnrc-text-muted)' }} />
+              <div className="border border-gray-100 rounded-2xl p-5 hover:bg-gray-50/20 transition-colors">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="tradeLicenseDoc" className="text-sm font-bold text-gray-900">Valid Trade License *</Label>
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                      <input id="tradeLicenseDoc" type="file" accept=".pdf" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                      <span className="text-xs text-gray-500 font-semibold truncate pr-6">Choose trade license file...</span>
+                      <Upload className="h-4 w-4 text-gray-400 shrink-0" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="tlIssueDate" className="text-xs text-muted-foreground">Issue Date *</Label>
-                      <Input id="tlIssueDate" type="date" required className="h-9 text-sm" />
+                      <Label htmlFor="tlIssueDate" className="text-xs font-bold text-gray-600">Issue Date *</Label>
+                      <Input id="tlIssueDate" type="date" required className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="tlExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="tlExpiryDate" type="date" className="h-9 text-sm" />
+                      <Label htmlFor="tlExpiryDate" className="text-xs font-bold text-gray-600">Expiry Date *</Label>
+                      <Input id="tlExpiryDate" type="date" required className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Tax Registration Certificate */}
-              <div className="space-y-4 pb-6 border-b border-gray-50 last:border-0 last:pb-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor="taxCertificate" className="font-semibold">Tax Registration Certificate *</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="taxCertificate" type="file" accept=".pdf" required className="bg-gray-50/50" />
-                      <Upload className="h-5 w-5 shrink-0" style={{ color: 'var(--fnrc-text-muted)' }} />
+              <div className="border border-gray-100 rounded-2xl p-5 hover:bg-gray-50/20 transition-colors">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="taxCertificate" className="text-sm font-bold text-gray-900">Tax Registration Certificate (TRN) *</Label>
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                      <input id="taxCertificate" type="file" accept=".pdf" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                      <span className="text-xs text-gray-500 font-semibold truncate pr-6">Choose TRN file...</span>
+                      <Upload className="h-4 w-4 text-gray-400 shrink-0" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="taxIssueDate" className="text-xs text-muted-foreground">Issue Date *</Label>
-                      <Input id="taxIssueDate" type="date" required className="h-9 text-sm" />
+                      <Label htmlFor="taxIssueDate" className="text-xs font-bold text-gray-600">Issue Date *</Label>
+                      <Input id="taxIssueDate" type="date" required className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="taxExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="taxExpiryDate" type="date" className="h-9 text-sm" />
+                      <Label htmlFor="taxExpiryDate" className="text-xs font-bold text-gray-600">Expiry Date</Label>
+                      <Input id="taxExpiryDate" type="date" className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Company Profile */}
-              <div className="space-y-4 pb-6 border-b border-gray-50 last:border-0 last:pb-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor="companyProfile" className="font-semibold">Company Profile</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="companyProfile" type="file" accept=".pdf" className="bg-gray-50/50" />
-                      <Upload className="h-5 w-5 shrink-0" style={{ color: 'var(--fnrc-text-muted)' }} />
+              <div className="border border-gray-100 rounded-2xl p-5 hover:bg-gray-50/20 transition-colors">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyProfile" className="text-sm font-bold text-gray-900">Corporate Capability Profile</Label>
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                      <input id="companyProfile" type="file" accept=".pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                      <span className="text-xs text-gray-500 font-semibold truncate pr-6">Choose corporate brochure...</span>
+                      <Upload className="h-4 w-4 text-gray-400 shrink-0" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cpIssueDate" className="text-xs text-muted-foreground">Issue Date</Label>
-                      <Input id="cpIssueDate" type="date" className="h-9 text-sm" />
+                      <Label htmlFor="cpIssueDate" className="text-xs font-bold text-gray-600">Issue Date</Label>
+                      <Input id="cpIssueDate" type="date" className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cpExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="cpExpiryDate" type="date" className="h-9 text-sm" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Other Docs */}
-              <div className="space-y-4 pb-6 last:border-0 last:pb-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <Label htmlFor="otherDocs" className="font-semibold">Other Supporting Documents</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="otherDocs" type="file" accept=".pdf" multiple className="bg-gray-50/50" />
-                      <Upload className="h-5 w-5 shrink-0" style={{ color: 'var(--fnrc-text-muted)' }} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
-                    <div className="space-y-2">
-                      <Label htmlFor="otherIssueDate" className="text-xs text-muted-foreground">Issue Date</Label>
-                      <Input id="otherIssueDate" type="date" className="h-9 text-sm" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="otherExpiryDate" className="text-xs text-muted-foreground">Expiry Date</Label>
-                      <Input id="otherExpiryDate" type="date" className="h-9 text-sm" />
+                      <Label htmlFor="cpExpiryDate" className="text-xs font-bold text-gray-600">Expiry Date</Label>
+                      <Input id="cpExpiryDate" type="date" className="h-9 text-xs rounded-lg border-gray-200" />
                     </div>
                   </div>
                 </div>
@@ -368,140 +343,123 @@ export default function VendorProfileSetup() {
 
           {/* Declarations */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="border-b border-gray-50 pb-5">
+              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <ClipboardCheck className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
-                Vendor Declarations
+                Legal Declarations & Policies
               </CardTitle>
-              <CardDescription>Please read and agree to the following declarations (required)</CardDescription>
+              <CardDescription>Affirm your agreement to official FNRC ethical guidelines (Mandatory)</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="pt-6 space-y-6">
               {/* Code of Conduct */}
-              <div className="space-y-3">
-                <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                  <h4 className="font-semibold mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
-                    Code of Conduct
-                  </h4>
-                  <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    I acknowledge that my company will conduct business with the Federal National Regulatory Commission (FNRC) 
-                    in accordance with the highest standards of ethical conduct. We will comply with all applicable laws, 
-                    regulations, and professional standards. We commit to conducting our business with integrity, honesty, 
-                    and fairness in all dealings with FNRC officials, employees, and other stakeholders.
-                  </p>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="codeOfConduct"
-                      checked={codeOfConductAgreed}
-                      onCheckedChange={(checked) => setCodeOfConductAgreed(checked as boolean)}
-                      required
-                    />
-                    <label
-                      htmlFor="codeOfConduct"
-                      className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      style={{ color: 'var(--fnrc-text-dark)' }}
-                    >
-                      I agree to abide by the Code of Conduct *
-                    </label>
-                  </div>
+              <div className="rounded-xl border border-gray-150 p-5 bg-gray-50/30 space-y-3">
+                <h4 className="font-bold text-gray-900 text-sm">
+                  1. Code of Business Conduct
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  I acknowledge that my company will conduct business with the Federal National Resources Commission (FNRC) in accordance with the highest standards of ethical conduct. We will comply with all applicable local laws, regulations, and procurement standards.
+                </p>
+                <div className="flex items-center space-x-3 pt-2">
+                  <Checkbox
+                    id="codeOfConduct"
+                    checked={codeOfConductAgreed}
+                    onCheckedChange={(checked) => setCodeOfConductAgreed(checked as boolean)}
+                    className="rounded-md"
+                  />
+                  <label
+                    htmlFor="codeOfConduct"
+                    className="cursor-pointer text-xs font-bold text-gray-700"
+                  >
+                    I agree to abide by the Code of Conduct *
+                  </label>
                 </div>
               </div>
 
               {/* Conflict of Interest */}
-              <div className="space-y-3">
-                <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                  <h4 className="font-semibold mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
-                    Conflict of Interest Declaration
-                  </h4>
-                  <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    I declare that my company and its representatives have no conflict of interest that would impair our 
-                    ability to provide impartial, objective services to FNRC. We will immediately disclose any actual, 
-                    potential, or perceived conflict of interest that may arise during the course of our engagement. 
-                    We understand that failure to disclose conflicts of interest may result in disqualification or 
-                    termination of contract.
-                  </p>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="conflictOfInterest"
-                      checked={conflictOfInterestAgreed}
-                      onCheckedChange={(checked) => setConflictOfInterestAgreed(checked as boolean)}
-                      required
-                    />
-                    <label
-                      htmlFor="conflictOfInterest"
-                      className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      style={{ color: 'var(--fnrc-text-dark)' }}
-                    >
-                      I declare no conflict of interest and agree to disclose any that may arise *
-                    </label>
-                  </div>
+              <div className="rounded-xl border border-gray-150 p-5 bg-gray-50/30 space-y-3">
+                <h4 className="font-bold text-gray-900 text-sm">
+                  2. Conflict of Interest Declaration
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  I declare that my company and its representatives have no conflict of interest that would impair our ability to provide impartial, objective services to FNRC. We will immediately disclose any potential or perceived conflict of interest that may arise.
+                </p>
+                <div className="flex items-center space-x-3 pt-2">
+                  <Checkbox
+                    id="conflictOfInterest"
+                    checked={conflictOfInterestAgreed}
+                    onCheckedChange={(checked) => setConflictOfInterestAgreed(checked as boolean)}
+                    className="rounded-md"
+                  />
+                  <label
+                    htmlFor="conflictOfInterest"
+                    className="cursor-pointer text-xs font-bold text-gray-700"
+                  >
+                    I declare no conflict of interest and agree to disclose any that may arise *
+                  </label>
                 </div>
               </div>
 
               {/* Anti-Bribery */}
-              <div className="space-y-3">
-                <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
-                  <h4 className="font-semibold mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
-                    Anti-Bribery and Corruption Policy
-                  </h4>
-                  <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>
-                    I certify that my company strictly prohibits bribery, corruption, and any form of unethical payments. 
-                    We have not and will not offer, promise, give, accept, or authorize any bribe or improper advantage 
-                    to obtain or retain business or secure any advantage in relation to FNRC contracts. We commit to 
-                    reporting any solicitation of bribes or improper conduct immediately. We understand that violation 
-                    of this policy will result in immediate contract termination and possible legal action.
-                  </p>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="antiBribery"
-                      checked={antiBriberyAgreed}
-                      onCheckedChange={(checked) => setAntiBriberyAgreed(checked as boolean)}
-                      required
-                    />
-                    <label
-                      htmlFor="antiBribery"
-                      className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      style={{ color: 'var(--fnrc-text-dark)' }}
-                    >
-                      I agree to comply with the Anti-Bribery and Corruption Policy *
-                    </label>
-                  </div>
+              <div className="rounded-xl border border-gray-150 p-5 bg-gray-50/30 space-y-3">
+                <h4 className="font-bold text-gray-900 text-sm">
+                  3. Anti-Bribery and Corruption Certificate
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  I certify that my company strictly prohibits bribery, corruption, and any form of unethical facilitation payments. We commit to reporting any solicitation of bribes or improper conduct immediately.
+                </p>
+                <div className="flex items-center space-x-3 pt-2">
+                  <Checkbox
+                    id="antiBribery"
+                    checked={antiBriberyAgreed}
+                    onCheckedChange={(checked) => setAntiBriberyAgreed(checked as boolean)}
+                    className="rounded-md"
+                  />
+                  <label
+                    htmlFor="antiBribery"
+                    className="cursor-pointer text-xs font-bold text-gray-700"
+                  >
+                    I agree to comply with the Anti-Bribery and Corruption Policy *
+                  </label>
                 </div>
               </div>
 
-              {/* Required notice */}
-              <Alert style={{ borderColor: 'var(--fnrc-error)', backgroundColor: '#FEE2E2' }}>
-                <AlertCircle className="h-4 w-4" style={{ color: 'var(--fnrc-error)' }} />
-                <AlertDescription style={{ color: 'var(--fnrc-text-dark)' }}>
-                  All declarations are mandatory. Your registration cannot be submitted without agreeing to all policies.
-                </AlertDescription>
-              </Alert>
+              {/* Error Warning alert */}
+              {(!codeOfConductAgreed || !conflictOfInterestAgreed || !antiBriberyAgreed) && (
+                <Alert className="border-red-100 bg-red-50 text-red-700 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  <AlertDescription className="text-xs font-semibold leading-relaxed">
+                    All legal declarations are mandatory. Your profile setup cannot be submitted without agreeing to all terms.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
 
-          {/* Post-submission Success Message */}
+          {/* Success Status Alert */}
           {isSubmitted && (
-            <Alert style={{ borderColor: 'var(--fnrc-success)', backgroundColor: '#F0FDF4' }}>
-              <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--fnrc-success)' }} />
-              <AlertDescription style={{ color: 'var(--fnrc-text-dark)' }} className="font-medium">
-                Your registration will be pending FNRC approval. You will be notified via email once reviewed.
+            <Alert className="border-emerald-100 bg-emerald-50 text-emerald-800 rounded-xl p-4 flex items-center gap-3">
+              <CheckCircle2 className="h-5 w-5 shrink-0" />
+              <AlertDescription className="text-sm font-bold leading-relaxed">
+                Profile submitted successfully! We are redirecting you to the registration status tracking...
               </AlertDescription>
             </Alert>
           )}
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
+              className="h-11 font-semibold"
               onClick={() => navigate('/vendor/landing')}
             >
               Cancel
             </Button>
             <Button 
               type="submit"
-              className="text-white"
+              className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 hover:shadow-xl hover:-translate-y-0.5 transition-all"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Submit for Approval
+              Submit for Verification
             </Button>
           </div>
         </form>

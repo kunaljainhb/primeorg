@@ -92,7 +92,7 @@ export default function VendorLogin() {
               FNRC Vendor Portal
             </CardTitle>
             <CardDescription className="text-center text-base font-medium text-muted-foreground">
-              Sign in to manage your procurement portal
+              Sign in to manage your vendor portal
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8">
@@ -100,12 +100,12 @@ export default function VendorLogin() {
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-semibold opacity-70">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-semibold opacity-70">Email Address or Mobile Number</Label>
                     <div className="relative">
                       <Input
                         id="email"
-                        type="email"
-                        placeholder="vendor@company.ae"
+                        type="text"
+                        placeholder="Email Address or Mobile Number"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="h-12 bg-gray-50/50 focus:bg-white transition-all pl-10"

@@ -102,7 +102,7 @@ export default function VendorRegister() {
               FNRC Vendor Registration
             </CardTitle>
             <CardDescription className="text-center text-base font-medium text-muted-foreground">
-              Create your enterprise account to access FNRC procurement portal
+              Create your account to access FNRC vendor portal
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8">

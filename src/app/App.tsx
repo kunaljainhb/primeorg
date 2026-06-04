@@ -1,9 +1,10 @@
 import { RouterProvider, useLocation } from '@/app/context/RouterContext';
-import { VendorLayout, AdminLayout } from '@/app/components/layout/Layouts';
+import { SidebarProvider } from '@/app/context/SidebarContext';
 import { Toaster } from '@/app/components/ui/sonner';
 
 // Public & Role Selection
 import RoleSelection from '@/app/pages/RoleSelection';
+import { VendorLayout, AdminLayout } from '@/app/components/layout/Layouts';
 
 // Vendor Pages
 import VendorLanding from '@/app/pages/vendor/VendorLanding';
@@ -90,8 +91,10 @@ function AppRoutes() {
 export default function App() {
   return (
     <RouterProvider>
-      <AppRoutes />
-      <Toaster />
+      <SidebarProvider>
+        <AppRoutes />
+        <Toaster />
+      </SidebarProvider>
     </RouterProvider>
   );
 }

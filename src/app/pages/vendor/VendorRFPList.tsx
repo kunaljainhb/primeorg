@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
-import { Search, Filter, Calendar, Clock, X, Check } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
 import { Badge } from '@/app/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
-import { Checkbox } from '@/app/components/ui/checkbox';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/app/components/ui/select';
 import { mockRFPs } from '@/app/data/mockData';
+import { SearchFilterBar, FilterDropdown } from '@/app/components/ui/search-filter-bar';
+import { StatusBadge } from '@/app/components/ui/status-badge';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -17,35 +16,19 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
-
-const formatStatus = (statusStr?: string) => {
-  if (!statusStr) return '';
-  return statusStr
-    .split(/_|\s+/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+  return `${month}/${day}/${year}`;
 };
 
 export default function VendorRFPList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [rfpStatusFilter, setRfpStatusFilter] = useState<'all' | 'open' | 'closed'>('all');
+  const [rfpStatusFilter, setRfpStatusFilter] = useState('all');
 
   const activeRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
   
   // Get unique categories from active RFPs
   const categories = Array.from(new Set(activeRFPs.flatMap(rfp => rfp.category)));
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
-  };
 
   const clearFilters = () => {
     setSelectedCategories([]);
@@ -55,207 +38,157 @@ export default function VendorRFPList() {
 
   const filteredRFPs = activeRFPs.filter(rfp => {
     const matchesSearch = rfp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         rfp.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || rfp.category.some(c => selectedCategories.includes(c));
+                          rfp.id.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = selectedCategories.length === 0 || rfp.category.some(cat => selectedCategories.includes(cat));
     
     const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
     const matchesStatus = rfpStatusFilter === 'all' ||
-                          (rfpStatusFilter === 'open' && !isClosed) ||
+                          (rfpStatusFilter === 'published' && !isClosed) ||
                           (rfpStatusFilter === 'closed' && isClosed);
                           
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  // Setup filters for standard SearchFilterBar
+  const filterConfig: FilterDropdown[] = [
+    {
+      key: 'category',
+      label: 'Category',
+      isMulti: true,
+      options: [
+        { label: 'All Categories', value: 'all' },
+        ...categories.map(cat => ({ label: cat, value: cat }))
+      ],
+      selectedValues: selectedCategories,
+      onMultiChange: (vals) => setSelectedCategories(vals),
+      onChange: () => {}
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      options: [
+        { label: 'All Statuses', value: 'all' },
+        { label: 'Published', value: 'published' },
+        { label: 'Closed', value: 'closed' }
+      ],
+      selectedValue: rfpStatusFilter,
+      onChange: (val) => setRfpStatusFilter(val)
+    }
+  ];
+
+  // Active filter chips
+  const activeChips = [];
+  if (selectedCategories.length > 0) {
+    activeChips.push({
+      label: `Categories: ${selectedCategories.join(', ')}`,
+      onRemove: () => setSelectedCategories([])
+    });
+  }
+  if (rfpStatusFilter !== 'all') {
+    activeChips.push({
+      label: `Status: ${rfpStatusFilter === 'published' ? 'Published' : 'Closed'}`,
+      onRemove: () => setRfpStatusFilter('all')
+    });
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+        <h1 className="mb-2 text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
           Available RFPs
         </h1>
-        <p style={{ color: 'var(--fnrc-text-muted)' }}>
-          Browse and respond to active procurement opportunities
-        </p>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: 'var(--fnrc-text-muted)' }} />
-                <Input
-                  placeholder="Search by RFP ID or title..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      <Filter className="h-4 w-4" />
-                      Filter by Category
-                      {selectedCategories.length > 0 && (
-                        <Badge className="ml-1 px-1.5 py-0.5 h-5 min-w-[20px] justify-center" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}>
-                          {selectedCategories.length}
-                        </Badge>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[280px] p-0" align="end">
-                    <div className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold">Categories</span>
-                        {selectedCategories.length > 0 && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => setSelectedCategories([])}
-                            className="h-auto p-0 text-xs text-red-500 hover:text-red-700"
-                          >
-                            Clear
-                          </Button>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        {categories.map((category) => (
-                          <div key={category} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`cat-${category}`} 
-                              checked={selectedCategories.includes(category)}
-                              onCheckedChange={() => toggleCategory(category)}
-                            />
-                            <label
-                              htmlFor={`cat-${category}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              {category}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-
-                <div style={{ width: '160px' }}>
-                  <Select 
-                    value={rfpStatusFilter} 
-                    onValueChange={(val) => setRfpStatusFilter(val as 'all' | 'open' | 'closed')}
-                  >
-                    <SelectTrigger className="h-10 w-full">
-                      <SelectValue placeholder="RFP Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="open">Published</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Active Filter Badges */}
-            {(selectedCategories.length > 0 || rfpStatusFilter !== 'all') && (
-              <div className="flex flex-wrap gap-2 pt-2 border-t" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                {selectedCategories.map(cat => (
-                  <Badge key={cat} variant="secondary" className="gap-1 pr-1">
-                    {cat}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                      onClick={() => toggleCategory(cat)}
-                    />
-                  </Badge>
-                ))}
-                {rfpStatusFilter !== 'all' && (
-                  <Badge variant="secondary" className="gap-1 pr-1 font-medium">
-                    Status: {rfpStatusFilter === 'open' ? 'Published' : 'Closed'}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:text-red-500" 
-                      onClick={() => setRfpStatusFilter('all')}
-                    />
-                  </Badge>
-                )}
-              </div>
-            )}
-          </div>
+      {/* Reusable Search & Filter Component */}
+      <Card className="shadow-card border-none">
+        <CardContent className="p-6">
+          <SearchFilterBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            placeholder="Search by RFP ID or title..."
+            filters={filterConfig}
+            activeChips={activeChips}
+            onClearAll={clearFilters}
+          />
         </CardContent>
       </Card>
 
-      {/* RFP Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredRFPs.map((rfp) => (
-          <Card key={rfp.id} className="flex flex-col">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center justify-between w-full">
-                  <h3 className="text-xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                    {rfp.title}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <Badge 
-                      className="text-xs px-2 py-0.5" 
-                      style={{ 
-                        backgroundColor: new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'var(--fnrc-border-gray)' : 'var(--fnrc-success)',
-                        color: 'white'
-                      }}
-                    >
-                      {new Date(rfp.submissionDeadline) < new Date('2026-05-15') ? 'Closed' : 'Published'}
-                    </Badge>
-                    <Badge variant="outline" style={{ color: 'var(--fnrc-text-muted)' }}>
-                      {rfp.id}
-                    </Badge>
+      {/* RFP Cards Grid */}
+      {filteredRFPs.length > 0 ? (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredRFPs.map((rfp) => {
+            const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
+            return (
+              <Card 
+                key={rfp.id} 
+                className="flex flex-col h-full bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200"
+              >
+                {/* Visual Accent bar inside cards */}
+                <div className="h-1.5 w-full bg-gradient-to-r from-[var(--fnrc-primary-green)] to-[var(--fnrc-accent-gold)]" />
+                
+                <CardContent className="p-6 flex flex-col justify-between flex-1 gap-5">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-gray-400 tracking-wider uppercase">{rfp.id}</span>
+                      <StatusBadge status={isClosed ? 'closed' : 'published'} />
+                    </div>
+
+                    <h3 className="text-[18px] font-bold text-gray-800 leading-snug line-clamp-2">
+                      {rfp.title}
+                    </h3>
+
+                    {/* Chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {rfp.category.map((cat, i) => (
+                        <Badge 
+                          key={i} 
+                          variant="secondary" 
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-[11px] px-2.5 py-0.5 rounded-full"
+                        >
+                          {cat}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-              <CardDescription>
-                <div className="flex flex-wrap gap-1">
-                  {rfp.category.map((cat, i) => (
-                    <Badge key={i} variant="secondary" style={{ backgroundColor: 'var(--fnrc-bg-light)', color: 'var(--fnrc-text-muted)' }}>
-                      {cat}
-                    </Badge>
-                  ))}
-                </div>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4 flex-1">
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  <Calendar className="h-4 w-4" />
-                  <span>Deadline: {formatDate(rfp.submissionDeadline)}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  <Clock className="h-4 w-4" />
-                  <span>Timeline: {rfp.timeline}</span>
-                </div>
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <Button
-                  className="w-full text-white"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                  onClick={() => navigate(`/vendor/rfps/${rfp.id}`)}
-                >
-                  View Details
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  <div className="space-y-4">
+                    {/* Time details */}
+                    <div className="space-y-2 border-t border-gray-100 pt-4">
+                      <div className="flex items-center gap-2.5 text-xs text-gray-500 font-medium">
+                        <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        <span>Deadline: {formatDate(rfp.submissionDeadline)}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-xs text-gray-500 font-medium">
+                        <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        <span>Duration: {rfp.timeline}</span>
+                      </div>
+                    </div>
 
-      {filteredRFPs.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
-            <p>No RFPs found matching your criteria</p>
-          </CardContent>
-        </Card>
+                    {/* CTA Button */}
+                    <Button
+                      className="w-full text-white text-xs font-semibold rounded-button bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 hover:shadow-md transition-all duration-150 py-4.5 gap-2 flex items-center justify-center"
+                      onClick={() => navigate(`/vendor/rfps/${rfp.id}`)}
+                    >
+                      View Opportunities
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        /* Standard Empty State */
+        <EmptyState
+          type="rfp"
+          title="No RFPs Found"
+          description="We couldn't find any RFP matching your query or selected filters. Try clearing your filters or searches to view all opportunities."
+          actionLabel="Clear All Filters"
+          onAction={clearFilters}
+        />
       )}
-
     </div>
   );
 }

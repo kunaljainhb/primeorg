@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { mockProposals, mockERPDocuments, saveProposalsToStorage, mockVendorReviews } from '@/app/data/mockData';
 import { ProposalDetailView } from '@/app/components/vendor/ProposalDetailView';
+import { StatusBadge } from '@/app/components/ui/status-badge';
 import { toast } from 'sonner';
 import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
@@ -28,7 +29,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${month}/${day}/${year}`;
 };
 
 const formatStatus = (statusStr?: string) => {
@@ -62,6 +63,18 @@ export default function VendorProposalTracking() {
   useEffect(() => {
     const found = mockProposals.find(p => p.id === proposalId);
     setProposal(found);
+  }, [proposalId]);
+
+  const [localRating, setLocalRating] = useState<any>(null);
+  useEffect(() => {
+    if (proposalId) {
+      const saved = localStorage.getItem(`external_rating_${proposalId}`);
+      if (saved) {
+        try {
+          setLocalRating(JSON.parse(saved));
+        } catch (e) {}
+      }
+    }
   }, [proposalId]);
 
   const handleProposalUpdate = (updatedProposal: any) => {
@@ -211,31 +224,21 @@ export default function VendorProposalTracking() {
             Proposal Details & Tracking
           </p>
         </div>
-        <Badge variant="secondary" className="px-5 py-2 text-sm font-bold border-none" style={{ backgroundColor: getStatusColor(proposal.status).bg, color: getStatusColor(proposal.status).text }}>
-          {formatStatus(proposal.status)}
-        </Badge>
+        <StatusBadge status={proposal.status} className="px-5 py-2 text-sm font-semibold" />
       </div>
 
       {/* Tab Structure */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
+        <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-2xl">
           <TabsTrigger 
             value="submitted" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'submitted' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'submitted' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
             Proposal Details
           </TabsTrigger>
           <TabsTrigger 
             value="status" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'status' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'status' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
             Proposal Status
           </TabsTrigger>
@@ -244,11 +247,7 @@ export default function VendorProposalTracking() {
           {isShortlisted && (
             <TabsTrigger 
               value="documents" 
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-              style={{ 
-                borderBottomColor: activeTab === 'documents' ? 'var(--fnrc-primary-green)' : 'transparent',
-                color: activeTab === 'documents' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-              }}
+              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
             >
               Documents
             </TabsTrigger>
@@ -256,11 +255,7 @@ export default function VendorProposalTracking() {
 
           <TabsTrigger 
             value="reviews" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-b-2 px-6 py-3"
-            style={{ 
-              borderBottomColor: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'transparent',
-              color: activeTab === 'reviews' ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)'
-            }}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
           >
             Reviews
           </TabsTrigger>
@@ -524,10 +519,65 @@ export default function VendorProposalTracking() {
               <Award className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
               Performance Reviews
             </CardTitle>
-            <CardDescription>Reviews from FNRC procurement team (Read-only)</CardDescription>
           </CardHeader>
           <CardContent>
-            {vendorReviews.length > 0 ? (
+            {localRating ? (
+              <div className="space-y-6">
+                <div className="rounded-lg border p-6 bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+                    <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">
+                      Reviewed by {localRating.submittedBy || 'Admin'} on {formatDate(localRating.submittedAt)}
+                    </div>
+                  </div>
+
+                  {/* Questions & Answers List */}
+                  <div className="space-y-4">
+                    {[
+                      { 
+                        label: "How would you rate the vendor's technical capability?", 
+                        value: localRating.q1Remark,
+                        rating: localRating.q1Rating
+                      },
+                      { 
+                        label: "Does the vendor have relevant experience in the required domain?", 
+                        value: localRating.q2Remark,
+                        rating: localRating.q2Rating
+                      },
+                      { 
+                        label: "Rate the vendor's financial stability.", 
+                        value: localRating.q3Remark,
+                        rating: localRating.q3Rating
+                      }
+                    ].map((q, i) => (
+                      <div key={i} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                          <div className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">
+                            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                            <span className="text-sm font-black text-gray-800">{q.rating || '-'} / 5</span>
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-600 bg-white p-3 rounded-md border border-gray-100">{q.value || "No remarks provided."}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Dedicated Remarks */}
+                  <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="text-xs font-extrabold text-gray-750 uppercase tracking-wider">Overall Comments & Rating</h4>
+                      <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                        <span className="text-sm font-black text-amber-700">{localRating.overallRating || '-'} / 5</span>
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 bg-white">
+                      {localRating.comments || "No overall comments provided."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : vendorReviews.length > 0 ? (
               <div className="space-y-6">
                 {vendorReviews.map((review) => (
                   <div 
@@ -546,28 +596,43 @@ export default function VendorProposalTracking() {
                       {[
                         { 
                           label: "How would you rate the vendor's technical capability?", 
-                          value: "Vendor demonstrated strong technical capability and adherence to the RFP technical requirements." 
+                          value: "Vendor demonstrated strong technical capability and adherence to the RFP technical requirements.",
+                          rating: 5
                         },
                         { 
                           label: "Does the vendor have relevant experience in the required domain?", 
-                          value: "Yes, the vendor has extensive previous experience completing similar projects successfully." 
+                          value: "Yes, the vendor has extensive previous experience completing similar projects successfully.",
+                          rating: 5
                         },
                         { 
                           label: "Rate the vendor's financial stability.", 
-                          value: "Financially stable and capable of handling the proposed project scale without advanced payments." 
+                          value: "Financially stable and capable of handling the proposed project scale without advanced payments.",
+                          rating: 4
                         }
                       ].map((q, i) => (
                         <div key={i} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 flex flex-col gap-2">
-                          <span className="text-sm font-bold text-gray-700">{q.label}</span>
-                          <span className="text-sm font-semibold text-gray-600">{q.value}</span>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                            <div className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">
+                              <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                              <span className="text-sm font-black text-gray-800">{q.rating} / 5</span>
+                            </div>
+                          </div>
+                          <span className="text-sm font-medium text-gray-600 bg-white p-3 rounded-md border border-gray-100">{q.value}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Dedicated Remarks */}
                     <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
-                      <label className="text-xs font-bold text-gray-700 block uppercase tracking-wider">Vendor Rating Comments & Justification</label>
-                      <div className="p-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 bg-gray-50">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="text-xs font-extrabold text-gray-750 uppercase tracking-wider">Overall Comments & Rating</h4>
+                        <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
+                          <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                          <span className="text-sm font-black text-amber-700">5 / 5</span>
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 bg-white">
                         {review.comments}
                       </div>
                     </div>

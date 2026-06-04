@@ -10,7 +10,7 @@
   --fnrc-text-dark: #2B2B2B;
   --fnrc-text-muted: #6E6E6E;
   --fnrc-border-gray: #D9D9D6;
-  --fnrc-bg-light: #F5F5F3;
+  --fnrc-bg-light: #F7F9FC;
   --fnrc-bg-stone: #D9D9D6;
   
   --fnrc-success: #6B8E23;
@@ -128,6 +128,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-card: 16px;
+  --radius-input: 12px;
+  --radius-button: 10px;
+  --radius-modal: 20px;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -158,21 +164,21 @@
   }
 
   h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.25;
   }
 
   h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.35;
   }
 
   h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   h4 {
@@ -198,4 +204,24 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
+}
+
+/* Global Premium Button Hover Contrast Fix */
+/* Only apply white text and brightness filter to filled solid buttons (not custom text-colored, outline, ghost, border, or transparent buttons) */
+button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--fnrc-"]):not([class*="/5"]):not([class*="/10"]),
+.rounded-button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--fnrc-"]):not([class*="/5"]):not([class*="/10"]) {
+  filter: brightness(0.90) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Prevent white text override and reset hover for outline, ghost, and transparent buttons */
+button.border:hover,
+button.bg-transparent:hover,
+button[class*="ghost"]:hover,
+button[class*="outline"]:hover,
+button[class*="link"]:hover {
+  color: inherit !important;
+  filter: brightness(0.97) !important;
+  background-color: rgba(0, 0, 0, 0.02) !important;
 }

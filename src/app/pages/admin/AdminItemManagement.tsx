@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
-import { Search } from 'lucide-react';
 import { Card, CardContent } from '@/app/components/ui/card';
-import { Input } from '@/app/components/ui/input';
-import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select";
 import {
   Table,
   TableBody,
@@ -21,6 +11,10 @@ import {
   TableRow,
 } from '@/app/components/ui/table';
 import { mockRFPs, mockProposals } from '@/app/data/mockData';
+import { ArrowRight, Pencil } from 'lucide-react';
+import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
+import { StatusBadge } from '@/app/components/ui/status-badge';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -29,7 +23,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${month}/${day}/${year}`;
 };
 
 export default function AdminItemManagement() {
@@ -41,7 +35,7 @@ export default function AdminItemManagement() {
   const publishedRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
 
   // Find RFPs that have at least one Shortlisted proposal
-  const items = publishedRFPs.map((rfp, rfpIndex) => {
+  const items = publishedRFPs.map((rfp) => {
     const shortlistedProposals = mockProposals.filter(
       prop => prop.rfpId === rfp.id && prop.status === 'shortlisted'
     );
@@ -70,110 +64,105 @@ export default function AdminItemManagement() {
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusColor = (status: string) => {
-    if (status === 'Pending') return { bg: '#FEF3C7', text: 'var(--fnrc-warning)' };
-    if (status === 'Completed') return { bg: '#D1FAE5', text: 'var(--fnrc-success)' };
-    return { bg: '#E5E7EB', text: 'var(--fnrc-text-muted)' };
+  const filters = [
+    {
+      key: 'status',
+      label: 'Inventory Status',
+      options: [
+        { label: 'All Statuses', value: 'all' },
+        { label: 'Pending Verification', value: 'pending' },
+        { label: 'Completed Receiving', value: 'completed' },
+      ],
+      selectedValue: statusFilter,
+      onChange: setStatusFilter
+    }
+  ];
+
+  const activeChips = statusFilter !== 'all' ? [
+    {
+      label: `Status: ${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`,
+      onRemove: () => setStatusFilter('all')
+    }
+  ] : [];
+
+  const handleClearAll = () => {
+    setSearchQuery('');
+    setStatusFilter('all');
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between border-b pb-5">
+    <div className="space-y-8 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
-          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
             Item Management
           </h1>
-          <p style={{ color: 'var(--fnrc-text-muted)' }}>
-            Track received quantities for shortlisted proposals
-          </p>
         </div>
       </div>
 
-      {/* Search and Filter Bar */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" style={{ color: 'var(--fnrc-text-muted)' }} />
-              <Input
-                placeholder="Search by RFP ID, Title, or Proposal ID..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <div className="w-full md:w-64">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Status Filter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Modern Search and Filter Bar */}
+      <SearchFilterBar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        placeholder="Search items by ID, title, or vendor..."
+        filters={filters}
+        activeChips={activeChips}
+        onClearAll={handleClearAll}
+      />
 
-      {/* Results Table */}
-      <Card>
+      {/* Table Section */}
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)', borderColor: 'var(--fnrc-border-gray)' }}>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>RFP ID</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>RFP Title</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal ID</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Vendor Name</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Created Date</TableHead>
-                <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Status</TableHead>
-                <TableHead className="text-right font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredItems.map((item, index) => {
-                const statusColor = getStatusColor(item.status);
-                return (
-                  <TableRow key={`${item.rfpId}-${item.proposalId}-${index}`} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                    <TableCell className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>
+          {filteredItems.length > 0 ? (
+            <Table>
+              <TableHeader className="bg-gray-50">
+                <TableRow>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">RFP ID</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">RFP Campaign Title</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Shortlisted Bid ID</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor Partner</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Shortlist Date</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Receiving Status</TableHead>
+                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredItems.map((item, index) => (
+                  <TableRow key={`${item.rfpId}-${item.proposalId}-${index}`} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
                       {item.rfpId}
                     </TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{item.rfpTitle}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-primary-green)' }}>{item.proposalId}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>{item.vendorName}</TableCell>
-                    <TableCell style={{ color: 'var(--fnrc-text-dark)' }}>
+                    <TableCell className="font-semibold text-gray-800 max-w-[200px] truncate">{item.rfpTitle}</TableCell>
+                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{item.proposalId}</TableCell>
+                    <TableCell className="font-semibold text-gray-800">{item.vendorName}</TableCell>
+                    <TableCell className="text-gray-500 font-medium">
                       {formatDate(item.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant="secondary"
-                        style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
-                      >
-                        {item.status}
-                      </Badge>
+                      <StatusBadge status={item.status} />
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right py-3 pr-6">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/items/${item.proposalId}`)}
-                        className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors"
+                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
+                        title="Edit Item Specs"
                       >
-                        View Details
+                        <Pencil className="h-3.5 w-3.5" />
                       </Button>
                     </TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-          {filteredItems.length === 0 && (
-            <div className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
-              <p>No items found</p>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <EmptyState
+              title="No Shortlisted Items Found"
+              description="No inventory items matched your search query. Refine your keywords or clear active filters."
+              actionLabel="Clear Filters"
+              onAction={handleClearAll}
+            />
           )}
         </CardContent>
       </Card>

@@ -6,7 +6,8 @@ import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Label } from '@/app/components/ui/label';
 import { Badge } from '@/app/components/ui/badge';
-import { ArrowLeft, FileText, Download, Check, Info, FileSpreadsheet } from 'lucide-react';
+import { StatusBadge } from '@/app/components/ui/status-badge';
+import { ArrowLeft, FileText, Download, Check, Info, FileSpreadsheet, Clock } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { mockProposals, mockRFPs } from '@/app/data/mockData';
 import { toast } from 'sonner';
@@ -18,7 +19,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
+  return `${month}/${day}/${year}`;
 };
 
 export default function AdminItemDetail() {
@@ -69,6 +70,36 @@ export default function AdminItemDetail() {
   }, [proposal.id, proposal.commercialAmount]);
 
   const [remark, setRemark] = useState('');
+  const [simulatorRemark, setSimulatorRemark] = useState('');
+  const [simulatorRole, setSimulatorRole] = useState<'admin' | 'manager'>('admin');
+  const [history, setHistory] = useState([
+    {
+      id: 1,
+      date: '10/05/2026 14:30',
+      receivedQty: proposal.id === 'PROP-104' ? 21 : 5,
+      manager: 'Ahmed Al Mansoori',
+      role: 'Logistics Officer',
+      remarks: 'Initial batch received in good condition, verified against delivery note.'
+    }
+  ]);
+
+  const handleSimulatorAction = (actionType: string) => {
+    if (!simulatorRemark.trim()) {
+      toast.error('Please enter a remark for the simulation.');
+      return;
+    }
+    const newEntry = {
+      id: Date.now(),
+      date: new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      receivedQty: items.reduce((sum, item) => sum + item.receivedQty, 0),
+      manager: simulatorRole === 'admin' ? 'FNRC Admin (Simulator)' : 'Item Manager (Simulator)',
+      role: simulatorRole === 'admin' ? 'System Administrator' : 'Inventory Manager',
+      remarks: `[${actionType}] ${simulatorRemark}`
+    };
+    setHistory([newEntry, ...history]);
+    setSimulatorRemark('');
+    toast.success(`${actionType} logged successfully!`);
+  };
 
   const handleReceivedQtyChange = (index: number, val: string) => {
     const num = parseInt(val, 10);
@@ -82,6 +113,20 @@ export default function AdminItemDetail() {
   };
 
   const handleUpdate = () => {
+    if (!remark.trim()) {
+      toast.error('Please enter a remark before updating.');
+      return;
+    }
+    const newEntry = {
+      id: Date.now(),
+      date: new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      receivedQty: items.reduce((sum, item) => sum + item.receivedQty, 0),
+      manager: simulatorRole === 'admin' ? 'FNRC Admin (Simulator)' : 'Item Manager (Simulator)',
+      role: simulatorRole === 'admin' ? 'System Administrator' : 'Inventory Manager',
+      remarks: `[Standard Update] ${remark}`
+    };
+    setHistory([newEntry, ...history]);
+    setRemark('');
     toast.success('Item details updated successfully!');
   };
 
@@ -119,17 +164,48 @@ export default function AdminItemDetail() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Badge 
-            variant="secondary" 
-            className="text-xs px-3 py-1.5 h-10 flex items-center font-semibold" 
-            style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
-          >
-            {status}
-          </Badge>
+          <StatusBadge status={status} />
         </div>
       </div>
 
+
       <div className="space-y-6">
+        {/* Simulator Card */}
+        <Card className="border-2 border-[var(--fnrc-primary-green)] shadow-md bg-[#F7F9FC]">
+          <CardHeader className="pb-3 border-b border-gray-200 mb-4 bg-white rounded-t-xl flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-[var(--fnrc-primary-green)]">
+                <Info className="h-5 w-5" />
+                Role Simulator
+              </CardTitle>
+              <CardDescription className="text-sm font-medium mt-1">
+                Simulate receiving actions and updates.
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant={simulatorRole === 'admin' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setSimulatorRole('admin')}
+                style={simulatorRole === 'admin' ? { backgroundColor: 'var(--fnrc-primary-green)' } : {}}
+                className={simulatorRole === 'admin' ? 'text-white font-bold shadow-sm' : 'font-semibold'}
+              >
+                Admin Simulator
+              </Button>
+              <Button 
+                variant={simulatorRole === 'manager' ? 'default' : 'outline'} 
+                size="sm"
+                onClick={() => setSimulatorRole('manager')}
+                style={simulatorRole === 'manager' ? { backgroundColor: 'var(--fnrc-primary-green)' } : {}}
+                className={simulatorRole === 'manager' ? 'text-white font-bold shadow-sm' : 'font-semibold'}
+              >
+                Item Manager
+              </Button>
+            </div>
+          </CardHeader>
+
+        </Card>
+
         {/* Combined RFP & Proposal Details */}
         <Card>
           <CardHeader className="pb-3 border-b border-gray-50 mb-4">
@@ -312,6 +388,83 @@ export default function AdminItemDetail() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Admin Simulator Actions */}
+        {simulatorRole === 'admin' && (
+          <Card className="border-2 border-[var(--fnrc-primary-green)] shadow-md bg-[#F7F9FC]">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2 text-[var(--fnrc-primary-green)]">
+                <Info className="h-4 w-4" />
+                <CardTitle className="text-base font-bold">Admin Simulator Actions</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="font-bold text-sm">Simulator Remark</Label>
+                <Textarea 
+                  placeholder="Enter a remark for this simulation..." 
+                  className="bg-white border-gray-300 resize-none"
+                  value={simulatorRemark}
+                  onChange={(e) => setSimulatorRemark(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  className="text-white font-bold gap-2 shadow-md hover:shadow-lg transition-all"
+                  style={{ backgroundColor: 'var(--fnrc-success)' }}
+                  onClick={() => handleSimulatorAction('Goods Received')}
+                >
+                  <Check className="h-4 w-4" />
+                  Goods Received
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  className="font-bold gap-2 shadow-md hover:shadow-lg transition-all bg-red-600 hover:bg-red-700"
+                  onClick={() => handleSimulatorAction('Goods Not Received')}
+                >
+                  Goods Not Received
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Detailed History */}
+        <Card className="border-2 border-gray-100 shadow-sm">
+          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              Detailed History
+            </CardTitle>
+            <CardDescription className="text-sm">Audit trail of all receiving activities</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0 px-6 pb-6">
+            <div className="border rounded-lg overflow-hidden mt-2" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+              <Table>
+                <TableHeader className="bg-gray-50">
+                  <TableRow>
+                    <TableHead className="font-bold text-gray-700 py-3">Date & Time</TableHead>
+                    <TableHead className="font-bold text-gray-700 py-3">Received Qty</TableHead>
+                    <TableHead className="font-bold text-gray-700 py-3">Item Manager</TableHead>
+                    <TableHead className="font-bold text-gray-700 py-3">Role</TableHead>
+                    <TableHead className="font-bold text-gray-700 py-3">Remarks</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {history.map((log) => (
+                    <TableRow key={log.id} className="bg-white hover:bg-gray-50/50">
+                      <TableCell className="font-medium text-gray-900">{log.date}</TableCell>
+                      <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{log.receivedQty}</TableCell>
+                      <TableCell className="text-gray-700 font-semibold">{log.manager}</TableCell>
+                      <TableCell className="text-gray-500 font-medium">{log.role}</TableCell>
+                      <TableCell className="text-gray-600">{log.remarks}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

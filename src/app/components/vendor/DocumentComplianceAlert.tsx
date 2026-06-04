@@ -47,7 +47,6 @@ export function DocumentComplianceAlert({ vendorId }: { vendorId: string }) {
             {complianceIssues.length} Action Required
           </Badge>
         </div>
-        <CardDescription className="text-xs">Regulatory documents requiring attention</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {complianceIssues.map((issue) => (
