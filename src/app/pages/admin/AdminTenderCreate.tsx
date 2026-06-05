@@ -5,17 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Textarea } from '@/app/components/ui/textarea';
+import { RichTextEditor } from '@/app/components/ui/rich-text-editor';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Calendar } from '@/app/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
 import { CalendarIcon, Plus, X, Upload, FileText, Globe, Lock, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { vendorCategories, mockRFPs } from '@/app/data/mockData';
+import { vendorCategories, mockTenders } from '@/app/data/mockData';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
 
-interface RFPFormData {
+interface TenderFormData {
   title: string;
   categories: string[];
   description: string;
@@ -31,13 +32,13 @@ interface RFPFormData {
   technicalProposalRequired: 'yes' | 'no';
 }
 
-export default function AdminRFPCreate() {
+export default function AdminTenderCreate() {
   const navigate = useNavigate();
-  const { rfpId } = useParams();
+  const { tenderId } = useParams();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<RFPFormData>(() => {
-    if (rfpId) {
-      const draft = mockRFPs.find(r => r.id === rfpId);
+  const [formData, setFormData] = useState<TenderFormData>(() => {
+    if (tenderId) {
+      const draft = mockTenders.find(r => r.id === tenderId);
       if (draft) {
         return {
           title: draft.title || '',
@@ -73,7 +74,7 @@ export default function AdminRFPCreate() {
     };
   });
 
-  const updateFormData = (field: keyof RFPFormData, value: any) => {
+  const updateFormData = (field: keyof TenderFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -130,8 +131,8 @@ export default function AdminRFPCreate() {
   };
 
   const handleSaveDraft = () => {
-    const rfpData = {
-      title: formData.title || 'Untitled RFP',
+    const tenderData = {
+      title: formData.title || 'Untitled Tender',
       category: formData.categories.length > 0 ? formData.categories : ['General'],
       description: formData.description,
       eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
@@ -143,23 +144,23 @@ export default function AdminRFPCreate() {
       createdAt: format(new Date(), 'yyyy-MM-dd'),
     };
 
-    if (rfpId) {
-      const idx = mockRFPs.findIndex(r => r.id === rfpId);
+    if (tenderId) {
+      const idx = mockTenders.findIndex(r => r.id === tenderId);
       if (idx !== -1) {
-        mockRFPs[idx] = { ...mockRFPs[idx], ...rfpData };
+        mockTenders[idx] = { ...mockTenders[idx], ...tenderData };
       }
     } else {
-      const newId = `RFP-00${mockRFPs.length + 1}`;
-      mockRFPs.push({ id: newId, ...rfpData });
+      const newId = `TEND-00${mockTenders.length + 1}`;
+      mockTenders.push({ id: newId, ...tenderData });
     }
 
-    toast.success('RFP saved as draft successfully');
-    navigate('/admin/rfps');
+    toast.success('Tender saved as draft successfully');
+    navigate('/admin/tenders');
   };
 
   const handlePublish = () => {
-    const rfpData = {
-      title: formData.title || 'Untitled RFP',
+    const tenderData = {
+      title: formData.title || 'Untitled Tender',
       category: formData.categories.length > 0 ? formData.categories : ['General'],
       description: formData.description,
       eligibilityCriteria: formData.eligibilityCriteria.split('\n').filter(Boolean),
@@ -171,23 +172,23 @@ export default function AdminRFPCreate() {
       createdAt: format(new Date(), 'yyyy-MM-dd'),
     };
 
-    if (rfpId) {
-      const idx = mockRFPs.findIndex(r => r.id === rfpId);
+    if (tenderId) {
+      const idx = mockTenders.findIndex(r => r.id === tenderId);
       if (idx !== -1) {
-        mockRFPs[idx] = { ...mockRFPs[idx], ...rfpData };
+        mockTenders[idx] = { ...mockTenders[idx], ...tenderData };
       }
     } else {
-      const newId = `RFP-00${mockRFPs.length + 1}`;
-      mockRFPs.push({ id: newId, ...rfpData });
+      const newId = `TEND-00${mockTenders.length + 1}`;
+      mockTenders.push({ id: newId, ...tenderData });
     }
 
-    toast.success('RFP published successfully');
-    navigate('/admin/rfps');
+    toast.success('Tender published successfully');
+    navigate('/admin/tenders');
   };
 
   const renderStepIndicator = () => {
     const steps = [
-      { number: 1, label: 'RFP Details' },
+      { number: 1, label: 'Tender Details' },
       { number: 2, label: 'Visibility & Publish' }
     ];
 
@@ -229,7 +230,7 @@ export default function AdminRFPCreate() {
         
         <div className="flex items-center gap-3 pb-2">
           {step === 1 ? (
-            <Button variant="outline" onClick={() => navigate('/admin/rfps')}>
+            <Button variant="outline" onClick={() => navigate('/admin/tenders')}>
               Cancel
             </Button>
           ) : (
@@ -256,7 +257,7 @@ export default function AdminRFPCreate() {
               className="text-white"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Publish RFP
+              Publish Tender
             </Button>
           )}
         </div>
@@ -267,22 +268,21 @@ export default function AdminRFPCreate() {
   const renderStep1 = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Basic RFP Information</CardTitle>
-        <CardDescription>Enter the fundamental details of the RFP</CardDescription>
+        <CardTitle className="font-bold text-lg">Basic Tender Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="title">RFP Title *</Label>
+          <Label htmlFor="title" className="font-bold">Tender Title *</Label>
           <Input
             id="title"
-            placeholder="Enter RFP title"
+            placeholder="Enter Tender title"
             value={formData.title}
             onChange={(e) => updateFormData('title', e.target.value)}
           />
         </div>
 
         <div className="space-y-3">
-          <Label>RFP Categories *</Label>
+          <Label className="font-bold">Service Category *</Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50/50">
             {vendorCategories.map((cat) => (
               <div key={cat} className="flex items-center space-x-2">
@@ -300,34 +300,34 @@ export default function AdminRFPCreate() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">Select one or more service categories relevant to this RFP.</p>
+          <p className="text-xs text-muted-foreground">Select one or more service categories relevant to this Tender.</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Description *</Label>
-          <Textarea
+          <Label htmlFor="description" className="font-bold">Description *</Label>
+          <RichTextEditor
             id="description"
-            placeholder="Enter RFP description"
+            placeholder="Enter Tender description"
             rows={4}
             value={formData.description}
-            onChange={(e) => updateFormData('description', e.target.value)}
+            onChange={(e: any) => updateFormData('description', e.target.value)}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="eligibility">Eligibility Criteria *</Label>
-          <Textarea
+          <Label htmlFor="eligibility" className="font-bold">Eligibility Criteria *</Label>
+          <RichTextEditor
             id="eligibility"
             placeholder="Enter eligibility criteria (one per line)"
             rows={4}
             value={formData.eligibilityCriteria}
-            onChange={(e) => updateFormData('eligibilityCriteria', e.target.value)}
+            onChange={(e: any) => updateFormData('eligibilityCriteria', e.target.value)}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="budget">Estimated Budget (Optional)</Label>
+            <Label htmlFor="budget" className="font-bold">Estimated Budget (Optional)</Label>
             <Input
               id="budget"
               placeholder="e.g., AED 500,000"
@@ -337,7 +337,7 @@ export default function AdminRFPCreate() {
           </div>
 
           <div className="space-y-2">
-            <Label>Submission Deadline *</Label>
+            <Label className="font-bold">Submission Deadline *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -362,7 +362,7 @@ export default function AdminRFPCreate() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label className="font-semibold text-sm">Technical Proposal Required *</Label>
+            <Label className="font-bold text-sm">Technical Proposal Required *</Label>
             <RadioGroup 
               value={formData.technicalProposalRequired} 
               onValueChange={(value: 'yes' | 'no') => updateFormData('technicalProposalRequired', value)}
@@ -396,24 +396,23 @@ export default function AdminRFPCreate() {
   const renderStep2 = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Scope & Timeline</CardTitle>
-        <CardDescription>Define the project scope and milestones</CardDescription>
+        <CardTitle className="font-bold text-lg">Scope & Timeline</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="scope">Scope of Work *</Label>
-          <Textarea
+          <Label htmlFor="scope" className="font-bold">Scope of Work *</Label>
+          <RichTextEditor
             id="scope"
             placeholder="Enter detailed scope of work"
             rows={6}
             value={formData.scopeOfWork}
-            onChange={(e) => updateFormData('scopeOfWork', e.target.value)}
+            onChange={(e: any) => updateFormData('scopeOfWork', e.target.value)}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Project Start Date *</Label>
+            <Label className="font-bold">Project Start Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -433,7 +432,7 @@ export default function AdminRFPCreate() {
           </div>
 
           <div className="space-y-2">
-            <Label>Project End Date *</Label>
+            <Label className="font-bold">Project End Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
@@ -455,7 +454,7 @@ export default function AdminRFPCreate() {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label>Milestones</Label>
+            <Label className="font-bold">Milestones</Label>
             <Button
               type="button"
               size="sm"
@@ -499,8 +498,7 @@ export default function AdminRFPCreate() {
   const renderStep3 = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Attachments</CardTitle>
-        <CardDescription>Upload RFP documents and specifications</CardDescription>
+        <CardTitle className="font-bold text-lg">Attachments</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -527,7 +525,7 @@ export default function AdminRFPCreate() {
 
           {formData.attachments.length > 0 && (
             <div className="space-y-2">
-              <Label>Uploaded Files</Label>
+              <Label className="font-bold">Uploaded Files</Label>
               {formData.attachments.map((file, index) => (
                 <div
                   key={index}
@@ -563,8 +561,7 @@ export default function AdminRFPCreate() {
   const renderStep4 = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Tender Visibility</CardTitle>
-        <CardDescription>Define who can view and participate in this tender</CardDescription>
+        <CardTitle className="font-bold text-lg">Tender Visibility</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <RadioGroup 
@@ -575,7 +572,7 @@ export default function AdminRFPCreate() {
           <div className="flex items-start space-x-3 space-y-0 rounded-lg border p-4 transition-colors hover:bg-gray-50/50">
             <RadioGroupItem value="open" id="open" className="mt-1" />
             <div className="space-y-1">
-              <Label htmlFor="open" className="flex items-center gap-2 text-base cursor-pointer">
+              <Label htmlFor="open" className="flex items-center gap-2 text-base cursor-pointer font-bold">
                 <Globe className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 Open Tender
               </Label>
@@ -588,7 +585,7 @@ export default function AdminRFPCreate() {
           <div className="flex items-start space-x-3 space-y-0 rounded-lg border p-4 transition-colors hover:bg-gray-50/50">
             <RadioGroupItem value="restricted" id="restricted" className="mt-1" />
             <div className="space-y-1">
-              <Label htmlFor="restricted" className="flex items-center gap-2 text-base cursor-pointer">
+              <Label htmlFor="restricted" className="flex items-center gap-2 text-base cursor-pointer font-bold">
                 <Lock className="h-4 w-4 text-amber-500" />
                 Restricted (Service Category)
               </Label>
@@ -607,8 +604,7 @@ export default function AdminRFPCreate() {
   const renderStep5 = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Review & Publish</CardTitle>
-        <CardDescription>Review all information before publishing</CardDescription>
+        <CardTitle className="font-bold text-lg">Review & Publish</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -617,10 +613,10 @@ export default function AdminRFPCreate() {
               <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
               Basic Information
             </h3>
-            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">RFP Title</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Tender Title</span>
                   <div className="font-medium mt-0.5">{formData.title || '-'}</div>
                 </div>
                 <div>
@@ -657,7 +653,7 @@ export default function AdminRFPCreate() {
               <CalendarIcon className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
               Scope & Timeline
             </h3>
-            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-sm">
                 <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Scope of Work</span>
                 <div className="mt-0.5">{formData.scopeOfWork || '-'}</div>
@@ -697,7 +693,7 @@ export default function AdminRFPCreate() {
               <Eye className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
               Tender Visibility
             </h3>
-            <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="flex items-center gap-3">
                 {formData.visibility === 'open' ? (
                   <>
@@ -729,7 +725,7 @@ export default function AdminRFPCreate() {
               <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
               Attachments
             </h3>
-            <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               {formData.attachments.length > 0 ? (
                 <div className="grid gap-2">
                   {formData.attachments.map((file, i) => (
@@ -766,12 +762,9 @@ export default function AdminRFPCreate() {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          {rfpId ? 'Edit Draft RFP' : 'Create New RFP'}
+        <h1 className="mb-2 text-xl font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>
+          {tenderId ? 'Edit Draft Tender' : 'Create New Tender'}
         </h1>
-        <p style={{ color: 'var(--fnrc-text-muted)' }}>
-          {rfpId ? 'Review and edit your draft before publishing the Request for Proposal' : 'Follow the steps to create and publish a new Request for Proposal'}
-        </p>
       </div>
 
       {renderStepIndicator()}

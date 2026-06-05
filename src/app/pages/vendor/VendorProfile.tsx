@@ -32,6 +32,7 @@ import { Globe, Phone, Mail, MapPin, Landmark, UserCircle, Briefcase, Lock, KeyR
 export default function VendorProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [registrationStatus, setRegistrationStatus] = useState('Approved');
+  const [activeTab, setActiveTab] = useState('company');
   
   // Detailed vendor data (mock)
   const [vendorData, setVendorData] = useState({
@@ -110,9 +111,9 @@ export default function VendorProfile() {
             Profile Settings
           </h1>
         </div>
-        <div className="flex items-center gap-4 p-3.5 rounded-xl border border-gray-100 bg-white shadow-xs">
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mr-2 flex items-center gap-1.5">
-            <Shield className="h-3.5 w-3.5 text-gray-400" />
+        <div className="flex items-center gap-3 p-2 rounded-xl border border-gray-100 bg-white shadow-sm">
+          <div className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1 mr-1 flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-gray-400" />
             Review Actions:
           </div>
           <div className="flex gap-1.5">
@@ -156,10 +157,10 @@ export default function VendorProfile() {
         </div>
       </div>
 
-      <Tabs defaultValue="company" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* Modernized Segmented Tabs List */}
-        <div className="flex border-b border-gray-200/80 pb-1">
-          <TabsList className="bg-gray-100/80 border border-gray-200/20 p-1 rounded-xl h-10 w-full sm:w-[360px] flex">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200/80 pb-2 gap-4">
+          <TabsList className="bg-gray-100/80 border border-gray-200/20 p-1 rounded-xl h-10 w-full sm:w-[360px] flex shrink-0">
             <TabsTrigger value="company" className="flex items-center justify-center gap-2 font-semibold text-xs rounded-lg py-1.5 transition-all w-1/2">
               <Building2 className="h-3.5 w-3.5" />
               Company Profile
@@ -169,27 +170,29 @@ export default function VendorProfile() {
               Change Password
             </TabsTrigger>
           </TabsList>
+
+          {activeTab === 'company' && (
+            <div className="flex justify-end">
+              {isEditing ? (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setIsEditing(false)} className="rounded-button text-xs font-semibold h-9 px-4">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSave} className="bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green)]/90 rounded-button text-xs font-semibold h-9 px-4 shadow-sm">
+                    Save Changes
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" onClick={() => setIsEditing(true)} className="rounded-button text-xs font-semibold border-gray-200 hover:bg-gray-50 h-9 px-4 flex items-center gap-1.5">
+                  Edit Profile
+                </Button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* --- COMPANY PROFILE TAB --- */}
         <TabsContent value="company" className="space-y-6 mt-6 focus-visible:outline-none">
-          <div className="flex justify-end">
-            {isEditing ? (
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsEditing(false)} className="rounded-button text-xs font-semibold h-9 px-4">
-                  Cancel
-                </Button>
-                <Button onClick={handleSave} className="bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green)]/90 rounded-button text-xs font-semibold h-9 px-4 shadow-sm">
-                  Save Changes
-                </Button>
-              </div>
-            ) : (
-              <Button variant="outline" onClick={() => setIsEditing(true)} className="rounded-button text-xs font-semibold border-gray-200 hover:bg-gray-50 h-9 px-4 flex items-center gap-1.5">
-                Edit Profile
-              </Button>
-            )}
-          </div>
-
           {/* Profile Overview Header Card */}
           <Card className="shadow-card border-none bg-white">
             <CardContent className="p-6">
@@ -202,7 +205,7 @@ export default function VendorProfile() {
                     <h2 className="text-[22px] font-bold text-gray-800 leading-none">{vendorData.companyNameEn}</h2>
                     <div className="flex flex-wrap items-center gap-2.5 mt-2">
                       <StatusBadge status={registrationStatus} />
-                      <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Vendor ID: VEN-001</span>
+                      <span className="text-[14px] text-black font-bold">Vendor ID: VEN-001</span>
                     </div>
                   </div>
                 </div>
@@ -216,9 +219,8 @@ export default function VendorProfile() {
               
               {/* Service Categories */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="pb-3 px-6 pt-6">
-                  <CardTitle className="text-lg font-bold text-gray-800">Service Categories</CardTitle>
-                  <CardDescription className="text-xs text-gray-400 font-medium">Core capabilities registered under FNRC registry</CardDescription>
+                <CardHeader className="pb-2 px-6 pt-5">
+                  <CardTitle className="text-lg font-bold text-black">Service Categories</CardTitle>
                 </CardHeader>
                 <CardContent className="px-6 pb-6">
                   {isEditing ? (
@@ -252,45 +254,43 @@ export default function VendorProfile() {
 
               {/* Company Details */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-6 pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                    <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <CardHeader className="px-6 pt-5 pb-2">
+                  <CardTitle className="text-lg font-bold text-black">
                     Company Details
                   </CardTitle>
-                  <CardDescription className="text-xs text-gray-400 font-medium">Official trade license and company details</CardDescription>
                 </CardHeader>
                 <CardContent className="px-6 pb-6 pt-1">
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Company Name (English)</Label>
+                      <Label className="text-[14px] text-black font-bold">Company Name (English)</Label>
                       {isEditing ? (
                         <Input value={vendorData.companyNameEn} onChange={(e) => setVendorData({...vendorData, companyNameEn: e.target.value})} className="rounded-input h-10 border-gray-200" />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.companyNameEn}</div>
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.companyNameEn}</div>
                       )}
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Company Name (Arabic)</Label>
+                      <Label className="text-[14px] text-black font-bold">Company Name (Arabic)</Label>
                       {isEditing ? (
                         <Input value={vendorData.companyNameAr} className="text-right rounded-input h-10 border-gray-200" dir="rtl" onChange={(e) => setVendorData({...vendorData, companyNameAr: e.target.value})} />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 text-right bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30" dir="rtl">{vendorData.companyNameAr}</div>
+                        <div className="font-normal text-[14px] text-gray-700 text-right p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30" dir="rtl">{vendorData.companyNameAr}</div>
                       )}
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Trade License Number</Label>
+                      <Label className="text-[14px] text-black font-bold">Trade License Number</Label>
                       {isEditing ? (
                         <Input value={vendorData.tradeLicense} onChange={(e) => setVendorData({...vendorData, tradeLicense: e.target.value})} className="rounded-input h-10 border-gray-200" />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.tradeLicense}</div>
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.tradeLicense}</div>
                       )}
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">License Expiry Date</Label>
+                      <Label className="text-[14px] text-black font-bold">License Expiry Date</Label>
                       {isEditing ? (
                         <Input type="date" value={vendorData.licenseExpiry} onChange={(e) => setVendorData({...vendorData, licenseExpiry: e.target.value})} className="rounded-input h-10 border-gray-200" />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{new Date(vendorData.licenseExpiry).toLocaleDateString()}</div>
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{new Date(vendorData.licenseExpiry).toLocaleDateString()}</div>
                       )}
                     </div>
                   </div>
@@ -299,79 +299,78 @@ export default function VendorProfile() {
 
               {/* Contact Information */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-6 pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                    <MapPin className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <CardHeader className="px-6 pt-5 pb-2">
+                  <CardTitle className="text-lg font-bold text-black">
                     Contact Info
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-6 pb-6 pt-1">
                   <div className="grid gap-5">
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Office Address</Label>
+                      <Label className="text-[14px] text-black font-bold">Office Address</Label>
                       {isEditing ? (
                         <Input value={vendorData.address} onChange={(e) => setVendorData({...vendorData, address: e.target.value})} className="rounded-input h-10 border-gray-200" />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.address}</div>
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.address}</div>
                       )}
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Country</Label>
+                        <Label className="text-[14px] text-black font-bold">Country</Label>
                         {isEditing ? (
                           <Input value={vendorData.country} onChange={(e) => setVendorData({...vendorData, country: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.country}</div>
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.country}</div>
                         )}
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">State / Emirate</Label>
+                        <Label className="text-[14px] text-black font-bold">State / Emirate</Label>
                         {isEditing ? (
                           <Input value={vendorData.stateEmirate} onChange={(e) => setVendorData({...vendorData, stateEmirate: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.stateEmirate}</div>
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.stateEmirate}</div>
                         )}
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">City</Label>
+                        <Label className="text-[14px] text-black font-bold">City</Label>
                         {isEditing ? (
                           <Input value={vendorData.city} onChange={(e) => setVendorData({...vendorData, city: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.city}</div>
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.city}</div>
                         )}
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Phone Number</Label>
+                        <Label className="text-[14px] text-black font-bold">Phone Number</Label>
                         {isEditing ? (
                           <Input value={vendorData.phone} onChange={(e) => setVendorData({...vendorData, phone: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                             <Phone className="h-4 w-4 text-gray-400" /> 
                             {vendorData.phone}
                           </div>
                         )}
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Fax Number</Label>
+                        <Label className="text-[14px] text-black font-bold">Fax Number</Label>
                         {isEditing ? (
                           <Input value={vendorData.fax} onChange={(e) => setVendorData({...vendorData, fax: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                             <Phone className="h-4 w-4 text-gray-400" /> 
                             {vendorData.fax}
                           </div>
                         )}
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Email ID</Label>
+                        <Label className="text-[14px] text-black font-bold">Email ID</Label>
                         {isEditing ? (
                           <Input value={vendorData.email} onChange={(e) => setVendorData({...vendorData, email: e.target.value})} className="rounded-input h-10 border-gray-200" />
                         ) : (
-                          <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                             <Mail className="h-4 w-4 text-gray-400" /> 
                             {vendorData.email}
                           </div>
@@ -380,11 +379,11 @@ export default function VendorProfile() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Website</Label>
+                      <Label className="text-[14px] text-black font-bold">Website</Label>
                       {isEditing ? (
                         <Input value={vendorData.website} onChange={(e) => setVendorData({...vendorData, website: e.target.value})} className="rounded-input h-10 border-gray-200" />
                       ) : (
-                        <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                           <Globe className="h-4 w-4 text-gray-400" /> 
                           {vendorData.website}
                         </div>
@@ -400,49 +399,48 @@ export default function VendorProfile() {
               
               {/* Primary Contact Card */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-6 pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                    <UserCircle className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <CardHeader className="px-6 pt-5 pb-0">
+                  <CardTitle className="text-lg font-bold text-black">
                     Primary Contact
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-6 pb-6 space-y-4 pt-1">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Name</Label>
+                    <Label className="text-[14px] text-black font-bold">Name</Label>
                     {isEditing ? (
                       <Input value={vendorData.primaryContact.name} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, name: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.primaryContact.name}</div>
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.primaryContact.name}</div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Job Title</Label>
+                    <Label className="text-[14px] text-black font-bold">Job Title</Label>
                     {isEditing ? (
                       <Input value={vendorData.primaryContact.jobTitle} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, jobTitle: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                         <Briefcase className="h-4 w-4 text-gray-400" />
                         {vendorData.primaryContact.jobTitle}
                       </div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Mobile Number</Label>
+                    <Label className="text-[14px] text-black font-bold">Mobile Number</Label>
                     {isEditing ? (
                       <Input value={vendorData.primaryContact.mobile} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, mobile: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                         <Phone className="h-4 w-4 text-gray-400" />
                         {vendorData.primaryContact.mobile}
                       </div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Email</Label>
+                    <Label className="text-[14px] text-black font-bold">Email</Label>
                     {isEditing ? (
                       <Input value={vendorData.primaryContact.email} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, email: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 flex items-center gap-2">
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2">
                         <Mail className="h-4 w-4 text-gray-400" />
                         {vendorData.primaryContact.email}
                       </div>
@@ -453,51 +451,50 @@ export default function VendorProfile() {
 
               {/* Financial Info Card */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-6 pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                    <Landmark className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <CardHeader className="px-6 pt-5 pb-2">
+                  <CardTitle className="text-lg font-bold text-black">
                     Financial Info
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-6 pb-6 space-y-4 pt-1">
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Bank Name</Label>
+                    <Label className="text-[14px] text-black font-bold">Bank Name</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.bankName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankName: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.financialInfo.bankName}</div>
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.financialInfo.bankName}</div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Account Holder Name</Label>
+                    <Label className="text-[14px] text-black font-bold">Account Holder Name</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.accountHolderName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, accountHolderName: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.financialInfo.accountHolderName}</div>
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.financialInfo.accountHolderName}</div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">IBAN</Label>
+                    <Label className="text-[14px] text-black font-bold">IBAN</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.bankAccount} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankAccount: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-mono text-xs font-semibold text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30 break-all">{vendorData.financialInfo.bankAccount}</div>
+                      <div className="font-mono text-xs font-semibold text-gray-700 break-all">{vendorData.financialInfo.bankAccount}</div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Swift Code</Label>
+                    <Label className="text-[14px] text-black font-bold">Swift Code</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.swiftCode} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, swiftCode: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.financialInfo.swiftCode}</div>
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.financialInfo.swiftCode}</div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-gray-400 font-semibold uppercase tracking-wider">VAT Registration Number</Label>
+                    <Label className="text-[14px] text-black font-bold">VAT Registration Number</Label>
                     {isEditing ? (
                       <Input value={vendorData.financialInfo.vatNumber} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, vatNumber: e.target.value}})} className="rounded-input h-10 border-gray-200" />
                     ) : (
-                      <div className="font-semibold text-[14px] text-gray-700 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100/30">{vendorData.financialInfo.vatNumber}</div>
+                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30">{vendorData.financialInfo.vatNumber}</div>
                     )}
                   </div>
                 </CardContent>
@@ -507,17 +504,13 @@ export default function VendorProfile() {
 
           {/* Compliance Documents Section */}
           <Card className="shadow-card border-none bg-white">
-            <CardHeader className="px-6 pt-6 pb-3">
+            <CardHeader className="px-6 pt-5 pb-2">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                  <CardTitle className="text-lg font-bold text-gray-800">Compliance Documents</CardTitle>
-                </div>
+                <CardTitle className="text-lg font-bold text-black">Compliance Documents</CardTitle>
                 <Button size="sm" className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4">
                   Upload Document
                 </Button>
               </div>
-              <CardDescription className="text-xs text-gray-400 font-medium font-medium">Regulatory and legal credentials required for FNRC qualifications</CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6">
               <Table>
@@ -590,9 +583,11 @@ export default function VendorProfile() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500">
-                          <Download className="h-4 w-4" />
-                        </Button>
+                        <div className="flex justify-end">
+                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -605,12 +600,10 @@ export default function VendorProfile() {
         {/* --- CHANGE PASSWORD TAB --- */}
         <TabsContent value="security" className="mt-6 focus-visible:outline-none">
           <Card className="max-w-2xl mx-auto shadow-card border-none bg-white">
-            <CardHeader className="px-6 pt-6 pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                <KeyRound className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+            <CardHeader className="px-6 pt-5 pb-2">
+              <CardTitle className="text-lg font-bold text-black">
                 Change Password
               </CardTitle>
-              <CardDescription className="text-xs text-gray-400 font-medium font-medium">Update account password to maintain security credentials</CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6 space-y-5 pt-1">
               <div className="space-y-2">

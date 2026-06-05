@@ -1,170 +1,403 @@
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
-import { Building2, FileText, CheckCircle, Users, ArrowRight, ShieldCheck, HelpCircle } from 'lucide-react';
+import { 
+  Building2, 
+  FileText, 
+  CheckCircle, 
+  Users, 
+  ShieldCheck, 
+  ChevronRight, 
+  Menu, 
+  X,
+  TrendingUp,
+  Globe,
+  Briefcase,
+  Leaf,
+  Lock,
+  Clock,
+  Handshake,
+  ArrowRight,
+  PhoneCall,
+  Mail,
+  HeadphonesIcon
+} from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
-import { Header } from '@/app/components/layout/Header';
+import { Card } from '@/app/components/ui/card';
+
+// Custom Landing Page Colors
+const COLORS = {
+  gold: '#B59969',
+  darkGreen: '#3D3935',
+  beige: '#FAFAFA',
+  textDark: '#3D3935',
+  gray: '#E5E7EB'
+};
+
+// --- Subcomponents ---
+
+function LandingHeader() {
+  const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
+          <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => navigate('/vendor/landing')}>
+            <img src="/fnrc-official-logo.png" alt="FNRC Logo" className="h-12 object-contain" />
+          </div>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {['About FNRC', 'Vendor Journey', 'Contact Us'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} className="text-sm font-semibold text-[#3D3935] hover:text-[#B59969] transition-colors">
+                {item}
+              </a>
+            ))}
+          </nav>
+
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              className="border-[#B59969] text-[#B59969] hover:bg-[#B59969] hover:text-[#3D3935] transition-colors rounded-xl font-semibold"
+              onClick={() => navigate('/vendor/login')}
+            >
+              Vendor Login
+            </Button>
+            <Button 
+              className="bg-[#B59969] hover:bg-[#a3834a] text-[#3D3935] rounded-xl font-semibold shadow-md shadow-[#B59969]/20"
+              onClick={() => navigate('/admin/login')}
+            >
+              Admin Login
+            </Button>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-[#3D3935]">
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-gray-100 px-6 py-4 space-y-4 shadow-xl">
+          {['About FNRC', 'Vendor Journey', 'Contact Us'].map((item) => (
+            <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} className="block text-base font-medium text-[#3D3935]">
+              {item}
+            </a>
+          ))}
+          <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
+            <Button variant="outline" className="w-full border-[#B59969] text-[#B59969] rounded-xl" onClick={() => navigate('/vendor/login')}>Vendor Login</Button>
+            <Button className="w-full bg-[#B59969] text-[#3D3935] rounded-xl" onClick={() => navigate('/admin/login')}>Admin Login</Button>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+// --- Main Page Component ---
 
 export default function VendorLanding() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#F7F9FC] flex flex-col font-sans">
-      <Header role="public" />
-      
+    <div className="min-h-screen font-sans bg-[#FAFAFA] text-[#3D3935] selection:bg-[#B59969] selection:text-[#3D3935]">
+      <LandingHeader />
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white border-b border-gray-100 py-24 sm:py-32">
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ 
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40 Q 20 20 40 40 T 80 40' fill='none' stroke='%23000000' stroke-width='1'/%3E%3C/svg%3E")`,
-            backgroundSize: '80px 80px'
-          }}
-        />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--fnrc-primary-green)]/5 rounded-full blur-3xl pointer-events-none" />
-        
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-[#FAFAFA] overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[800px] h-[800px] bg-[#B59969]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-[#B59969]/5 rounded-full blur-3xl pointer-events-none" />
+
         <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] text-xs font-semibold uppercase tracking-wider mb-6">
-              <ShieldCheck className="h-4 w-4" /> Official FNRC Procurement Platform
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E7EB] shadow-sm mb-8">
+                <ShieldCheck className="h-4 w-4 text-[#B59969]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-[#B59969]">Official FNRC Procurement Platform</span>
+              </div>
+              <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-[#3D3935] leading-[1.1] mb-6">
+                Supplier & Vendor <br/>
+                <span className="text-[#B59969]">Procurement Portal</span>
+              </h1>
+              <p className="text-lg leading-relaxed text-gray-600 mb-10">
+                Access procurement opportunities, submit proposals, manage vendor registrations, and build long-term partnerships with Fujairah Natural Resources Corporation.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-[#B59969] hover:bg-[#a3834a] text-[#3D3935] h-14 px-8 rounded-xl text-base font-bold shadow-lg shadow-[#B59969]/20 transition-transform hover:-translate-y-1"
+                  onClick={() => navigate('/vendor/register')}
+                >
+                  Register as Vendor
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="bg-white border-[#E5E7EB] text-[#3D3935] h-14 px-8 rounded-xl text-base font-bold shadow-sm hover:border-[#B59969] hover:text-[#B59969] transition-all hover:-translate-y-1"
+                  onClick={() => navigate('/vendor/login')}
+                >
+                  Vendor Login
+                </Button>
+              </div>
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl leading-tight mb-6">
-              Empowering Suppliers, <br />
-              <span className="text-[var(--fnrc-primary-green)]">Developing Fujairah</span>
-            </h1>
-            <p className="text-lg leading-relaxed text-gray-500 max-w-2xl mx-auto mb-10">
-              Welcome to the Fujairah Natural Resources Corporation Vendor Portal. Access government tenders, manage active proposals, and build long-term partnerships with transparent, enterprise-grade procurement tools.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <Button 
-                size="lg"
-                className="w-full sm:w-auto h-12 text-base font-semibold text-white px-8 shadow-lg shadow-[var(--fnrc-primary-green)]/20 hover:shadow-xl hover:shadow-[var(--fnrc-primary-green)]/30 hover:-translate-y-0.5 transition-all duration-200"
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                onClick={() => navigate('/vendor/register')}
-              >
-                Register as Vendor
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto h-12 text-base font-semibold hover:bg-gray-50 border-2 hover:-translate-y-0.5 transition-all duration-200"
-                style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
-                onClick={() => navigate('/vendor/login')}
-              >
-                Vendor Login
-              </Button>
+
+            {/* Right Image */}
+            <div className="relative lg:h-[600px] w-full rounded-[40px] overflow-hidden shadow-2xl shadow-[#B59969]/10 border-8 border-white">
+              <img 
+                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop" 
+                alt="Fujairah Mountains and Mining" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#264A3E]/40 to-transparent mix-blend-multiply" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Indicators */}
+      <section className="py-12 bg-white border-y border-[#E5E7EB] relative z-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-[#E5E7EB]">
+            {[
+              { label: 'Years of Service', value: '15+', icon: Globe },
+              { label: 'Registered Vendors', value: '500+', icon: Users },
+              { label: 'Active Opportunities', value: '100+', icon: Briefcase },
+              { label: 'Completed Projects', value: '1000+', icon: CheckCircle },
+            ].map((stat, i) => (
+              <div key={i} className="flex flex-col items-center text-center px-4 group">
+                <div className="mb-3 p-3 bg-[#FAFAFA] rounded-full group-hover:scale-110 group-hover:bg-[#B59969]/10 transition-transform">
+                  <stat.icon className="h-6 w-6 text-[#B59969]" />
+                </div>
+                <div className="text-3xl font-extrabold text-[#B59969] mb-1">{stat.value}</div>
+                <div className="text-sm font-medium text-gray-500">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose FNRC */}
+      <section className="py-24 bg-[#FAFAFA]">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-4">Why Choose FNRC</h2>
+            <p className="text-lg text-gray-600">Experience a world-class enterprise procurement process built on trust, efficiency, and sustainability.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: 'Transparent Procurement', desc: 'Clear guidelines, fair evaluations, and open communication throughout the bidding lifecycle.', icon: ShieldCheck },
+              { title: 'Secure Vendor Management', desc: 'Enterprise-grade security for your corporate data, financial records, and sensitive proposals.', icon: Lock },
+              { title: 'Timely Opportunities', desc: 'Real-time notifications for relevant tenders matching your business classification.', icon: Clock },
+              { title: 'Long-Term Partnerships', desc: 'We value strategic relationships that drive sustainable economic growth for the Emirate.', icon: Handshake },
+            ].map((feature, i) => (
+              <Card key={i} className="bg-white border-0 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 p-8 rounded-3xl group">
+                <div className="w-14 h-14 rounded-2xl bg-[#FAFAFA] flex items-center justify-center mb-6 group-hover:bg-[#B59969] transition-colors">
+                  <feature.icon className="h-7 w-7 text-[#B59969] group-hover:text-[#3D3935] transition-colors" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-xl font-bold text-[#3D3935] mb-3">{feature.title}</h3>
+                <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* About FNRC Section */}
-      <section className="bg-white py-20 sm:py-24 border-b border-gray-100">
+      <section id="about-fnrc" className="py-24 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl mb-6">
-              About FNRC Procurement
-            </h2>
-            <div className="text-base leading-relaxed text-gray-500 space-y-4">
-              <p>
-                The Fujairah Natural Resources Corporation (FNRC) is dedicated to fostering sustainable economic growth and resource utilization in the Emirate of Fujairah. Our procurement processes are governed by principles of equal opportunity, strict transparency, and social and environmental responsibility.
-              </p>
-              <p>
-                By registering on our modern Vendor Portal, your business gains direct exposure to official government requirements and request-for-proposal campaigns, enabling active partnership in prestigious public infrastructure and mining operations.
-              </p>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="relative rounded-[40px] overflow-hidden h-[500px] shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop" 
+                alt="FNRC Building" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Procurement Process */}
-      <section className="py-20 sm:py-24 flex-1">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight text-center text-gray-950 sm:text-4xl mb-16">
-            Our Procurement Journey
-          </h2>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200">
-              <CardContent className="pt-8 pb-6 px-6 text-center flex flex-col items-center">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                  <Users className="h-7 w-7" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  1. Register Account
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Establish your supplier credentials and complete your comprehensive enterprise profile online.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200">
-              <CardContent className="pt-8 pb-6 px-6 text-center flex flex-col items-center">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                  <CheckCircle className="h-7 w-7" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  2. Document Approval
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Our compliance team reviews trade licenses and financial records to guarantee premium partnerships.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200">
-              <CardContent className="pt-8 pb-6 px-6 text-center flex flex-col items-center">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                  <FileText className="h-7 w-7" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  3. Explore RFPs
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Access active Request for Proposals categorized by technical service and resource sectors.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200">
-              <CardContent className="pt-8 pb-6 px-6 text-center flex flex-col items-center">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                  <Building2 className="h-7 w-7" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  4. Bid & Win
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Prepare technical and commercial specifications, submit proposal files, and track evaluation milestones.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Support & Contact */}
-      <section className="bg-gray-50 py-12 border-t border-gray-100">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3 text-left">
-            <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
-              <HelpCircle className="h-5 w-5" />
-            </div>
+            
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Need help with registration?</p>
-              <p className="text-xs text-gray-500">Our customer support team is available 24/7 to assist you.</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B59969]/10 text-[#B59969] text-xs font-bold uppercase tracking-wider mb-6">
+                About FNRC
+              </div>
+              <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-6 leading-tight">
+                Committed to Sustainable Resource Development
+              </h2>
+              <div className="space-y-4 text-lg text-gray-600 mb-8 leading-relaxed">
+                <p>
+                  Fujairah Natural Resources Corporation (FNRC) is an independent government entity established to oversee natural resource management, mineral regulation, and geological research.
+                </p>
+                <p>
+                  We are dedicated to driving sustainable development and economic growth within the Emirate through strategic investment support and strict environmental compliance.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  'Established 2008', 
+                  'Regulatory Authority', 
+                  'Environmental Compliance', 
+                  'Strategic Investment Support'
+                ].map((highlight, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-[#FAFAFA] border border-[#E5E7EB]">
+                    <CheckCircle className="h-5 w-5 text-[#B59969] shrink-0" />
+                    <span className="font-semibold text-sm text-[#3D3935]">{highlight}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="flex gap-4">
-            <span className="text-sm font-medium text-gray-600">Email: <a href="mailto:procurement@fnrc.gov.ae" className="text-[var(--fnrc-primary-green)] font-bold hover:underline">procurement@fnrc.gov.ae</a></span>
+        </div>
+      </section>
+
+      {/* Vendor Journey */}
+      <section id="vendor-journey" className="py-24 bg-[#FAFAFA]">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-4">The Vendor Journey</h2>
+            <p className="text-lg text-gray-600">A streamlined, fully digital process to become an approved supplier and win contracts.</p>
           </div>
+
+          <div className="relative">
+            {/* Connecting Line */}
+            <div className="hidden lg:block absolute top-[48px] left-[10%] right-[10%] h-1 bg-[#E5E7EB] rounded-full">
+              <div className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-[#B59969] to-transparent rounded-full opacity-50"></div>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-6 relative z-10">
+              {[
+                { title: 'Register Account', icon: Users },
+                { title: 'Document Verification', icon: FileText },
+                { title: 'Vendor Approval', icon: ShieldCheck },
+                { title: 'Explore Opportunities', icon: Globe },
+                { title: 'Submit Proposal', icon: Briefcase },
+                { title: 'Award & Contract', icon: Handshake },
+              ].map((step, idx) => (
+                <div key={idx} className="flex flex-col items-center group">
+                  <div className="w-24 h-24 rounded-2xl bg-white shadow-lg shadow-gray-200 border border-[#E5E7EB] flex items-center justify-center mb-6 group-hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[#B59969] scale-y-0 origin-bottom group-hover:scale-y-100 transition-transform duration-300 ease-in-out"></div>
+                    <step.icon className="h-10 w-10 text-[#B59969] group-hover:text-[#3D3935] relative z-10 transition-colors" strokeWidth={1.5} />
+                    <div className="absolute top-2 right-2 text-xs font-black text-gray-100 group-hover:text-[#3D3935]/20 z-0">0{idx + 1}</div>
+                  </div>
+                  <h3 className="text-[15px] font-bold text-center text-[#3D3935]">{step.title}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* Why Partner With FNRC (Dark Premium Section) */}
+      <section className="py-24 bg-[#F6EFE7] relative overflow-hidden border-y border-[#E5E7EB]">
+        
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-5xl font-extrabold text-[#3D3935] mb-6">Why Partner With FNRC</h2>
+            <p className="text-lg text-gray-600">Join a network of leading enterprises contributing to the sustainable development of Fujairah.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: 'Government Backing', desc: 'Secure contracts with a sovereign entity.', icon: ShieldCheck },
+              { title: 'Digital Tender Management', desc: 'End-to-end online proposal submission and tracking.', icon: Globe },
+              { title: 'Fair Evaluation Process', desc: 'Transparent scoring based on merit and capability.', icon: TrendingUp },
+              { title: 'Secure Handling', desc: 'Encrypted document vaults for sensitive data.', icon: Lock },
+              { title: 'Sustainable Initiatives', desc: 'Align your business with environmental goals.', icon: Leaf },
+              { title: 'Dedicated Support', desc: 'Vendor relationship managers at your service.', icon: HeadphonesIcon },
+            ].map((item, i) => (
+              <div key={i} className="flex gap-4 p-6 rounded-2xl bg-white border border-[#E5E7EB] hover:shadow-md transition-colors">
+                <div className="shrink-0 mt-1">
+                  <item.icon className="h-6 w-6 text-[#B59969]" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-[#3D3935] mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Support Section */}
+      <section id="contact-us" className="py-24 bg-[#FAFAFA]">
+        <div className="mx-auto max-w-5xl px-6 lg:px-8">
+          <Card className="bg-white border-0 shadow-2xl rounded-[40px] overflow-hidden flex flex-col md:flex-row">
+            <div className="p-12 md:w-1/2 flex flex-col justify-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B59969]/10 text-[#B59969] text-xs font-bold uppercase tracking-wider mb-6 w-max">
+                Support Center
+              </div>
+              <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl font-extrabold text-[#3D3935] mb-4">We're Here to Help</h2>
+              <p className="text-gray-600 mb-8">Our dedicated vendor support team is available to assist you with registration, compliance, and portal navigation.</p>
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#FAFAFA] flex items-center justify-center shrink-0">
+                    <Mail className="h-5 w-5 text-[#B59969]" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 font-medium">Email Support</div>
+                    <div className="font-bold text-[#3D3935]">vendors@fnrc.gov.ae</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#FAFAFA] flex items-center justify-center shrink-0">
+                    <PhoneCall className="h-5 w-5 text-[#B59969]" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 font-medium">Phone Support</div>
+                    <div className="font-bold text-[#3D3935]">+971 9 205 0000</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#FAFAFA] flex items-center justify-center shrink-0">
+                    <Clock className="h-5 w-5 text-[#B59969]" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 font-medium">Working Hours</div>
+                    <div className="font-bold text-[#3D3935]">Mon - Fri, 07:30 - 15:30</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="md:w-1/2 bg-[#B59969]/10 p-12 flex items-center justify-center">
+              <img 
+                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1000&auto=format&fit=crop" 
+                alt="Support Team" 
+                className="rounded-[32px] shadow-lg object-cover h-full w-full"
+              />
+            </div>
+          </Card>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-8">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center text-xs text-gray-400 space-y-2">
-          <p>© 2026 Fujairah Natural Resources Corporation. All rights reserved.</p>
-          <p className="uppercase tracking-widest font-bold opacity-40 text-[9px]">Government of Fujairah</p>
+      <footer className="bg-[#FAFAFA] py-8 border-t border-[#E5E7EB]">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+            <p>© 2026 Fujairah Natural Resources Corporation. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-[#B59969] transition-colors hover:text-[#3D3935]">Terms and Condition</a>
+              <a href="#" className="hover:text-[#B59969] transition-colors hover:text-[#3D3935]">Privacy Policy</a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

@@ -8,7 +8,7 @@ export type SystemStatus =
   | 'correction_requested' | 'technical_correction_requested' | 'commercial_correction_requested'
   | 'draft' | 'closed'
   | 'published' | 'open'
-  | 'shortlisted' | 'selected' | 'technical_review_completed' | 'commercial_review_completed'
+  | 'approved' | 'selected' | 'technical_review_completed' | 'commercial_review_completed'
   | string;
 
 interface StatusBadgeProps {
@@ -23,12 +23,12 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   let bgClass = "bg-gray-100 text-gray-700 border-gray-200/50";
   let displayLabel = status;
 
-  if (normStatus === 'approved' || normStatus === 'active' || normStatus === 'verified' || normStatus === 'delivered' || normStatus === 'paid') {
+  if (normStatus === 'approved' || normStatus === 'shortlisted' || normStatus === 'active' || normStatus === 'verified' || normStatus === 'delivered' || normStatus === 'paid') {
     bgClass = "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400";
     displayLabel = normStatus === 'paid' ? 'Paid' : normStatus === 'active' ? 'Active' : normStatus === 'verified' ? 'Verified' : normStatus === 'delivered' ? 'Delivered' : 'Approved';
   } else if (normStatus === 'pending' || normStatus === 'under_review' || normStatus === 'submitted' || normStatus === 'technical_review_started' || normStatus === 'commercial_review_started' || normStatus === 'technical_review') {
     bgClass = "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400";
-    displayLabel = normStatus === 'under_review' ? 'Under Review' : normStatus === 'submitted' ? 'Submitted' : normStatus === 'technical_review_started' ? 'Technical Review Started' : normStatus === 'commercial_review_started' ? 'Commercial Review Started' : normStatus === 'technical_review' ? 'Technical Review' : 'Pending';
+    displayLabel = normStatus === 'under_review' ? 'Commercial Review Completed' : normStatus === 'submitted' ? 'Submitted' : normStatus === 'technical_review_started' ? 'Technical Review Started' : normStatus === 'commercial_review_started' ? 'Commercial Review Started' : normStatus === 'technical_review' ? 'Technical Review' : 'Pending';
   } else if (normStatus === 'rejected' || normStatus === 'suspended' || normStatus === 'expired' || normStatus === 'inactive' || normStatus === 'cancelled' || normStatus.includes('rejected')) {
     bgClass = "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/20 dark:text-rose-400";
     displayLabel = normStatus === 'suspended' ? 'Suspended' : normStatus === 'expired' ? 'Expired' : normStatus === 'inactive' ? 'Inactive' : normStatus === 'cancelled' ? 'Cancelled' : normStatus.includes('technical') ? 'Technical Rejected' : normStatus.includes('commercial') ? 'Commercial Rejected' : 'Rejected';
@@ -40,10 +40,10 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     displayLabel = normStatus === 'closed' ? 'Closed' : 'Draft';
   } else if (normStatus === 'published' || normStatus === 'open') {
     bgClass = "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/20 dark:text-blue-400";
-    displayLabel = 'Published';
-  } else if (normStatus === 'shortlisted' || normStatus === 'selected' || normStatus.includes('completed')) {
+    displayLabel = 'Open';
+  } else if (normStatus === 'selected' || normStatus.includes('completed')) {
     bgClass = "bg-indigo-50 text-indigo-700 border-indigo-100 dark:bg-indigo-950/20 dark:text-indigo-400";
-    displayLabel = normStatus === 'selected' ? 'Selected' : normStatus === 'shortlisted' ? 'Shortlisted' : normStatus.includes('technical') ? 'Technical Completed' : 'Commercial Completed';
+    displayLabel = normStatus === 'selected' ? 'Selected' : normStatus === 'approved' ? 'Approved' : normStatus.includes('technical') ? 'Technical Completed' : 'Commercial Review Completed';
   } else {
     // Fallback: Format text elegantly
     displayLabel = status

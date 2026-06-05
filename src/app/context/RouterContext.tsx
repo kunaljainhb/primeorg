@@ -62,9 +62,9 @@ export function useParams() {
 function extractParams(path: string): Record<string, string> {
   const params: Record<string, string> = {};
   
-  // Extract route params (e.g., /rfps/123 -> { rfpId: '123' })
-  const rfpMatch = path.match(/\/rfps\/(?:edit\/)?([^/]+)(?:\/|$)/);
-  if (rfpMatch && rfpMatch[1] !== 'create') params.rfpId = rfpMatch[1];
+  // Extract route params (e.g., /tenders/123 -> { tenderId: '123' })
+  const tenderMatch = path.match(/\/tenders\/(?:edit\/)?([^/]+)(?:\/|$)/);
+  if (tenderMatch && tenderMatch[1] !== 'create') params.tenderId = tenderMatch[1];
   
   const proposalMatch = path.match(/\/proposals\/([^/]+)(?:\/|$)/);
   if (proposalMatch) params.proposalId = proposalMatch[1];

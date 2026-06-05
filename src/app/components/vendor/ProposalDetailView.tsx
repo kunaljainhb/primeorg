@@ -23,8 +23,8 @@ import {
 interface ProposalDetailViewProps {
   proposal: {
     id: string;
-    rfpId: string;
-    rfpTitle: string;
+    tenderId: string;
+    tenderTitle: string;
     status: string;
     submissionDate: string;
     commercialAmount: number;
@@ -90,7 +90,6 @@ export function ProposalDetailView({
       correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
       approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
       rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
-      shortlisted: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
       selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' }
     };
     return colors[status] || colors.submitted;
@@ -124,7 +123,7 @@ export function ProposalDetailView({
       
       approved: 3,
       rejected: 3,
-      shortlisted: 3,
+      approved: 3,
       selected: 3
     };
     
@@ -159,7 +158,7 @@ export function ProposalDetailView({
     
     const isTechApproved = proposalState.technicalStatus === 'approved' || proposalState.status === 'technical_review_completed';
     const isCommApproved = proposalState.commercialStatus === 'approved' || proposalState.status === 'commercial_review_completed';
-    const isOverallApproved = ['approved', 'shortlisted', 'selected'].includes(proposalState.status);
+    const isOverallApproved = ['approved', 'approved', 'selected'].includes(proposalState.status);
 
     if (isTechRejected || isCommRejected || isOverallRejected) {
       step2Label = 'Evaluation Rejected';
@@ -190,7 +189,7 @@ export function ProposalDetailView({
       step3Label = 'Proposal Rejected';
       step3Desc = 'Proposal rejected by procurement';
       step3Status = 'error';
-    } else if (['approved', 'shortlisted', 'selected'].includes(proposalState.status)) {
+    } else if (['approved', 'approved', 'selected'].includes(proposalState.status)) {
       step3Label = 'Proposal Approved';
       step3Desc = 'Proposal approved by procurement';
       step3Status = 'completed';
@@ -210,7 +209,7 @@ export function ProposalDetailView({
     const logs = [
       {
         action: 'Proposal Submitted',
-        performedBy: 'System',
+        performedBy: 'Vendor',
         date: proposalState.submissionDate,
         time: '10:30 AM',
         remarks: '—'
@@ -283,7 +282,7 @@ export function ProposalDetailView({
       return logs;
     }
 
-    // Shortlisted status
+    // Approved status
     logs.push(
       {
         action: 'Technical Proposal Approved',
@@ -307,7 +306,7 @@ export function ProposalDetailView({
         remarks: 'Pricing aligned with budget. Recommended for shortlisting'
       },
       {
-        action: 'Proposal Shortlisted',
+        action: 'Proposal Approved',
         performedBy: 'Procurement Manager',
         date: '2026-02-20',
         time: '10:00 AM',
@@ -326,8 +325,8 @@ export function ProposalDetailView({
       technical_review: 'Your technical proposal is currently under review by our evaluators',
       technical_correction_requested: 'Attention Required: The evaluation team has requested corrections on your technical proposal',
       under_review: 'Your proposal is currently under commercial evaluation',
-      shortlisted: 'Congratulations! Your proposal has been shortlisted',
-      rejected: 'Your proposal was not selected for this RFP'
+      approved: 'Congratulations! Your proposal has been approved',
+      rejected: 'Your proposal was not selected for this Tender'
     };
     return statusText[proposalState.status] || 'Processing your proposal';
   };
@@ -450,37 +449,38 @@ export function ProposalDetailView({
   return (
     <div className="space-y-6">
       {/* SECTION 1: PROPOSAL SUMMARY (Always show in both) */}
-      <Card style={{ borderColor: isRejected ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
-        <CardContent className="pt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <Card className="gap-0 h-auto" style={{ borderColor: isRejected ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
+        <CardContent className="!pt-4 !pb-4">
+          <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Proposal ID</div>
-              <div 
-                className="font-semibold cursor-pointer hover:underline" 
-                style={{ color: 'var(--fnrc-primary-green)' }}
+              <span className="text-sm font-bold text-black block">Proposal ID</span>
+              <span 
+                className="text-base font-normal text-[var(--fnrc-primary-green)] mt-1 block cursor-pointer hover:underline" 
                 onClick={() => navigate(`/vendor/proposals/${proposalState.id}`)}
               >
                 {proposalState.id}
+              </span>
+            </div>
+            <div>
+              <span className="text-sm font-bold text-black block">Tender Number - Tender Title</span>
+              <span className="text-base font-normal text-gray-800 mt-1 block">{proposalState.tenderId} - {proposalState.tenderTitle}</span>
+            </div>
+            <div>
+              <span className="text-sm font-bold text-black block">Status</span>
+              <div className="mt-1">
+                <StatusBadge status={proposalState.status} />
               </div>
-            </div>
-            <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>RFP Number - RFP Title</div>
-              <div className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>{proposalState.rfpId} - {proposalState.rfpTitle}</div>
-            </div>
-            <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Status</div>
-              <StatusBadge status={proposalState.status} />
             </div>
           </div>
           <Separator className="my-4" />
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Submission Date</div>
-              <div style={{ color: 'var(--fnrc-text-dark)' }}>{new Date(proposalState.submissionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              <span className="text-sm font-bold text-black block">Proposal Date</span>
+              <span className="text-base font-normal text-gray-800 mt-1 block">{new Date(proposalState.submissionDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
             </div>
             <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Commercial Amount</div>
-              <div className="font-semibold text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>AED {proposalState.commercialAmount.toLocaleString()}</div>
+              <span className="text-sm font-bold text-black block">Commercial Amount</span>
+              <span className="text-base font-normal text-gray-800 mt-1 block">AED {proposalState.commercialAmount.toLocaleString()}</span>
             </div>
           </div>
         </CardContent>
@@ -490,14 +490,13 @@ export function ProposalDetailView({
       {(viewMode === 'all' || viewMode === 'submitted') && (
         <div className="space-y-6">
           {/* Technical Proposal Card - conditional editor zone */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+          <Card className="gap-0 h-auto">
+            <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+              <CardTitle className="text-lg font-bold text-gray-900">
                 Technical Proposal
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="!pt-3 px-6 pb-4">
               {proposalState.status === 'technical_correction_requested' ? (
                 <div className="space-y-6">
                   {/* Warning Alert with Admin Remarks */}
@@ -546,7 +545,7 @@ export function ProposalDetailView({
                       className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-gray-50/50"
                       style={{ 
                         borderColor: selectedFile ? 'var(--fnrc-primary-green)' : 'var(--fnrc-border-gray)',
-                        backgroundColor: 'var(--fnrc-bg-light)'
+                        backgroundColor: '#F7F9FC'
                       }}
                       onClick={() => document.getElementById('technical-file-input')?.click()}
                     >
@@ -615,11 +614,11 @@ export function ProposalDetailView({
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div>
-                    <h4 className="text-sm font-semibold mb-2" style={{ color: 'var(--fnrc-text-muted)' }}>Technical Approach</h4>
+                    <h4 className="text-sm font-bold text-black block mb-1">Approach</h4>
                     <div className="rounded-lg border p-4 bg-gray-50" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <p className="text-base font-normal text-gray-800 leading-relaxed whitespace-pre-wrap">
                         {proposalState.technicalProposal}
                       </p>
                     </div>
@@ -630,14 +629,13 @@ export function ProposalDetailView({
           </Card>
 
           {/* Commercial Proposal */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+          <Card className="gap-0 h-auto">
+            <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+              <CardTitle className="text-lg font-bold text-gray-900">
                 Commercial Proposal
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="!pt-3 px-6 pb-4 space-y-4">
               {proposalState.status === 'commercial_correction_requested' || proposalState.status === 'correction_requested' ? (
                 <div className="space-y-6">
                   {/* Warning Alert with Admin Remarks */}
@@ -777,25 +775,23 @@ export function ProposalDetailView({
                 </div>
               ) : (
                 <>
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-6">
                     <div>
-                      <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Total Proposed Amount</h4>
-                      <div className="text-2xl font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <span className="text-sm font-bold text-black block">Total Proposed Amount</span>
+                      <span className="text-base font-normal text-gray-800 mt-1 block">
                         AED {proposalState.commercialAmount.toLocaleString()}
-                      </div>
+                      </span>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--fnrc-text-muted)' }}>Payment Terms</h4>
-                      <p className="text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <span className="text-sm font-bold text-black block">Payment Terms</span>
+                      <span className="text-base font-normal text-gray-800 mt-1 block">
                         {proposalState.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)'}
-                      </p>
+                      </span>
                     </div>
                   </div>
                   
-                  <Separator />
-                  
-                  <div>
-                    <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>Cost Breakdown</h4>
+                  <div className="mt-6">
+                    <h4 className="text-sm font-bold text-black block mb-2">Cost Breakdown</h4>
                     <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                       <Table>
                         <TableHeader className="bg-gray-50/60 backdrop-blur-xs">
@@ -845,8 +841,7 @@ export function ProposalDetailView({
           {/* Uploaded Documents */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+              <CardTitle className="text-lg font-bold text-gray-900">
                 Uploaded Documents
               </CardTitle>
             </CardHeader>
@@ -887,19 +882,18 @@ export function ProposalDetailView({
 
       {/* SECTION 2: VISUAL STATUS PROGRESS */}
       {(viewMode === 'all' || viewMode === 'status') && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Evaluation Progress</CardTitle>
-            <CardDescription>{getProgressStatusText()}</CardDescription>
+        <Card className="gap-0 h-auto">
+          <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+            <CardTitle className="text-lg font-bold text-gray-900">Evaluation Progress</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="!pt-4 px-6 pb-4">
             {/* Step-based Progress Tracker */}
             {(() => {
               const stages: TimelineStage[] = [
-                { key: 'submitted', label: 'Submitted', description: 'Proposal submitted' },
-                { key: 'technical', label: 'Technical Review', description: 'Approach evaluation' },
-                { key: 'commercial', label: 'Commercial Review', description: 'Pricing evaluation' },
-                { key: 'final', label: 'Final Decision', description: 'Award decision' }
+                { key: 'submitted', label: 'Submitted' },
+                { key: 'technical', label: 'Technical Review' },
+                { key: 'commercial', label: 'Commercial Review' },
+                { key: 'final', label: 'Final Decision' }
               ];
 
               let currentStageKey = 'submitted';
@@ -915,9 +909,9 @@ export function ProposalDetailView({
               } else if (['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'technical_review_completed'].includes(normStatus)) {
                 currentStageKey = 'commercial';
                 completedStageKeys = ['submitted', 'technical'];
-              } else if (['shortlisted', 'selected', 'approved', 'rejected'].includes(normStatus)) {
+              } else if (['approved', 'selected', 'rejected'].includes(normStatus)) {
                 currentStageKey = 'final';
-                completedStageKeys = ['submitted', 'technical', 'commercial'];
+                completedStageKeys = ['submitted', 'technical', 'commercial', 'final'];
               }
 
               return (
@@ -947,35 +941,34 @@ export function ProposalDetailView({
 
       {/* SECTION 3: ACTIVITY & DECISION LOG (ALWAYS VISIBLE) */}
       {(viewMode === 'all' || viewMode === 'status') && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Detailed Activity Log</CardTitle>
-            <CardDescription>Complete history of actions performed on this proposal</CardDescription>
+        <Card className="gap-0 h-auto">
+          <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+            <CardTitle className="text-lg font-bold text-gray-900">Detailed Activity</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="!pt-4 px-6 pb-4">
             <div className="rounded-lg border" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
               <Table>
                 <TableHeader>
-                  <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
-                    <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Action</TableHead>
-                    <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Performed By</TableHead>
-                    <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Date & Time</TableHead>
-                    <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Remarks</TableHead>
+                  <TableRow style={{ backgroundColor: '#F7F9FC' }}>
+                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Action</TableHead>
+                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Performed By</TableHead>
+                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Date & Time</TableHead>
+                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Remarks</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {activityLog.map((log, idx) => (
                     <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                      <TableCell className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <TableCell className="text-base font-normal text-gray-800">
                         {log.action}
                       </TableCell>
-                      <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
+                      <TableCell className="text-base font-normal text-gray-800">
                         {log.performedBy}
                       </TableCell>
-                      <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
-                        {log.date} {log.time}
+                      <TableCell className="text-base font-normal text-gray-800">
+                        {log.date.includes('-') ? log.date.split('-').reverse().join('/') : new Date(log.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} - {log.time}
                       </TableCell>
-                      <TableCell style={{ color: 'var(--fnrc-text-muted)' }}>
+                      <TableCell className="text-base font-normal text-gray-800">
                         {log.remarks}
                       </TableCell>
                     </TableRow>

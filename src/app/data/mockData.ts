@@ -1,6 +1,6 @@
 // Mock data for FNRC Vendor Portal
 
-export interface RFP {
+export interface Tender {
   id: string;
   title: string;
   category: string[];
@@ -28,11 +28,11 @@ export interface Vendor {
 
 export interface Proposal {
   id: string;
-  rfpId: string;
-  rfpTitle: string;
+  tenderId: string;
+  tenderTitle: string;
   vendorId: string;
   vendorName: string;
-  status: 'submitted' | 'under_review' | 'shortlisted' | 'selected' | 'rejected' | 'technical_review' | 'technical_correction_requested' | 'technical_review_started' | 'commercial_review_started' | 'technical_review_completed' | 'commercial_review_completed' | 'correction_requested' | 'commercial_correction_requested' | 'technical_review_rejected' | 'commercial_review_rejected';
+  status: 'submitted' | 'under_review' | 'approved' | 'selected' | 'rejected' | 'technical_review' | 'technical_correction_requested' | 'technical_review_started' | 'commercial_review_started' | 'technical_review_completed' | 'commercial_review_completed' | 'correction_requested' | 'commercial_correction_requested' | 'technical_review_rejected' | 'commercial_review_rejected';
   submissionDate: string;
   technicalProposal: string;
   commercialAmount: number;
@@ -54,7 +54,7 @@ export interface Proposal {
   contactPerson?: string;
   email?: string;
   phone?: string;
-  shortlistedDate?: string;
+  approvedDate?: string;
   technicalReviewer?: string;
   commercialReviewer?: string;
   uploadedDocuments?: { name: string; url: string; remarks: string; uploadedDate: string }[];
@@ -62,7 +62,7 @@ export interface Proposal {
 
 export interface ERPDocument {
   id: string;
-  rfpId: string;
+  tenderId: string;
   vendorId: string;
   documentType: 'LPO' | 'Invoice' | 'Payment Receipt' | 'Delivery Note';
   documentNumber: string;
@@ -74,8 +74,8 @@ export interface ERPDocument {
 
 export interface VendorReview {
   id: string;
-  rfpId: string;
-  rfpTitle: string;
+  tenderId: string;
+  tenderTitle: string;
   vendorId: string;
   vendorName: string;
   reviewDate: string;
@@ -109,23 +109,34 @@ export interface AdminUser {
   createdDate?: string;
 }
 
-// Mock RFPs
-export const mockRFPs: RFP[] = [
+// Mock Tenders
+export const mockTenders: Tender[] = [
   {
-    id: 'RFP-001',
+    id: 'TEND-001',
     title: 'Supply of IT Hardware for HQ',
     category: ['IT Hardware & Software', 'Equipment & Machinery'],
-    description: 'Procurement of 50 laptops and 20 desktop units for the new headquarters',
-    scopeOfWork: 'Delivery, installation, and initial setup of hardware',
+    description: 'The Federal National Resource Council (FNRC) is initiating a comprehensive procurement campaign to upgrade the IT infrastructure at our newly constructed headquarters. This Tender covers the supply, installation, and commissioning of high-performance laptops and desktop workstations tailored for demanding administrative and analytical workloads.',
+    scopeOfWork: '1. Supply of 50 enterprise-grade laptops and 20 advanced desktop units.\n2. Full deployment, imaging, and configuration on-site.\n3. Asset tagging and integration with the central FNRC inventory system.\n4. Secure disposal and data wiping of legacy hardware.\n5. Three-year comprehensive on-site warranty and dedicated support SLAs.',
     timeline: '2 months',
     submissionDeadline: '2026-06-15',
     createdAt: '2026-05-01',
     status: 'published',
-    eligibilityCriteria: ['Must be an authorized reseller', 'Local presence in Dubai'],
-    attachments: [{ name: 'Specs_IT.pdf', url: '#' }]
+    eligibilityCriteria: [
+      'Must be an authorized tier-1 reseller or direct manufacturer',
+      'Proven local presence and operational office in Dubai, UAE',
+      'Minimum of 5 years experience handling large-scale government IT deployments',
+      'ISO 27001 certification for data security and handling',
+      'Demonstrated capacity to deliver hardware within 30 days of PO issuance'
+    ],
+    attachments: [
+      { name: 'Hardware_Specifications_Annex_A.pdf', url: '#' },
+      { name: 'FNRC_IT_Compliance_Guidelines.pdf', url: '#' },
+      { name: 'Pricing_Matrix_Template.xlsx', url: '#' },
+      { name: 'Standard_Terms_and_Conditions.pdf', url: '#' }
+    ]
   },
   {
-    id: 'RFP-002',
+    id: 'TEND-002',
     title: 'Cloud Migration Services',
     category: ['IT Hardware & Software', 'Consultancy & Training'],
     description: 'Migration of local servers to a secure cloud environment',
@@ -138,7 +149,7 @@ export const mockRFPs: RFP[] = [
     attachments: [{ name: 'Migration_Plan.pdf', url: '#' }]
   },
   {
-    id: 'RFP-003',
+    id: 'TEND-003',
     title: 'Security Guard Services',
     category: ['Cleaning & Hospitality', 'Security Services'],
     description: '24/7 security services for the corporate office buildings',
@@ -151,7 +162,7 @@ export const mockRFPs: RFP[] = [
     attachments: [{ name: 'Security_SOP.pdf', url: '#' }]
   },
   {
-    id: 'RFP-004',
+    id: 'TEND-004',
     title: 'EV Charging Station Network',
     category: ['Contracting & Maintenance'],
     description: 'Establishment of EV charging points across all parking lots',
@@ -164,7 +175,7 @@ export const mockRFPs: RFP[] = [
     attachments: [{ name: 'EV_Specs.pdf', url: '#' }]
   },
   {
-    id: 'RFP-005',
+    id: 'TEND-005',
     title: 'Office Renovation Project',
     category: ['Contracting & Maintenance', 'Building Materials', 'Equipment & Machinery'],
     description: 'Interior renovation and fit-out for 2nd floor offices',
@@ -177,7 +188,7 @@ export const mockRFPs: RFP[] = [
     attachments: [{ name: 'Design_Layout.pdf', url: '#' }]
   },
   {
-    id: 'RFP-006',
+    id: 'TEND-006',
     title: 'Annual Security Audit 2026',
     category: ['IT Hardware & Software'],
     description: 'Comprehensive cybersecurity audit and penetration testing for all digital assets',
@@ -190,10 +201,10 @@ export const mockRFPs: RFP[] = [
     attachments: []
   },
   {
-    id: 'RFP-007',
-    title: 'Closed RFP Sample',
+    id: 'TEND-007',
+    title: 'Closed Tender Sample',
     category: ['IT Hardware & Software'],
-    description: 'Sample closed RFP for testing.',
+    description: 'Sample closed Tender for testing.',
     scopeOfWork: 'N/A',
     timeline: 'N/A',
     submissionDeadline: '2026-05-01',
@@ -206,31 +217,32 @@ export const mockRFPs: RFP[] = [
 
 // Initial default proposals
 const initialProposals: Proposal[] = [
-  // RFP-001 has 3 proposals
+  // TEND-001 has 3 proposals
   {
     id: 'PROP-100',
-    rfpId: 'RFP-001',
-    rfpTitle: 'Supply of IT Hardware for HQ',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
     status: 'commercial_review_completed',
     submissionDate: '2026-06-01',
-    technicalProposal: 'Premium laptops and workstations',
+    technicalProposal: `1. Executive Summary\nWe propose a comprehensive IT hardware refresh utilizing enterprise-grade Dell Latitude series laptops and Precision workstations.\n\n2. Architecture & Deployment Strategy\n- Staged rollout over 4 weeks to minimize operational disruption.\n- Pre-imaging of all machines with FNRC's custom corporate image (Windows 11 Enterprise + Security Stack).\n- Asset tagging and integration into existing ServiceNow CMDB prior to delivery.\n\n3. Value Addition\nIncluded 3-year ProSupport Plus with Next Business Day onsite service and Accidental Damage Protection.`,
     commercialAmount: 420000,
     technicalStatus: 'approved',
     commercialStatus: 'approved',
     technicalReviewer: 'Mohammed Al Zaabi',
-    commercialReviewer: 'Sarah Al Hosani'
+    commercialReviewer: 'Sarah Al Hosani',
+    paymentTerms: `- 30% Advance Payment upon LPO issuance and contract signing.\n- 50% Milestone Payment upon successful delivery and physical verification of all hardware at FNRC HQ.\n- 20% Final Payment upon completion of user migration, old asset retrieval, and final project sign-off.`
   },
   {
     id: 'PROP-101',
-    rfpId: 'RFP-001',
-    rfpTitle: 'Supply of IT Hardware for HQ',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-002',
     vendorName: 'Modern Office Furnishings',
-    status: 'shortlisted',
+    status: 'approved',
     submissionDate: '2026-06-02',
-    shortlistedDate: '2026-06-15',
+    approvedDate: '2026-06-15',
     technicalProposal: 'Standard enterprise hardware package',
     commercialAmount: 395000,
     technicalStatus: 'approved',
@@ -246,8 +258,8 @@ const initialProposals: Proposal[] = [
   },
   {
     id: 'PROP-110',
-    rfpId: 'RFP-001',
-    rfpTitle: 'Supply of IT Hardware for HQ',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-004',
     vendorName: 'ABC Trading',
     status: 'rejected',
@@ -259,16 +271,16 @@ const initialProposals: Proposal[] = [
     remarks: 'Hardware does not meet minimum technical specifications.'
   },
 
-  // RFP-002 has 1 proposal
+  // TEND-002 has 1 proposal
   {
     id: 'PROP-102',
-    rfpId: 'RFP-002',
-    rfpTitle: 'Cloud Migration Services',
+    tenderId: 'TEND-002',
+    tenderTitle: 'Cloud Migration Services',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
     status: 'technical_correction_requested',
     submissionDate: '2026-05-10',
-    technicalProposal: 'Hybrid cloud solution using Azure Stack Hub',
+    technicalProposal: `1. Cloud Strategy Overview\nWe recommend a Hybrid Cloud architecture utilizing Microsoft Azure Stack Hub to ensure data sovereignty while leveraging scalable cloud services.\n\n2. Migration Methodology\n- Phase 1: Assessment and Discovery using Azure Migrate.\n- Phase 2: Foundation setup (Landing Zones, ExpressRoute networking).\n- Phase 3: Workload migration (Rehost, Refactor where applicable).\n\n3. Redundancy & Continuity\n- Active-Passive Disaster Recovery setup.\n- (NOTE: Further details regarding multi-zone failover mechanisms are currently pending as per reviewer request.)`,
     commercialAmount: 850000,
     remarks: 'Technical proposal is missing detail about multi-zone failover mechanisms. Please provide specific redundant architecture details and update the technical document.',
     technicalStatus: 'correction_requested',
@@ -280,16 +292,16 @@ const initialProposals: Proposal[] = [
     methodology: 'Phased migration with zero downtime',
     resources: '5 Cloud Architects, 10 Engineers',
     boqSummary: 'Azure subscriptions, Migration tools, Support services',
-    paymentTerms: '20% advance, 80% on milestones',
+    paymentTerms: `- 15% Mobilization Advance.\n- 25% Upon completion of Phase 1 (Assessment).\n- 40% Upon successful workload migration (Phase 3).\n- 20% Upon UAT sign-off and project handover.`,
     warranty: '1 year post-migration support',
     vendorContact: 'contact@techsolutions.ae'
   },
 
-  // RFP-003 has 1 proposal
+  // TEND-003 has 1 proposal
   {
     id: 'PROP-103',
-    rfpId: 'RFP-003',
-    rfpTitle: 'Security Guard Services',
+    tenderId: 'TEND-003',
+    tenderTitle: 'Security Guard Services',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
     status: 'rejected',
@@ -311,35 +323,35 @@ const initialProposals: Proposal[] = [
     vendorContact: 'contact@techsolutions.ae'
   },
 
-  // RFP-004 has 1 proposal
+  // TEND-004 has 1 proposal
   {
     id: 'PROP-104',
-    rfpId: 'RFP-004',
-    rfpTitle: 'EV Charging Station Network',
+    tenderId: 'TEND-004',
+    tenderTitle: 'EV Charging Station Network',
     vendorId: 'VEN-002',
     vendorName: 'Modern Office Furnishings',
-    status: 'shortlisted',
+    status: 'approved',
     submissionDate: '2026-05-18',
-    shortlistedDate: '2026-05-25',
+    approvedDate: '2026-05-25',
     technicalProposal: 'Complete installation of 20 fast-charging units',
     commercialAmount: 850000,
     technicalStatus: 'approved',
     commercialStatus: 'approved',
-    remarks: 'Shortlisted for final rollout.'
+    remarks: 'Approved for final rollout.'
   },
 
-  // RFP-005 has 2 proposals
+  // TEND-005 has 2 proposals
   {
     id: 'PROP-105',
-    rfpId: 'RFP-005',
-    rfpTitle: 'Office Renovation Project',
+    tenderId: 'TEND-005',
+    tenderTitle: 'Office Renovation Project',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
-    status: 'shortlisted',
+    status: 'approved',
     submissionDate: '2026-04-10',
     technicalProposal: 'Modern open-plan office renovation with sustainable materials',
     commercialAmount: 600000,
-    remarks: 'Proposal shortlisted for final negotiation.',
+    remarks: 'Proposal approved for final negotiation.',
     technicalStatus: 'approved',
     commercialStatus: 'approved',
     deliveryTimeline: '3 months',
@@ -363,8 +375,8 @@ const initialProposals: Proposal[] = [
   },
   {
     id: 'PROP-106',
-    rfpId: 'RFP-005',
-    rfpTitle: 'Office Renovation Project',
+    tenderId: 'TEND-005',
+    tenderTitle: 'Office Renovation Project',
     vendorId: 'VEN-003',
     vendorName: 'Gulf Construction Services',
     status: 'under_review',
@@ -376,8 +388,8 @@ const initialProposals: Proposal[] = [
   },
   {
     id: 'PROP-107',
-    rfpId: 'RFP-001',
-    rfpTitle: 'Supply of IT Hardware for HQ',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-002',
     vendorName: 'Modern Office Furnishings',
     status: 'submitted',
@@ -400,9 +412,17 @@ export const mockProposals: Proposal[] = (() => {
     const saved = localStorage.getItem('mock_proposals');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved) as Proposal[];
-        const p100 = parsed.find(p => p.id === 'PROP-100');
+        const parsed = JSON.parse(saved) as any[];
         let needsSave = false;
+
+        // Migration for RFP to Tender terminology
+        parsed.forEach(p => {
+          if (p.rfpId) { p.tenderId = p.rfpId; delete p.rfpId; needsSave = true; }
+          if (p.tenderId && p.tenderId.startsWith('RFP-')) { p.tenderId = p.tenderId.replace('RFP-', 'TEND-'); needsSave = true; }
+          if (p.rfpTitle) { p.tenderTitle = p.rfpTitle; delete p.rfpTitle; needsSave = true; }
+        });
+
+        const p100 = parsed.find(p => p.id === 'PROP-100');
         if (p100 && p100.status !== 'commercial_review_completed') {
           p100.status = 'commercial_review_completed';
           p100.technicalStatus = 'approved';
@@ -419,7 +439,7 @@ export const mockProposals: Proposal[] = (() => {
         if (needsSave) {
           localStorage.setItem('mock_proposals', JSON.stringify(parsed));
         }
-        return parsed;
+        return parsed as Proposal[];
       } catch (e) {
         console.error("Failed parsing mock_proposals", e);
       }
@@ -510,7 +530,7 @@ export const mockAdminUsers: AdminUser[] = [
     id: 'ADM-003',
     name: 'Mohammed Al Zaabi',
     email: 'mohammed.alzaabi@fnrc.gov.ae',
-    role: 'reviewer',
+    role: 'technical_department',
     status: 'active',
     createdDate: '2026-03-01'
   },
@@ -518,7 +538,7 @@ export const mockAdminUsers: AdminUser[] = [
     id: 'ADM-004',
     name: 'Sarah Al Hosani',
     email: 'sarah.alhosani@fnrc.gov.ae',
-    role: 'reviewer',
+    role: 'commercial_department',
     status: 'active',
     createdDate: '2026-03-15'
   }
@@ -551,7 +571,7 @@ export const documentTypes = [
   { name: 'Tax Registration Certificate', type: 'Vendor', mandatory: 'Yes', status: 'Active' },
   { name: 'Company Profile', type: 'Vendor', mandatory: 'No', status: 'Active' },
   { name: 'ISO Certifications', type: 'Proposal', mandatory: 'No', status: 'Active' },
-  { name: 'Bank Guarantee', type: 'RFP', mandatory: 'Yes', status: 'Active' },
+  { name: 'Bank Guarantee', type: 'Tender', mandatory: 'Yes', status: 'Active' },
   { name: 'Previous Project References', type: 'Proposal', mandatory: 'No', status: 'Active' },
   { name: 'Insurance Certificate', type: 'Vendor', mandatory: 'Yes', status: 'Inactive' }
 ];
@@ -566,7 +586,7 @@ export const roles = [
   {
     name: 'Procurement Admin',
     value: 'procurement_admin',
-    permissions: ['vendor_management', 'rfp_management', 'proposal_review']
+    permissions: ['vendor_management', 'tender_management', 'proposal_review']
   },
   {
     name: 'Reviewer',
@@ -575,11 +595,11 @@ export const roles = [
   }
 ];
 
-// Mock ERP Documents for shortlisted vendors
+// Mock ERP Documents for approved vendors
 export const mockERPDocuments: ERPDocument[] = [
   {
     id: 'DOC-001',
-    rfpId: 'RFP-005',
+    tenderId: 'TEND-005',
     vendorId: 'VEN-001',
     documentType: 'LPO',
     documentNumber: 'LPO-2026-045',
@@ -590,7 +610,7 @@ export const mockERPDocuments: ERPDocument[] = [
   },
   {
     id: 'DOC-002',
-    rfpId: 'RFP-005',
+    tenderId: 'TEND-005',
     vendorId: 'VEN-001',
     documentType: 'Invoice',
     documentNumber: 'INV-2026-089',
@@ -601,7 +621,7 @@ export const mockERPDocuments: ERPDocument[] = [
   },
   {
     id: 'DOC-003',
-    rfpId: 'RFP-001',
+    tenderId: 'TEND-001',
     vendorId: 'VEN-002',
     documentType: 'LPO',
     documentNumber: 'LPO-2026-001',
@@ -612,7 +632,7 @@ export const mockERPDocuments: ERPDocument[] = [
   },
   {
     id: 'DOC-004',
-    rfpId: 'RFP-001',
+    tenderId: 'TEND-001',
     vendorId: 'VEN-002',
     documentType: 'Invoice',
     documentNumber: 'INV-2026-002',
@@ -627,8 +647,8 @@ export const mockERPDocuments: ERPDocument[] = [
 export const mockVendorReviews: VendorReview[] = [
   {
     id: 'REV-001',
-    rfpId: 'RFP-005',
-    rfpTitle: 'Office Renovation Project',
+    tenderId: 'TEND-005',
+    tenderTitle: 'Office Renovation Project',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
     reviewedBy: 'Ahmed Al Mansoori',
@@ -639,6 +659,36 @@ export const mockVendorReviews: VendorReview[] = [
     communicationRating: 4,
     complianceRating: 5,
     comments: 'Excellent quality of work. Partitioning was done precisely according to design. Minor delay in MEP work but overall very satisfied.'
+  },
+  {
+    id: 'REV-002',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-004',
+    vendorName: 'ABC Trading',
+    reviewedBy: 'Mohammed Al Zaabi',
+    reviewDate: '2026-06-05',
+    overallRating: 2.0,
+    qualityRating: 2,
+    timelinessRating: 3,
+    communicationRating: 2,
+    complianceRating: 1,
+    comments: 'Hardware specifications fell significantly short of the minimum baseline requirements. Critical features such as advanced security chips and processing power were missing.'
+  },
+  {
+    id: 'REV-003',
+    tenderId: 'TEND-001',
+    tenderTitle: 'Supply of IT Hardware for HQ',
+    vendorId: 'VEN-004',
+    vendorName: 'ABC Trading',
+    reviewedBy: 'Sarah Al Hosani',
+    reviewDate: '2026-06-06',
+    overallRating: 1.5,
+    qualityRating: 2,
+    timelinessRating: 2,
+    communicationRating: 3,
+    complianceRating: 1,
+    comments: 'The pricing was low, but the proposed hardware lacks long-term value and does not meet our required lifespan criteria. Cannot proceed with this vendor.'
   }
 ];
 

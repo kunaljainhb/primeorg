@@ -10,12 +10,12 @@ interface ReviewVendorModalProps {
   open: boolean;
   onClose: () => void;
   vendorName: string;
-  rfpTitle: string;
-  rfpId: string;
+  tenderTitle: string;
+  tenderId: string;
   vendorId: string;
 }
 
-export function ReviewVendorModal({ open, onClose, vendorName, rfpTitle }: ReviewVendorModalProps) {
+export function ReviewVendorModal({ open, onClose, vendorName, tenderTitle }: ReviewVendorModalProps) {
   const [qualityRating, setQualityRating] = useState(0);
   const [timelinessRating, setTimelinessRating] = useState(0);
   const [communicationRating, setCommunicationRating] = useState(0);
@@ -94,7 +94,7 @@ export function ReviewVendorModal({ open, onClose, vendorName, rfpTitle }: Revie
 
         <div id="review-vendor-description" className="space-y-6 py-4">
           {/* Vendor Info */}
-          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span style={{ color: 'var(--fnrc-text-muted)' }}>Vendor Name:</span>
@@ -103,9 +103,9 @@ export function ReviewVendorModal({ open, onClose, vendorName, rfpTitle }: Revie
                 </div>
               </div>
               <div>
-                <span style={{ color: 'var(--fnrc-text-muted)' }}>RFP Reference:</span>
+                <span style={{ color: 'var(--fnrc-text-muted)' }}>Tender Reference:</span>
                 <div className="font-medium mt-1" style={{ color: 'var(--fnrc-text-dark)' }}>
-                  {rfpTitle}
+                  {tenderTitle}
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@ export function ReviewVendorModal({ open, onClose, vendorName, rfpTitle }: Revie
 
           {/* Overall Rating Display */}
           {overallRating > 0 && (
-            <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="p-4 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
               <div className="flex items-center justify-between">
                 <span className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
                   Overall Rating

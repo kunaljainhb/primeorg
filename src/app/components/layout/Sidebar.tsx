@@ -27,7 +27,7 @@ interface NavItem {
 
 const vendorNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/vendor/dashboard', icon: LayoutDashboard },
-  { name: 'RFPs', href: '/vendor/rfps', icon: FileText },
+  { name: 'Tenders', href: '/vendor/tenders', icon: FileText },
   { name: 'My Proposals', href: '/vendor/proposals', icon: Send },
   { name: 'Profile', href: '/vendor/profile', icon: User },
 ];
@@ -35,7 +35,7 @@ const vendorNavItems: NavItem[] = [
 const adminNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Vendor Management', href: '/admin/vendors', icon: Users },
-  { name: 'RFP Management', href: '/admin/rfps', icon: FileText },
+  { name: 'Tender Management', href: '/admin/tenders', icon: FileText },
   { name: 'Item Management', href: '/admin/items', icon: ClipboardList },
   { name: 'User & Roles', href: '/admin/users', icon: Shield },
   { name: 'Master Data', href: '/admin/master-data', icon: Database },

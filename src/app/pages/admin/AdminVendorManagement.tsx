@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
-import { RefreshCw, ArrowRight, Pencil } from 'lucide-react';
+import { RefreshCw, ArrowRight, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
@@ -32,6 +32,13 @@ export default function AdminVendorManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isSyncing, setIsSyncing] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
 
   const handleSyncERP = () => {
     setIsSyncing(true);
@@ -47,6 +54,37 @@ export default function AdminVendorManagement() {
     const matchesStatus = statusFilter === 'all' || vendor.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedVendors = [...filteredVendors].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    
+    let aVal: any = a[key as keyof typeof a];
+    let bVal: any = b[key as keyof typeof b];
+
+    if (key === 'registrationDate') {
+       aVal = new Date(aVal).getTime();
+       bVal = new Date(bVal).getTime();
+    }
+
+    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedVendors.length / itemsPerPage);
+  const paginatedVendors = sortedVendors.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const filters = [
     {
@@ -81,7 +119,7 @@ export default function AdminVendorManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Vendor Directory
+            Vendor Management
           </h1>
         </div>
         <Button 
@@ -108,20 +146,40 @@ export default function AdminVendorManagement() {
       {/* Results Table */}
       <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
-          {filteredVendors.length > 0 ? (
+          {paginatedVendors.length > 0 ? (
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor ID</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Company Name</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Category Sectors</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Registration Date</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
+                    <div className="flex items-center gap-1.5">
+                      Vendor ID
+                      {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('companyName')}>
+                    <div className="flex items-center gap-1.5">
+                      Vendor name
+                      {sortConfig?.key === 'companyName' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">Service Category</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('registrationDate')}>
+                    <div className="flex items-center gap-1.5">
+                      Registration Date
+                      {sortConfig?.key === 'registrationDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
+                    <div className="flex items-center gap-1.5">
+                      Status
+                      {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredVendors.map((vendor) => (
+                {paginatedVendors.map((vendor) => (
                   <TableRow key={vendor.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                     <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
                       {vendor.id}
@@ -158,6 +216,52 @@ export default function AdminVendorManagement() {
               actionLabel="Clear Filters"
               onAction={handleClearAll}
             />
+          )}
+
+          {/* Pagination Controls */}
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedVendors.length)}</span> of <span className="font-bold text-gray-900">{sortedVendors.length}</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="font-semibold"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1 mx-2">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
+                        currentPage === i + 1 
+                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                          : 'text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="font-semibold"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

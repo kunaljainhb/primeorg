@@ -4,12 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { StatusBadge } from '@/app/components/ui/status-badge';
-import { mockRFPs, mockProposals } from '@/app/data/mockData';
+import { mockTenders, mockProposals } from '@/app/data/mockData';
 import { DocumentComplianceAlert } from '@/app/components/vendor/DocumentComplianceAlert';
 
 export default function VendorDashboard() {
   const navigate = useNavigate();
-  const activeRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
+  const activeTenders = mockTenders.filter(tender => tender.status === 'published');
   const myProposals = mockProposals.filter(p => p.vendorId === 'VEN-001');
 
   return (
@@ -26,8 +26,8 @@ export default function VendorDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/vendor/rfps')}>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/vendor/tenders')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -35,7 +35,7 @@ export default function VendorDashboard() {
                   Active Tenders
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
-                  {activeRFPs.length}
+                  {activeTenders.length}
                 </div>
               </div>
               <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-primary-green)]/15 to-[var(--fnrc-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
@@ -81,53 +81,37 @@ export default function VendorDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Success Rate
-                </span>
-                <div className="text-3xl font-bold text-gray-800">
-                  50%
-                </div>
-              </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 group-hover:scale-105 transition-transform duration-200">
-                <TrendingUp className="h-5 w-5 text-emerald-600" strokeWidth={1.5} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
 
       {/* Main Content Row 1 */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Active RFPs */}
+        {/* Active Tenders */}
         <Card className="shadow-card">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-bold text-gray-800">Active Tenders</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {activeRFPs.slice(0, 3).map((rfp) => {
-                const isClosed = new Date(rfp.submissionDeadline) < new Date('2026-05-15');
+              {activeTenders.slice(0, 3).map((tender) => {
+                const isClosed = new Date(tender.submissionDeadline) < new Date('2026-05-15');
                 return (
-                  <div key={rfp.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-gray-100">
+                  <div key={tender.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-gray-100">
                     <div className="space-y-1">
                       <div className="font-semibold text-[15px] text-gray-800 flex items-center gap-2">
-                        {rfp.title}
+                        {tender.title}
                         <StatusBadge status={isClosed ? 'closed' : 'published'} />
                       </div>
                       <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-                        <span>{rfp.id}</span>
+                        <span>{tender.id}</span>
                         <span>•</span>
-                        <span>Due: {new Date(rfp.submissionDeadline).toLocaleDateString()}</span>
+                        <span>Deadline: {new Date(tender.submissionDeadline).toLocaleDateString()}</span>
                       </div>
                     </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => navigate(`/vendor/rfps/${rfp.id}`)}
+                      onClick={() => navigate(`/vendor/tenders/${tender.id}`)}
                       className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button"
                     >
                       View
@@ -138,7 +122,7 @@ export default function VendorDashboard() {
               <Button
                 variant="ghost"
                 className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
-                onClick={() => navigate('/vendor/rfps')}
+                onClick={() => navigate('/vendor/tenders')}
               >
                 View All Tenders →
               </Button>
@@ -158,7 +142,7 @@ export default function VendorDashboard() {
                   <div key={proposal.id} className="flex items-start justify-between border-b pb-4 last:border-0 border-gray-100">
                     <div className="space-y-1.5 flex flex-col items-start">
                       <div className="font-semibold text-[15px] text-gray-800">
-                        {proposal.rfpTitle}
+                        {proposal.tenderTitle}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                         <span>{proposal.id}</span>
@@ -204,18 +188,18 @@ export default function VendorDashboard() {
           <CardContent>
             <div className="space-y-4">
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-success)' }}>
-                <div className="text-sm font-semibold text-foreground">Proposal Shortlisted!</div>
-                <p className="text-sm mt-1 text-muted-foreground">Your proposal for <span className="font-semibold text-foreground">RFP-2026-005 (Office Renovation)</span> has been shortlisted for technical review.</p>
+                <div className="text-sm font-semibold text-foreground">Proposal Approved!</div>
+                <p className="text-sm mt-1 text-muted-foreground">Your proposal for <span className="font-semibold text-foreground">TEND-2026-005 (Office Renovation)</span> has been approved for technical review.</p>
                 <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-success)' }}>Update</span>
               </div>
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-info)' }}>
                 <div className="text-sm font-semibold text-foreground">New Tender Published: HVAC Systems</div>
-                <p className="text-sm mt-1 text-muted-foreground">FNRC has published a new RFP for Annual Maintenance of HVAC Systems. Check eligibility now.</p>
-                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-info)' }}>New RFP</span>
+                <p className="text-sm mt-1 text-muted-foreground">FNRC has published a new Tender for Annual Maintenance of HVAC Systems. Check eligibility now.</p>
+                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-info)' }}>New Tender</span>
               </div>
               <div className="border-l-4 pl-4 py-1" style={{ borderColor: 'var(--fnrc-error)' }}>
                 <div className="text-sm font-semibold text-foreground">Proposal Status Update</div>
-                <p className="text-sm mt-1 text-muted-foreground">A decision has been finalized for <span className="font-semibold text-foreground">RFP-2026-003</span>. Please check your tracking page.</p>
+                <p className="text-sm mt-1 text-muted-foreground">A decision has been finalized for <span className="font-semibold text-foreground">TEND-2026-003</span>. Please check your tracking page.</p>
                 <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-error)' }}>Alert</span>
               </div>
             </div>

@@ -19,7 +19,7 @@ import {
   Brain
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { mockRFPs, mockProposals, mockERPDocuments } from '@/app/data/mockData';
+import { mockTenders, mockProposals, mockERPDocuments } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import {
   AlertDialog,
@@ -48,28 +48,28 @@ const formatDate = (dateStr?: string | Date) => {
   return `${month}/${day}/${year}`;
 };
 
-export default function AdminRFPDetail() {
+export default function AdminTenderDetail() {
   const navigate = useNavigate();
-  const { rfpId } = useParams();
+  const { tenderId } = useParams();
   const location = useLocation();
-  const rfp = mockRFPs.find(r => r.id === rfpId) || mockRFPs[0];
+  const tender = mockTenders.find(r => r.id === tenderId) || mockTenders[0];
 
   // Redirect to edit/create page if in draft status
   useEffect(() => {
-    if (rfp && rfp.status.toLowerCase() === 'draft') {
-      navigate(`/admin/rfps/edit/${rfp.id}`);
+    if (tender && tender.status.toLowerCase() === 'draft') {
+      navigate(`/admin/tenders/edit/${tender.id}`);
     }
-  }, [rfp, navigate]);
+  }, [tender, navigate]);
 
   const defaultTab = location.pathname.includes('tab=chats') ? 'chats' : 'overview';
 
-  const relatedProposals = mockProposals.filter(p => p.rfpId === rfp.id);
-  const shortlistedProposals = relatedProposals.filter(p => p.status === 'shortlisted');
+  const relatedProposals = mockProposals.filter(p => p.tenderId === tender.id);
+  const approvedProposals = relatedProposals.filter(p => p.status === 'approved');
 
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
-  const [newDeadline, setNewDeadline] = useState<string>(rfp.submissionDeadline ? String(rfp.submissionDeadline).split('T')[0] : '');
+  const [newDeadline, setNewDeadline] = useState<string>(tender.submissionDeadline ? String(tender.submissionDeadline).split('T')[0] : '');
   const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
   const [showAIComparisonDialog, setShowAIComparisonDialog] = useState(false);
   const [isAIAnalyzing, setIsAIAnalyzing] = useState(false);
@@ -196,16 +196,16 @@ export default function AdminRFPDetail() {
     }
   };
 
-  const handleCloseRFP = () => {
-    toast.success('RFP closed successfully');
+  const handleCloseTender = () => {
+    toast.success('Tender closed successfully');
     setShowCloseDialog(false);
-    navigate('/admin/rfps');
+    navigate('/admin/tenders');
   };
 
-  const handleCancelRFP = () => {
-    toast.success('RFP cancelled successfully');
+  const handleCancelTender = () => {
+    toast.success('Tender cancelled successfully');
     setShowCancelDialog(false);
-    navigate('/admin/rfps');
+    navigate('/admin/tenders');
   };
 
   const handleChangeDeadline = () => {
@@ -220,9 +220,9 @@ export default function AdminRFPDetail() {
   return (
     <div className="space-y-8 font-sans">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/admin/rfps')} className="gap-2 text-gray-500 hover:text-gray-900 transition-colors">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin/tenders')} className="gap-2 text-gray-500 hover:text-gray-900 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          Back to RFPs
+          Back to Tenders
         </Button>
       </div>
 
@@ -231,21 +231,21 @@ export default function AdminRFPDetail() {
         <div>
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-              {rfp.title}
+              {tender.title}
             </h1>
-            <StatusBadge status={rfp.status} />
+            <StatusBadge status={tender.status} />
           </div>
           <p className="text-sm font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
-            {rfp.id}
+            {tender.id}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {(rfp.status !== 'closed' && rfp.status !== 'cancelled') && (
+          {(tender.status !== 'closed' && tender.status !== 'cancelled') && (
             <>
               <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 h-10 font-semibold" onClick={() => setShowCancelDialog(true)}>
                 <XIcon className="mr-1.5 h-4 w-4" />
-                Cancel RFP
+                Cancel Tender
               </Button>
               <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50 h-10 font-semibold" onClick={() => setShowDeadlineDialog(true)}>
                 <Clock className="mr-1.5 h-4 w-4" />
@@ -253,7 +253,7 @@ export default function AdminRFPDetail() {
               </Button>
               <Button className="text-white h-10 px-6 font-semibold shadow-md shadow-green-600/10" style={{ backgroundColor: 'var(--fnrc-success)' }} onClick={() => setShowCloseDialog(true)}>
                 <Check className="mr-1.5 h-4 w-4" />
-                Close RFP
+                Close Tender
               </Button>
             </>
           )}
@@ -263,10 +263,10 @@ export default function AdminRFPDetail() {
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-2xl">
           <TabsTrigger value="overview" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Overview
+            Tender Overview
           </TabsTrigger>
           <TabsTrigger value="chats" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800 flex items-center gap-1.5">
-            Clarification Chats
+            Vendor Chats
             {totalUnreadChats > 0 && (
               <span className="bg-red-500 text-white font-bold text-[9px] h-4 min-w-4 px-1 flex items-center justify-center rounded-full border-none leading-none animate-pulse">
                 {totalUnreadChats}
@@ -274,45 +274,45 @@ export default function AdminRFPDetail() {
             )}
           </TabsTrigger>
           <TabsTrigger value="proposals" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Proposal Bids ({relatedProposals.length})
+            Proposal Received ({relatedProposals.length})
           </TabsTrigger>
-          <TabsTrigger value="shortlisted" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Shortlist ({shortlistedProposals.length})
+          <TabsTrigger value="approved" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
+            Shortlist Proposal ({approvedProposals.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6 focus:outline-none">
           {/* Basic Information */}
-          <Card>
-            <CardHeader className="pb-3 border-b border-gray-50">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-                <Building2 className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Campaign Specifications
+          <Card className="border border-gray-100 shadow-sm">
+            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+                <Building2 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Tender Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+            <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
               <div className="space-y-6">
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">RFP Category</Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {rfp.category.map((cat, i) => (
-                      <Badge key={i} variant="secondary" className="bg-gray-50 text-gray-650 border border-gray-100 font-bold text-[10px]">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Tender Category</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {tender.category.map((cat, i) => (
+                      <Badge key={i} variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none font-semibold text-xs px-3 py-1">
                         {cat}
                       </Badge>
                     ))}
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Description</Label>
-                  <p className="text-sm text-gray-700 leading-relaxed font-semibold">
-                    {rfp.description}
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</Label>
+                  <p className="text-sm text-gray-800 leading-relaxed font-medium">
+                    {tender.description}
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Eligibility Requirements</Label>
-                  <ul className="space-y-1.5">
-                    {rfp.eligibilityCriteria.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-gray-600 font-semibold">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Eligibility Requirements</Label>
+                  <ul className="space-y-2">
+                    {tender.eligibilityCriteria.map((item, i) => (
+                      <li key={i} className="flex items-center gap-2.5 text-sm text-gray-800 font-medium">
                         <div className="h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0" />
                         {item}
                       </li>
@@ -322,17 +322,17 @@ export default function AdminRFPDetail() {
               </div>
 
               <div className="space-y-6">
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Estimated Budget Allocation</Label>
-                  <div className="text-2xl font-black text-[var(--fnrc-primary-green)]">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Estimated Budget Allocation</Label>
+                  <div className="text-lg font-bold text-gray-900">
                     AED 500,000.00
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Submission Period Deadline</Label>
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-800">
-                    <CalendarIcon className="h-4 w-4 text-gray-450" />
-                    {formatDate(rfp.submissionDeadline)}
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Submission Period Deadline</Label>
+                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900">
+                    <CalendarIcon className="h-4 w-4 text-gray-400" />
+                    {formatDate(tender.submissionDeadline)}
                   </div>
                 </div>
               </div>
@@ -340,49 +340,49 @@ export default function AdminRFPDetail() {
           </Card>
 
           {/* Scope of Work */}
-          <Card>
-            <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-                <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Technical Scope of Work
+          <Card className="border border-gray-100 shadow-sm">
+            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+                <Briefcase className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Scope of Work
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-1">
-                <p className="text-sm text-gray-650 leading-relaxed font-semibold">
-                  {rfp.scopeOfWork}
+            <CardContent className="space-y-8 pt-6">
+              <div className="space-y-2">
+                <p className="text-sm text-gray-800 leading-relaxed font-medium">
+                  {tender.scopeOfWork}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-8 border-t border-gray-100 pt-6">
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Project Initiation Date</Label>
-                  <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Initiation Date</Label>
+                  <div className="font-bold text-sm flex items-center gap-2 text-gray-900">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     01/06/2026
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] uppercase font-bold text-gray-400">Project Completion Date</Label>
-                  <div className="font-bold text-sm flex items-center gap-2 text-gray-800">
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Completion Date</Label>
+                  <div className="font-bold text-sm flex items-center gap-2 text-gray-900">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     31/12/2026
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 pt-4">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Project Execution Milestones</Label>
+              <div className="space-y-4 pt-2">
+                <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Execution Milestones</Label>
                 <div className="grid md:grid-cols-3 gap-4">
                   {[
                     { title: 'Project Initiation', date: '15/06/2026' },
                     { title: 'Intermediate Progress Review', date: '01/09/2026' },
                     { title: 'Final Technical Handover', date: '20/12/2026' }
                   ].map((m, i) => (
-                    <div key={i} className="flex flex-col gap-1.5 p-4 bg-gray-50/50 border border-gray-100 rounded-xl">
-                      <span className="text-[10px] font-black text-gray-400 tracking-wider">MILESTONE 0{i + 1}</span>
-                      <span className="text-sm font-bold text-gray-850">{m.title}</span>
-                      <span className="text-xs font-bold text-[var(--fnrc-primary-green)]">{m.date}</span>
+                    <div key={i} className="flex flex-col gap-2 p-5 bg-gray-50 border border-gray-100 rounded-xl hover:border-gray-200 transition-colors">
+                      <span className="text-xs font-bold text-gray-400 tracking-wider">MILESTONE 0{i + 1}</span>
+                      <span className="text-sm font-bold text-gray-900">{m.title}</span>
+                      <span className="text-sm font-semibold text-[var(--fnrc-primary-green)]">{m.date}</span>
                     </div>
                   ))}
                 </div>
@@ -391,26 +391,26 @@ export default function AdminRFPDetail() {
           </Card>
 
           {/* Attachments */}
-          <Card>
-            <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-                <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Tender Documents & Guidelines
+          <Card className="border border-gray-100 shadow-sm">
+            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                Tender Document
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {rfp.attachments.map((file, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-gray-50 flex items-center justify-center text-red-500">
+            <CardContent className="space-y-3 pt-6">
+              {tender.attachments.map((file, i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition-colors">
                       <FileText className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-gray-800">{file.name}</div>
-                      <div className="text-[10px] text-gray-400 font-semibold">Tender Document Package</div>
+                      <div className="text-sm font-bold text-gray-900">{file.name}</div>
+                      <div className="text-xs text-gray-500 font-medium mt-0.5">Tender Document Package</div>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5 font-semibold">
+                  <Button variant="outline" size="sm" className="gap-2 font-semibold hover:bg-gray-100">
                     <Download className="h-4 w-4" />
                     Download
                   </Button>
@@ -477,7 +477,7 @@ export default function AdminRFPDetail() {
                   <CardHeader className="pb-3 border-b border-gray-50 flex flex-row items-center justify-between">
                     <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
                       <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                      Clarifications: {vendorChats[activeVendorId].vendorName}
+                      {vendorChats[activeVendorId].vendorName}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-6 flex-1 flex flex-col justify-between space-y-4">
@@ -571,9 +571,9 @@ export default function AdminRFPDetail() {
                   <TableRow>
                     <TableHead className="py-4 pl-6 w-[60px]"></TableHead>
                     <TableHead className="font-bold text-gray-900 text-sm py-4">Proposal ID</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor Partner</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Submission Date</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4 text-right">Bid Amount</TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor Name</TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4">Deadline Date</TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 text-right">Proposal Amount</TableHead>
                     <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
                     <TableHead className="text-right pr-6 font-bold text-gray-900 text-sm py-4">Action</TableHead>
                   </TableRow>
@@ -611,11 +611,11 @@ export default function AdminRFPDetail() {
           </Card>
         </TabsContent>
 
-        {/* TAB 4: SHORTLISTED VENDORS */}
-        <TabsContent value="shortlisted" className="focus:outline-none space-y-6">
-          {shortlistedProposals.length > 0 ? (
-            shortlistedProposals.map((proposal) => {
-              const vendorDocs = mockERPDocuments.filter(d => d.rfpId === rfp.id && d.vendorId === proposal.vendorId);
+        {/* TAB 4: APPROVED VENDORS */}
+        <TabsContent value="approved" className="focus:outline-none space-y-6">
+          {approvedProposals.length > 0 ? (
+            approvedProposals.map((proposal) => {
+              const vendorDocs = mockERPDocuments.filter(d => d.tenderId === tender.id && d.vendorId === proposal.vendorId);
 
               return (
                 <Card key={proposal.id} className="overflow-hidden border border-gray-100/50 shadow-sm">
@@ -623,7 +623,7 @@ export default function AdminRFPDetail() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 flex-1">
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Vendor Partner</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Vendor Name</p>
                           <p className="text-sm font-bold text-gray-800">{proposal.vendorName}</p>
                         </div>
                         <div>
@@ -631,13 +631,13 @@ export default function AdminRFPDetail() {
                           <p className="text-sm font-bold text-gray-800">{proposal.id}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Submission Date</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Deadline Date</p>
                           <p className="text-sm font-semibold text-gray-700">{formatDate(proposal.submissionDate)}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Shortlisted Date</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Approved Date</p>
                           <p className="text-sm font-semibold text-gray-700">
-                            {proposal.shortlistedDate ? formatDate(proposal.shortlistedDate) : formatDate(new Date())}
+                            {proposal.approvedDate ? formatDate(proposal.approvedDate) : formatDate(new Date())}
                           </p>
                         </div>
                       </div>
@@ -699,43 +699,43 @@ export default function AdminRFPDetail() {
             })
           ) : (
             <EmptyState
-              title="No Shortlisted Vendors"
-              description="No vendors have been shortlisted for this RFP campaign. Complete evaluation scorecard details to shortlist a supplier."
+              title="No Approved Vendors"
+              description="No vendors have been approved for this Tender campaign. Complete evaluation scorecard details to shortlist a supplier."
             />
           )}
         </TabsContent>
       </Tabs>
 
-      {/* Close RFP dialog */}
+      {/* Close Tender dialog */}
       <AlertDialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
         <AlertDialogContent className="rounded-modal p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-gray-900">Close RFP Campaign?</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-bold text-gray-900">Close Tender Campaign?</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-gray-500 leading-relaxed">
-              Closing this RFP will immediately terminate the proposal submission window. Registered vendors will no longer be able to draft or upload specs.
+              Closing this Tender will immediately terminate the proposal submission window. Registered vendors will no longer be able to draft or upload specs.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel className="font-semibold rounded-lg">Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-[var(--fnrc-success)] hover:bg-green-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCloseRFP}>
+            <AlertDialogAction className="bg-[var(--fnrc-success)] hover:bg-green-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCloseTender}>
               Confirm Close
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Cancel RFP dialog */}
+      {/* Cancel Tender dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent className="rounded-modal p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-red-600">Cancel RFP Campaign?</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-bold text-red-600">Cancel Tender Campaign?</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-gray-500 leading-relaxed font-semibold">
-              This action is highly critical. Cancelling this RFP will invalidate all received proposal bids and notify active operators. This action cannot be undone.
+              This action is highly critical. Cancelling this Tender will invalidate all received proposal bids and notify active operators. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel className="font-semibold rounded-lg">Dismiss</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCancelRFP}>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCancelTender}>
               Confirm Cancellation
             </AlertDialogAction>
           </AlertDialogFooter>

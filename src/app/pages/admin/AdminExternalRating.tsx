@@ -8,7 +8,7 @@ import { mockProposals } from '@/app/data/mockData';
 export default function AdminExternalRating() {
   const params = new URLSearchParams(window.location.search);
   const proposalId = params.get('proposalId');
-  const rfpId = params.get('rfpId');
+  const tenderId = params.get('tenderId');
 
   const proposal = mockProposals.find(p => p.id === proposalId);
 
@@ -107,8 +107,8 @@ export default function AdminExternalRating() {
         </h1>
         <div className="flex flex-col sm:flex-row justify-center gap-4 text-sm font-medium">
           <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
-            <span className="text-gray-500 mr-2">RFP Name:</span>
-            <span className="text-gray-800 font-bold">{proposal.rfpTitle}</span>
+            <span className="text-gray-500 mr-2">Tender Name:</span>
+            <span className="text-gray-800 font-bold">{proposal.tenderTitle}</span>
           </div>
           <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
             <span className="text-gray-500 mr-2">Proposal ID:</span>
@@ -119,15 +119,15 @@ export default function AdminExternalRating() {
 
       <Card className="max-w-2xl w-full border border-gray-150 shadow-2xl bg-white rounded-2xl">
         <CardHeader className="border-b bg-gray-50/40 pb-4">
-          <CardTitle className="text-lg font-bold text-gray-800">Vendor & RFP Context</CardTitle>
-          <CardDescription>Review RFP and proposal context below before submitting scorecards</CardDescription>
+          <CardTitle className="text-lg font-bold text-gray-800">Vendor & Tender Context</CardTitle>
+          <CardDescription>Review Tender and proposal context below before submitting scorecards</CardDescription>
         </CardHeader>
         <CardContent className="pt-6 space-y-6">
           {/* Metadata Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50/70 p-5 rounded-2xl border border-gray-100">
             <div>
-              <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">RFP Title / Agreement</span>
-              <span className="text-sm font-extrabold text-gray-800 block mt-0.5">{proposal.rfpTitle}</span>
+              <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">Tender Title / Agreement</span>
+              <span className="text-sm font-extrabold text-gray-800 block mt-0.5">{proposal.tenderTitle}</span>
             </div>
             <div>
               <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">Vendor Legal Name</span>

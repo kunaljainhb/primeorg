@@ -5,7 +5,8 @@ import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Textarea } from '@/app/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { RichTextEditor } from '@/app/components/ui/rich-text-editor';
+
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 import { Separator } from '@/app/components/ui/separator';
 import { Plus, Trash2, Upload, ArrowLeft, CheckCircle2 } from 'lucide-react';
@@ -17,12 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table';
-import { mockRFPs } from '@/app/data/mockData';
+import { mockTenders } from '@/app/data/mockData';
 
 export default function VendorProposalSubmit() {
   const navigate = useNavigate();
-  const { rfpId } = useParams();
-  const rfp = mockRFPs.find(r => r.id === rfpId);
+  const { tenderId } = useParams();
+  const tender = mockTenders.find(r => r.id === tenderId);
   const [showSuccess, setShowSuccess] = useState(false);
   const [costItems, setCostItems] = useState([
     { id: '1', description: 'Core Services & Implementation', unitPrice: 0, quantity: 1, amount: 0 },
@@ -64,8 +65,8 @@ export default function VendorProposalSubmit() {
     setShowSuccess(true);
   };
 
-  if (!rfp) {
-    return <div>RFP not found</div>;
+  if (!tender) {
+    return <div>Tender not found</div>;
   }
 
   return (
@@ -73,66 +74,44 @@ export default function VendorProposalSubmit() {
       <div className="flex items-center justify-between">
         <Button
           variant="ghost"
-          onClick={() => navigate(`/vendor/rfps/${rfpId}`)}
+          onClick={() => navigate(`/vendor/tenders/${tenderId}`)}
           className="gap-2 text-gray-500 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to RFP Details
+          Back to Tender Details
         </Button>
       </div>
 
-      <div className="bg-white p-8 rounded-card shadow-card border border-gray-100/50">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-2">
-          Submit Proposal Bid
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight leading-tight mb-2">
+          Proposal Submission
         </h1>
-        <p className="text-sm font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
-          {rfp.title} ({rfp.id})
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-700 tracking-tight">
+            {tender.id} - {tender.title}
+          </h2>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <Tabs defaultValue="technical" className="space-y-6">
-          <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-xl">
-            <TabsTrigger 
-              value="technical"
-              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
-            >
-              Technical Specification
-            </TabsTrigger>
-            <TabsTrigger 
-              value="commercial"
-              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
-            >
-              Commercial Specification
-            </TabsTrigger>
-            <TabsTrigger 
-              value="documents"
-              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
-            >
-              Supporting Files
-            </TabsTrigger>
-          </TabsList>
-
           {/* Technical Proposal */}
-          <TabsContent value="technical" className="space-y-6 focus:outline-none">
-            <Card>
-              <CardHeader className="border-b border-gray-50 pb-5">
-                <CardTitle className="text-lg font-bold text-gray-900">Technical Methodology</CardTitle>
+            <Card className="gap-0 h-auto">
+              <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+                <CardTitle className="text-lg font-bold text-gray-900">Technical Approach</CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6">
+              <CardContent className="!pt-4 px-6 pb-4 space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="technicalDescription" className="text-sm font-bold text-gray-700">Methodology & Approach *</Label>
-                  <Textarea
+                  <Label htmlFor="technicalDescription" className="text-sm font-bold text-gray-700">Approach *</Label>
+                  <RichTextEditor
                     id="technicalDescription"
                     rows={8}
-                    className="rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 resize-none text-sm p-4"
                     placeholder="Describe your step-by-step methodology, project milestones, quality assurance practices, and how your team aligns with FNRC expectations..."
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="technicalDoc" className="text-sm font-bold text-gray-700">Detailed Technical Document (PDF) *</Label>
-                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-8 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+                  <Label htmlFor="technicalDoc" className="text-sm font-bold text-gray-700">Technical Document *</Label>
+                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
                     <input 
                       id="technicalDoc" 
                       type="file" 
@@ -140,8 +119,8 @@ export default function VendorProposalSubmit() {
                       required 
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
-                    <div className="h-12 w-12 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
-                      <Upload className="h-6 w-6" />
+                    <div className="h-10 w-10 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform duration-200">
+                      <Upload className="h-5 w-5" />
                     </div>
                     <span className="text-sm font-semibold text-gray-700">Upload your technical file</span>
                     <span className="text-xs text-gray-400 mt-1">PDF format (Maximum file size: 10MB)</span>
@@ -149,25 +128,22 @@ export default function VendorProposalSubmit() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
           {/* Commercial Proposal */}
-          <TabsContent value="commercial" className="space-y-6 focus:outline-none">
-            <Card>
-              <CardHeader className="border-b border-gray-50 pb-5">
+            <Card className="gap-0 h-auto">
+              <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
                 <CardTitle className="text-lg font-bold text-gray-900">Commercial Specifications</CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6">
+              <CardContent className="!pt-4 px-6 pb-4 space-y-6">
                 <div>
-                  <Label className="text-sm font-bold text-gray-700 mb-4 block">Itemized Cost Breakdown (AED) *</Label>
-                  <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                  <Label className="text-sm font-bold text-gray-700 mb-4 block">Cost Breakdown (AED) *</Label>
+                  <div className="overflow-hidden">
                     <Table>
-                      <TableHeader className="bg-gray-50">
+                      <TableHeader className="bg-transparent">
                         <TableRow>
-                          <TableHead className="w-[45%] font-bold text-gray-800 text-sm py-4">Description</TableHead>
-                          <TableHead className="text-right w-[20%] font-bold text-gray-800 text-sm py-4">Unit Price (AED)</TableHead>
-                          <TableHead className="text-right w-[12%] font-bold text-gray-800 text-sm py-4">Quantity</TableHead>
-                          <TableHead className="text-right w-[18%] font-bold text-gray-800 text-sm py-4">Amount (AED)</TableHead>
+                          <TableHead className="w-[45%] font-bold text-gray-800 text-xs uppercase tracking-wider py-4">Description</TableHead>
+                          <TableHead className="text-right w-[20%] font-bold text-gray-800 text-xs uppercase tracking-wider py-4">Unit Price (AED)</TableHead>
+                          <TableHead className="text-right w-[12%] font-bold text-gray-800 text-xs uppercase tracking-wider py-4">Quantity</TableHead>
+                          <TableHead className="text-right w-[18%] font-bold text-gray-800 text-xs uppercase tracking-wider py-4">Amount (AED)</TableHead>
                           <TableHead className="w-[5%]"></TableHead>
                         </TableRow>
                       </TableHeader>
@@ -179,14 +155,14 @@ export default function VendorProposalSubmit() {
                                 placeholder="e.g. Core Hardware, Service Integration..."
                                 value={item.description}
                                 onChange={(e) => updateCostItem(item.id, 'description', e.target.value)}
-                                className="h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
+                                className="h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2"
                                 required
                               />
                             </TableCell>
                             <TableCell className="py-3">
                               <Input 
                                 type="number"
-                                className="text-right h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
+                                className="text-right h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2"
                                 placeholder="0.00"
                                 min={0}
                                 value={item.unitPrice || ''}
@@ -197,7 +173,7 @@ export default function VendorProposalSubmit() {
                             <TableCell className="py-3">
                               <Input 
                                 type="number"
-                                className="text-right h-10 text-sm border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30"
+                                className="text-right h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2"
                                 placeholder="1"
                                 min={1}
                                 step={1}
@@ -241,9 +217,9 @@ export default function VendorProposalSubmit() {
                             </Button>
                           </TableCell>
                         </TableRow>
-                        <TableRow className="bg-gray-50 border-t border-gray-100 hover:bg-gray-50">
+                        <TableRow className="bg-transparent border-t border-gray-200 hover:bg-transparent">
                           <TableCell colSpan={3} className="font-bold text-right text-gray-900 py-4" style={{ color: 'var(--fnrc-text-dark)' }}>
-                            Total Quote Sum (Exclusive of VAT)
+                            Total Amount
                           </TableCell>
                           <TableCell className="text-right font-extrabold text-base text-[var(--fnrc-primary-green)] py-4 pr-2">
                             AED {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -258,8 +234,18 @@ export default function VendorProposalSubmit() {
                 <Separator className="bg-gray-100" />
 
                 <div className="space-y-2">
-                  <Label htmlFor="commercialDoc" className="text-sm font-bold text-gray-700">Detailed Commercial Document (PDF) *</Label>
-                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-8 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+                  <Label htmlFor="paymentTerms" className="text-sm font-bold text-gray-700">Payment Milestones & Terms *</Label>
+                  <RichTextEditor
+                    id="paymentTerms"
+                    rows={4}
+                    placeholder="Specify project stage payments (e.g. 20% on Mobilization, 40% on Delivery...)"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="commercialDoc" className="text-sm font-bold text-gray-700">Commercial Document *</Label>
+                  <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
                     <input 
                       id="commercialDoc" 
                       type="file" 
@@ -267,82 +253,79 @@ export default function VendorProposalSubmit() {
                       required 
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
-                    <div className="h-12 w-12 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200">
-                      <Upload className="h-6 w-6" />
+                    <div className="h-10 w-10 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform duration-200">
+                      <Upload className="h-5 w-5" />
                     </div>
                     <span className="text-sm font-semibold text-gray-700">Upload your commercial/BOQ file</span>
                     <span className="text-xs text-gray-400 mt-1">PDF format (Maximum file size: 10MB)</span>
                   </div>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="paymentTerms" className="text-sm font-bold text-gray-700">Payment Milestones & Terms *</Label>
-                  <Textarea
-                    id="paymentTerms"
-                    rows={3}
-                    className="rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 resize-none text-sm p-4"
-                    placeholder="Specify project stage payments (e.g. 20% on Mobilization, 40% on Delivery...)"
-                    required
-                  />
-                </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
           {/* Supporting Documents */}
-          <TabsContent value="documents" className="space-y-6 focus:outline-none">
-            <Card>
-              <CardHeader className="border-b border-gray-50 pb-5">
+            <Card className="gap-0 h-auto">
+              <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
                 <CardTitle className="text-lg font-bold text-gray-900">Supporting Records</CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6">
-                <div className="grid gap-6 md:grid-cols-2">
+              <CardContent className="!pt-4 px-6 pb-4 space-y-6">
+                <div className="flex flex-col gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="companyProfile" className="text-sm font-bold text-gray-700">Company Overview Brochure</Label>
+                    <Label htmlFor="suppDoc1" className="text-sm font-bold text-gray-700">Company Profile</Label>
                     <div className="flex items-center gap-2">
-                      <Input id="companyProfile" type="file" accept=".pdf" className="rounded-xl border-gray-200" />
+                      <Input id="suppDoc1" type="file" accept=".pdf" className="rounded-xl border-gray-200 flex-1" />
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0"
+                        onClick={() => {
+                          const el = document.getElementById('suppDoc1') as HTMLInputElement;
+                          if (el) el.value = '';
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="previousProjects" className="text-sm font-bold text-gray-700">Past Project Case Studies</Label>
+                    <Label htmlFor="suppDoc2" className="text-sm font-bold text-gray-700">Previous Work</Label>
                     <div className="flex items-center gap-2">
-                      <Input id="previousProjects" type="file" accept=".pdf" className="rounded-xl border-gray-200" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="certifications" className="text-sm font-bold text-gray-700">ISO/Quality Credentials</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="certifications" type="file" accept=".pdf" multiple className="rounded-xl border-gray-200" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="otherDocs" className="text-sm font-bold text-gray-700">Other Appendices</Label>
-                    <div className="flex items-center gap-2">
-                      <Input id="otherDocs" type="file" accept=".pdf" multiple className="rounded-xl border-gray-200" />
+                      <Input id="suppDoc2" type="file" accept=".pdf" className="rounded-xl border-gray-200 flex-1" />
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0"
+                        onClick={() => {
+                          const el = document.getElementById('suppDoc2') as HTMLInputElement;
+                          if (el) el.value = '';
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+
 
         {/* Submit Actions */}
         <div className="flex justify-end gap-3 pt-4">
           <Button
             type="button"
             variant="outline"
-            className="h-11 font-semibold"
-            onClick={() => navigate(`/vendor/rfps/${rfpId}`)}
+            className="font-semibold"
+            onClick={() => navigate(`/vendor/tenders/${tenderId}`)}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-xl hover:-translate-y-0.5"
+            className="text-white font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5"
             style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
           >
-            Submit Formal Bid
+            Submit Proposal
           </Button>
         </div>
       </form>

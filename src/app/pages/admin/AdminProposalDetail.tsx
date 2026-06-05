@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/ta
 import { Badge } from '@/app/components/ui/badge';
 import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X, History, Plus, Star } from 'lucide-react';
 import { toast } from 'sonner';
-import { mockProposals, mockAdminUsers, mockRFPs, saveProposalsToStorage } from '@/app/data/mockData';
+import { mockProposals, mockAdminUsers, mockTenders, saveProposalsToStorage } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
@@ -38,15 +38,15 @@ export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
-  const rfp = mockRFPs.find(r => r.id === proposal.rfpId) || mockRFPs[0];
+  const tender = mockTenders.find(r => r.id === proposal.tenderId) || mockTenders[0];
   const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer');
 
   const isInitiallyRejected = proposal.status === 'rejected';
-  const isInitiallyShortlisted = proposal.status === 'shortlisted';
+  const isInitiallyApproved = proposal.status === 'approved';
   const [proposalRemark, setProposalRemark] = useState(
     isInitiallyRejected
-      ? 'The commercial proposal exceeded the allocated RFP budget limits.'
-      : isInitiallyShortlisted
+      ? 'The commercial proposal exceeded the allocated Tender budget limits.'
+      : isInitiallyApproved
       ? 'Highly qualified vendor meeting all technical specs and commercial constraints.'
       : ''
   );
@@ -94,16 +94,16 @@ export default function AdminProposalDetail() {
     toast.success('Vendor performance ratings saved successfully!');
   };
   const [technicalReviewer, setTechnicalReviewer] = useState(
-    isInitiallyRejected ? 'Mohammed Al Zaabi' : (isInitiallyShortlisted ? 'Mohammed Al Zaabi' : '')
+    isInitiallyRejected ? 'Mohammed Al Zaabi' : (isInitiallyApproved ? 'Mohammed Al Zaabi' : '')
   );
   const [commercialReviewer, setCommercialReviewer] = useState(
-    isInitiallyRejected ? 'Mohammed Al Zaabi' : (isInitiallyShortlisted ? 'Mohammed Al Zaabi' : '')
+    isInitiallyRejected ? 'Mohammed Al Zaabi' : (isInitiallyApproved ? 'Mohammed Al Zaabi' : '')
   );
   const [technicalStatus, setTechnicalStatus] = useState(
-    isInitiallyRejected ? 'approved' : (isInitiallyShortlisted ? 'approved' : (proposal.technicalStatus || 'pending'))
+    isInitiallyRejected ? 'approved' : (isInitiallyApproved ? 'approved' : (proposal.technicalStatus || 'pending'))
   );
   const [commercialStatus, setCommercialStatus] = useState(
-    isInitiallyRejected ? 'rejected' : (isInitiallyShortlisted ? 'approved' : (proposal.commercialStatus || 'pending'))
+    isInitiallyRejected ? 'rejected' : (isInitiallyApproved ? 'approved' : (proposal.commercialStatus || 'pending'))
   );
 
   const [showShareModal, setShowShareModal] = useState(false);
@@ -111,11 +111,11 @@ export default function AdminProposalDetail() {
 
   // Reviewer remarks for technical and commercial evaluations
   const [technicalRemark, setTechnicalRemark] = useState(
-    isInitiallyShortlisted ? 'All technical requirements met. Score: 85/100' : 
+    isInitiallyApproved ? 'All technical requirements met. Score: 85/100' : 
     isInitiallyRejected ? 'Technical approach does not meet the minimum compliance requirements.' : ''
   );
   const [commercialRemark, setCommercialRemark] = useState(
-    isInitiallyShortlisted ? 'Pricing aligned with budget. Recommended for shortlisting.' : 
+    isInitiallyApproved ? 'Pricing aligned with budget. Recommended for shortlisting.' : 
     isInitiallyRejected ? 'Pricing exceeds the maximum allocated budget and payment terms are unacceptable.' : ''
   );
 
@@ -269,14 +269,14 @@ export default function AdminProposalDetail() {
   };
 
   const handleShortlistVendor = () => {
-    proposal.status = 'shortlisted';
-    setOverallStatus('shortlisted');
+    proposal.status = 'approved';
+    setOverallStatus('approved');
     setTechnicalReviewer('Mohammed Al Zaabi');
     setCommercialReviewer('Mohammed Al Zaabi');
     setTechnicalStatus('approved');
     setCommercialStatus('approved');
     saveProposalsToStorage(mockProposals);
-    toast.success('Vendor shortlisted successfully! ERP integration active: LPO and Invoice generated.');
+    toast.success('Vendor approved successfully! ERP integration active: LPO and Invoice generated.');
   };
 
   const handleApproveProposalAction = () => {
@@ -344,7 +344,7 @@ export default function AdminProposalDetail() {
       commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
       technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
       commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      shortlisted: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
+      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
       rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
       correction_requested: { bg: '#FEF3C7', text: '#F59E0B' },
     };
@@ -408,14 +408,14 @@ export default function AdminProposalDetail() {
     });
   }
 
-  if (overallStatus === 'shortlisted') {
+  if (overallStatus === 'approved') {
     auditLogs.push({
-      date: formatDate(proposal.shortlistedDate || new Date()),
+      date: formatDate(proposal.approvedDate || new Date()),
       time: '16:00 PM',
-      action: 'Proposal Shortlisted',
+      action: 'Proposal Approved',
       name: 'System',
-      status: 'shortlisted',
-      remarks: 'Proposal successfully shortlisted for further stages.'
+      status: 'approved',
+      remarks: 'Proposal successfully approved for further stages.'
     });
   }
 
@@ -426,7 +426,7 @@ export default function AdminProposalDetail() {
     { key: 'decision', label: 'Final Decision', description: 'Procurement award' },
   ];
 
-  const currentStageKey = ['approved', 'shortlisted', 'rejected', 'correction_requested'].includes(overallStatus)
+  const currentStageKey = ['approved', 'approved', 'rejected', 'correction_requested'].includes(overallStatus)
     ? 'decision'
     : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
     ? 'commercial_review'
@@ -434,7 +434,7 @@ export default function AdminProposalDetail() {
     ? 'technical_review'
     : 'submitted';
 
-  const completedStageKeys = ['approved', 'shortlisted', 'rejected', 'correction_requested'].includes(overallStatus)
+  const completedStageKeys = ['approved', 'approved', 'rejected', 'correction_requested'].includes(overallStatus)
     ? ['submitted', 'technical_review', 'commercial_review']
     : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
     ? ['submitted', 'technical_review']
@@ -447,7 +447,7 @@ export default function AdminProposalDetail() {
       {/* Header back button */}
       <div className="flex items-center justify-between border-b pb-4 mb-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/rfps/${proposal.rfpId}`)} className="rounded-full">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/tenders/${proposal.tenderId}`)} className="rounded-full">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -484,10 +484,10 @@ export default function AdminProposalDetail() {
           <TabsTrigger value="commercial">Commercial Proposal</TabsTrigger>
           <TabsTrigger value="supporting">Supporting Documents</TabsTrigger>
           <TabsTrigger value="feedback">Vendor Feedback</TabsTrigger>
-          {(rfp.status === 'published') && (
+          {(tender.status === 'published') && (
             <TabsTrigger 
               value="action"
-              disabled={!(technicalStatus === 'approved' && commercialStatus === 'approved') && !['approved', 'shortlisted', 'rejected'].includes(overallStatus)}
+              disabled={!(technicalStatus === 'approved' && commercialStatus === 'approved') && !['approved', 'approved', 'rejected'].includes(overallStatus)}
               className="disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
               Proposal Action
@@ -513,12 +513,12 @@ export default function AdminProposalDetail() {
                 <p className="text-sm">{proposal.vendorName}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">RFP ID</p>
-                <p className="text-sm">{proposal.rfpId}</p>
+                <p className="font-medium text-gray-600">Tender ID</p>
+                <p className="text-sm">{proposal.tenderId}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">RFP Title</p>
-                <p className="text-sm">{proposal.rfpTitle}</p>
+                <p className="font-medium text-gray-600">Tender Title</p>
+                <p className="text-sm">{proposal.tenderTitle}</p>
               </div>
               <div>
                 <p className="font-medium text-gray-600">Commercial Amount (AED)</p>
@@ -723,7 +723,7 @@ export default function AdminProposalDetail() {
                 </div>
 
                 {/* Decision buttons */}
-                {(overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                {(overallStatus !== 'approved' && overallStatus !== 'rejected') && (
                   <div className="flex flex-wrap gap-3">
                   <Button
                     onClick={() => handleTechnicalStatusUpdate('approved')}
@@ -912,7 +912,7 @@ export default function AdminProposalDetail() {
                 </div>
 
                 {/* Decision buttons */}
-                {(overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                {(overallStatus !== 'approved' && overallStatus !== 'rejected') && (
                   <div className="flex flex-wrap gap-3">
                   <Button
                     onClick={() => handleCommercialStatusUpdate('approved')}
@@ -1002,7 +1002,7 @@ export default function AdminProposalDetail() {
           </Card>
         </TabsContent>
 
-        {rfp.status === 'published' && (
+        {tender.status === 'published' && (
           <TabsContent value="action" className="space-y-6">
             
             {/* CARD 1: Proposal Action Decision */}
@@ -1023,11 +1023,11 @@ export default function AdminProposalDetail() {
                     <div className="space-y-1">
                       <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
                       <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
-                        {proposalRemark || "The commercial proposal exceeded the allocated RFP budget limits."}
+                        {proposalRemark || "The commercial proposal exceeded the allocated Tender budget limits."}
                       </p>
                     </div>
                   </div>
-                ) : overallStatus === 'shortlisted' ? (
+                ) : overallStatus === 'approved' ? (
                   <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
                     <div className="flex items-center gap-2">
                       <StatusBadge status="approved" />
@@ -1118,8 +1118,8 @@ export default function AdminProposalDetail() {
                     </CardTitle>
                     <div className="flex flex-col gap-1.5 bg-white p-3 rounded-md border shadow-sm">
                       <div className="text-sm">
-                        <span className="font-bold text-gray-500 mr-2 uppercase text-xs">RFP Name:</span> 
-                        <span className="text-gray-800 font-bold">{rfp.title}</span>
+                        <span className="font-bold text-gray-500 mr-2 uppercase text-xs">Tender Name:</span> 
+                        <span className="text-gray-800 font-bold">{tender.title}</span>
                       </div>
                       <div className="text-sm">
                         <span className="font-bold text-gray-500 mr-2 uppercase text-xs">Proposal ID:</span>
@@ -1137,7 +1137,7 @@ export default function AdminProposalDetail() {
                       <Award className="h-3.5 w-3.5" />
                       Generate Rating Link
                     </Button>
-                    {isRatingSaved && (overallStatus !== 'shortlisted' && overallStatus !== 'rejected') && (
+                    {isRatingSaved && (overallStatus !== 'approved' && overallStatus !== 'rejected') && (
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -1297,9 +1297,9 @@ export default function AdminProposalDetail() {
                 <div className="border border-gray-100 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                   <div className="bg-gray-50/80 p-5 border-b border-gray-100 flex justify-between items-center">
                     <div>
-                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">RFP-2025-089: Office IT Equipment Supply</h4>
+                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">TEND-2025-089: Office IT Equipment Supply</h4>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
-                        <span>RFP Date: 12 Jan 2025</span>
+                        <span>Tender Date: 12 Jan 2025</span>
                         <span>Proposal Number: PROP-2025-089-A</span>
                         <span>Proposal Date: 02 Feb 2025</span>
                       </div>
@@ -1370,9 +1370,9 @@ export default function AdminProposalDetail() {
                 <div className="border border-gray-100 rounded-xl p-5 bg-gray-50/50 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">RFP-2024-112: Network Security Audit</h4>
+                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">TEND-2024-112: Network Security Audit</h4>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
-                        <span>RFP Date: 05 Sep 2024</span>
+                        <span>Tender Date: 05 Sep 2024</span>
                         <span>Proposal Number: PROP-2024-112-C</span>
                         <span>Proposal Date: 20 Sep 2024</span>
                       </div>
@@ -1425,7 +1425,7 @@ export default function AdminProposalDetail() {
       </Tabs>
 
       <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
-        <DialogContent className="sm:max-w-xl bg-white max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-4xl bg-white max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-800">
               <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
@@ -1456,7 +1456,7 @@ export default function AdminProposalDetail() {
                       <TableCell>
                         <StatusBadge status={log.status} />
                       </TableCell>
-                      <TableCell className="text-xs text-gray-500 max-w-[200px] truncate" title={log.remarks}>{log.remarks}</TableCell>
+                      <TableCell className="text-xs text-gray-500">{log.remarks}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1484,8 +1484,8 @@ export default function AdminProposalDetail() {
                 <span className="font-extrabold text-gray-700">{proposal.vendorName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold text-gray-400">RFP TITLE</span>
-                <span className="font-extrabold text-gray-700 truncate max-w-[200px]">{proposal.rfpTitle}</span>
+                <span className="font-bold text-gray-400">Tender TITLE</span>
+                <span className="font-extrabold text-gray-700 truncate max-w-[200px]">{proposal.tenderTitle}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-bold text-gray-400">PROPOSAL REF</span>
@@ -1499,7 +1499,7 @@ export default function AdminProposalDetail() {
                 <input
                   type="text"
                   readOnly
-                  value={`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&rfpId=${proposal.rfpId}`}
+                  value={`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&tenderId=${proposal.tenderId}`}
                   className="w-full px-3 py-2 border rounded-lg text-xs font-semibold text-gray-600 bg-gray-50/50 focus:outline-none"
                 />
                 <Button
@@ -1507,7 +1507,7 @@ export default function AdminProposalDetail() {
                   style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                   className="text-white text-xs font-bold shrink-0"
                   onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&rfpId=${proposal.rfpId}`);
+                    navigator.clipboard.writeText(`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&tenderId=${proposal.tenderId}`);
                     toast.success('Rating link copied to clipboard successfully!');
                   }}
                 >

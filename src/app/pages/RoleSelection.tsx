@@ -7,7 +7,7 @@ export default function RoleSelection() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-8" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+    <div className="flex min-h-screen items-center justify-center p-8" style={{ backgroundColor: '#F7F9FC' }}>
       <div className="w-full max-w-5xl">
         {/* Header */}
         <div className="mb-12 text-center">
@@ -35,12 +35,12 @@ export default function RoleSelection() {
               </div>
               <CardTitle className="text-2xl">Vendor Portal</CardTitle>
               <CardDescription className="text-base">
-                For registered vendors to participate in FNRC RFPs and submit proposals
+                For registered vendors to participate in FNRC Tenders and submit proposals
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                <p>• View and respond to RFPs</p>
+                <p>• View and respond to Tenders</p>
                 <p>• Submit technical and commercial proposals</p>
                 <p>• Track proposal status</p>
                 <p>• Manage company profile and documents</p>
@@ -70,7 +70,7 @@ export default function RoleSelection() {
             <CardContent className="space-y-3">
               <div className="space-y-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
                 <p>• Manage vendor registrations and approvals</p>
-                <p>• Create and manage RFPs</p>
+                <p>• Create and manage Tenders</p>
                 <p>• Review and evaluate proposals</p>
                 <p>• Generate reports and audit logs</p>
               </div>

@@ -31,7 +31,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F7F9FC' }}>
       <Header role="public" />
       <main className="pt-4">
         {children}

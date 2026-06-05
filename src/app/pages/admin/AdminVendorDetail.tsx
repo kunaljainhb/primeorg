@@ -160,7 +160,7 @@ export default function AdminVendorDetail() {
       </div>
 
       {/* Header card summary */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-8 rounded-card shadow-card border border-gray-100/50">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-8 rounded-card shadow-card border border-gray-100/50">
         <div>
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
@@ -185,151 +185,147 @@ export default function AdminVendorDetail() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Company Details */}
-        <Card>
-          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-            <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-              <Building2 className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+        <Card className="gap-0 overflow-hidden">
+          <CardHeader className="pb-2 border-b border-gray-50">
+            <CardTitle className="text-base font-bold text-gray-900">
               Company Details
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Company Legal Name (English)</Label>
-              <div className="text-sm font-bold text-gray-800">{vendor.companyName}</div>
+          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Company Legal Name (English)</Label>
+              <div className="text-sm font-normal text-gray-800">{vendor.companyName}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400 block">Company Legal Name (Arabic)</Label>
-              <div className="text-sm font-bold text-gray-800 text-right" dir="rtl">{vendorDetails.companyNameAr}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold block">Company Legal Name (Arabic)</Label>
+              <div className="text-sm font-normal text-gray-800 text-right" dir="rtl">{vendorDetails.companyNameAr}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Trade License Number</Label>
-              <div className="text-sm font-bold text-gray-800">{vendor.tradeLicense}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Trade License Number</Label>
+              <div className="text-sm font-normal text-gray-800">{vendor.tradeLicense}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Expiry Date</Label>
-              <div className="text-sm font-bold text-gray-800">{formatDate(vendorDetails.expiryDate)}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Expiry Date</Label>
+              <div className="text-sm font-normal text-gray-800">{formatDate(vendorDetails.expiryDate)}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Contact Info */}
-        <Card>
-          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-            <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-              <MapPin className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+        <Card className="gap-0 overflow-hidden">
+          <CardHeader className="pb-2 border-b border-gray-50">
+            <CardTitle className="text-base font-bold text-gray-900">
               Contact Details & Location
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
-            <div className="space-y-1 md:col-span-2">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Address</Label>
-              <div className="text-sm font-bold text-gray-800">{vendor.address}</div>
+          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
+              <div className="space-y-0 md:col-span-2">
+              <Label className="text-[13px] text-black font-bold">Address</Label>
+              <div className="text-sm font-normal text-gray-800">{vendor.address}</div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Country</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.country}</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:col-span-2">
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Country</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.country}</div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">State/Emirate</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.stateEmirate}</div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">State/Emirate</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.stateEmirate}</div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">City</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.city}</div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Phone Number</Label>
-                <div className="text-sm font-bold text-gray-800">+971 4 123 4567</div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Fax Number</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.fax}</div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Business Email</Label>
-                <div className="text-sm font-bold text-gray-800">{vendor.email}</div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">City</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.city}</div>
               </div>
             </div>
 
-            <div className="space-y-1 md:col-span-2">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Website</Label>
-              <div className="text-sm font-bold text-gray-800">{vendorDetails.website}</div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:col-span-2">
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Phone Number</Label>
+                <div className="text-sm font-normal text-gray-800">+971 4 123 4567</div>
+              </div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Fax Number</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.fax}</div>
+              </div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Business Email</Label>
+                <div className="text-sm font-normal text-gray-800">{vendor.email}</div>
+              </div>
+            </div>
+
+            <div className="space-y-0 md:col-span-2">
+              <Label className="text-[13px] text-black font-bold">Website</Label>
+              <div className="text-sm font-normal text-gray-800">{vendorDetails.website}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Primary Contact */}
-        <Card>
-          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-            <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-              <UserCircle className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Primary Contact Partner
+        <Card className="gap-0 overflow-hidden">
+          <CardHeader className="pb-2 border-b border-gray-50">
+            <CardTitle className="text-base font-bold text-gray-900">
+              Primary Contact
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8">
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Full Name</Label>
-              <div className="text-sm font-bold text-gray-800">{vendorDetails.primaryContact.name}</div>
+          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Full Name</Label>
+              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.name}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Job Title</Label>
-              <div className="text-sm font-bold text-gray-800">{vendorDetails.primaryContact.jobTitle}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Job Title</Label>
+              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.jobTitle}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Mobile Number</Label>
-              <div className="text-sm font-bold text-gray-800">{vendorDetails.primaryContact.mobile}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Mobile Number</Label>
+              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.mobile}</div>
             </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-gray-400">Email Address</Label>
-              <div className="text-sm font-bold text-gray-800">{vendorDetails.primaryContact.email}</div>
+            <div className="space-y-0">
+              <Label className="text-[13px] text-black font-bold">Email</Label>
+              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.email}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Financial Info */}
-        <Card>
-          <CardHeader className="pb-3 border-b border-gray-50 mb-4">
-            <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-900">
-              <Landmark className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Financial & Banking Records
+        <Card className="gap-0 overflow-hidden">
+          <CardHeader className="pb-2 border-b border-gray-50">
+            <CardTitle className="text-base font-bold text-gray-900">
+              Financial Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Bank Name</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.financialInfo.bankName}</div>
+          <CardContent className="pt-5 grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Bank Name</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.financialInfo.bankName}</div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Account Holder Title</Label>
-                <div className="text-sm font-bold text-gray-800">{vendorDetails.financialInfo.accountHolderName}</div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Account Holder Name</Label>
+                <div className="text-sm font-normal text-gray-800">{vendorDetails.financialInfo.accountHolderName}</div>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">Account Number</Label>
-                <div className="text-sm font-mono font-bold bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.accountNumber}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">Account Number</Label>
+                <div className="text-sm font-mono font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.accountNumber}</div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">IBAN</Label>
-                <div className="text-sm font-mono font-bold bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.bankAccountNumber}</div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">IBAN</Label>
+                <div className="text-sm font-mono font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.bankAccountNumber}</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">SWIFT / BIC Code</Label>
-                <div className="text-sm font-bold font-mono bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.swiftCode}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">SWIFT code</Label>
+                <div className="text-sm font-normal font-mono bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.swiftCode}</div>
               </div>
-              <div className="space-y-1">
-                <Label className="text-[10px] uppercase font-bold text-gray-400">VAT Registration Number (TRN)</Label>
-                <div className="text-sm font-bold bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.vatNumber}</div>
+              <div className="space-y-0">
+                <Label className="text-[13px] text-black font-bold">VAT Registration Number (TRN)</Label>
+                <div className="text-sm font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.vatNumber}</div>
               </div>
             </div>
           </CardContent>
@@ -337,14 +333,11 @@ export default function AdminVendorDetail() {
       </div>
 
       {/* Service Categories Section */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden gap-0">
         <CardHeader className="pb-4 border-b border-gray-50">
-          <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-            <CardTitle className="text-lg font-bold text-gray-900">Approved Service Categories</CardTitle>
-          </div>
+          <CardTitle className="text-lg font-bold text-gray-900">Service Categories</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 pt-5">
           <div className="flex flex-wrap gap-2">
             {vendor.category.map((cat, idx) => (
               <Badge key={idx} variant="secondary" className="bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] border-[var(--fnrc-primary-green)]/20 font-semibold px-3 py-1 text-sm">
@@ -356,14 +349,11 @@ export default function AdminVendorDetail() {
       </Card>
 
       {/* Compliance Documents Section */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden gap-0">
         <CardHeader className="pb-4 border-b border-gray-50">
-          <div className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-            <CardTitle className="text-lg font-bold">Uploaded Compliance Credentials</CardTitle>
-          </div>
+          <CardTitle className="text-lg font-bold text-gray-900">Required Documents</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 pt-2">
           <Table>
             <TableHeader className="bg-gray-50">
               <TableRow>
@@ -385,7 +375,7 @@ export default function AdminVendorDetail() {
                       <div className="flex items-center gap-3">
                         <FileText className="h-5 w-5 text-gray-400" />
                         <div>
-                          <div className="text-sm font-bold text-gray-800">{doc.name}</div>
+                          <div className="text-sm font-normal text-gray-800">{doc.name}</div>
                           <div className="text-[10px] font-bold text-gray-400">{doc.fileSize}</div>
                         </div>
                       </div>
@@ -451,8 +441,8 @@ export default function AdminVendorDetail() {
 
       {/* Administrative Action Card */}
       {vendor.status !== 'rejected' && vendor.status !== 'blacklisted' && (
-        <Card className="border border-gray-200/60 shadow-sm">
-          <CardHeader className="pb-3 border-b border-gray-50">
+        <Card className="border border-gray-200/60 shadow-sm gap-0">
+          <CardHeader className="pb-2 border-b border-gray-50">
             <CardTitle className="text-base font-bold text-gray-900">Administrative Review Panel</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
@@ -535,7 +525,7 @@ export default function AdminVendorDetail() {
 
       {/* Audit History Dialog */}
       <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
-        <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto">
           <DialogHeader className="border-b pb-4 mb-4">
             <DialogTitle className="flex items-center gap-2 text-xl font-bold text-gray-900">
               <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
@@ -560,13 +550,13 @@ export default function AdminVendorDetail() {
                 ].map((audit, i) => (
                   <TableRow key={i} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                     <TableCell className="text-xs font-semibold text-gray-500 whitespace-nowrap pl-4 py-3">{audit.date}</TableCell>
-                    <TableCell className="text-sm font-bold text-gray-800">{audit.name}</TableCell>
+                    <TableCell className="text-sm font-normal text-gray-800">{audit.name}</TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="text-[10px] bg-gray-50 text-gray-600 font-bold border border-gray-100 rounded-md">
                         {audit.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs font-semibold text-gray-600 max-w-[300px] leading-relaxed pr-4 py-3">{audit.change}</TableCell>
+                    <TableCell className="text-xs font-semibold text-gray-600 leading-relaxed pr-4 py-3">{audit.change}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

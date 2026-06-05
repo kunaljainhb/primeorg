@@ -382,7 +382,7 @@ export default function VendorLogin() {
           </DialogHeader>
           <div id="uaepass-dialog-description" className="flex flex-col items-center justify-center space-y-4 py-6">
             {/* QR Code Placeholder */}
-            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: 'var(--fnrc-bg-light)' }}>
+            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-center">
                 <QrCode className="mx-auto h-48 w-48" style={{ color: 'var(--fnrc-text-muted)' }} />
               </div>

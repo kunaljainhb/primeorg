@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table';
-import { mockRFPs, mockProposals } from '@/app/data/mockData';
-import { ArrowRight, Pencil } from 'lucide-react';
+import { mockTenders, mockProposals } from '@/app/data/mockData';
+import { ArrowRight, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
@@ -31,24 +31,32 @@ export default function AdminItemManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Find all Published RFPs
-  const publishedRFPs = mockRFPs.filter(rfp => rfp.status === 'published');
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Find RFPs that have at least one Shortlisted proposal
-  const items = publishedRFPs.map((rfp) => {
-    const shortlistedProposals = mockProposals.filter(
-      prop => prop.rfpId === rfp.id && prop.status === 'shortlisted'
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
+
+  // Find all Published Tenders
+  const publishedTenders = mockTenders.filter(tender => tender.status === 'published');
+
+  // Find Tenders that have at least one Approved proposal
+  const items = publishedTenders.map((tender) => {
+    const approvedProposals = mockProposals.filter(
+      prop => prop.tenderId === tender.id && prop.status === 'approved'
     );
     
-    return shortlistedProposals.map((proposal) => {
+    return approvedProposals.map((proposal) => {
       // Logic for status: PROP-104 is mocked as fully received
       const status = proposal.id === 'PROP-104' ? 'Completed' : 'Pending';
 
       return {
-        rfpId: rfp.id,
-        rfpTitle: rfp.title,
-        category: rfp.category.join(', '),
-        createdAt: rfp.createdAt,
+        tenderId: tender.id,
+        tenderTitle: tender.title,
+        category: tender.category.join(', '),
+        createdAt: tender.createdAt,
         proposalId: proposal.id,
         vendorName: proposal.vendorName,
         status
@@ -57,12 +65,43 @@ export default function AdminItemManagement() {
   }).flat();
 
   const filteredItems = items.filter(item => {
-    const matchesSearch = item.rfpId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.rfpTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch = item.tenderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          item.tenderTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.proposalId.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || item.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    
+    let aVal: any = a[key as keyof typeof a];
+    let bVal: any = b[key as keyof typeof b];
+
+    if (key === 'createdAt') {
+       aVal = new Date(aVal).getTime();
+       bVal = new Date(bVal).getTime();
+    }
+
+    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+  const paginatedItems = sortedItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const filters = [
     {
@@ -113,26 +152,56 @@ export default function AdminItemManagement() {
       {/* Table Section */}
       <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
         <CardContent className="p-0">
-          {filteredItems.length > 0 ? (
+          {paginatedItems.length > 0 ? (
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">RFP ID</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">RFP Campaign Title</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Shortlisted Bid ID</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor Partner</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Shortlist Date</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Receiving Status</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('tenderId')}>
+                    <div className="flex items-center gap-1.5">
+                      Tender ID
+                      {sortConfig?.key === 'tenderId' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('tenderTitle')}>
+                    <div className="flex items-center gap-1.5">
+                      Tender Title
+                      {sortConfig?.key === 'tenderTitle' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('proposalId')}>
+                    <div className="flex items-center gap-1.5">
+                      Shortlist Proposal ID
+                      {sortConfig?.key === 'proposalId' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('vendorName')}>
+                    <div className="flex items-center gap-1.5">
+                      Vendor Name
+                      {sortConfig?.key === 'vendorName' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdAt')}>
+                    <div className="flex items-center gap-1.5">
+                      Proposal approved date
+                      {sortConfig?.key === 'createdAt' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
+                    <div className="flex items-center gap-1.5">
+                      Receiving Status
+                      {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredItems.map((item, index) => (
-                  <TableRow key={`${item.rfpId}-${item.proposalId}-${index}`} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                {paginatedItems.map((item, index) => (
+                  <TableRow key={`${item.tenderId}-${item.proposalId}-${index}`} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                     <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
-                      {item.rfpId}
+                      {item.tenderId}
                     </TableCell>
-                    <TableCell className="font-semibold text-gray-800 max-w-[200px] truncate">{item.rfpTitle}</TableCell>
+                    <TableCell className="font-semibold text-gray-800 max-w-[200px] truncate">{item.tenderTitle}</TableCell>
                     <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{item.proposalId}</TableCell>
                     <TableCell className="font-semibold text-gray-800">{item.vendorName}</TableCell>
                     <TableCell className="text-gray-500 font-medium">
@@ -158,11 +227,57 @@ export default function AdminItemManagement() {
             </Table>
           ) : (
             <EmptyState
-              title="No Shortlisted Items Found"
+              title="No Approved Items Found"
               description="No inventory items matched your search query. Refine your keywords or clear active filters."
               actionLabel="Clear Filters"
               onAction={handleClearAll}
             />
+          )}
+
+          {/* Pagination Controls */}
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedItems.length)}</span> of <span className="font-bold text-gray-900">{sortedItems.length}</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="font-semibold"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1 mx-2">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
+                        currentPage === i + 1 
+                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                          : 'text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="font-semibold"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>

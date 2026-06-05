@@ -9,7 +9,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { ArrowLeft, FileText, Download, Check, Info, FileSpreadsheet, Clock } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
-import { mockProposals, mockRFPs } from '@/app/data/mockData';
+import { mockProposals, mockTenders } from '@/app/data/mockData';
 import { toast } from 'sonner';
 
 const formatDate = (dateStr?: string | Date) => {
@@ -27,7 +27,7 @@ export default function AdminItemDetail() {
   const navigate = useNavigate();
 
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
-  const rfp = mockRFPs.find(r => r.id === proposal.rfpId) || mockRFPs[0];
+  const tender = mockTenders.find(r => r.id === proposal.tenderId) || mockTenders[0];
 
   const [items, setItems] = useState([
     {
@@ -158,7 +158,7 @@ export default function AdminItemDetail() {
             </h1>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-sm font-medium text-muted-foreground italic">
-                Managing Proposal {proposal.id} for RFP {rfp.id}
+                Managing Proposal {proposal.id} for Tender {tender.id}
               </span>
             </div>
           </div>
@@ -206,26 +206,26 @@ export default function AdminItemDetail() {
 
         </Card>
 
-        {/* Combined RFP & Proposal Details */}
+        {/* Combined Tender & Proposal Details */}
         <Card>
           <CardHeader className="pb-3 border-b border-gray-50 mb-4">
             <CardTitle className="text-base font-bold flex items-center gap-2">
               <FileText className="h-4 w-4 text-green-600" />
-              RFP & Proposal Details
+              Tender & Proposal Details
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-8">
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">RFP ID</Label>
-              <div className="text-sm font-semibold">{rfp.id}</div>
+              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Tender ID</Label>
+              <div className="text-sm font-semibold">{tender.id}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">RFP Title</Label>
-              <div className="text-sm font-semibold">{rfp.title}</div>
+              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Tender Title</Label>
+              <div className="text-sm font-semibold">{tender.title}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">RFP Created Date</Label>
-              <div className="text-sm font-semibold">{formatDate(rfp.createdAt)}</div>
+              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Tender Created Date</Label>
+              <div className="text-sm font-semibold">{formatDate(tender.createdAt)}</div>
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] uppercase font-bold text-muted-foreground">Vendor Name</Label>
@@ -236,12 +236,12 @@ export default function AdminItemDetail() {
               <div className="text-sm font-semibold">{proposal.id}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Proposal Submission Date</Label>
+              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Proposal Deadline Date</Label>
               <div className="text-sm font-semibold">{formatDate(proposal.submissionDate)}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Shortlisted Date</Label>
-              <div className="text-sm font-semibold">{formatDate(proposal.shortlistedDate || new Date().toISOString())}</div>
+              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Approved Date</Label>
+              <div className="text-sm font-semibold">{formatDate(proposal.approvedDate || new Date().toISOString())}</div>
             </div>
           </CardContent>
         </Card>
@@ -253,7 +253,7 @@ export default function AdminItemDetail() {
               <FileSpreadsheet className="h-4 w-4 text-green-600" />
               Item Details
             </CardTitle>
-            <CardDescription className="text-sm">Track received quantities for the shortlisted proposal items</CardDescription>
+            <CardDescription className="text-sm">Track received quantities for the approved proposal items</CardDescription>
           </CardHeader>
           <CardContent className="p-0 px-6 pb-6">
             <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>

@@ -113,7 +113,7 @@ export default function VendorRegistrationStatus() {
               </AlertTitle>
               <AlertDescription className="text-sm text-emerald-800 leading-relaxed">
                 Congratulations! Your vendor profile has been fully validated and approved by the Federal National Regulatory Commission. 
-                Your active vendor number is <strong className="font-mono font-bold">VEN-001</strong>. You can now access and participate in open RFPs.
+                Your active vendor number is <strong className="font-mono font-bold">VEN-001</strong>. You can now access and participate in open Tenders.
               </AlertDescription>
             </div>
           </Alert>

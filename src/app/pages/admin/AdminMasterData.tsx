@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
-import { Database, Plus, Pencil } from 'lucide-react';
+import { Database, Plus, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { vendorCategories, documentTypes } from '@/app/data/mockData';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
@@ -13,6 +13,24 @@ import { toast } from 'sonner';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 
 export default function AdminMasterData() {
+  
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
+  const renderSortIcon = (key: string) => {
+    if (sortConfig?.key === key) {
+      return sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />;
+    }
+    return <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />;
+  };
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    setSortConfig({ key, direction });
+  };
+
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [showDocTypeDialog, setShowDocTypeDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -35,11 +53,11 @@ export default function AdminMasterData() {
     },
     {
       id: 'D002',
-      title: 'RFP Submission Terms & Conditions',
-      type: 'RFP',
+      title: 'Tender Submission Terms & Conditions',
+      type: 'Tender',
       lastUpdated: '01/03/2026',
       status: 'Active',
-      content: 'By submitting this proposal, the vendor agrees to abide by the terms set forth in the RFP document, including pricing validity and timeline commitments.'
+      content: 'By submitting this proposal, the vendor agrees to abide by the terms set forth in the Tender document, including pricing validity and timeline commitments.'
     },
     {
       id: 'D003',
@@ -170,9 +188,9 @@ export default function AdminMasterData() {
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Category Registry Name</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Created Date</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('name')}><div className="flex items-center gap-1.5">Category Registry Name {renderSortIcon('name')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('date')}><div className="flex items-center gap-1.5">Created Date {renderSortIcon('date')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}><div className="flex items-center gap-1.5">Status {renderSortIcon('status')}</div></TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -195,6 +213,22 @@ export default function AdminMasterData() {
                 ))}
               </TableBody>
             </Table>
+
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">1</span> to <span className="font-bold text-gray-900">10</span> of <span className="font-bold text-gray-900">10</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled className="font-semibold"><ChevronLeft className="h-4 w-4 mr-1" />Previous</Button>
+                <div className="flex items-center gap-1 mx-2">
+                  <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                </div>
+                <Button variant="outline" size="sm" disabled className="font-semibold">Next<ChevronRight className="h-4 w-4 ml-1" /></Button>
+              </div>
+            </div>
+          )}
+
           </CardContent>
         </Card>
 
@@ -202,21 +236,21 @@ export default function AdminMasterData() {
         <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
           <CardHeader className="border-b border-gray-50 pb-5 flex flex-row items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-lg font-bold text-gray-900">Document Type Mandates</CardTitle>
+              <CardTitle className="text-lg font-bold text-gray-900">Document Type</CardTitle>
 
             </div>
             <Button size="sm" style={{ backgroundColor: 'var(--fnrc-primary-green)', color: 'white' }} className="gap-1 font-semibold" onClick={() => setShowDocTypeDialog(true)}>
               <Plus className="h-4 w-4" />
-              Add Mandate
+              Add Document
             </Button>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Type</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Required Document Title</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Mandatory</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('type')}><div className="flex items-center gap-1.5">Type {renderSortIcon('type')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('docTitle')}><div className="flex items-center gap-1.5">Required Document Title {renderSortIcon('docTitle')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('mandatory')}><div className="flex items-center gap-1.5">Mandatory {renderSortIcon('mandatory')}</div></TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
                 </TableRow>
@@ -233,7 +267,7 @@ export default function AdminMasterData() {
                       <StatusBadge status={doc.status.toLowerCase()} />
                     </TableCell>
                     <TableCell className="text-right py-3 pr-6">
-                      <Button size="sm" variant="outline" className="h-8 w-8 p-0 justify-center items-center font-semibold" onClick={() => handleEditDocType(doc)} title="Edit Document Mandate">
+                      <Button size="sm" variant="outline" className="h-8 w-8 p-0 justify-center items-center font-semibold" onClick={() => handleEditDocType(doc)} title="Edit Document">
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                     </TableCell>
@@ -241,6 +275,22 @@ export default function AdminMasterData() {
                 ))}
               </TableBody>
             </Table>
+
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">1</span> to <span className="font-bold text-gray-900">10</span> of <span className="font-bold text-gray-900">10</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled className="font-semibold"><ChevronLeft className="h-4 w-4 mr-1" />Previous</Button>
+                <div className="flex items-center gap-1 mx-2">
+                  <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                </div>
+                <Button variant="outline" size="sm" disabled className="font-semibold">Next<ChevronRight className="h-4 w-4 ml-1" /></Button>
+              </div>
+            </div>
+          )}
+
           </CardContent>
         </Card>
       </div>
@@ -256,8 +306,8 @@ export default function AdminMasterData() {
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Legal Clause Title</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Last Updated</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('legalTitle')}><div className="flex items-center gap-1.5">Legal Clause Title {renderSortIcon('legalTitle')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('lastUpdated')}><div className="flex items-center gap-1.5">Last Updated {renderSortIcon('lastUpdated')}</div></TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
                 </TableRow>
@@ -279,6 +329,22 @@ export default function AdminMasterData() {
                 ))}
               </TableBody>
             </Table>
+
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">1</span> to <span className="font-bold text-gray-900">10</span> of <span className="font-bold text-gray-900">10</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled className="font-semibold"><ChevronLeft className="h-4 w-4 mr-1" />Previous</Button>
+                <div className="flex items-center gap-1 mx-2">
+                  <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                </div>
+                <Button variant="outline" size="sm" disabled className="font-semibold">Next<ChevronRight className="h-4 w-4 ml-1" /></Button>
+              </div>
+            </div>
+          )}
+
           </CardContent>
         </Card>
 
@@ -298,9 +364,9 @@ export default function AdminMasterData() {
             <Table>
               <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 w-12">Seq</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Rubric Question</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 w-24">Status</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 w-12 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('seq')}><div className="flex items-center gap-1.5">Seq {renderSortIcon('seq')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('rubric')}><div className="flex items-center gap-1.5">Rubric Question {renderSortIcon('rubric')}</div></TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 w-24 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('queryStatus')}><div className="flex items-center gap-1.5">Status {renderSortIcon('queryStatus')}</div></TableHead>
                   <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6 w-24">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -321,6 +387,22 @@ export default function AdminMasterData() {
                 ))}
               </TableBody>
             </Table>
+
+          {true && (
+            <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing <span className="font-bold text-gray-900">1</span> to <span className="font-bold text-gray-900">10</span> of <span className="font-bold text-gray-900">10</span> entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" disabled className="font-semibold"><ChevronLeft className="h-4 w-4 mr-1" />Previous</Button>
+                <div className="flex items-center gap-1 mx-2">
+                  <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                </div>
+                <Button variant="outline" size="sm" disabled className="font-semibold">Next<ChevronRight className="h-4 w-4 ml-1" /></Button>
+              </div>
+            </div>
+          )}
+
           </CardContent>
         </Card>
       </div>
@@ -375,7 +457,7 @@ export default function AdminMasterData() {
       <Dialog open={showDocTypeDialog} onOpenChange={setShowDocTypeDialog}>
         <DialogContent className="sm:max-w-md p-8" aria-describedby="doctype-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Add Document Mandate</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">Add Document</DialogTitle>
           </DialogHeader>
           <div id="doctype-dialog-description" className="space-y-4 py-4">
             <div className="space-y-2">
@@ -408,7 +490,7 @@ export default function AdminMasterData() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="vendor">Vendor Setup</SelectItem>
-                  <SelectItem value="rfp">RFP Published</SelectItem>
+                  <SelectItem value="tender">Tender Published</SelectItem>
                   <SelectItem value="proposal">Bid Submission</SelectItem>
                 </SelectContent>
               </Select>
@@ -435,7 +517,7 @@ export default function AdminMasterData() {
               className="text-white font-semibold"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Save Mandate
+              Save Document
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -506,7 +588,7 @@ export default function AdminMasterData() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="vendor">Vendor Setup</SelectItem>
-                      <SelectItem value="rfp">RFP Published</SelectItem>
+                      <SelectItem value="tender">Tender Published</SelectItem>
                       <SelectItem value="proposal">Bid Submission</SelectItem>
                     </SelectContent>
                   </Select>

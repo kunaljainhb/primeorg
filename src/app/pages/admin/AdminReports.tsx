@@ -56,7 +56,7 @@ export default function AdminReports() {
               <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
                 <div>
                   <div className="font-bold text-gray-800 text-sm">
-                    RFP Activity Report
+                    Tender Activity Report
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
                     Monitor publishing activity, submission volume, and closed/cancelled tender campaigns.
@@ -86,7 +86,7 @@ export default function AdminReports() {
                     Proposal Submission Audit
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    Compare technical and commercial proposal counts and pricing averages per active RFP.
+                    Compare technical and commercial proposal counts and pricing averages per active Tender.
                   </p>
                 </div>
                 <div className="flex gap-2 items-center mt-4">
@@ -169,7 +169,7 @@ export default function AdminReports() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-gray-800">
-                  RFP Published: IT Infrastructure Modernization
+                  Tender Published: IT Infrastructure Modernization
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 02:15 PM</span>
@@ -185,7 +185,7 @@ export default function AdminReports() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-gray-800">
-                  Proposal Shortlisted: PROP-001
+                  Proposal Approved: PROP-001
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 11:00 AM</span>

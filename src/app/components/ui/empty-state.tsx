@@ -3,7 +3,7 @@ import { FileQuestion, FolderOpen, Send, UserX, Inbox } from 'lucide-react';
 import { cn } from './utils';
 import { Button } from './button';
 
-export type EmptyStateType = 'rfp' | 'vendor' | 'proposal' | 'document' | 'general';
+export type EmptyStateType = 'tender' | 'vendor' | 'proposal' | 'document' | 'general';
 
 interface EmptyStateProps {
   type?: EmptyStateType;
@@ -26,7 +26,7 @@ export function EmptyState({
   // Icon selector
   const getIcon = () => {
     switch (type) {
-      case 'rfp':
+      case 'tender':
         return <FileQuestion className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
       case 'vendor':
         return <UserX className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;

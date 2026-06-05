@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { Separator } from '@/app/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
-import { mockProposals, mockERPDocuments, saveProposalsToStorage, mockVendorReviews } from '@/app/data/mockData';
+import { mockProposals, mockERPDocuments, saveProposalsToStorage, mockVendorReviews, mockAdminUsers } from '@/app/data/mockData';
 import { ProposalDetailView } from '@/app/components/vendor/ProposalDetailView';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { toast } from 'sonner';
@@ -44,6 +44,12 @@ const formatStatus = (statusStr?: string) => {
 export default function VendorProposalTracking() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
+
+  const getReviewerRoleName = (name: string) => {
+    const admin = mockAdminUsers.find(u => u.name === name);
+    if (!admin) return 'Reviewer';
+    return admin.role.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  };
   
   // Wrap proposal in React state to ensure UI updates instantly on resubmit or simulation
   const [proposal, setProposal] = useState(() => {
@@ -149,11 +155,11 @@ export default function VendorProposalTracking() {
     return <div>Proposal not found</div>;
   }
 
-  // Check if vendor is shortlisted or rejected to show additional tabs
-  const isShortlisted = proposal.status === 'shortlisted' || proposal.status === 'selected';
-  // Filter ERP documents for this vendor and RFP
-  const erpDocuments = mockERPDocuments.filter(doc => doc.rfpId === proposal.rfpId && doc.vendorId === proposal.vendorId);
-  const vendorReviews = mockVendorReviews.filter(review => review.rfpId === proposal.rfpId && review.vendorId === proposal.vendorId);
+  // Check if vendor is approved or rejected to show additional tabs
+  const isApproved = proposal.status === 'approved' || proposal.status === 'selected';
+  // Filter ERP documents for this vendor and Tender
+  const erpDocuments = mockERPDocuments.filter(doc => doc.tenderId === proposal.tenderId && doc.vendorId === proposal.vendorId);
+  const vendorReviews = mockVendorReviews.filter(review => review.tenderId === proposal.tenderId && review.vendorId === proposal.vendorId);
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
@@ -217,37 +223,35 @@ export default function VendorProposalTracking() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
             {proposal.id}
           </h1>
-          <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
-            Proposal Details & Tracking
-          </p>
+
         </div>
         <StatusBadge status={proposal.status} className="px-5 py-2 text-sm font-semibold" />
       </div>
 
       {/* Tab Structure */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-        <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-2xl">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-0">
+        <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="submitted" 
-            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
           >
             Proposal Details
           </TabsTrigger>
           <TabsTrigger 
             value="status" 
-            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
           >
             Proposal Status
           </TabsTrigger>
           
-          {/* Conditional tabs for shortlisted/rejected vendors */}
-          {isShortlisted && (
+          {/* Conditional tabs for approved/rejected vendors */}
+          {isApproved && (
             <TabsTrigger 
               value="documents" 
-              className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
             >
               Documents
             </TabsTrigger>
@@ -255,14 +259,14 @@ export default function VendorProposalTracking() {
 
           <TabsTrigger 
             value="reviews" 
-            className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
           >
             Reviews
           </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: PROPOSAL DETAILS */}
-        <TabsContent value="submitted" className="mt-6">
+        <TabsContent value="submitted" className="mt-4">
           <ProposalDetailView 
             proposal={proposal}
             showBackButton={false}
@@ -272,7 +276,7 @@ export default function VendorProposalTracking() {
         </TabsContent>
 
         {/* TAB 2: PROPOSAL STATUS */}
-        <TabsContent value="status" className="mt-6">
+        <TabsContent value="status" className="mt-4">
           <ProposalDetailView 
             proposal={proposal}
             showBackButton={false}
@@ -281,9 +285,9 @@ export default function VendorProposalTracking() {
           />
         </TabsContent>
 
-        {/* TAB 2: DOCUMENTS (Only visible if shortlisted) */}
-        {isShortlisted && (
-          <TabsContent value="documents" className="mt-6 space-y-6">
+        {/* TAB 2: DOCUMENTS (Only visible if approved) */}
+        {isApproved && (
+          <TabsContent value="documents" className="mt-4 space-y-6">
             {/* ERP Synced Documents Card */}
             <Card>
               <CardHeader>
@@ -298,7 +302,7 @@ export default function VendorProposalTracking() {
                   <div className="rounded-lg border" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                     <Table>
                       <TableHeader>
-                        <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                        <TableRow style={{ backgroundColor: '#F7F9FC' }}>
                           <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Type</TableHead>
                           <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Number</TableHead>
                           <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Date</TableHead>
@@ -381,7 +385,7 @@ export default function VendorProposalTracking() {
                     <div className="rounded-lg border" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                       <Table>
                         <TableHeader>
-                          <TableRow style={{ backgroundColor: 'var(--fnrc-bg-light)' }}>
+                          <TableRow style={{ backgroundColor: '#F7F9FC' }}>
                             <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Document Name</TableHead>
                             <TableHead className="font-semibold animate-pulse-once" style={{ color: 'var(--fnrc-text-dark)' }}>Uploaded Date</TableHead>
                             <TableHead className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Remarks</TableHead>
@@ -512,7 +516,7 @@ export default function VendorProposalTracking() {
 
 
       {/* TAB 3: REVIEWS */}
-      <TabsContent value="reviews" className="mt-6">
+      <TabsContent value="reviews" className="mt-4">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -526,7 +530,7 @@ export default function VendorProposalTracking() {
                 <div className="rounded-lg border p-6 bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
                     <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">
-                      Reviewed by {localRating.submittedBy || 'Admin'} on {formatDate(localRating.submittedAt)}
+                      Reviewed by {getReviewerRoleName(localRating.submittedBy || 'Admin')} on {formatDate(localRating.submittedAt)}
                     </div>
                   </div>
 
@@ -587,7 +591,7 @@ export default function VendorProposalTracking() {
                   >
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
                       <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">
-                        Reviewed by {review.reviewedBy} on {formatDate(review.reviewDate)}
+                        Reviewed by {getReviewerRoleName(review.reviewedBy)} on {formatDate(review.reviewDate)}
                       </div>
                     </div>
 
@@ -596,7 +600,7 @@ export default function VendorProposalTracking() {
                       {[
                         { 
                           label: "How would you rate the vendor's technical capability?", 
-                          value: "Vendor demonstrated strong technical capability and adherence to the RFP technical requirements.",
+                          value: "Vendor demonstrated strong technical capability and adherence to the Tender technical requirements.",
                           rating: 5
                         },
                         { 

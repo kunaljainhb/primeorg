@@ -29,11 +29,11 @@ export function ProgressTimeline({
   const currentStageIndex = stages.findIndex(s => s.key === currentStageKey);
 
   return (
-    <div className={cn("w-full py-6 px-2 overflow-x-auto select-none", className)}>
-      <div className="min-w-[600px] flex items-center justify-between relative py-4">
+    <div className={cn("w-full py-2 select-none", className)}>
+      <div className="flex items-start justify-between relative px-2">
         
-        {/* Unified Mathematical Track Container (aligned exactly to circle centers) */}
-        <div className="absolute top-1/2 left-6 right-6 -translate-y-1/2 h-1.5 bg-gray-150 rounded-full z-0 pointer-events-none">
+        {/* Unified Mathematical Track Container */}
+        <div className="absolute top-5 left-[12%] right-[12%] h-1 bg-gray-200 rounded-full z-0 pointer-events-none">
           {/* Glowing Dynamic completed progress fill bar */}
           <div 
             className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-out"
@@ -48,7 +48,7 @@ export function ProgressTimeline({
         {/* Milestones nodes */}
         {stages.map((stage, idx) => {
           const isCompleted = completedStageKeys.includes(stage.key) || idx < currentStageIndex;
-          const isActive = stage.key === currentStageKey;
+          const isActive = stage.key === currentStageKey && !isCompleted;
           const Icon = stage.icon;
 
           return (
@@ -63,9 +63,9 @@ export function ProgressTimeline({
               {/* Outer Ring Circle */}
               <div 
                 className={cn(
-                  "flex h-12 w-12 items-center justify-center rounded-full border-2 bg-white transition-all duration-300 relative shadow-md",
-                  isCompleted && "border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)] text-white shadow-lg shadow-[var(--fnrc-primary-green)]/20",
-                  isActive && "border-[var(--fnrc-accent-gold)] ring-4 ring-[var(--fnrc-accent-gold)]/20 text-[var(--fnrc-accent-gold)] font-bold scale-110 shadow-lg shadow-[var(--fnrc-accent-gold)]/15",
+                  "flex h-10 w-10 items-center justify-center rounded-full border-2 bg-white transition-all duration-300 relative shadow-sm",
+                  isCompleted && "border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)] text-white shadow-md shadow-[var(--fnrc-primary-green)]/20",
+                  isActive && "border-[var(--fnrc-accent-gold)] ring-4 ring-[var(--fnrc-accent-gold)]/20 text-[var(--fnrc-accent-gold)] font-bold scale-110 shadow-md shadow-[var(--fnrc-accent-gold)]/15",
                   !isCompleted && !isActive && "border-gray-200 text-gray-400 group-hover:border-gray-300"
                 )}
               >
@@ -76,19 +76,19 @@ export function ProgressTimeline({
 
                 {/* Content: Check icon for complete, stage icon or step number otherwise */}
                 {isCompleted ? (
-                  <Check className="h-5 w-5 stroke-[3]" />
+                  <Check className="h-4 w-4 stroke-[3]" />
                 ) : Icon ? (
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 ) : (
-                  <span className="text-sm font-bold">{idx + 1}</span>
+                  <span className="text-xs font-bold">{idx + 1}</span>
                 )}
               </div>
 
               {/* Step Labels block */}
-              <div className="text-center mt-4 max-w-[130px] px-1">
+              <div className="text-center mt-3 px-1">
                 <p 
                   className={cn(
-                    "text-xs font-black uppercase tracking-wider transition-colors duration-200",
+                    "text-[11px] sm:text-xs font-black uppercase tracking-wider transition-colors duration-200",
                     isActive && "text-[var(--fnrc-accent-gold)]",
                     isCompleted && "text-[var(--fnrc-primary-green)]",
                     !isCompleted && !isActive && "text-gray-500 group-hover:text-gray-700"
@@ -97,7 +97,7 @@ export function ProgressTimeline({
                   {stage.label}
                 </p>
                 {stage.description && (
-                  <p className="text-[10px] text-gray-400 font-semibold mt-1.5 line-clamp-2 leading-relaxed">
+                  <p className="text-[10px] text-gray-400 font-semibold mt-1 line-clamp-2 leading-relaxed">
                     {stage.description}
                   </p>
                 )}

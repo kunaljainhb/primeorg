@@ -60,7 +60,6 @@ export default function VendorProfileSetup() {
                 <Building className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
                 Company Details
               </CardTitle>
-              <CardDescription>Legal registration and trade classification</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-5">
               <div className="grid gap-5 md:grid-cols-2">
@@ -91,7 +90,6 @@ export default function VendorProfileSetup() {
                 <MapPin className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
                 Contact Information
               </CardTitle>
-              <CardDescription>Official business address and endpoints</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-5">
               <div className="grid gap-5 md:grid-cols-2">
@@ -152,9 +150,8 @@ export default function VendorProfileSetup() {
             <CardHeader className="border-b border-gray-50 pb-5">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <User className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Primary Contact Partner
+                Primary Contact
               </CardTitle>
-              <CardDescription>The main coordinator for communications and bids</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-5">
               <div className="grid gap-5 md:grid-cols-2">
@@ -177,7 +174,7 @@ export default function VendorProfileSetup() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactEmail" className="text-sm font-bold text-gray-700">Direct Email *</Label>
+                  <Label htmlFor="contactEmail" className="text-sm font-bold text-gray-700">Email *</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-40 text-gray-700" />
                     <Input id="contactEmail" type="email" className="pl-10 rounded-xl border-gray-200" placeholder="ahmed@techsolutions.ae" required />
@@ -192,18 +189,17 @@ export default function VendorProfileSetup() {
             <CardHeader className="border-b border-gray-50 pb-5">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <Landmark className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Financial & Banking Info
+                Financial Information
               </CardTitle>
-              <CardDescription>Required bank routing parameters for contract award disbursement</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-5">
               <div className="grid gap-5 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="bankName" className="text-sm font-bold text-gray-700">Beneficiary Bank Name *</Label>
+                  <Label htmlFor="bankName" className="text-sm font-bold text-gray-700">Bank Name *</Label>
                   <Input id="bankName" placeholder="National Bank of Fujairah" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="accountHolderName" className="text-sm font-bold text-gray-700">Account Holder Title *</Label>
+                  <Label htmlFor="accountHolderName" className="text-sm font-bold text-gray-700">Account Holder Name *</Label>
                   <Input id="accountHolderName" placeholder="TechSolutions LLC" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
@@ -215,7 +211,7 @@ export default function VendorProfileSetup() {
                   <Input id="iban" placeholder="AE12 3456 7890 1234 5678 901" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="swiftCode" className="text-sm font-bold text-gray-700">SWIFT / BIC Code *</Label>
+                  <Label htmlFor="swiftCode" className="text-sm font-bold text-gray-700">SWIFT code *</Label>
                   <Input id="swiftCode" placeholder="NBFXAEADXXX" className="rounded-xl border-gray-200" required />
                 </div>
                 <div className="space-y-2">
@@ -231,9 +227,8 @@ export default function VendorProfileSetup() {
             <CardHeader className="border-b border-gray-50 pb-5">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <ListFilter className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Technical Capabilities & Sectors
+                Service Categories
               </CardTitle>
-              <CardDescription>Select business activities to receive customized tender matches</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -262,9 +257,8 @@ export default function VendorProfileSetup() {
             <CardHeader className="border-b border-gray-50 pb-5">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Required Legal Documents
+                Required Documents
               </CardTitle>
-              <CardDescription>Upload files in PDF format (Maximum file size: 5MB per document)</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               {/* Trade License */}
@@ -348,7 +342,6 @@ export default function VendorProfileSetup() {
                 <ClipboardCheck className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
                 Legal Declarations & Policies
               </CardTitle>
-              <CardDescription>Affirm your agreement to official FNRC ethical guidelines (Mandatory)</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               {/* Code of Conduct */}
