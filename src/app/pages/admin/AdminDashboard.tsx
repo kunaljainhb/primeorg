@@ -6,11 +6,13 @@ import { Badge } from '@/app/components/ui/badge';
 import { ScrollArea } from '@/app/components/ui/scroll-area';
 import { Input } from '@/app/components/ui/input';
 import { mockVendors, mockTenders, mockProposals } from '@/app/data/mockData';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 import { StatusBadge } from '@/app/components/ui/status-badge';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const pendingVendors = mockVendors.filter(v => v.status === 'pending');
   const activeTenders = mockTenders.filter(r => r.status === 'published');
   const pendingProposals = mockProposals.filter(p => p.status === 'submitted' || p.status === 'under_review');
@@ -19,21 +21,21 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="mb-2 text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
-          FNRC Admin Portal
+          {t("Admin Portal")}
         </h1>
         <p className="text-sm font-medium text-gray-500">
-          FNRC Procurement Management System
+          {t("FNRC Procurement Management System")}
         </p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/admin/vendors')}>
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card" onClick={() => navigate('/admin/vendors')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Pending Approvals
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                  {t("Pending Approvals")}
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
                   {pendingVendors.length}
@@ -47,12 +49,12 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/admin/tenders')}>
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card" onClick={() => navigate('/admin/tenders')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Active Tenders
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                  {t("Active Tenders")}
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
                   {activeTenders.length}
@@ -66,12 +68,12 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group" onClick={() => navigate('/admin/proposals')}>
+        <Card className="cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card" onClick={() => navigate('/admin/proposals')}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Proposals Received
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                  {t("Proposals Received")}
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
                   {mockProposals.length}
@@ -85,12 +87,12 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group">
+        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Approved Vendors
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                  {t("Approved Vendors")}
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
                   {mockVendors.filter(v => v.status === 'approved').length}
@@ -108,9 +110,9 @@ export default function AdminDashboard() {
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Pending Vendor Approvals */}
-        <Card className="shadow-card">
+        <Card className="shadow-card rounded-card">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-gray-800">Pending Vendor Approvals</CardTitle>
+            <CardTitle className="text-lg font-bold text-gray-800">{t("Pending Vendor Approvals")}</CardTitle>
 
           </CardHeader>
           <CardContent>
@@ -124,32 +126,32 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                       <span>{vendor.category.join(', ')}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400 mt-1">
-                      Registered: {new Date(vendor.registrationDate).toLocaleDateString()}
+                    <div className="text-[11px] text-gray-400 mt-1 font-semibold">
+                      {t("Registered")}: {new Date(vendor.registrationDate).toLocaleDateString()}
                     </div>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => navigate(`/admin/vendors/${vendor.id}`)}
-                    className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button"
+                    className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button cursor-pointer"
                   >
-                    Review
+                    {t("Review")}
                   </Button>
                 </div>
               ))}
               {pendingVendors.length === 0 && (
-                <p className="text-center text-sm text-gray-400 py-4">
-                  No pending approvals
+                <p className="text-center text-sm text-gray-400 py-4 font-semibold">
+                  {t("No pending approvals")}
                 </p>
               )}
               {pendingVendors.length > 0 && (
                 <Button
                   variant="ghost"
-                  className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
+                  className="w-full text-[var(--fnrc-primary-green)] font-bold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm cursor-pointer"
                   onClick={() => navigate('/admin/vendors')}
                 >
-                  View All Vendors →
+                  {t("View All Vendors")} {t("→")}
                 </Button>
               )}
             </div>
@@ -157,9 +159,9 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Active Tenders */}
-        <Card className="shadow-card">
+        <Card className="shadow-card rounded-card">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-gray-800">Active Tender Opportunities</CardTitle>
+            <CardTitle className="text-lg font-bold text-gray-800">{t("Active Tender Opportunities")}</CardTitle>
 
           </CardHeader>
           <CardContent>
@@ -173,25 +175,25 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                       <span>{tender.id}</span>
                       <span>•</span>
-                      <span>Deadline: {new Date(tender.submissionDeadline).toLocaleDateString()}</span>
+                      <span className="font-semibold">{t("Deadline")}: {new Date(tender.submissionDeadline).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => navigate(`/admin/tenders/${tender.id}`)}
-                    className="text-xs rounded-button"
+                    className="text-xs rounded-button cursor-pointer"
                   >
-                    Manage
+                    {t("Manage")}
                   </Button>
                 </div>
               ))}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
+                className="w-full text-[var(--fnrc-primary-green)] font-bold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm cursor-pointer"
                 onClick={() => navigate('/admin/tenders')}
               >
-                View All Tenders →
+                {t("View All Tenders")} {t("→")}
               </Button>
             </div>
           </CardContent>
@@ -200,9 +202,9 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
         {/* Recent Proposals */}
-        <Card className="shadow-card">
+        <Card className="shadow-card rounded-card">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-gray-800">Recent Proposal Submissions</CardTitle>
+            <CardTitle className="text-lg font-bold text-gray-800">{t("Recent Proposal Submissions")}</CardTitle>
 
           </CardHeader>
           <CardContent>
@@ -224,8 +226,8 @@ export default function AdminDashboard() {
                       {proposal.tenderTitle} • AED {proposal.commercialAmount.toLocaleString()}
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button transition-colors">
-                    Review
+                  <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button transition-colors cursor-pointer">
+                    {t("Review")}
                   </Button>
                 </div>
               ))}
@@ -234,11 +236,11 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Active Vendor Chats */}
-        <Card className="flex flex-col h-[500px]">
+        <Card className="flex flex-col h-[500px] rounded-card">
           <CardHeader className="pb-3 border-b border-[#E5E5E5]">
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 font-bold">
               <MessageSquare className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Active Vendor Chats
+              {t("Active Vendor Chats")}
             </CardTitle>
 
           </CardHeader>
@@ -261,7 +263,7 @@ export default function AdminDashboard() {
                           <span className="text-sm font-bold text-gray-600 tracking-wider">{chat.vendor.substring(0, 2).toUpperCase()}</span>
                         </div>
                         {chat.unread > 0 && (
-                          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                          <span className="absolute -top-1 -end-1 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}></span>
                           </span>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation } from '@/app/context/RouterContext';
 import { useSidebar } from '@/app/context/SidebarContext';
 import { 
@@ -11,7 +12,9 @@ import {
   FolderOpen,
   Shield,
   Database,
-  BarChart3
+  BarChart3,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { cn } from '@/app/components/ui/utils';
 
@@ -19,10 +22,16 @@ interface SidebarProps {
   role: 'vendor' | 'admin';
 }
 
+interface SubNavItem {
+  name: string;
+  href: string;
+}
+
 interface NavItem {
   name: string;
   href: string;
   icon: React.ElementType;
+  subItems?: SubNavItem[];
 }
 
 const vendorNavItems: NavItem[] = [
@@ -38,19 +47,42 @@ const adminNavItems: NavItem[] = [
   { name: 'Tender Management', href: '/admin/tenders', icon: FileText },
   { name: 'Item Management', href: '/admin/items', icon: ClipboardList },
   { name: 'User & Roles', href: '/admin/users', icon: Shield },
-  { name: 'Master Data', href: '/admin/master-data', icon: Database },
+  { 
+    name: 'Master Data', 
+    href: '/admin/master-data', 
+    icon: Database,
+    subItems: [
+      { name: 'Service Category', href: '/admin/master-data/service-category' },
+      { name: 'Document Type', href: '/admin/master-data/document-type' },
+      { name: 'Declaration Context', href: '/admin/master-data/declaration-context' },
+      { name: 'Vendor Rating Question', href: '/admin/master-data/vendor-rating-question' },
+    ]
+  },
   { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
   { name: 'System Config', href: '/admin/config', icon: Settings },
 ];
+
+import { useTranslation } from '@/app/context/LanguageContext';
 
 export function Sidebar({ role }: SidebarProps) {
   const location = useLocation();
   const navItems = role === 'vendor' ? vendorNavItems : adminNavItems;
   const { collapsed } = useSidebar();
+  const { t, language } = useTranslation();
+
+  // Track expanded menu items. Default Master Data to always expanded (true)
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
+    'Master Data': true
+  });
+
+  const toggleExpand = (name: string) => {
+    if (name === 'Master Data') return;
+    setExpandedItems(prev => ({ ...prev, [name]: !prev[name] }));
+  };
 
   return (
     <aside
-      className={`${collapsed ? 'w-16' : 'w-72'} fixed left-0 top-14 h-[calc(100vh-3.5rem)] border-r shadow-sm overflow-hidden`}
+      className={`${collapsed ? 'w-16' : 'w-72'} fixed start-0 top-14 h-[calc(100vh-3.5rem)] border-e shadow-sm overflow-hidden`}
       style={{
         backgroundColor: 'var(--fnrc-secondary-dark-green)',
         borderColor: 'var(--fnrc-secondary-dark-green)',
@@ -68,31 +100,78 @@ export function Sidebar({ role }: SidebarProps) {
       <nav className={cn("flex h-full flex-col gap-1.5 relative z-10", collapsed ? "p-2" : "p-4")}>
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.href;
+          const hasSubItems = !!item.subItems;
+          const isExpanded = !!expandedItems[item.name];
+          const isSubActive = hasSubItems && item.subItems?.some(sub => location.pathname === sub.href);
+          const isActive = location.pathname === item.href || isSubActive;
+
+          const handleClick = (e: React.MouseEvent) => {
+            if (hasSubItems) {
+              e.preventDefault();
+              if (item.name !== 'Master Data') {
+                toggleExpand(item.name);
+              }
+            }
+          };
 
           return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                'flex items-center rounded-button transition-all duration-150 relative overflow-hidden',
-                collapsed ? 'justify-center p-3' : 'gap-4 px-4 py-3',
-                isActive
-                  ? 'font-semibold text-white shadow-md shadow-black/15'
-                  : 'text-white/70 hover:bg-white/8 hover:text-white'
+            <div key={item.name} className="flex flex-col">
+              <Link
+                to={item.href}
+                onClick={handleClick}
+                className={cn(
+                  'flex items-center rounded-button transition-all duration-150 relative overflow-hidden',
+                  collapsed ? 'justify-center p-3' : 'gap-4 px-4 py-3',
+                  isActive
+                    ? 'font-semibold text-white shadow-md shadow-black/15'
+                    : 'text-white/70 hover:bg-white/8 hover:text-white'
+                )}
+                style={
+                  isActive
+                    ? { backgroundColor: 'var(--fnrc-accent-gold)' }
+                    : {}
+                }
+              >
+                {isActive && (
+                  <div className="absolute start-0 top-2 bottom-2 w-1.25 bg-white rounded-e-full" />
+                )}
+                <Icon className={cn("h-5 w-5 shrink-0 transition-transform duration-150", isActive ? "scale-105" : "group-hover:scale-105")} strokeWidth={isActive ? 2 : 1.5} />
+                {!collapsed && <span className="tracking-wide text-[14px] whitespace-nowrap flex-grow">{t(item.name)}</span>}
+                {!collapsed && hasSubItems && item.name !== 'Master Data' && (
+                  isExpanded ? <ChevronUp className="h-4 w-4 opacity-70" /> : <ChevronDown className="h-4 w-4 opacity-70" />
+                )}
+              </Link>
+              
+              {!collapsed && hasSubItems && isExpanded && (
+                <div className="flex flex-col gap-1 mt-1 ps-6 border-s border-white/10 ms-6">
+                  {item.subItems?.map((sub) => {
+                    const isSubItemActive = location.pathname === sub.href;
+                    return (
+                      <Link
+                        key={sub.href}
+                        to={sub.href}
+                        className={cn(
+                          'flex items-center px-4 py-2 text-xs font-semibold rounded-button transition-all duration-150 relative overflow-hidden',
+                          isSubItemActive
+                            ? 'text-white font-bold'
+                            : 'text-white/60 hover:bg-white/5 hover:text-white'
+                        )}
+                        style={
+                          isSubItemActive
+                            ? { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                            : {}
+                        }
+                      >
+                        {isSubItemActive && (
+                          <div className="absolute start-0 top-1.5 bottom-1.5 w-1 bg-white rounded-e-full" />
+                        )}
+                        <span className="tracking-wide">{t(sub.name)}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-              style={
-                isActive
-                  ? { backgroundColor: 'var(--fnrc-accent-gold)' }
-                  : {}
-              }
-            >
-              {isActive && (
-                <div className="absolute left-0 top-2 bottom-2 w-1.25 bg-white rounded-r-full" />
-              )}
-              <Icon className={cn("h-5 w-5 shrink-0 transition-transform duration-150", isActive ? "scale-105" : "group-hover:scale-105")} strokeWidth={isActive ? 2 : 1.5} />
-              {!collapsed && <span className="tracking-wide text-[14px] whitespace-nowrap">{item.name}</span>}
-            </Link>
+            </div>
           );
         })}
       </nav>

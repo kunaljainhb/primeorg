@@ -31,6 +31,7 @@ export interface SearchFilterBarProps {
   activeChips?: { label: string; onRemove: () => void }[];
   onClearAll?: () => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export function SearchFilterBar({
@@ -41,6 +42,7 @@ export function SearchFilterBar({
   activeChips = [],
   onClearAll,
   className,
+  children,
 }: SearchFilterBarProps) {
   const hasActiveFilters = activeChips.length > 0 || searchQuery !== '';
 
@@ -68,7 +70,7 @@ export function SearchFilterBar({
         </div>
 
         {/* Dropdowns Filters */}
-        {filters.length > 0 && (
+        {(filters.length > 0 || children) && (
           <div className="flex flex-wrap gap-2 items-center">
             {filters.map((filter) => {
               const isFiltered = filter.isMulti 
@@ -81,7 +83,7 @@ export function SearchFilterBar({
                     <Button
                       variant="outline"
                       className={cn(
-                        "h-12 px-4 rounded-input border border-gray-200 bg-white hover:bg-gray-50 text-[14px] font-medium transition-all gap-2 flex items-center shadow-xs",
+                        "h-12 px-4 rounded-input border border-gray-200 bg-white hover:bg-gray-55 text-[14px] font-medium transition-all gap-2 flex items-center shadow-xs",
                         isFiltered && "border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)]/5 text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10"
                       )}
                     >
@@ -150,7 +152,7 @@ export function SearchFilterBar({
                             key={option.value}
                             onClick={() => filter.onChange(option.value)}
                             className={cn(
-                              "cursor-pointer font-medium text-[14px] text-gray-700 hover:text-gray-900 focus:text-gray-900 rounded-md px-2.5 py-2 hover:bg-gray-50 focus:bg-gray-50 transition-colors",
+                              "cursor-pointer font-medium text-[14px] text-gray-700 hover:text-gray-900 focus:text-gray-900 rounded-md px-2.5 py-2 hover:bg-gray-55 focus:bg-gray-55 transition-colors",
                               filter.selectedValue === option.value && "text-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)]/5 font-semibold hover:bg-[var(--fnrc-primary-green)]/8 focus:bg-[var(--fnrc-primary-green)]/8"
                             )}
                           >
@@ -164,9 +166,11 @@ export function SearchFilterBar({
               );
             })}
 
+            {children}
+
             {hasActiveFilters && onClearAll && (
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={onClearAll}
                 className="h-12 px-4 text-red-600 hover:text-red-700 hover:bg-red-50/50 text-[14px] font-semibold transition-colors"
               >

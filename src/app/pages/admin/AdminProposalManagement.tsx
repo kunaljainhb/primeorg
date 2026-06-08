@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -21,6 +23,7 @@ const formatDate = (dateStr?: string | Date) => {
 
 export default function AdminProposalManagement() {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -74,16 +77,16 @@ export default function AdminProposalManagement() {
   const filters = [
     {
       key: 'status',
-      label: 'Review Status',
+      label: t('Review Status'),
       options: [
-        { label: 'All Statuses', value: 'all' },
-        { label: 'Submitted', value: 'submitted' },
-        { label: 'Technical Review', value: 'technical_review' },
-        { label: 'Technical Review Started', value: 'technical_review_started' },
-        { label: 'Commercial Review Completed', value: 'under_review' },
-        { label: 'Correction Requested', value: 'correction_requested' },
-        { label: 'Approved', value: 'approved' },
-        { label: 'Rejected', value: 'rejected' },
+        { label: t('All Statuses'), value: 'all' },
+        { label: t('Submitted'), value: 'submitted' },
+        { label: t('Technical Review'), value: 'technical_review' },
+        { label: t('Technical Review Started'), value: 'technical_review_started' },
+        { label: t('Commercial Review Completed'), value: 'under_review' },
+        { label: t('Correction Requested'), value: 'correction_requested' },
+        { label: t('Approved'), value: 'approved' },
+        { label: t('Rejected'), value: 'rejected' },
       ],
       selectedValue: statusFilter,
       onChange: setStatusFilter
@@ -92,7 +95,7 @@ export default function AdminProposalManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `Status: ${statusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}`,
+      label: `${t('Status')}: ${t(statusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];
@@ -107,7 +110,7 @@ export default function AdminProposalManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Proposal Evaluation
+            {t("Proposal Evaluation")}
           </h1>
         </div>
       </div>
@@ -116,7 +119,7 @@ export default function AdminProposalManagement() {
       <SearchFilterBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        placeholder="Search proposals by ID, vendor or Tender..."
+        placeholder={t("Search proposals by ID, vendor or Tender...")}
         filters={filters}
         activeChips={activeChips}
         onClearAll={handleClearAll}
@@ -131,41 +134,41 @@ export default function AdminProposalManagement() {
                 <TableRow>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
                     <div className="flex items-center gap-1.5">
-                      Proposal ID
+                      {t("Proposal ID")}
                       {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('tenderId')}>
                     <div className="flex items-center gap-1.5">
-                      Tender Details
+                      {t("Tender Details")}
                       {sortConfig?.key === 'tenderId' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('vendorName')}>
                     <div className="flex items-center gap-1.5">
-                      Vendor Entity
+                      {t("Vendor Entity")}
                       {sortConfig?.key === 'vendorName' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('submissionDate')}>
                     <div className="flex items-center gap-1.5">
-                      Deadline Date
+                      {t("Proposal Submission Date")}
                       {sortConfig?.key === 'submissionDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('commercialAmount')}>
                     <div className="flex items-center gap-1.5">
-                      Bid Amount
+                      {t("Bid Amount")}
                       {sortConfig?.key === 'commercialAmount' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
                     <div className="flex items-center gap-1.5">
-                      Evaluation Status
+                      {t("Evaluation Status")}
                       {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">Action</TableHead>
+                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">{t("Action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -185,15 +188,15 @@ export default function AdminProposalManagement() {
                     <TableCell>
                       <StatusBadge status={proposal.status} />
                     </TableCell>
-                    <TableCell className="text-right py-3 pr-4">
+                    <TableCell className="text-right py-3 pe-4">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/proposals/${proposal.id}`)}
                         className="gap-1 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
                       >
-                        Review
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        {t("Review")}
+                        <ArrowRight className={cn("h-3.5 w-3.5", language === 'ar' && "scale-x-[-1]")} />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -202,9 +205,9 @@ export default function AdminProposalManagement() {
             </Table>
           ) : (
             <EmptyState
-              title="No Proposals Found"
-              description="No proposal bids matched your search or filters. Clear active filters to view all entries."
-              actionLabel="Clear Filters"
+              title={t("No Proposals Found")}
+              description={t("No proposal bids matched your search or filters. Clear active filters to view all entries.")}
+              actionLabel={t("Clear Filters")}
               onAction={handleClearAll}
             />
           )}
@@ -213,7 +216,7 @@ export default function AdminProposalManagement() {
           {true && (
             <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
               <span className="text-sm text-gray-500 font-medium">
-                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedProposals.length)}</span> of <span className="font-bold text-gray-900">{sortedProposals.length}</span> entries
+                {t("Showing")} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t("to")} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedProposals.length)}</span> {t("of")} <span className="font-bold text-gray-900">{sortedProposals.length}</span> {t("entries")}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -223,8 +226,8 @@ export default function AdminProposalManagement() {
                   disabled={currentPage === 1}
                   className="font-semibold"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
+                  {t("Previous")}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
                   {Array.from({ length: totalPages }).map((_, i) => (
@@ -248,8 +251,8 @@ export default function AdminProposalManagement() {
                   disabled={currentPage === totalPages}
                   className="font-semibold"
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  {t("Next")}
+                  <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
                 </Button>
               </div>
             </div>

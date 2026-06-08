@@ -6,11 +6,14 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslation, useLanguage } from '@/app/context/LanguageContext';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('admin@fnrc.gov.ae');
   const [password, setPassword] = useState('••••••••');
+  const { t, language } = useTranslation();
+  const { setLanguage } = useLanguage();
   
   // Forgot password state
   const [isForgotPassword, setIsForgotPassword] = useState(false);
@@ -24,15 +27,30 @@ export default function AdminLogin() {
   const handleResetPassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (!resetEmail) {
-      toast.error('Please enter a valid email address');
+      toast.error(t('Please enter a valid email address'));
       return;
     }
-    toast.success(`A secure password reset link has been sent to ${resetEmail}`);
+    toast.success(`${t('A secure password reset link has been sent to')} ${resetEmail}`);
     setIsForgotPassword(false);
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center p-8 relative overflow-hidden bg-background">
+      {/* Floating Language Toggle */}
+      <div className="absolute top-4 end-4 z-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+          className="flex items-center gap-2 text-xs font-semibold bg-white border border-gray-300 shadow-sm rounded-full hover:bg-gray-50 cursor-pointer"
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[10px] uppercase font-bold">
+            {language === 'en' ? 'ar' : 'en'}
+          </span>
+          {language === 'en' ? 'العربية' : 'English'}
+        </Button>
+      </div>
+
       <div 
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ 
@@ -48,19 +66,19 @@ export default function AdminLogin() {
             </div>
           </div>
           <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
-            {isForgotPassword ? 'Reset Password' : 'FNRC Admin Portal'}
+            {isForgotPassword ? t('Reset Password') : t('Admin Portal')}
           </CardTitle>
-          <CardDescription className="text-center text-base font-medium">
+          <CardDescription className="text-center text-sm font-semibold min-h-[40px] px-4">
             {isForgotPassword 
-              ? 'Enter your registered email address' 
-              : 'Secure access for FNRC procurement team'}
+              ? t('Enter your registered email address') 
+              : t('Secure access for FNRC procurement team')}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">
           {isForgotPassword ? (
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="resetEmail">Email Address</Label>
+                <Label htmlFor="resetEmail">{t('Email Address')}</Label>
                 <div className="relative">
                   <Input
                     id="resetEmail"
@@ -68,33 +86,33 @@ export default function AdminLogin() {
                     placeholder="admin@fnrc.gov.ae"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
-                    className="pl-9"
+                    className="ps-9"
                     required
                   />
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Mail className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 </div>
               </div>
               <Button 
                 type="submit" 
-                className="w-full text-white font-bold h-11"
+                className="w-full text-white font-bold h-11 cursor-pointer"
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
               >
-                Submit
+                {t('Submit')}
               </Button>
               <div className="text-center pt-2">
                 <button
                   type="button"
                   onClick={() => setIsForgotPassword(false)}
-                  className="text-sm font-semibold hover:underline text-[var(--fnrc-primary-green)] flex items-center justify-center gap-1.5 mx-auto"
+                  className="text-sm font-semibold hover:underline text-[var(--fnrc-primary-green)] flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                 >
-                  <ArrowLeft className="h-4 w-4" /> Back to Login
+                  <ArrowLeft className={`h-4 w-4 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} /> {t('Back to Login')}
                 </button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">{t('Email Address')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -106,16 +124,16 @@ export default function AdminLogin() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('Password')}</Label>
                   <button
                     type="button"
                     onClick={() => {
                       setResetEmail(email);
                       setIsForgotPassword(true);
                     }}
-                    className="text-xs font-semibold hover:underline text-[var(--fnrc-primary-green)]"
+                    className="text-xs font-semibold hover:underline text-[var(--fnrc-primary-green)] cursor-pointer"
                   >
-                    Forgot Password?
+                    {t('Forgot Password?')}
                   </button>
                 </div>
                 <Input
@@ -129,18 +147,18 @@ export default function AdminLogin() {
               </div>
               <Button 
                 type="submit" 
-                className="w-full text-white font-bold h-11"
+                className="w-full text-white font-bold h-11 cursor-pointer"
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
               >
-                Login
+                {t('Login')}
               </Button>
               <div className="text-center text-sm pt-2" style={{ color: 'var(--fnrc-text-muted)' }}>
                 <button
                   type="button"
                   onClick={() => navigate('/')}
-                  className="hover:underline flex items-center justify-center gap-1.5 mx-auto"
+                  className="hover:underline flex items-center justify-center gap-1.5 mx-auto cursor-pointer font-semibold"
                 >
-                  <ArrowLeft className="h-4 w-4" /> Back to Home
+                  <ArrowLeft className={`h-4 w-4 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} /> {t('Back to Home')}
                 </button>
               </div>
             </form>

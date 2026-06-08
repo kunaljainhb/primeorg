@@ -80,7 +80,10 @@ function AppRoutes() {
   if (path.startsWith('/admin/proposals/')) return <AdminLayout><AdminProposalDetail /></AdminLayout>;
   if (path === '/admin/proposals') return <AdminLayout><AdminProposalManagement /></AdminLayout>;
   if (path === '/admin/users') return <AdminLayout><AdminUserManagement /></AdminLayout>;
-  if (path === '/admin/master-data') return <AdminLayout><AdminMasterData /></AdminLayout>;
+  if (path === '/admin/master-data' || path === '/admin/master-data/service-category') return <AdminLayout><AdminMasterData defaultTab="category" /></AdminLayout>;
+  if (path === '/admin/master-data/document-type') return <AdminLayout><AdminMasterData defaultTab="doctype" /></AdminLayout>;
+  if (path === '/admin/master-data/declaration-context') return <AdminLayout><AdminMasterData defaultTab="declaration" /></AdminLayout>;
+  if (path === '/admin/master-data/vendor-rating-question') return <AdminLayout><AdminMasterData defaultTab="rubric" /></AdminLayout>;
   if (path === '/admin/reports') return <AdminLayout><AdminReports /></AdminLayout>;
   if (path === '/admin/config') return <AdminLayout><AdminConfig /></AdminLayout>;
 
@@ -88,13 +91,17 @@ function AppRoutes() {
   return <RoleSelection />;
 }
 
+import { LanguageProvider } from '@/app/context/LanguageContext';
+
 export default function App() {
   return (
-    <RouterProvider>
-      <SidebarProvider>
-        <AppRoutes />
-        <Toaster />
-      </SidebarProvider>
-    </RouterProvider>
+    <LanguageProvider>
+      <RouterProvider>
+        <SidebarProvider>
+          <AppRoutes />
+          <Toaster />
+        </SidebarProvider>
+      </RouterProvider>
+    </LanguageProvider>
   );
 }

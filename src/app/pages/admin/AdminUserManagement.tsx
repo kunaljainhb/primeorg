@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/app/components/ui/sheet';
 import { toast } from 'sonner';
 import { StatusBadge } from '@/app/components/ui/status-badge';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -30,6 +32,7 @@ const mockEmployees = [
 ];
 
 export default function AdminUserManagement() {
+  const { t, language } = useTranslation();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showUserDrawer, setShowUserDrawer] = useState(false);
@@ -79,10 +82,10 @@ export default function AdminUserManagement() {
 
   const handleCreateUser = () => {
     if (!formData.name || !formData.email || !formData.role) {
-      toast.error('Please fill all required fields');
+      toast.error(t('Please fill all required fields'));
       return;
     }
-    toast.success('Admin user created successfully');
+    toast.success(t('Admin user created successfully'));
     setShowCreateDialog(false);
     setFormData({ name: '', email: '', employeeId: '', role: '', status: 'active' });
   };
@@ -100,7 +103,7 @@ export default function AdminUserManagement() {
   };
 
   const handleUpdateUser = () => {
-    toast.success('User updated successfully');
+    toast.success(t('User updated successfully'));
     setShowEditDialog(false);
     setFormData({ name: '', email: '', employeeId: '', role: '', status: 'active' });
   };
@@ -116,11 +119,11 @@ export default function AdminUserManagement() {
   };
 
   return (
-    <div className="space-y-8 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
+    <div className="space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-3 pt-1">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            User & Roles Management
+            {t('User & Roles Management')}
           </h1>
         </div>
         <Button
@@ -129,7 +132,7 @@ export default function AdminUserManagement() {
           onClick={() => setShowCreateDialog(true)}
         >
           <Plus className="h-4 w-4" />
-          Create Admin User
+          {t('Create Admin User')}
         </Button>
       </div>
 
@@ -139,7 +142,7 @@ export default function AdminUserManagement() {
           <CardHeader className="border-b border-gray-50 pb-5">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
               <Users className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Administrative personnel
+              {t('User Management')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -148,41 +151,41 @@ export default function AdminUserManagement() {
                 <TableRow>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
                     <div className="flex items-center gap-1.5">
-                      Employee ID
+                      {t('Employee ID')}
                       {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('name')}>
                     <div className="flex items-center gap-1.5">
-                      Name
+                      {t('Name')}
                       {sortConfig?.key === 'name' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('email')}>
                     <div className="flex items-center gap-1.5">
-                      Email
+                      {t('Email')}
                       {sortConfig?.key === 'email' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('role')}>
                     <div className="flex items-center gap-1.5">
-                      Role
+                      {t('Role')}
                       {sortConfig?.key === 'role' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdDate')}>
                     <div className="flex items-center gap-1.5">
-                      Created Date
+                      {t('Created Date')}
                       {sortConfig?.key === 'createdDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
                     <div className="flex items-center gap-1.5">
-                      Status
+                      {t('Status')}
                       {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
+                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pe-6">{t('Action')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -193,7 +196,7 @@ export default function AdminUserManagement() {
                     <TableCell className="text-gray-500 font-medium">{user.email}</TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="bg-gray-50 text-gray-600 border border-gray-100 rounded-md font-semibold">
-                        {user.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                        {t(user.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-gray-500 font-medium text-xs">
@@ -202,8 +205,8 @@ export default function AdminUserManagement() {
                     <TableCell>
                       <StatusBadge status={user.status} />
                     </TableCell>
-                    <TableCell className="text-right py-3 pr-6" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" variant="outline" className="h-8 w-8 p-0 justify-center items-center font-semibold" onClick={() => handleEditUser(user)} title="Edit User">
+                    <TableCell className="text-right py-3 pe-6" onClick={(e) => e.stopPropagation()}>
+                      <Button size="sm" variant="outline" className="h-8 w-8 p-0 justify-center items-center font-semibold" onClick={() => handleEditUser(user)} title={t('Edit User')}>
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                     </TableCell>
@@ -216,7 +219,7 @@ export default function AdminUserManagement() {
             {true && (
               <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
                 <span className="text-sm text-gray-500 font-medium">
-                  Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedUsers.length)}</span> of <span className="font-bold text-gray-900">{sortedUsers.length}</span> entries
+                  {t('Showing')} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t('to')} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedUsers.length)}</span> {t('of')} <span className="font-bold text-gray-900">{sortedUsers.length}</span> {t('entries')}
                 </span>
                 <div className="flex items-center gap-2">
                   <Button
@@ -226,8 +229,8 @@ export default function AdminUserManagement() {
                     disabled={currentPage === 1}
                     className="font-semibold"
                   >
-                    <ChevronLeft className="h-4 w-4 mr-1" />
-                    Previous
+                    <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
+                    {t('Previous')}
                   </Button>
                   <div className="flex items-center gap-1 mx-2">
                     {Array.from({ length: totalPages }).map((_, i) => (
@@ -251,8 +254,8 @@ export default function AdminUserManagement() {
                     disabled={currentPage === totalPages}
                     className="font-semibold"
                   >
-                    Next
-                    <ChevronRight className="h-4 w-4 ml-1" />
+                    {t('Next')}
+                    <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
                   </Button>
                 </div>
               </div>
@@ -261,34 +264,22 @@ export default function AdminUserManagement() {
         </Card>
 
         {/* Roles & Permissions */}
-        <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
-          <CardHeader className="border-b border-gray-50 pb-5">
+        <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit gap-0">
+          <CardHeader className="border-b border-gray-50 pb-2">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
               <Shield className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-              Role Permissions Matrix
+              {t('Role Permissions Matrix')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6 space-y-4">
+          <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {roles.map((role) => (
-              <div key={role.value} className="rounded-xl border border-gray-100 p-4 bg-gray-50/20 hover:bg-gray-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex-1">
-                  <div className="font-bold text-gray-800 text-sm">{role.name}</div>
+              <div key={role.value} className="rounded-xl border border-gray-100 p-4 bg-gray-50/20 hover:bg-gray-50/50 transition-colors flex flex-col justify-between">
+                <div>
+                  <div className="font-bold text-gray-800 text-sm">{t(role.name)}</div>
                   <div className="mt-1.5 text-xs text-gray-400 font-semibold leading-relaxed">
-                    Privileges: {role.permissions.map(p => p.split('_').join(' ')).join(', ')}
+                    {t('Privileges')}: {role.permissions.map(p => t(p.split('_').map(word => word === 'and' ? 'and' : word.charAt(0).toUpperCase() + word.slice(1)).join(' '))).join(', ')}
                   </div>
                 </div>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="font-semibold shrink-0 justify-center w-full sm:w-auto"
-                  onClick={() => {
-                    setSelectedUser({ role: role.value, permissions: role.permissions });
-                    setShowUserDrawer(true);
-                  }}
-                >
-                  <Eye className="mr-1.5 h-3.5 w-3.5" />
-                  View Matrix Details
-                </Button>
               </div>
             ))}
           </CardContent>
@@ -299,11 +290,11 @@ export default function AdminUserManagement() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="sm:max-w-md p-8" aria-describedby="create-user-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Create New Administrator</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('Create New Administrator')}</DialogTitle>
           </DialogHeader>
           <div id="create-user-dialog-description" className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Select Employee *</Label>
+              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('Select Employee *')}</Label>
               <Select 
                 value={formData.employeeId} 
                 onValueChange={(value) => {
@@ -319,7 +310,7 @@ export default function AdminUserManagement() {
                 }}
               >
                 <SelectTrigger className="rounded-xl border-gray-200">
-                  <SelectValue placeholder="Choose government employee..." />
+                  <SelectValue placeholder={t('Choose government employee...')} />
                 </SelectTrigger>
                 <SelectContent>
                   {mockEmployees.map((emp) => (
@@ -331,64 +322,64 @@ export default function AdminUserManagement() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="employeeId" className="text-sm font-semibold text-gray-700">Employee ID</Label>
+              <Label htmlFor="employeeId" className="text-sm font-semibold text-gray-700">{t('Employee ID')}</Label>
               <Input
                 id="employeeId"
-                placeholder="Auto-filled"
+                placeholder={t('Auto-filled')}
                 value={formData.employeeId}
                 className="rounded-xl border-gray-200 bg-gray-50"
                 disabled
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
+              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">{t('Email Address')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Auto-filled"
+                placeholder={t('Auto-filled')}
                 value={formData.email}
                 className="rounded-xl border-gray-200 bg-gray-50"
                 disabled
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="role" className="text-sm font-semibold text-gray-700">Privilege Role *</Label>
+              <Label htmlFor="role" className="text-sm font-semibold text-gray-700">{t('Privilege Role *')}</Label>
               <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
                 <SelectTrigger className="rounded-xl border-gray-200">
-                  <SelectValue placeholder="Choose privilege level..." />
+                  <SelectValue placeholder={t('Choose privilege level...')} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
                     <SelectItem key={role.value} value={role.value}>
-                      {role.name}
+                      {t(role.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="status" className="text-sm font-semibold text-gray-700">Account Status *</Label>
+              <Label htmlFor="status" className="text-sm font-semibold text-gray-700">{t('Account Status *')}</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger className="rounded-xl border-gray-200">
-                  <SelectValue placeholder="Select account state..." />
+                  <SelectValue placeholder={t('Select account state...')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">{t('Active')}</SelectItem>
+                  <SelectItem value="inactive">{t('Inactive')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter className="sm:justify-end gap-2">
             <Button variant="outline" className="font-semibold" onClick={() => setShowCreateDialog(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               onClick={handleCreateUser}
               className="text-white font-semibold"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Create Account
+              {t('Create Account')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -398,21 +389,21 @@ export default function AdminUserManagement() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="sm:max-w-md p-8" aria-describedby="edit-user-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Edit Admin User Configuration</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('Edit Admin User Configuration')}</DialogTitle>
           </DialogHeader>
           <div id="edit-user-dialog-description" className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name" className="text-sm font-semibold text-gray-700">Full Name *</Label>
+              <Label htmlFor="edit-name" className="text-sm font-semibold text-gray-700">{t('Full Name *')}</Label>
               <Input
                 id="edit-name"
-                placeholder="Enter full name"
+                placeholder={t('Enter full name')}
                 value={formData.name}
                 className="rounded-xl border-gray-200"
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-email" className="text-sm font-semibold text-gray-700">Email Address *</Label>
+              <Label htmlFor="edit-email" className="text-sm font-semibold text-gray-700">{t('Email Address *')}</Label>
               <Input
                 id="edit-email"
                 type="email"
@@ -423,43 +414,43 @@ export default function AdminUserManagement() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-role" className="text-sm font-semibold text-gray-700">Privilege Role *</Label>
+              <Label htmlFor="edit-role" className="text-sm font-semibold text-gray-700">{t('Privilege Role *')}</Label>
               <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
                 <SelectTrigger className="rounded-xl border-gray-200">
-                  <SelectValue placeholder="Choose privilege level..." />
+                  <SelectValue placeholder={t('Choose privilege level...')} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
                     <SelectItem key={role.value} value={role.value}>
-                      {role.name}
+                      {t(role.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-status" className="text-sm font-semibold text-gray-700">Account Status *</Label>
+              <Label htmlFor="edit-status" className="text-sm font-semibold text-gray-700">{t('Account Status *')}</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
                 <SelectTrigger className="rounded-xl border-gray-200">
-                  <SelectValue placeholder="Select account state..." />
+                  <SelectValue placeholder={t('Select account state...')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">{t('Active')}</SelectItem>
+                  <SelectItem value="inactive">{t('Inactive')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter className="sm:justify-end gap-2">
             <Button variant="outline" className="font-semibold" onClick={() => setShowEditDialog(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               onClick={handleUpdateUser}
               className="text-white font-semibold"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Update Account
+              {t('Update Account')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -479,12 +470,12 @@ export default function AdminUserManagement() {
               </div>
               <div>
                 <SheetTitle className="text-lg font-bold text-gray-800">
-                  {selectedUser?.name ? 'User Profile Details' : 'Role Authorization Details'}
+                  {selectedUser?.name ? t('User Profile Details') : t('Role Authorization Details')}
                 </SheetTitle>
                 <p className="text-xs text-gray-500 font-medium">
                   {selectedUser?.name 
-                    ? 'Administrative account configurations and permissions' 
-                    : 'System privileges and access level specifications'}
+                    ? t('Administrative account configurations and permissions') 
+                    : t('System privileges and access level specifications')}
                 </p>
               </div>
             </div>
@@ -494,14 +485,14 @@ export default function AdminUserManagement() {
             <div className="mt-6 space-y-6">
               {selectedUser.name && (
                 <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 space-y-4">
-                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Account Information</h4>
+                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">{t('Account Information')}</h4>
                   <div className="grid grid-cols-1 gap-4">
                     <div className="flex items-start gap-3">
                       <div className="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                         <Users className="h-4 w-4 text-gray-500" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-gray-400">Full Name</div>
+                        <div className="text-[10px] font-bold text-gray-400">{t('Full Name')}</div>
                         <div className="text-sm font-bold text-gray-800">{selectedUser.name}</div>
                       </div>
                     </div>
@@ -511,7 +502,7 @@ export default function AdminUserManagement() {
                         <Mail className="h-4 w-4 text-gray-500" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-gray-400">Email Address</div>
+                        <div className="text-[10px] font-bold text-gray-400">{t('Email Address')}</div>
                         <div className="text-sm font-semibold text-gray-700">{selectedUser.email}</div>
                       </div>
                     </div>
@@ -520,16 +511,16 @@ export default function AdminUserManagement() {
               )}
 
               <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 space-y-4">
-                <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Role Information</h4>
+                <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">{t('Role Information')}</h4>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                       <Shield className="h-4 w-4 text-gray-500" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-bold text-gray-400">Assigned Role</div>
+                      <div className="text-[10px] font-bold text-gray-400">{t('Assigned Role')}</div>
                       <div className="text-sm font-bold text-gray-800 capitalize">
-                        {(selectedUser.role || '').replace('_', ' ')}
+                        {t(selectedUser.role.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}
                       </div>
                     </div>
                   </div>
@@ -540,19 +531,19 @@ export default function AdminUserManagement() {
               </div>
 
               <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 space-y-4">
-                <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Assigned Permissions Scopes</h4>
+                <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">{t('Assigned Permissions Scopes')}</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {getUserPermissions(selectedUser.role).map((permission: string) => (
                     <div key={permission} className="flex items-center gap-2 p-2.5 rounded-lg border border-gray-150 bg-white">
                       <div className="h-5 w-5 rounded-full bg-green-50 flex items-center justify-center shrink-0">
                         <Check className="h-3 w-3 text-[var(--fnrc-success)]" />
                       </div>
-                      <span className="text-xs font-bold text-gray-700 capitalize">{permission.replace('_', ' ')}</span>
+                      <span className="text-xs font-bold text-gray-700 capitalize">{t(permission.split('_').map((word: string) => word === 'and' ? 'and' : word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}</span>
                     </div>
                   ))}
                   {getUserPermissions(selectedUser.role).length === 0 && (
                     <div className="col-span-2 text-xs font-medium text-gray-500 italic p-3 text-center">
-                      No authorization privileges configured.
+                      {t('No authorization privileges configured.')}
                     </div>
                   )}
                 </div>
@@ -560,14 +551,14 @@ export default function AdminUserManagement() {
 
               {selectedUser.status && (
                 <div className="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 space-y-4">
-                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Security & Activity Log</h4>
+                  <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-2">{t('Security & Activity Log')}</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-start gap-3">
                       <div className="h-8 w-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                         <Calendar className="h-4 w-4 text-gray-500" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-gray-400">Created Date</div>
+                        <div className="text-[10px] font-bold text-gray-400">{t('Created Date')}</div>
                         <div className="text-xs font-semibold text-gray-700">
                           {formatDate(selectedUser.createdDate || '2026-01-10')}
                         </div>
@@ -579,9 +570,9 @@ export default function AdminUserManagement() {
                         <Activity className="h-4 w-4 text-gray-500" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold text-gray-400">Last Active Session</div>
+                        <div className="text-[10px] font-bold text-gray-400">{t('Last Active Session')}</div>
                         <div className="text-xs font-semibold text-gray-700">
-                          {formatDate(new Date())} • Active
+                          {formatDate(new Date())} • {t('Active')}
                         </div>
                       </div>
                     </div>

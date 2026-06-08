@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
 import { RichTextEditor } from '@/app/components/ui/rich-text-editor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Calendar } from '@/app/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
 import { CalendarIcon, Plus, X, Upload, FileText, Globe, Lock, Eye } from 'lucide-react';
@@ -15,6 +13,8 @@ import { toast } from 'sonner';
 import { vendorCategories, mockTenders } from '@/app/data/mockData';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/app/components/ui/radio-group';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 interface TenderFormData {
   title: string;
@@ -35,6 +35,7 @@ interface TenderFormData {
 export default function AdminTenderCreate() {
   const navigate = useNavigate();
   const { tenderId } = useParams();
+  const { t, language } = useTranslation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<TenderFormData>(() => {
     if (tenderId) {
@@ -142,6 +143,12 @@ export default function AdminTenderCreate() {
       status: 'draft' as const,
       attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
       createdAt: format(new Date(), 'yyyy-MM-dd'),
+      estimatedBudget: formData.estimatedBudget,
+      projectStartDate: formData.projectStartDate ? format(formData.projectStartDate, 'yyyy-MM-dd') : undefined,
+      projectEndDate: formData.projectEndDate ? format(formData.projectEndDate, 'yyyy-MM-dd') : undefined,
+      milestones: formData.milestones,
+      visibility: formData.visibility,
+      technicalProposalRequired: formData.technicalProposalRequired,
     };
 
     if (tenderId) {
@@ -154,7 +161,7 @@ export default function AdminTenderCreate() {
       mockTenders.push({ id: newId, ...tenderData });
     }
 
-    toast.success('Tender saved as draft successfully');
+    toast.success(t('Tender saved as draft successfully'));
     navigate('/admin/tenders');
   };
 
@@ -170,6 +177,12 @@ export default function AdminTenderCreate() {
       status: 'published' as const,
       attachments: formData.attachments.map(a => ({ name: a.name, url: '#' })),
       createdAt: format(new Date(), 'yyyy-MM-dd'),
+      estimatedBudget: formData.estimatedBudget,
+      projectStartDate: formData.projectStartDate ? format(formData.projectStartDate, 'yyyy-MM-dd') : undefined,
+      projectEndDate: formData.projectEndDate ? format(formData.projectEndDate, 'yyyy-MM-dd') : undefined,
+      milestones: formData.milestones,
+      visibility: formData.visibility,
+      technicalProposalRequired: formData.technicalProposalRequired,
     };
 
     if (tenderId) {
@@ -182,18 +195,18 @@ export default function AdminTenderCreate() {
       mockTenders.push({ id: newId, ...tenderData });
     }
 
-    toast.success('Tender published successfully');
+    toast.success(t('Tender published successfully'));
     navigate('/admin/tenders');
   };
 
   const renderStepIndicator = () => {
     const steps = [
-      { number: 1, label: 'Tender Details' },
-      { number: 2, label: 'Visibility & Publish' }
+      { number: 1, label: t('Tender Details') },
+      { number: 2, label: t('Visibility & Publish') }
     ];
 
     return (
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="flex items-center">
           {steps.map((s, idx) => (
             <div key={s.number} className="flex items-center">
@@ -231,16 +244,16 @@ export default function AdminTenderCreate() {
         <div className="flex items-center gap-3 pb-2">
           {step === 1 ? (
             <Button variant="outline" onClick={() => navigate('/admin/tenders')}>
-              Cancel
+              {t('Cancel')}
             </Button>
           ) : (
             <Button variant="outline" onClick={() => setStep(1)}>
-              Back
+              {t('Back')}
             </Button>
           )}
           
           <Button variant="outline" onClick={handleSaveDraft}>
-            Save as Draft
+            {t('Save as Draft')}
           </Button>
           
           {step === 1 ? (
@@ -249,7 +262,7 @@ export default function AdminTenderCreate() {
               className="text-white"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Next
+              {t('Next')}
             </Button>
           ) : (
             <Button
@@ -257,7 +270,7 @@ export default function AdminTenderCreate() {
               className="text-white"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Publish Tender
+              {t('Publish Tender')}
             </Button>
           )}
         </div>
@@ -268,21 +281,21 @@ export default function AdminTenderCreate() {
   const renderStep1 = () => (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold text-lg">Basic Tender Information</CardTitle>
+        <CardTitle className="font-bold text-lg">{t('Basic Tender Information')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="title" className="font-bold">Tender Title *</Label>
+          <Label htmlFor="title" className="font-bold">{t('Tender Title *')}</Label>
           <Input
             id="title"
-            placeholder="Enter Tender title"
+            placeholder={t('Enter Tender title')}
             value={formData.title}
             onChange={(e) => updateFormData('title', e.target.value)}
           />
         </div>
 
         <div className="space-y-3">
-          <Label className="font-bold">Service Category *</Label>
+          <Label className="font-bold">{t('Service Category *')}</Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-gray-50/50">
             {vendorCategories.map((cat) => (
               <div key={cat} className="flex items-center space-x-2">
@@ -295,19 +308,19 @@ export default function AdminTenderCreate() {
                   htmlFor={`cat-${cat}`}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {cat}
+                  {t(cat)}
                 </label>
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">Select one or more service categories relevant to this Tender.</p>
+          <p className="text-xs text-muted-foreground">{t('Select one or more service categories relevant to this Tender.')}</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description" className="font-bold">Description *</Label>
+          <Label htmlFor="description" className="font-bold">{t('Description *')}</Label>
           <RichTextEditor
             id="description"
-            placeholder="Enter Tender description"
+            placeholder={t('Enter Tender description')}
             rows={4}
             value={formData.description}
             onChange={(e: any) => updateFormData('description', e.target.value)}
@@ -315,10 +328,10 @@ export default function AdminTenderCreate() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="eligibility" className="font-bold">Eligibility Criteria *</Label>
+          <Label htmlFor="eligibility" className="font-bold">{t('Eligibility Criteria *')}</Label>
           <RichTextEditor
             id="eligibility"
-            placeholder="Enter eligibility criteria (one per line)"
+            placeholder={t('Enter eligibility criteria (one per line)')}
             rows={4}
             value={formData.eligibilityCriteria}
             onChange={(e: any) => updateFormData('eligibilityCriteria', e.target.value)}
@@ -327,7 +340,7 @@ export default function AdminTenderCreate() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="budget" className="font-bold">Estimated Budget (Optional)</Label>
+            <Label htmlFor="budget" className="font-bold">{t('Estimated Budget (Optional)')}</Label>
             <Input
               id="budget"
               placeholder="e.g., AED 500,000"
@@ -337,7 +350,7 @@ export default function AdminTenderCreate() {
           </div>
 
           <div className="space-y-2">
-            <Label className="font-bold">Submission Deadline *</Label>
+            <Label className="font-bold">{t('Submission Deadline *')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -345,7 +358,7 @@ export default function AdminTenderCreate() {
                   className="w-full justify-start text-left font-normal"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.submissionDeadline ? format(formData.submissionDeadline, 'PPP') : 'Pick a date'}
+                  {formData.submissionDeadline ? format(formData.submissionDeadline, 'dd/MM/yyyy') : t('Pick a date')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -362,7 +375,7 @@ export default function AdminTenderCreate() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label className="font-bold text-sm">Technical Proposal Required *</Label>
+            <Label className="font-bold text-sm">{t('Technical Proposal Required *')}</Label>
             <RadioGroup 
               value={formData.technicalProposalRequired} 
               onValueChange={(value: 'yes' | 'no') => updateFormData('technicalProposalRequired', value)}
@@ -370,25 +383,27 @@ export default function AdminTenderCreate() {
             >
               <label 
                 htmlFor="tech-yes"
-                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.technicalProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+                className={cn(
+                  "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
+                  formData.technicalProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+                )}
               >
                 <RadioGroupItem value="yes" id="tech-yes" />
-                <span className="font-medium text-sm w-full">Yes, Required</span>
+                <span className="font-medium text-sm w-full">{t('Yes, Required')}</span>
               </label>
               <label
                 htmlFor="tech-no"
-                className={`flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1 ${formData.technicalProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'}`}
+                className={cn(
+                  "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
+                  formData.technicalProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+                )}
               >
                 <RadioGroupItem value="no" id="tech-no" />
-                <span className="font-medium text-sm w-full">No, Not Required</span>
+                <span className="font-medium text-sm w-full">{t('No, Not Required')}</span>
               </label>
             </RadioGroup>
           </div>
-
-
         </div>
-
-
       </CardContent>
     </Card>
   );
@@ -396,14 +411,14 @@ export default function AdminTenderCreate() {
   const renderStep2 = () => (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold text-lg">Scope & Timeline</CardTitle>
+        <CardTitle className="font-bold text-lg">{t('Scope & Timeline')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="scope" className="font-bold">Scope of Work *</Label>
+          <Label htmlFor="scope" className="font-bold">{t('Scope of Work *')}</Label>
           <RichTextEditor
             id="scope"
-            placeholder="Enter detailed scope of work"
+            placeholder={t('Enter detailed scope of work')}
             rows={6}
             value={formData.scopeOfWork}
             onChange={(e: any) => updateFormData('scopeOfWork', e.target.value)}
@@ -412,12 +427,12 @@ export default function AdminTenderCreate() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="font-bold">Project Start Date *</Label>
+            <Label className="font-bold">{t('Project Start Date *')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.projectStartDate ? format(formData.projectStartDate, 'PPP') : 'Pick a date'}
+                  {formData.projectStartDate ? format(formData.projectStartDate, 'dd/MM/yyyy') : t('Pick a date')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -432,12 +447,12 @@ export default function AdminTenderCreate() {
           </div>
 
           <div className="space-y-2">
-            <Label className="font-bold">Project End Date *</Label>
+            <Label className="font-bold">{t('Project End Date *')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.projectEndDate ? format(formData.projectEndDate, 'PPP') : 'Pick a date'}
+                  {formData.projectEndDate ? format(formData.projectEndDate, 'dd/MM/yyyy') : t('Pick a date')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -454,7 +469,7 @@ export default function AdminTenderCreate() {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="font-bold">Milestones</Label>
+            <Label className="font-bold">{t('Milestones')}</Label>
             <Button
               type="button"
               size="sm"
@@ -463,13 +478,13 @@ export default function AdminTenderCreate() {
               style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add Milestone
+              {t('Add Milestone')}
             </Button>
           </div>
           {formData.milestones.map((milestone, index) => (
             <div key={index} className="flex gap-2">
               <Input
-                placeholder="Milestone title"
+                placeholder={t('Milestone title')}
                 value={milestone.title}
                 onChange={(e) => updateMilestone(index, 'title', e.target.value)}
               />
@@ -489,8 +504,6 @@ export default function AdminTenderCreate() {
             </div>
           ))}
         </div>
-
-
       </CardContent>
     </Card>
   );
@@ -498,7 +511,7 @@ export default function AdminTenderCreate() {
   const renderStep3 = () => (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold text-lg">Attachments</CardTitle>
+        <CardTitle className="font-bold text-lg">{t('Attachments')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -506,12 +519,12 @@ export default function AdminTenderCreate() {
             <Upload className="mx-auto h-12 w-12 mb-4" style={{ color: 'var(--fnrc-text-muted)' }} />
             <label htmlFor="file-upload" className="cursor-pointer">
               <span className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>
-                Click to upload
+                {t('Click to upload')}
               </span>{' '}
-              <span style={{ color: 'var(--fnrc-text-muted)' }}>or drag and drop</span>
+              <span style={{ color: 'var(--fnrc-text-muted)' }}>{t('or drag and drop')}</span>
             </label>
             <p className="mt-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-              PDF, DOC, DOCX, XLS, XLSX up to 10MB
+              {t('PDF, DOC, DOCX, XLS, XLSX up to 10MB')}
             </p>
             <input
               id="file-upload"
@@ -525,7 +538,7 @@ export default function AdminTenderCreate() {
 
           {formData.attachments.length > 0 && (
             <div className="space-y-2">
-              <Label className="font-bold">Uploaded Files</Label>
+              <Label className="font-bold">{t('Uploaded Files')}</Label>
               {formData.attachments.map((file, index) => (
                 <div
                   key={index}
@@ -552,8 +565,6 @@ export default function AdminTenderCreate() {
             </div>
           )}
         </div>
-
-
       </CardContent>
     </Card>
   );
@@ -561,7 +572,7 @@ export default function AdminTenderCreate() {
   const renderStep4 = () => (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold text-lg">Tender Visibility</CardTitle>
+        <CardTitle className="font-bold text-lg">{t('Tender Visibility')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <RadioGroup 
@@ -574,10 +585,10 @@ export default function AdminTenderCreate() {
             <div className="space-y-1">
               <Label htmlFor="open" className="flex items-center gap-2 text-base cursor-pointer font-bold">
                 <Globe className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Open Tender
+                {t('Open Tender')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                This tender is public and visible to all registered vendors across all service categories.
+                {t('This tender is public and visible to all registered vendors across all service categories.')}
               </p>
             </div>
           </div>
@@ -587,16 +598,14 @@ export default function AdminTenderCreate() {
             <div className="space-y-1">
               <Label htmlFor="restricted" className="flex items-center gap-2 text-base cursor-pointer font-bold">
                 <Lock className="h-4 w-4 text-amber-500" />
-                Restricted (Service Category)
+                {t('Restricted (Service Category)')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                Only vendors registered under the selected service categories will be able to view and participate.
+                {t('Only vendors registered under the selected service categories will be able to view and participate.')}
               </p>
             </div>
           </div>
         </RadioGroup>
-
-
       </CardContent>
     </Card>
   );
@@ -604,82 +613,85 @@ export default function AdminTenderCreate() {
   const renderStep5 = () => (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold text-lg">Review & Publish</CardTitle>
+        <CardTitle className="font-bold text-lg text-black">{t('Review & Publish')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div>
-            <h3 className="mb-2 font-semibold flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
               <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Basic Information
+              {t('Basic Information')}
             </h3>
-            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
-              <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Tender Title</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Tender Title')}</span>
                   <div className="font-medium mt-0.5">{formData.title || '-'}</div>
                 </div>
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Deadline</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Deadline')}</span>
                   <div className="font-medium mt-0.5">
-                    {formData.submissionDeadline ? format(formData.submissionDeadline, 'PPP') : '-'}
+                    {formData.submissionDeadline ? format(formData.submissionDeadline, 'dd/MM/yyyy') : '-'}
                   </div>
                 </div>
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Technical Prop.</span>
-                  <div className="font-medium mt-0.5 capitalize">{formData.technicalProposalRequired}</div>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Technical Prop.')}</span>
+                  <div className="font-medium mt-0.5 capitalize">{formData.technicalProposalRequired === 'yes' ? t('Yes, Required') : t('No, Not Required')}</div>
                 </div>
-
+                <div>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Estimated Budget')}</span>
+                  <div className="font-medium mt-0.5">{formData.estimatedBudget || t('Not specified')}</div>
+                </div>
               </div>
               <div>
-                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Categories</span>
-                <div className="flex flex-wrap gap-1.5 mt-1">
-                  {formData.categories.length > 0 ? formData.categories.map(cat => (
-                    <Badge key={cat} variant="secondary" className="text-[10px] bg-white border border-gray-200">
-                      {cat}
-                    </Badge>
-                  )) : <span className="text-sm">-</span>}
+                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Service Category')}</span>
+                <div className="text-sm font-medium mt-0.5 text-gray-800">
+                  {formData.categories.length > 0 ? formData.categories.map(c => t(c)).join(', ') : '-'}
                 </div>
               </div>
               <div className="text-sm">
-                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Description</span>
-                <div className="mt-0.5">{formData.description || '-'}</div>
+                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Description')}</span>
+                <div className="mt-1 text-gray-700 whitespace-pre-line leading-relaxed">{formData.description || '-'}</div>
+              </div>
+              <div className="text-sm">
+                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Eligibility Criteria')}</span>
+                <div className="mt-1 text-gray-700 whitespace-pre-line leading-relaxed">{formData.eligibilityCriteria || '-'}</div>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="mb-2 font-semibold flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
               <CalendarIcon className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Scope & Timeline
+              {t('Scope & Timeline')}
             </h3>
-            <div className="rounded-lg border p-4 space-y-3" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-sm">
-                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Scope of Work</span>
-                <div className="mt-0.5">{formData.scopeOfWork || '-'}</div>
+                <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Scope of Work')}</span>
+                <div className="mt-1 text-gray-700 whitespace-pre-line leading-relaxed">{formData.scopeOfWork || '-'}</div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Project Start</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Project Start')}</span>
                   <div className="font-medium mt-0.5">
-                    {formData.projectStartDate ? format(formData.projectStartDate, 'PPP') : '-'}
+                    {formData.projectStartDate ? format(formData.projectStartDate, 'dd/MM/yyyy') : '-'}
                   </div>
                 </div>
                 <div>
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Project End</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Project End')}</span>
                   <div className="font-medium mt-0.5">
-                    {formData.projectEndDate ? format(formData.projectEndDate, 'PPP') : '-'}
+                    {formData.projectEndDate ? format(formData.projectEndDate, 'dd/MM/yyyy') : '-'}
                   </div>
                 </div>
               </div>
               {formData.milestones.length > 0 && (
                 <div className="pt-2">
-                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">Milestones</span>
+                  <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Milestones')}</span>
                   <div className="mt-1 space-y-1">
                     {formData.milestones.map((m, i) => (
                       <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 py-1">
                         <span className="font-medium">{m.title}</span>
-                        <span className="text-muted-foreground">{m.date ? format(new Date(m.date), 'PPP') : '-'}</span>
+                        <span className="text-muted-foreground">{m.date ? format(new Date(m.date), 'dd/MM/yyyy') : '-'}</span>
                       </div>
                     ))}
                   </div>
@@ -689,9 +701,9 @@ export default function AdminTenderCreate() {
           </div>
 
           <div>
-            <h3 className="mb-2 font-semibold flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
               <Eye className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Tender Visibility
+              {t('Tender Visibility')}
             </h3>
             <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="flex items-center gap-3">
@@ -701,8 +713,8 @@ export default function AdminTenderCreate() {
                       <Globe className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="font-medium text-sm">Open Tender</div>
-                      <p className="text-xs text-muted-foreground italic">Publicly visible to all registered vendors.</p>
+                      <div className="font-medium text-sm text-gray-900">{t('Open Tender')}</div>
+                      <p className="text-xs text-muted-foreground italic">{t('This tender is public and visible to all registered vendors across all service categories.')}</p>
                     </div>
                   </>
                 ) : (
@@ -711,8 +723,8 @@ export default function AdminTenderCreate() {
                       <Lock className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="font-medium text-sm">Restricted (Service Category)</div>
-                      <p className="text-xs text-muted-foreground italic">Visible only to vendors in selected categories.</p>
+                      <div className="font-medium text-sm text-gray-900">{t('Restricted (Service Category)')}</div>
+                      <p className="text-xs text-muted-foreground italic">{t('Only vendors registered under the selected service categories will be able to view and participate.')}</p>
                     </div>
                   </>
                 )}
@@ -721,9 +733,9 @@ export default function AdminTenderCreate() {
           </div>
 
           <div>
-            <h3 className="mb-2 font-semibold flex items-center gap-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
               <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-              Attachments
+              {t('Attachments')}
             </h3>
             <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
               {formData.attachments.length > 0 ? (
@@ -737,33 +749,20 @@ export default function AdminTenderCreate() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">No attachments uploaded.</p>
+                <p className="text-sm text-muted-foreground italic">{t('No attachments uploaded.')}</p>
               )}
             </div>
           </div>
         </div>
-
-
       </CardContent>
     </Card>
   );
-
-  function Badge({ children, className, variant, style }: any) {
-    return (
-      <span 
-        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`}
-        style={style}
-      >
-        {children}
-      </span>
-    )
-  }
 
   return (
     <div className="space-y-6">
       <div className="mb-8">
         <h1 className="mb-2 text-xl font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>
-          {tenderId ? 'Edit Draft Tender' : 'Create New Tender'}
+          {tenderId ? t('Edit Draft Tender') : t('Create New Tender')}
         </h1>
       </div>
 
@@ -782,7 +781,6 @@ export default function AdminTenderCreate() {
           {renderStep5()}
         </div>
       )}
-
     </div>
   );
 }

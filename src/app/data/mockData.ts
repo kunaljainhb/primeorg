@@ -11,6 +11,12 @@ export interface Tender {
   status: 'draft' | 'published' | 'closed' | 'cancelled';
   eligibilityCriteria: string[];
   attachments: { name: string; url: string }[];
+  estimatedBudget?: string;
+  projectStartDate?: string;
+  projectEndDate?: string;
+  milestones?: { title: string; date: string }[];
+  visibility?: 'open' | 'restricted';
+  technicalProposalRequired?: 'yes' | 'no';
 }
 
 export interface Vendor {
@@ -133,7 +139,17 @@ export const mockTenders: Tender[] = [
       { name: 'FNRC_IT_Compliance_Guidelines.pdf', url: '#' },
       { name: 'Pricing_Matrix_Template.xlsx', url: '#' },
       { name: 'Standard_Terms_and_Conditions.pdf', url: '#' }
-    ]
+    ],
+    estimatedBudget: 'AED 500,000',
+    projectStartDate: '2026-07-01',
+    projectEndDate: '2026-12-31',
+    milestones: [
+      { title: 'Project Kickoff', date: '2026-07-15' },
+      { title: 'Mid-term Review', date: '2026-09-30' },
+      { title: 'Final Delivery & Sign-off', date: '2026-12-15' }
+    ],
+    visibility: 'open',
+    technicalProposalRequired: 'yes'
   },
   {
     id: 'TEND-002',
@@ -146,7 +162,17 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-05-05',
     status: 'published',
     eligibilityCriteria: ['Azure/AWS certification', 'ISO 27001 compliance'],
-    attachments: [{ name: 'Migration_Plan.pdf', url: '#' }]
+    attachments: [{ name: 'Migration_Plan.pdf', url: '#' }],
+    estimatedBudget: 'AED 800,000',
+    projectStartDate: '2026-08-01',
+    projectEndDate: '2027-02-01',
+    milestones: [
+      { title: 'Infrastructure Audit', date: '2026-08-30' },
+      { title: 'Migration Execution', date: '2026-11-30' },
+      { title: 'Staff Training & Handover', date: '2027-01-15' }
+    ],
+    visibility: 'restricted',
+    technicalProposalRequired: 'yes'
   },
   {
     id: 'TEND-003',
@@ -159,7 +185,17 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-04-10',
     status: 'published',
     eligibilityCriteria: ['SIRA license mandatory', 'Min 5 years experience'],
-    attachments: [{ name: 'Security_SOP.pdf', url: '#' }]
+    attachments: [{ name: 'Security_SOP.pdf', url: '#' }],
+    estimatedBudget: 'AED 240,000',
+    projectStartDate: '2026-06-01',
+    projectEndDate: '2028-06-01',
+    milestones: [
+      { title: 'Contract Commencement', date: '2026-06-01' },
+      { title: 'Annual Review 1', date: '2027-06-01' },
+      { title: 'Contract Completion', date: '2028-06-01' }
+    ],
+    visibility: 'open',
+    technicalProposalRequired: 'no'
   },
   {
     id: 'TEND-004',
@@ -172,7 +208,17 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-05-10',
     status: 'published',
     eligibilityCriteria: ['Electrical license', 'Smart city tech experience'],
-    attachments: [{ name: 'EV_Specs.pdf', url: '#' }]
+    attachments: [{ name: 'EV_Specs.pdf', url: '#' }],
+    estimatedBudget: 'AED 150,000',
+    projectStartDate: '2026-06-15',
+    projectEndDate: '2026-11-15',
+    milestones: [
+      { title: 'Civil Works', date: '2026-07-15' },
+      { title: 'Charger Installation', date: '2026-09-15' },
+      { title: 'Software Integration', date: '2026-11-01' }
+    ],
+    visibility: 'open',
+    technicalProposalRequired: 'yes'
   },
   {
     id: 'TEND-005',
@@ -185,7 +231,17 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-03-20',
     status: 'published',
     eligibilityCriteria: ['Valid trade license', 'Grade A contractor'],
-    attachments: [{ name: 'Design_Layout.pdf', url: '#' }]
+    attachments: [{ name: 'Design_Layout.pdf', url: '#' }],
+    estimatedBudget: 'AED 350,005',
+    projectStartDate: '2026-05-01',
+    projectEndDate: '2026-08-01',
+    milestones: [
+      { title: 'Demolition', date: '2026-05-15' },
+      { title: 'Fit-out Works', date: '2026-07-01' },
+      { title: 'Handover', date: '2026-08-01' }
+    ],
+    visibility: 'restricted',
+    technicalProposalRequired: 'yes'
   },
   {
     id: 'TEND-006',
@@ -198,7 +254,17 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-05-15',
     status: 'draft',
     eligibilityCriteria: ['CREST certified', 'Proven track record in financial sector'],
-    attachments: []
+    attachments: [],
+    estimatedBudget: 'AED 90,000',
+    projectStartDate: '2026-09-01',
+    projectEndDate: '2026-11-01',
+    milestones: [
+      { title: 'Assessment Commencement', date: '2026-09-05' },
+      { title: 'Vulnerability Scanning', date: '2026-09-30' },
+      { title: 'Final Report Delivery', date: '2026-10-25' }
+    ],
+    visibility: 'open',
+    technicalProposalRequired: 'yes'
   },
   {
     id: 'TEND-007',
@@ -211,7 +277,50 @@ export const mockTenders: Tender[] = [
     createdAt: '2026-04-01',
     status: 'closed',
     eligibilityCriteria: [],
-    attachments: []
+    attachments: [],
+    estimatedBudget: 'AED 50,000',
+    projectStartDate: '2026-05-01',
+    projectEndDate: '2026-06-01',
+    milestones: [],
+    technicalProposalRequired: 'no'
+  },
+  {
+    id: 'TEND-008',
+    title: 'HQ Security Systems Upgrade',
+    category: ['Equipment & Machinery', 'IT Hardware & Software'],
+    description: 'Upgrade of physical security systems, access gates, and CCTV surveillance at HQ.',
+    scopeOfWork: 'Supply, installation, and configuration of access controllers and IP cameras.',
+    timeline: '3 months',
+    submissionDeadline: '2026-05-20',
+    createdAt: '2026-04-15',
+    status: 'published',
+    eligibilityCriteria: ['SIRA certified installation contractor', 'Minimum 3 years experience'],
+    attachments: [],
+    estimatedBudget: 'AED 350,000',
+    projectStartDate: '2026-06-01',
+    projectEndDate: '2026-09-01',
+    milestones: [],
+    visibility: 'open',
+    technicalProposalRequired: 'yes'
+  },
+  {
+    id: 'TEND-009',
+    title: 'Ergonomic Office Chairs Supply',
+    category: ['Building Materials', 'Equipment & Machinery'],
+    description: 'Bulk supply of ergonomic office chairs for executive and staff offices at HQ.',
+    scopeOfWork: 'Supply and delivery of 120 ergonomic task chairs.',
+    timeline: '1 month',
+    submissionDeadline: '2026-05-25',
+    createdAt: '2026-04-20',
+    status: 'published',
+    eligibilityCriteria: ['Must provide sample unit for testing', '5-year local warranty'],
+    attachments: [],
+    estimatedBudget: 'AED 150,000',
+    projectStartDate: '2026-06-10',
+    projectEndDate: '2026-07-10',
+    milestones: [],
+    visibility: 'open',
+    technicalProposalRequired: 'no'
   }
 ];
 
@@ -243,10 +352,12 @@ const initialProposals: Proposal[] = [
     status: 'approved',
     submissionDate: '2026-06-02',
     approvedDate: '2026-06-15',
-    technicalProposal: 'Standard enterprise hardware package',
+    technicalProposal: `1. Technical Proposal Overview\nWe propose standard enterprise hardware package using high-durability modern workstations and ultrabooks.\n\n2. Service & Support SLA\n- 24/7 dedicated support desk access.\n- Staged implementation within 4 weeks.`,
     commercialAmount: 395000,
     technicalStatus: 'approved',
     commercialStatus: 'approved',
+    deliveryTimeline: '4 weeks',
+    paymentTerms: `- 20% Advance Payment upon LPO issuance and contract signing.\n- 60% Milestone Payment upon successful delivery and setup.\n- 20% Final Payment after UAT and sign-off.`,
     uploadedDocuments: [
       {
         name: 'Bank_Guarantee_v1.pdf',
@@ -398,6 +509,36 @@ const initialProposals: Proposal[] = [
     commercialAmount: 480000,
     technicalStatus: 'pending',
     commercialStatus: 'pending'
+  },
+  {
+    id: 'PROP-108',
+    tenderId: 'TEND-008',
+    tenderTitle: 'HQ Security Systems Upgrade',
+    vendorId: 'VEN-001',
+    vendorName: 'TechSolutions LLC',
+    status: 'approved',
+    submissionDate: '2026-05-15',
+    approvedDate: '2026-05-28',
+    technicalProposal: 'State-of-the-art IP camera system and biometric access gates.',
+    commercialAmount: 320000,
+    technicalStatus: 'approved',
+    commercialStatus: 'approved',
+    remarks: 'Approved for direct procurement.'
+  },
+  {
+    id: 'PROP-109',
+    tenderId: 'TEND-009',
+    tenderTitle: 'Ergonomic Office Chairs Supply',
+    vendorId: 'VEN-002',
+    vendorName: 'Modern Office Furnishings',
+    status: 'approved',
+    submissionDate: '2026-05-22',
+    approvedDate: '2026-05-30',
+    technicalProposal: 'High-back ergonomic mesh chairs with multi-adjustable arms.',
+    commercialAmount: 138000,
+    technicalStatus: 'approved',
+    commercialStatus: 'approved',
+    remarks: 'Selected based on quality and price matching.'
   }
 ];
 
@@ -430,6 +571,37 @@ export const mockProposals: Proposal[] = (() => {
           p100.technicalReviewer = 'Mohammed Al Zaabi';
           p100.commercialReviewer = 'Sarah Al Hosani';
           needsSave = true;
+        }
+        const p101 = parsed.find(p => p.id === 'PROP-101');
+        if (p101) {
+          let updated = false;
+          if (p101.status !== 'approved') {
+            p101.status = 'approved';
+            updated = true;
+          }
+          if (p101.technicalStatus !== 'approved') {
+            p101.technicalStatus = 'approved';
+            updated = true;
+          }
+          if (p101.commercialStatus !== 'approved') {
+            p101.commercialStatus = 'approved';
+            updated = true;
+          }
+          if (!p101.deliveryTimeline) {
+            p101.deliveryTimeline = '4 weeks';
+            updated = true;
+          }
+          if (!p101.paymentTerms) {
+            p101.paymentTerms = `- 20% Advance Payment upon LPO issuance and contract signing.\n- 60% Milestone Payment upon successful delivery and setup.\n- 20% Final Payment after UAT and sign-off.`;
+            updated = true;
+          }
+          if (!p101.technicalProposal || p101.technicalProposal === 'Standard enterprise hardware package') {
+            p101.technicalProposal = `1. Technical Proposal Overview\nWe propose standard enterprise hardware package using high-durability modern workstations and ultrabooks.\n\n2. Service & Support SLA\n- 24/7 dedicated support desk access.\n- Staged implementation within 4 weeks.`;
+            updated = true;
+          }
+          if (updated) {
+            needsSave = true;
+          }
         }
         const newProps = initialProposals.filter(ip => !parsed.find(p => p.id === ip.id));
         if (newProps.length > 0) {
@@ -586,12 +758,17 @@ export const roles = [
   {
     name: 'Procurement Admin',
     value: 'procurement_admin',
-    permissions: ['vendor_management', 'tender_management', 'proposal_review']
+    permissions: ['vendor_management', 'tender_management', 'proposal_management', 'item_management']
   },
   {
     name: 'Reviewer',
     value: 'reviewer',
-    permissions: ['proposal_review', 'vendor_view']
+    permissions: ['proposal_commercial_and_technical_reviewer']
+  },
+  {
+    name: 'Item Manager',
+    value: 'item_manager',
+    permissions: ['item_management']
   }
 ];
 

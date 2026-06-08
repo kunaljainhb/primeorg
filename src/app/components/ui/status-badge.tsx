@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from './utils';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 export type SystemStatus = 
   | 'approved' | 'active' | 'verified' | 'delivered' | 'paid'
@@ -17,18 +18,19 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  const { t } = useTranslation();
   const normStatus = (status || '').toLowerCase().trim();
 
   // Color mapping
   let bgClass = "bg-gray-100 text-gray-700 border-gray-200/50";
   let displayLabel = status;
 
-  if (normStatus === 'approved' || normStatus === 'shortlisted' || normStatus === 'active' || normStatus === 'verified' || normStatus === 'delivered' || normStatus === 'paid') {
+  if (normStatus === 'approved' || normStatus === 'shortlisted' || normStatus === 'active' || normStatus === 'verified' || normStatus === 'delivered' || normStatus === 'paid' || normStatus === 'receiving completed') {
     bgClass = "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400";
-    displayLabel = normStatus === 'paid' ? 'Paid' : normStatus === 'active' ? 'Active' : normStatus === 'verified' ? 'Verified' : normStatus === 'delivered' ? 'Delivered' : 'Approved';
-  } else if (normStatus === 'pending' || normStatus === 'under_review' || normStatus === 'submitted' || normStatus === 'technical_review_started' || normStatus === 'commercial_review_started' || normStatus === 'technical_review') {
+    displayLabel = normStatus === 'paid' ? 'Paid' : normStatus === 'active' ? 'Active' : normStatus === 'verified' ? 'Verified' : normStatus === 'delivered' ? 'Delivered' : normStatus === 'receiving completed' ? 'Receiving Completed' : 'Approved';
+  } else if (normStatus === 'pending' || normStatus === 'under_review' || normStatus === 'submitted' || normStatus === 'technical_review_started' || normStatus === 'commercial_review_started' || normStatus === 'technical_review' || normStatus === 'receiving pending') {
     bgClass = "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400";
-    displayLabel = normStatus === 'under_review' ? 'Commercial Review Completed' : normStatus === 'submitted' ? 'Submitted' : normStatus === 'technical_review_started' ? 'Technical Review Started' : normStatus === 'commercial_review_started' ? 'Commercial Review Started' : normStatus === 'technical_review' ? 'Technical Review' : 'Pending';
+    displayLabel = normStatus === 'under_review' ? 'Commercial Review Completed' : normStatus === 'submitted' ? 'Submitted' : normStatus === 'technical_review_started' ? 'Technical Review Started' : normStatus === 'commercial_review_started' ? 'Commercial Review Started' : normStatus === 'technical_review' ? 'Technical Review' : normStatus === 'receiving pending' ? 'Receiving Pending' : 'Pending';
   } else if (normStatus === 'rejected' || normStatus === 'suspended' || normStatus === 'expired' || normStatus === 'inactive' || normStatus === 'cancelled' || normStatus.includes('rejected')) {
     bgClass = "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/20 dark:text-rose-400";
     displayLabel = normStatus === 'suspended' ? 'Suspended' : normStatus === 'expired' ? 'Expired' : normStatus === 'inactive' ? 'Inactive' : normStatus === 'cancelled' ? 'Cancelled' : normStatus.includes('technical') ? 'Technical Rejected' : normStatus.includes('commercial') ? 'Commercial Rejected' : 'Rejected';
@@ -60,7 +62,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         className
       )}
     >
-      {displayLabel}
+      {t(displayLabel)}
     </span>
   );
 }

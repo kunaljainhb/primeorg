@@ -9,7 +9,7 @@ export function VendorLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#F7F9FC]">
       <Header role="vendor" userName="TechSolutions LLC" />
       <Sidebar role="vendor" />
-      <main className={`${collapsed ? 'ml-16' : 'ml-72'} pt-4 px-8 pb-8 animate-fade-in transition-[margin] duration-200 ease-in-out`}>
+      <main className={`${collapsed ? 'ms-16' : 'ms-72'} pt-4 px-8 pb-8 animate-fade-in transition-[margin] duration-200 ease-in-out`}>
         {children}
       </main>
     </div>
@@ -22,7 +22,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#F7F9FC]">
       <Header role="admin" userName="Ahmed Al Mansoori" />
       <Sidebar role="admin" />
-      <main className={`${collapsed ? 'ml-16' : 'ml-72'} pt-4 px-8 pb-8 animate-fade-in transition-[margin] duration-200 ease-in-out`}>
+      <main className={`${collapsed ? 'ms-16' : 'ms-72'} pt-4 px-8 pb-8 animate-fade-in transition-[margin] duration-200 ease-in-out`}>
         {children}
       </main>
     </div>

@@ -14,6 +14,8 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { Input } from '@/app/components/ui/input';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { ProgressTimeline } from '@/app/components/ui/progress-timeline';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -37,9 +39,10 @@ const formatStatus = (statusStr?: string) => {
 export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
+  const { t, language } = useTranslation();
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
   const tender = mockTenders.find(r => r.id === proposal.tenderId) || mockTenders[0];
-  const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer');
+  const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer' || u.role === 'technical_department' || u.role === 'commercial_department');
 
   const isInitiallyRejected = proposal.status === 'rejected';
   const isInitiallyApproved = proposal.status === 'approved';
@@ -174,6 +177,129 @@ export default function AdminProposalDetail() {
       toast.info('New message received from ' + proposal.vendorName);
     }, 2000);
   };
+
+  const rfpFeedbacks = [
+    {
+      tenderId: 'TEND-2025-089',
+      tenderTitle: t('Office IT Equipment Supply'),
+      tenderDate: '12 Jan 2025',
+      proposalId: 'PROP-2025-089-A',
+      proposalDate: '02 Feb 2025',
+      overallRating: 4.5,
+      departments: [
+        {
+          department: t('IT Department'),
+          evaluator: 'Ahmed Al Mansoori',
+          avatar: 'AA',
+          role: t('Technical Lead'),
+          date: '16/03/2025',
+          overallComments: t('The vendor delivered high-quality hardware within the requested timeframe.'),
+          questions: [
+            {
+              question: t("How would you rate the hardware technical specifications and compliance?"),
+              answer: t("All Dell Latitude laptops matched our corporate specs exactly, including the security TPM 2.0 module."),
+              rating: 5
+            },
+            {
+              question: t("Did the vendor complete user data migration on schedule?"),
+              answer: t("Migration was completed, but had a slight delay due to lack of standard automation scripts."),
+              rating: 4
+            },
+            {
+              question: t("Rate the quality of technical documentation and user manuals."),
+              answer: t("Provided standard manufacturer booklets, but custom deployment guides were missing."),
+              rating: 4
+            }
+          ]
+        },
+        {
+          department: t('Procurement Department'),
+          evaluator: 'Sarah Al Hashmi',
+          avatar: 'SH',
+          role: t('Commercial Director'),
+          date: '17/03/2025',
+          overallComments: t('The vendor was highly compliant with terms and quick in negotiations.'),
+          questions: [
+            {
+              question: t("Rate the vendor's transparency in pricing and BOQ breakdown."),
+              answer: t("The itemized price list was extremely detailed, clear, and matched market baselines."),
+              rating: 5
+            },
+            {
+              question: t("How satisfied are you with their response to delivery SLA queries?"),
+              answer: t("Delivered replies within 24 hours with concrete shipping schedules."),
+              rating: 5
+            },
+            {
+              question: t("Was the bank guarantee and compliance documentation submitted on time?"),
+              answer: t("Submitted within 3 days of LPO issuance, which was within our expected timeline."),
+              rating: 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      tenderId: 'TEND-2024-112',
+      tenderTitle: t('Network Security Audit'),
+      tenderDate: '05 Sep 2024',
+      proposalId: 'PROP-2024-112-C',
+      proposalDate: '20 Sep 2024',
+      overallRating: 2.0,
+      departments: [
+        {
+          department: t('Security Department'),
+          evaluator: 'Mohammed Khalid',
+          avatar: 'MK',
+          role: t('Chief Information Security Officer'),
+          date: '12/11/2024',
+          overallComments: t('The vendor team lacked experience and failed to deliver an acceptable audit report.'),
+          questions: [
+            {
+              question: t("Rate the quality and depth of the penetration testing methodology?"),
+              answer: t("Only automated Nessus scans were run; zero manual testing or exploitation was performed."),
+              rating: 2
+            },
+            {
+              question: t("Did the vendor deliver audit deliverables on schedule?"),
+              answer: t("Missed the initial audit draft deadline by two weeks, delaying our compliance certification."),
+              rating: 1
+            },
+            {
+              question: t("Rate the professionalism and certification level of onsite resources."),
+              answer: t("Onsite consultants were junior and lacked necessary certifications like OSCP or CEH."),
+              rating: 2
+            }
+          ]
+        },
+        {
+          department: t('Finance Department'),
+          evaluator: 'Khalid Al Jaber',
+          avatar: 'KA',
+          role: t('Accounts Manager'),
+          date: '14/11/2024',
+          overallComments: t('Billing was confusing and they requested advance payments not in contract.'),
+          questions: [
+            {
+              question: t("Rate their adherence to the commercial billing and invoicing terms."),
+              answer: t("Sent commercial invoices before milestone completion and repeatedly called accounts receivable."),
+              rating: 2
+            },
+            {
+              question: t("How satisfied are you with their financial transparency?"),
+              answer: t("Did not disclose third-party tool licensing costs until final billing."),
+              rating: 2
+            },
+            {
+              question: t("Did the vendor match the original contract value?"),
+              answer: t("Attempted to raise change requests for standard firewall scans."),
+              rating: 3
+            }
+          ]
+        }
+      ]
+    }
+  ];
 
   const handleChatFocus = () => {
     setUnreadCount(0);
@@ -420,10 +546,10 @@ export default function AdminProposalDetail() {
   }
 
   const timelineStages = [
-    { key: 'submitted', label: 'Submitted', description: 'Proposal submitted' },
-    { key: 'technical_review', label: 'Tech Review', description: 'Technical evaluation' },
-    { key: 'commercial_review', label: 'Comm Review', description: 'Commercial evaluation' },
-    { key: 'decision', label: 'Final Decision', description: 'Procurement award' },
+    { key: 'submitted', label: t('Submitted'), description: t('Proposal submitted') },
+    { key: 'technical_review', label: t('Tech Review'), description: t('Technical evaluation') },
+    { key: 'commercial_review', label: t('Comm Review'), description: t('Commercial evaluation') },
+    { key: 'decision', label: t('Final Decision'), description: t('Procurement award') },
   ];
 
   const currentStageKey = ['approved', 'approved', 'rejected', 'correction_requested'].includes(overallStatus)
@@ -443,19 +569,18 @@ export default function AdminProposalDetail() {
     : [];
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 font-sans">
       {/* Header back button */}
       <div className="flex items-center justify-between border-b pb-4 mb-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/tenders/${proposal.tenderId}`)} className="rounded-full">
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className={cn("h-5 w-5", language === 'ar' && "scale-x-[-1]")} />
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Proposal Details</h1>
-              <StatusBadge status={overallStatus} />
+              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>{proposal.id}</h1>
             </div>
-            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>Vendor: {proposal.vendorName}</p>
+            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>{t("Vendor")}: {proposal.vendorName}</p>
           </div>
         </div>
         <Button 
@@ -463,8 +588,8 @@ export default function AdminProposalDetail() {
           className="h-9 font-bold text-xs" 
           onClick={() => setShowAuditHistory(true)}
         >
-          <History className="mr-2 h-4 w-4 text-[var(--fnrc-primary-green)]" />
-          Audit History
+          <History className={cn("me-2 h-4 w-4 text-[var(--fnrc-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
+          {t("Audit History")}
         </Button>
       </div>
 
@@ -478,90 +603,115 @@ export default function AdminProposalDetail() {
       </Card>
 
       <Tabs defaultValue="summary" className="space-y-6">
-        <TabsList className="mb-4">
-          <TabsTrigger value="summary">Proposal Summary</TabsTrigger>
-          <TabsTrigger value="technical">Technical Proposal</TabsTrigger>
-          <TabsTrigger value="commercial">Commercial Proposal</TabsTrigger>
-          <TabsTrigger value="supporting">Supporting Documents</TabsTrigger>
-          <TabsTrigger value="feedback">Vendor Feedback</TabsTrigger>
+        <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
+          <TabsTrigger 
+            value="summary"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t("Proposal Summary")}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="technical"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t("Technical Proposal")}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="commercial"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t("Commercial Proposal")}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="supporting"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t("Supporting Documents")}
+          </TabsTrigger>
+          <TabsTrigger 
+            value="feedback"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t("Vendor Feedback")}
+          </TabsTrigger>
           {(tender.status === 'published') && (
             <TabsTrigger 
               value="action"
               disabled={!(technicalStatus === 'approved' && commercialStatus === 'approved') && !['approved', 'approved', 'rejected'].includes(overallStatus)}
-              className="disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
+              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
-              Proposal Action
+              {t("Proposal Action")}
             </TabsTrigger>
           )}
         </TabsList>
 
         <TabsContent value="summary" className="space-y-4">
           <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="flex items-center justify-between">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
+              <CardTitle className="text-lg font-bold text-black flex items-center justify-between">
                 <span>{proposal.id}</span>
                 <StatusBadge status={overallStatus} />
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <CardContent className="pt-1 px-6 pb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="font-medium text-gray-600">Proposal Date</p>
-                <p className="text-sm">{formatDate(proposal.submissionDate)}</p>
+                <p className="text-sm font-bold text-black mb-1 block">{t("Proposal Date")}</p>
+                <p className="text-sm font-normal text-gray-800">{formatDate(proposal.submissionDate)}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">Vendor Name</p>
-                <p className="text-sm">{proposal.vendorName}</p>
+                <p className="text-sm font-bold text-black mb-1 block">{t("Vendor Name")}</p>
+                <p className="text-sm font-normal text-gray-800">{proposal.vendorName}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">Tender ID</p>
-                <p className="text-sm">{proposal.tenderId}</p>
+                <p className="text-sm font-bold text-black mb-1 block">{t("Tender ID")}</p>
+                <p className="text-sm font-normal text-gray-800">{proposal.tenderId}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">Tender Title</p>
-                <p className="text-sm">{proposal.tenderTitle}</p>
+                <p className="text-sm font-bold text-black mb-1 block">{t("Tender Title")}</p>
+                <p className="text-sm font-normal text-gray-800">{proposal.tenderTitle}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-600">Commercial Amount (AED)</p>
-                <p className="text-sm font-bold text-[var(--fnrc-primary-green)]">{proposal.commercialAmount.toLocaleString()}</p>
+                <p className="text-sm font-bold text-black mb-1 block">{t("Commercial Amount (AED)")}</p>
+                <p className="text-sm font-normal text-[var(--fnrc-primary-green)]">{proposal.commercialAmount.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Vendor Clarification Chat */}
           <Card className="mt-6">
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <Users className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Vendor Clarifications Chat
+                {t("Vendor Clarifications Chat")}
               </CardTitle>
               {unreadCount > 0 && (
                 <Badge 
                   variant="secondary" 
                   className="bg-red-500 text-white font-bold text-[10px] px-2.5 py-0.5 rounded-full border-none animate-pulse"
                 >
-                  {unreadCount} Unread
+                  {unreadCount} {t("Unread")}
                 </Badge>
               )}
             </CardHeader>
-            <CardContent className="pt-4 space-y-4" onClick={handleChatFocus}>
+            <CardContent className="pt-1 px-6 pb-6 space-y-4" onClick={handleChatFocus}>
               {/* Message scroll container */}
               <div className="border border-gray-100 rounded-xl bg-gray-50/30 p-4 h-[300px] overflow-y-auto space-y-3 flex flex-col scrollbar-thin scrollbar-thumb-gray-200">
                 {messages.map((msg) => (
                   <div 
                     key={msg.id} 
-                    className={`flex flex-col max-w-[80%] ${msg.sender === 'admin' ? 'align-end ml-auto' : 'align-start mr-auto'}`}
+                    className={`flex flex-col max-w-[80%] ${msg.sender === 'admin' ? 'align-end ms-auto' : 'align-start me-auto'}`}
                   >
                     {/* Sender Label */}
-                    <span className={`text-[10px] font-bold mb-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
-                      {msg.sender === 'admin' ? 'Government Admin' : proposal.vendorName}
+                    <span className={`text-[10px] font-bold mb-1 text-gray-400 ${msg.sender === 'admin' ? 'text-end' : 'text-start'}`}>
+                      {msg.sender === 'admin' ? t('Government Admin') : proposal.vendorName}
                     </span>
                     
                     {/* Message Bubble */}
                     <div 
                       className={`p-3 rounded-2xl text-sm font-medium shadow-sm relative ${
                         msg.sender === 'admin' 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' 
-                          : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                          ? 'bg-[var(--fnrc-primary-green)] text-white rounded-te-none' 
+                          : 'bg-white text-gray-800 border border-gray-100 rounded-ts-none'
                       }`}
                     >
                       {msg.text}
@@ -574,18 +724,18 @@ export default function AdminProposalDetail() {
                     </div>
                     
                     {/* Timestamp */}
-                    <span className={`text-[9px] font-semibold mt-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
+                    <span className={`text-[9px] font-semibold mt-1 text-gray-400 ${msg.sender === 'admin' ? 'text-end' : 'text-start'}`}>
                       {msg.timestamp}
                     </span>
                   </div>
                 ))}
 
                 {isTyping && (
-                  <div className="flex flex-col max-w-[80%] align-start mr-auto">
+                  <div className="flex flex-col max-w-[80%] align-start me-auto">
                     <span className="text-[10px] font-bold mb-1 text-gray-400">
-                      {proposal.vendorName} is typing
+                      {proposal.vendorName} {t("is typing")}
                     </span>
-                    <div className="bg-white text-gray-800 border border-gray-100 p-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+                    <div className="bg-white text-gray-800 border border-gray-100 p-3 rounded-2xl rounded-ts-none flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 bg-gray-300 rounded-full animate-bounce"></span>
                       <span className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></span>
                       <span className="h-1.5 w-1.5 bg-gray-500 rounded-full animate-bounce delay-200"></span>
@@ -598,7 +748,7 @@ export default function AdminProposalDetail() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder={`Type a message to ${proposal.vendorName}...`}
+                  placeholder={`${t("Type a message to")} ${proposal.vendorName}...`}
                   value={newMessageText}
                   onChange={(e) => setNewMessageText(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -609,7 +759,7 @@ export default function AdminProposalDetail() {
                   className="text-white h-10 px-6 font-bold text-xs rounded-xl shrink-0"
                   style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                 >
-                  Send
+                  {t("Send")}
                 </Button>
               </div>
             </CardContent>
@@ -619,25 +769,25 @@ export default function AdminProposalDetail() {
         <TabsContent value="technical" className="space-y-6">
           {/* Technical Approach */}
           <Card>
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Technical Approach
+                {t("Technical Approach")}
               </CardTitle>
               <StatusBadge status={technicalStatus} />
             </CardHeader>
-            <CardContent className="pt-4 space-y-4">
+            <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
                 <div>
-                  <h4 className="text-xs font-black text-gray-450 mb-1.5">Executive Summary & Proposal Statement</h4>
-                  <p className="text-sm font-semibold text-gray-700 leading-relaxed">
+                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Executive Summary & Proposal Statement")}</h4>
+                  <p className="text-sm font-normal text-gray-800 leading-relaxed">
                     {proposal.technicalProposal}
                   </p>
                 </div>
                 {proposal.methodology && (
                   <div className="pt-4 border-t border-gray-200/60">
-                    <h4 className="text-xs font-black text-gray-450 mb-1.5">Proposed Methodology & Deployment Strategy</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                    <h4 className="text-sm font-bold text-black mb-1 block">{t("Proposed Methodology & Deployment Strategy")}</h4>
+                    <p className="text-sm font-normal text-gray-855 leading-relaxed">
                       {proposal.methodology}
                     </p>
                   </div>
@@ -648,20 +798,20 @@ export default function AdminProposalDetail() {
 
           {/* Technical Documents */}
           <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
+              <CardTitle className="text-lg font-bold text-black flex items-center gap-2">
                 <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Submitted Technical Documents
+                {t("Submitted Technical Documents")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-1 px-6 pb-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {technicalDocs.map((doc, i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-[var(--fnrc-primary-green)] transition-all bg-white">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-blue-500" />
                       <div>
-                        <div className="text-xs font-bold text-gray-800">{doc}</div>
+                        <div className="text-xs font-normal text-gray-800">{doc}</div>
                         <div className="text-[9px] text-muted-foreground font-bold">PDF • 1.8 MB</div>
                       </div>
                     </div>
@@ -676,22 +826,22 @@ export default function AdminProposalDetail() {
 
           {/* Technical Approval Matrix */}
           <Card>
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Technical Approval Matrix
+                {t("Technical Approval Matrix")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 space-y-5">
-              <p className="text-xs font-medium text-gray-500">
-                Specify the Technical Reviewer responsible for evaluating this proposal. The reviewer will be notified to begin technical scoring and compliance assessment.
+            <CardContent className="pt-1 px-6 pb-6 space-y-5">
+              <p className="text-xs font-normal text-gray-500">
+                {t("Specify the Technical Reviewer responsible for evaluating this proposal. The reviewer will be notified to begin technical scoring and compliance assessment.")}
               </p>
               
               <div className="max-w-md w-full">
-                <label className="text-xs font-bold text-gray-700 block mb-1">Technical Reviewer Name</label>
+                <label className="text-sm font-bold text-black block mb-1">{t("Technical Reviewer Name")}</label>
                 <Select value={technicalReviewer} onValueChange={handleSaveTechnicalApproval}>
-                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-semibold text-gray-800 bg-white">
-                    <SelectValue placeholder="Select Technical Reviewer" />
+                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-normal text-gray-800 bg-white">
+                    <SelectValue placeholder={t("Select Technical Reviewer")} />
                   </SelectTrigger>
                   <SelectContent>
                     {reviewers.map((reviewer) => (
@@ -705,21 +855,21 @@ export default function AdminProposalDetail() {
 
               {/* Remarks + Decision Buttons */}
               <div className="pt-4 border-t border-gray-200/60 space-y-4">
-                <h4 className="text-xs font-bold text-gray-700">Technical Evaluation Decision</h4>
+                <h4 className="text-sm font-bold text-black block mb-1">{t("Technical Evaluation Decision")}</h4>
 
                 {/* Remarks textarea */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 flex items-center gap-1">
-                    Reviewer Remarks
+                  <label className="text-sm font-bold text-black flex items-center gap-1 mb-1">
+                    {t("Reviewer Remarks")}
                     <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    placeholder="Enter detailed remarks for this technical evaluation (e.g. 'Failover mechanism is insufficient', 'All requirements fully met')..."
+                    placeholder={t("Enter detailed remarks for this technical evaluation (e.g. 'Failover mechanism is insufficient', 'All requirements fully met')...")}
                     value={technicalRemark}
                     onChange={(e) => setTechnicalRemark(e.target.value)}
-                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)]"
+                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
                   />
-                  <p className="text-[10px] text-gray-400">Remarks are required and will be visible to the vendor.</p>
+                  <p className="text-[10px] text-gray-400">{t("Remarks are required and will be visible to the vendor.")}</p>
                 </div>
 
                 {/* Decision buttons */}
@@ -737,7 +887,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <Check className={`h-4 w-4 ${technicalStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
-                    Approved
+                    {t("Approved")}
                   </Button>
                   <Button
                     onClick={() => handleTechnicalStatusUpdate('rejected')}
@@ -751,7 +901,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <X className={`h-4 w-4 ${technicalStatus === 'rejected' ? 'text-white' : 'text-red-500'}`} />
-                    Rejected
+                    {t("Rejected")}
                   </Button>
                   <Button
                     onClick={() => handleTechnicalStatusUpdate('correction_requested')}
@@ -765,7 +915,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <Clock className={`h-4 w-4 ${technicalStatus === 'correction_requested' ? 'text-white' : 'text-amber-500'}`} />
-                    Correction Requested
+                    {t("Correction Requested")}
                   </Button>
                 </div>
                 )}
@@ -777,87 +927,76 @@ export default function AdminProposalDetail() {
         <TabsContent value="commercial" className="space-y-6">
           {/* Commercial Details Card */}
           <Card>
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Commercial Proposal
+                {t("Commercial Proposal")}
               </CardTitle>
               <StatusBadge status={commercialStatus} />
             </CardHeader>
-            <CardContent className="pt-4 space-y-4">
+            <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
                 <div>
-                  <h4 className="text-xs font-black text-gray-450 mb-4">Cost Breakdown</h4>
+                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Cost Breakdown Details")}</h4>
                   <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
                     <Table>
                       <TableHeader className="bg-gray-50/80">
-                        <TableRow className="border-b-gray-200 hover:bg-gray-50/80">
-                          <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider w-[40%]">Description</TableHead>
-                          <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Unit Price (AED)</TableHead>
-                          <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-center w-[20%]">Quantity</TableHead>
-                          <TableHead className="font-bold text-[10px] text-gray-600 uppercase tracking-wider text-right w-[20%] pr-4">Amount (AED)</TableHead>
+                        <TableRow className="border-b border-gray-250 hover:bg-gray-50/80">
+                          <TableHead className="font-bold text-[10px] text-black uppercase tracking-wider w-[40%]">{t("Description")}</TableHead>
+                          <TableHead className="font-bold text-[10px] text-black uppercase tracking-wider text-center w-[20%]">{t("Unit Price (AED)")}</TableHead>
+                          <TableHead className="font-bold text-[10px] text-black uppercase tracking-wider text-center w-[20%]">{t("Quantity")}</TableHead>
+                          <TableHead className="font-bold text-[10px] text-black uppercase tracking-wider text-right w-[20%] pe-4">{t("Amount (AED)")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {commercialBreakdown.map((entry, i) => (
-                          <TableRow key={i} className="border-b-gray-100 bg-white hover:bg-white">
-                            <TableCell className="p-3">
-                              <Input 
-                                value={entry.item} 
-                                readOnly 
-                                className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm focus-visible:ring-0 cursor-default" 
-                              />
+                          <TableRow key={i} className="border-b border-gray-100 bg-white hover:bg-white">
+                            <TableCell className="p-3 text-sm font-normal text-gray-800">
+                              {entry.item}
                             </TableCell>
-                            <TableCell className="p-3">
-                              <Input 
-                                value={(entry.amount / 1).toFixed(2)} 
-                                readOnly 
-                                className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-right focus-visible:ring-0 cursor-default" 
-                              />
+                            <TableCell className="p-3 text-sm text-center font-normal text-gray-600">
+                              {entry.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </TableCell>
-                            <TableCell className="p-3">
-                              <Input 
-                                value="1" 
-                                readOnly 
-                                className="h-9 border-gray-200 bg-white text-gray-700 shadow-sm text-center focus-visible:ring-0 cursor-default" 
-                              />
+                            <TableCell className="p-3 text-sm text-center font-normal text-gray-600">
+                              1
                             </TableCell>
-                            <TableCell className="p-3 text-right">
-                              <div className="h-9 rounded-md bg-gray-50 border border-gray-200 flex items-center justify-end px-3 text-gray-500 text-sm shadow-inner">
-                                {entry.amount.toFixed(2)}
-                              </div>
+                            <TableCell className="p-3 text-sm text-right font-normal text-gray-800">
+                              {entry.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
                     <div className="p-4 border-t border-gray-200 bg-gray-50/50 flex justify-end items-center gap-6">
-                      <span className="font-bold text-sm text-gray-700">Total Proposal Amount</span>
+                      <span className="font-bold text-sm text-black">{t("Total Proposal Amount")}</span>
                       <span className="font-bold text-lg text-[var(--fnrc-primary-green)]">
                         AED {commercialBreakdown.reduce((sum, item) => sum + item.amount, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
                 </div>
-                
-                <div className="pt-4 border-t border-gray-200/60 flex items-center justify-between bg-white p-3 rounded-lg border border-gray-100">
-                  <div className="flex items-center gap-2.5">
-                    <FileText className="h-4 w-4 text-red-500" />
-                    <div>
-                      <div className="text-xs font-bold text-gray-800">Commercial Proposal.pdf</div>
-                      <div className="text-[9px] text-muted-foreground font-bold">PDF • 3.1 MB</div>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
-                    <Download className="h-4 w-4" />
-                  </Button>
+
+                <div className="pt-4 border-t border-gray-200/60">
+                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Payment Milestones & Terms")}</h4>
+                  <p className="text-sm text-gray-850 font-normal leading-relaxed whitespace-pre-line bg-white p-4 border rounded-xl border-gray-150">
+                    {proposal.paymentTerms || 'Standard payment terms apply. Milestone-based payments of 20% advance, 40% intermediate, and 40% upon final delivery sign-off.'}
+                  </p>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200/60">
-                  <h4 className="text-xs font-black text-gray-450 mb-1.5">Payment Terms</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                    Standard payment terms apply. Milestone-based payments of 20% advance, 40% intermediate, and 40% upon final delivery sign-off.
-                  </p>
+                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Commercial Document")}</h4>
+                  <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-gray-155 shadow-sm">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="h-5 w-5 text-red-500" />
+                      <div>
+                        <div className="text-xs font-normal text-gray-800">Commercial Proposal.pdf</div>
+                        <div className="text-[10px] text-gray-400 font-bold">PDF • 3.1 MB</div>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -865,22 +1004,22 @@ export default function AdminProposalDetail() {
 
           {/* Commercial Approval Matrix */}
           <Card>
-            <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Commercial Approval Matrix
+                {t("Commercial Approval Matrix")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4 space-y-5">
-              <p className="text-xs font-medium text-gray-500">
-                Specify the Commercial Reviewer responsible for evaluating this proposal. The reviewer will be notified to review pricing compliance and LPO preparation.
+            <CardContent className="pt-1 px-6 pb-6 space-y-5">
+              <p className="text-xs font-normal text-gray-500">
+                {t("Specify the Commercial Reviewer responsible for evaluating this proposal. The reviewer will be notified to review pricing compliance and LPO preparation.")}
               </p>
               
               <div className="max-w-md w-full">
-                <label className="text-xs font-bold text-gray-700 block mb-1">Commercial Reviewer Name</label>
+                <label className="text-sm font-bold text-black block mb-1">{t("Commercial Reviewer Name")}</label>
                 <Select value={commercialReviewer} onValueChange={handleSaveCommercialApproval}>
-                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-semibold text-gray-800 bg-white">
-                    <SelectValue placeholder="Select Commercial Reviewer" />
+                  <SelectTrigger className="w-full h-9 border-gray-200 text-sm font-normal text-gray-800 bg-white">
+                    <SelectValue placeholder={t("Select Commercial Reviewer")} />
                   </SelectTrigger>
                   <SelectContent>
                     {reviewers.map((reviewer) => (
@@ -894,21 +1033,21 @@ export default function AdminProposalDetail() {
 
               {/* Remarks + Decision Buttons */}
               <div className="pt-4 border-t border-gray-200/60 space-y-4">
-                <h4 className="text-xs font-bold text-gray-700">Commercial Evaluation Decision</h4>
+                <h4 className="text-sm font-bold text-black block mb-1">{t("Commercial Evaluation Decision")}</h4>
 
                 {/* Remarks textarea */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 flex items-center gap-1">
-                    Reviewer Remarks
+                  <label className="text-sm font-bold text-black flex items-center gap-1 mb-1">
+                    {t("Reviewer Remarks")}
                     <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    placeholder="Enter detailed remarks for this commercial evaluation (e.g. 'Pricing exceeds budget by 15%', 'Excellent pricing and payment terms')..."
+                    placeholder={t("Enter detailed remarks for this commercial evaluation (e.g. 'Pricing exceeds budget by 15%', 'Excellent pricing and payment terms')...")}
                     value={commercialRemark}
                     onChange={(e) => setCommercialRemark(e.target.value)}
-                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)]"
+                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
                   />
-                  <p className="text-[10px] text-gray-400">Remarks are required and will be visible to the vendor.</p>
+                  <p className="text-[10px] text-gray-400">{t("Remarks are required and will be visible to the vendor.")}</p>
                 </div>
 
                 {/* Decision buttons */}
@@ -926,7 +1065,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <Check className={`h-4 w-4 ${commercialStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
-                    Approved
+                    {t("Approved")}
                   </Button>
                   <Button
                     onClick={() => handleCommercialStatusUpdate('rejected')}
@@ -940,7 +1079,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <X className={`h-4 w-4 ${commercialStatus === 'rejected' ? 'text-white' : 'text-red-500'}`} />
-                    Rejected
+                    {t("Rejected")}
                   </Button>
                   <Button
                     onClick={() => handleCommercialStatusUpdate('correction_requested')}
@@ -954,7 +1093,7 @@ export default function AdminProposalDetail() {
                     }}
                   >
                     <Clock className={`h-4 w-4 ${commercialStatus === 'correction_requested' ? 'text-white' : 'text-amber-500'}`} />
-                    Correction Requested
+                    {t("Correction Requested")}
                   </Button>
                 </div>
                 )}
@@ -965,31 +1104,31 @@ export default function AdminProposalDetail() {
 
         <TabsContent value="supporting" className="space-y-6">
           <Card>
-            <CardHeader className="pb-3 border-b">
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                Supporting Documents
+                {t("Supporting Documents")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-1 px-6 pb-6">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-                    <TableHead className="font-bold text-xs text-gray-700">Document Name</TableHead>
-                    <TableHead className="font-bold text-xs text-gray-700">Document Category</TableHead>
-                    <TableHead className="font-bold text-xs text-gray-700">Upload Date</TableHead>
-                    <TableHead className="text-right pr-4 font-bold text-xs text-gray-700">Action</TableHead>
+                    <TableHead className="font-bold text-xs text-black">{t("Document Name")}</TableHead>
+                    <TableHead className="font-bold text-xs text-black">{t("Document Category")}</TableHead>
+                    <TableHead className="font-bold text-xs text-black">{t("Upload Date")}</TableHead>
+                    <TableHead className="text-right pe-4 font-bold text-xs text-black">{t("Action")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {supportingDocs.map((doc) => (
                     <TableRow key={doc.id} className="hover:bg-gray-50/30">
-                      <TableCell className="font-semibold text-sm text-gray-800 py-3">{doc.name}</TableCell>
-                      <TableCell className="font-medium text-xs text-gray-500 py-3">{doc.category}</TableCell>
-                      <TableCell className="font-medium text-xs text-gray-500 py-3">
+                      <TableCell className="font-normal text-sm text-gray-800 py-3">{doc.name}</TableCell>
+                      <TableCell className="font-normal text-xs text-gray-600 py-3">{doc.category}</TableCell>
+                      <TableCell className="font-normal text-xs text-gray-600 py-3">
                         {formatDate(doc.date)}
                       </TableCell>
-                      <TableCell className="text-right pr-4 py-3">
+                      <TableCell className="text-right pe-4 py-3">
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
                           <Download className="h-4 w-4" />
                         </Button>
@@ -1007,22 +1146,22 @@ export default function AdminProposalDetail() {
             
             {/* CARD 1: Proposal Action Decision */}
             <Card>
-              <CardHeader className="pb-3 border-b">
-                <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+              <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
+                <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                   <Award className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                  Proposal Action Decision
+                  {t("Proposal Action Decision")}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-5 space-y-4">
+              <CardContent className="pt-1 px-6 pb-6 space-y-4">
                 {overallStatus === 'rejected' ? (
                   <div className="bg-red-50/50 border border-red-100 p-5 rounded-xl space-y-3.5">
                     <div className="flex items-center gap-2">
                       <StatusBadge status="rejected" />
-                      <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
+                      <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
-                      <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
+                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
                         {proposalRemark || "The commercial proposal exceeded the allocated Tender budget limits."}
                       </p>
                     </div>
@@ -1031,11 +1170,11 @@ export default function AdminProposalDetail() {
                   <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
                     <div className="flex items-center gap-2">
                       <StatusBadge status="approved" />
-                      <span className="text-[10px] text-gray-500 font-bold">Decision Completed</span>
+                      <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
-                      <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
+                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
                         {proposalRemark || "Highly qualified vendor meeting all technical specs and commercial constraints."}
                       </p>
                     </div>
@@ -1045,17 +1184,17 @@ export default function AdminProposalDetail() {
                   <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-4">
                     <div className="flex items-center gap-2">
                       <StatusBadge status="approved" />
-                      <span className="text-[10px] text-gray-500 font-bold">Proposal approved — proceed to shortlisting</span>
+                      <span className="text-[10px] text-gray-500 font-bold">{t("Proposal approved — proceed to shortlisting")}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-xs font-black text-gray-700 block">Final Remarks:</span>
-                      <p className="text-sm font-semibold text-gray-800 bg-white p-3 rounded-lg border border-gray-100 leading-relaxed">
+                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
+                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-100 leading-relaxed">
                         {proposalRemark}
                       </p>
                     </div>
                     <div className="pt-2 border-t border-green-100">
                       <p className="text-xs text-gray-500 font-medium mb-3">
-                        The proposal has been approved. You can now shortlist this vendor to generate ERP documents (LPO & Invoice).
+                        {t("The proposal has been approved. You can now shortlist this vendor to generate ERP documents (LPO & Invoice).")}
                       </p>
                       <Button
                         onClick={handleShortlistVendor}
@@ -1063,25 +1202,25 @@ export default function AdminProposalDetail() {
                         style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                       >
                         <Award className="h-4 w-4" />
-                        Shortlist Vendor
+                        {t("Shortlist Vendor")}
                       </Button>
                     </div>
                   </div>
                 ) : (
                   // Pending decision — show Approve / Reject only
                   <div className="space-y-4">
-                    <p className="text-xs font-medium text-gray-500">
-                      Take a final decision on this vendor's proposal. Approving allows you to then shortlist the vendor for ERP document generation.
+                    <p className="text-xs font-normal text-gray-500">
+                      {t("Take a final decision on this vendor's proposal. Approving allows you to then shortlist the vendor for ERP document generation.")}
                     </p>
                     <div className="space-y-1.5">
-                      <label htmlFor="remark" className="text-xs font-bold text-gray-700 block">Remarks & Decision Comments <span className="text-red-500">*</span></label>
+                      <label htmlFor="remark" className="text-sm font-bold text-black block mb-1">{t("Remarks & Decision Comments")} <span className="text-red-500">*</span></label>
                       <textarea
                         id="remark"
                         rows={3}
-                        placeholder="Enter remarks or justification for this decision..."
+                        placeholder={t("Enter remarks or justification for this decision...")}
                         value={proposalRemark}
                         onChange={(e) => setProposalRemark(e.target.value)}
-                        className="w-full p-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                        className="w-full p-3 rounded-lg border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
                       />
                     </div>
                     <div className="flex gap-3">
@@ -1091,7 +1230,7 @@ export default function AdminProposalDetail() {
                         style={{ backgroundColor: 'var(--fnrc-success)' }}
                       >
                         <Check className="h-4 w-4" />
-                        Approve Proposal
+                        {t("Approve Proposal")}
                       </Button>
                       <Button
                         onClick={handleRejectProposalAction}
@@ -1099,7 +1238,7 @@ export default function AdminProposalDetail() {
                         style={{ backgroundColor: '#EF4444' }}
                       >
                         <X className="h-4 w-4" />
-                        Reject Proposal
+                        {t("Reject Proposal")}
                       </Button>
                     </div>
                   </div>
@@ -1109,21 +1248,21 @@ export default function AdminProposalDetail() {
 
             {/* CARD 2: Vendor reviews and ratings - displayed below */}
             <Card>
-              <CardHeader className="pb-4 border-b bg-gray-50/30">
+              <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
                 <div className="flex flex-col sm:flex-row justify-between gap-4">
                   <div className="space-y-3">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
+                    <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                       <Award className="h-5 w-5 text-amber-500" />
-                      Vendor Rating
+                      {t("Vendor Rating")}
                     </CardTitle>
                     <div className="flex flex-col gap-1.5 bg-white p-3 rounded-md border shadow-sm">
                       <div className="text-sm">
-                        <span className="font-bold text-gray-500 mr-2 uppercase text-xs">Tender Name:</span> 
-                        <span className="text-gray-800 font-bold">{tender.title}</span>
+                        <span className="font-bold text-black me-2 text-xs">{t("TENDER NAME:")}</span> 
+                        <span className="text-gray-800 font-normal">{tender.title}</span>
                       </div>
                       <div className="text-sm">
-                        <span className="font-bold text-gray-500 mr-2 uppercase text-xs">Proposal ID:</span>
-                        <span className="text-[var(--fnrc-primary-green)] font-black">{proposal.id}</span>
+                        <span className="font-bold text-black me-2 text-xs">{t("PROPOSAL ID:")}</span>
+                        <span className="text-[var(--fnrc-primary-green)] font-normal">{proposal.id}</span>
                       </div>
                     </div>
                   </div>
@@ -1135,46 +1274,46 @@ export default function AdminProposalDetail() {
                       onClick={() => setShowShareModal(true)}
                     >
                       <Award className="h-3.5 w-3.5" />
-                      Generate Rating Link
+                      {t("Generate Rating Link")}
                     </Button>
                     {isRatingSaved && (overallStatus !== 'approved' && overallStatus !== 'rejected') && (
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="text-xs font-bold border-gray-250 text-gray-600 hover:bg-gray-50 h-9 shadow-sm"
+                        className="text-xs font-bold border-gray-250 text-gray-600 hover:bg-gray-55 h-9 shadow-sm"
                         onClick={() => setIsRatingSaved(false)}
                       >
-                        Edit Ratings
+                        {t("Edit Ratings")}
                       </Button>
                     )}
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6">
+              <CardContent className="pt-1 px-6 pb-6 space-y-6">
                 {isRatingSaved ? (
                   <div className="bg-white space-y-6">
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4">
-                      <div className="text-[11px] text-gray-400 font-semibold">
-                        Reviewed by Fatima Al Hammadi on 18/02/2026
+                      <div className="text-[11px] text-gray-400 font-normal">
+                        {t("Reviewed by Fatima Al Hammadi on 18/02/2026")}
                       </div>
                     </div>
 
                     {/* Ratings List */}
                     <div className="space-y-4">
                       {[
-                        { label: "How would you rate the vendor's technical capability?", value: q1Remark, rating: q1Rating },
-                        { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, rating: q2Rating },
-                        { label: "Rate the vendor's financial stability.", value: q3Remark, rating: q3Rating }
+                        { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, rating: q1Rating },
+                        { label: t("Does the vendor have relevant experience in the required domain?"), value: q2Remark, rating: q2Rating },
+                        { label: t("Rate the vendor's financial stability."), value: q3Remark, rating: q3Rating }
                       ].map((q, i) => (
                         <div key={i} className="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-sm font-bold text-gray-700">{q.label}</span>
+                            <span className="text-sm font-bold text-black">{q.label}</span>
                             <div className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">
                               <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                              <span className="text-sm font-black text-gray-800">{q.rating || '-'} / 5</span>
+                              <span className="text-sm font-bold text-gray-800">{q.rating || '-'} / 5</span>
                             </div>
                           </div>
-                          <span className="text-sm font-medium text-gray-600 bg-white p-3 rounded-md border border-gray-100">{q.value || "No remarks provided."}</span>
+                          <span className="text-sm font-normal text-gray-800 bg-white p-3 rounded-md border border-gray-100">{q.value || t("No remarks provided.")}</span>
                         </div>
                       ))}
                     </div>
@@ -1182,13 +1321,13 @@ export default function AdminProposalDetail() {
                     {/* Admin Comments */}
                     <div className="space-y-2 pt-4 border-t border-gray-100">
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="text-xs font-extrabold text-gray-750">Overall Comments & Rating</h4>
+                        <h4 className="text-sm font-bold text-black mb-1">{t("Overall Comments & Rating")}</h4>
                         <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm">
                           <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                          <span className="text-sm font-black text-amber-700">{overallRating || '-'} / 5</span>
+                          <span className="text-sm font-bold text-amber-700">{overallRating || '-'} / 5</span>
                         </div>
                       </div>
-                      <p className="text-sm font-medium text-gray-600 leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                      <p className="text-sm font-normal text-gray-800 leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100">
                         {ratingRemark || "Outstanding technical proposal with comprehensive documentation. Team demonstrated excellent understanding of requirements. All compliance criteria met. Recommended for shortlisting."}
                       </p>
                     </div>
@@ -1197,34 +1336,34 @@ export default function AdminProposalDetail() {
                   /* Interactive Star Rating Form */
                   <div className="space-y-6">
                     <div className="space-y-4">
-                      <h3 className="text-xs font-black text-gray-450 uppercase tracking-wider flex items-center gap-1.5">
+                      <h3 className="text-sm font-bold text-black flex items-center gap-1.5 mb-1">
                         <Award className="h-4 w-4 text-amber-500" />
-                        Vendor Rating Matrix
+                        {t("Vendor Rating Matrix")}
                       </h3>
                       
                       <div className="space-y-4">
                         {[
-                          { label: "How would you rate the vendor's technical capability?", value: q1Remark, setter: setQ1Remark, rating: q1Rating, setRating: setQ1Rating },
-                          { label: "Does the vendor have relevant experience in the required domain?", value: q2Remark, setter: setQ2Remark, rating: q2Rating, setRating: setQ2Rating },
-                          { label: "Rate the vendor's financial stability.", value: q3Remark, setter: setQ3Remark, rating: q3Rating, setRating: setQ3Rating }
+                          { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, setter: setQ1Remark, rating: q1Rating, setRating: setQ1Rating },
+                          { label: t("Does the vendor have relevant experience in the required domain?"), value: q2Remark, setter: setQ2Remark, rating: q2Rating, setRating: setQ2Rating },
+                          { label: t("Rate the vendor's financial stability."), value: q3Remark, setter: setQ3Remark, rating: q3Rating, setRating: setQ3Rating }
                         ].map((q, i) => (
                           <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 flex flex-col gap-4">
-                            <span className="text-sm font-extrabold text-gray-800">{q.label}</span>
+                            <span className="text-sm font-bold text-black">{q.label}</span>
                             <div className="space-y-1.5">
-                              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Answer</label>
+                              <label className="text-xs font-bold text-black uppercase tracking-wide">{t("Answer")}</label>
                               <Textarea
-                                placeholder="Enter your answer here..."
+                                placeholder={t("Enter your answer here...")}
                                 value={q.value}
                                 onChange={(e) => q.setter(e.target.value)}
-                                className="w-full text-sm resize-none focus-visible:ring-[var(--fnrc-primary-green)]"
+                                className="w-full text-sm resize-none focus-visible:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
                                 rows={2}
                               />
                             </div>
                             <div className="flex items-center gap-3">
-                              <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Rating (out of 5)</label>
+                              <label className="text-xs font-bold text-black uppercase tracking-wide">{t("Rating (out of 5)")}</label>
                               <Select value={q.rating ? q.rating.toString() : ''} onValueChange={(val) => q.setRating(Number(val))}>
                                 <SelectTrigger className="w-32 h-9 border-gray-200 font-bold focus:ring-[var(--fnrc-primary-green)] text-gray-800">
-                                  <SelectValue placeholder="Select" />
+                                  <SelectValue placeholder={t("Select")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {[1, 2, 3, 4, 5].map(num => (
@@ -1240,22 +1379,22 @@ export default function AdminProposalDetail() {
                       {/* Dedicated Remarks for Vendor Rating system */}
                       <div className="space-y-3 pt-6 border-t border-gray-100">
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                          <label htmlFor="ratingRemarkInput" className="text-xs font-bold text-gray-700 block">Overall Vendor Rating & Justification</label>
+                          <label htmlFor="ratingRemarkInput" className="text-sm font-bold text-black block mb-1">{t("Overall Vendor Rating & Justification")}</label>
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-bold text-gray-600">Calculated Overall Rating:</span>
+                            <span className="text-xs font-normal text-gray-600">{t("Calculated Overall Rating:")}</span>
                             <div className="flex items-center gap-1.5 bg-amber-50 px-4 py-2 rounded-lg border border-amber-200 shadow-sm">
                                <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                               <span className="text-sm font-black text-amber-700">{overallRating > 0 ? overallRating : '-'} / 5</span>
+                               <span className="text-sm font-bold text-amber-700">{overallRating > 0 ? overallRating : '-'} / 5</span>
                             </div>
                           </div>
                         </div>
                         <textarea
                           id="ratingRemarkInput"
                           rows={3}
-                          placeholder="Enter specific remarks regarding this vendor's performance..."
+                          placeholder={t("Enter specific remarks regarding this vendor's performance...")}
                           value={ratingRemark}
                           onChange={(e) => setRatingRemark(e.target.value)}
-                          className="w-full p-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                          className="w-full p-4 rounded-xl border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
                         />
                       </div>
 
@@ -1266,7 +1405,7 @@ export default function AdminProposalDetail() {
                           style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                         >
                           <Check className="h-4 w-4" />
-                          Save Ratings
+                          {t("Save Ratings")}
                         </Button>
                       </div>
                     </div>
@@ -1276,160 +1415,116 @@ export default function AdminProposalDetail() {
             </Card>
           </TabsContent>
         )}
-
-        <TabsContent value="feedback" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3 border-b border-gray-100 flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base font-bold text-gray-800">
-                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-                Historical Vendor Feedback
-              </CardTitle>
-              <div className="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                <span className="text-xs font-bold text-amber-800 uppercase">Overall Average</span>
-                <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-amber-200 shadow-sm">
+        <TabsContent value="feedback" className="space-y-6">
+          <Card className="shadow-sm border border-gray-200/80 rounded-xl overflow-hidden bg-white">
+            <CardHeader className="border-b border-gray-100 bg-gray-50/50 py-5 px-6 flex flex-row items-center justify-between">
+              <div className="space-y-1 text-start">
+                <CardTitle className="flex items-center gap-2.5 text-lg font-extrabold text-black">
+                  <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
+                  {t("Historical Vendor Feedback")}
+                </CardTitle>
+                <p className="text-xs text-gray-500 font-medium">{t("RFP wise Feedbacks")}</p>
+              </div>
+              <div className="flex items-center gap-2 bg-amber-50/80 px-3.5 py-2 rounded-xl border border-amber-200/60 shadow-xs">
+                <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">{t("Overall Average")}</span>
+                <div className="flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-amber-200/50 shadow-xs">
                   <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                  <span className="text-sm font-black text-amber-600">3 / 5</span>
+                  <span className="text-sm font-black text-amber-600">3.3 / 5</span>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                <div className="border border-gray-100 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  <div className="bg-gray-50/80 p-5 border-b border-gray-100 flex justify-between items-center">
-                    <div>
-                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">TEND-2025-089: Office IT Equipment Supply</h4>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
-                        <span>Tender Date: 12 Jan 2025</span>
-                        <span>Proposal Number: PROP-2025-089-A</span>
-                        <span>Proposal Date: 02 Feb 2025</span>
+            <CardContent className="p-6 space-y-8">
+              {rfpFeedbacks.map((rfp) => (
+                <div key={rfp.tenderId} className="border border-gray-200/80 rounded-2xl bg-white shadow-xs overflow-hidden">
+                  {/* RFP Header */}
+                  <div className="bg-amber-50/80 border-l-4 border-l-amber-500 p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div className="space-y-1.5 text-start">
+                      <h4 className="font-extrabold text-gray-900 text-[15px]">{rfp.tenderId}: {rfp.tenderTitle}</h4>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500 font-semibold">
+                        <span>{t("Tender Date:")} <span className="text-gray-700">{rfp.tenderDate}</span></span>
+                        <span className="text-gray-300">|</span>
+                        <span>{t("Proposal Number:")} <span className="font-mono text-gray-700">{rfp.proposalId}</span></span>
+                        <span className="text-gray-300">|</span>
+                        <span>{t("Proposal Date:")} <span className="text-gray-700">{rfp.proposalDate}</span></span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                    <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-xl border border-gray-200/60 shadow-xs shrink-0 self-start sm:self-auto">
                       <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                      <span className="text-xs font-bold text-gray-800">4 / 5</span>
+                      <span className="text-xs font-black text-gray-800">{rfp.overallRating} / 5</span>
                     </div>
                   </div>
 
-                  <div className="p-5 space-y-6">
-                    {/* User 1 */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">AA</div>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-gray-800">Ahmed Al Mansoori</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Technical Evaluator • Rated on 16/03/2025</span>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-600 leading-relaxed font-medium mb-3">
-                        "Vendor delivered all IT equipment on time and as per the technical specifications. Minor delays in providing the user manuals, but overall excellent service and highly competitive pricing."
-                      </p>
-                      <div className="bg-gray-50/50 p-3.5 rounded-lg border border-gray-100">
-                        <div className="space-y-2.5">
-                          <div className="flex justify-between items-center text-xs text-gray-600">
-                            <span className="font-medium">How would you rate the vendor's technical capability?</span>
-                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 5</span>
+                  {/* Departments List */}
+                  <div className="divide-y divide-gray-100">
+                    {rfp.departments.map((dept) => (
+                      <div key={dept.department} className="p-6 space-y-6 hover:bg-gray-50/10 transition-colors text-start">
+                        {/* Department & Evaluator Info */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 text-start">
+                            <div className="h-9 w-9 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] flex items-center justify-center text-xs font-black shadow-xs">
+                              {dept.avatar}
+                            </div>
+                            <div className="space-y-0.5 text-start">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-extrabold text-gray-900">{dept.evaluator}</span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] border border-[var(--fnrc-primary-green)]/10">
+                                  {dept.department}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-gray-400 font-semibold">
+                                {dept.role} • {t("Rated on")} {dept.date}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex justify-between items-center text-xs text-gray-600">
-                            <span className="font-medium">Did the vendor deliver on time?</span>
-                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 4</span>
-                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="border-t border-gray-100"></div>
+                        {/* Overall Comments */}
+                        <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 relative text-start">
+                          <p className="text-xs italic text-gray-600 leading-relaxed font-semibold">
+                            &ldquo;{dept.overallComments}&rdquo;
+                          </p>
+                        </div>
 
-                    {/* User 2 */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="h-7 w-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">SH</div>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-gray-800">Sarah Al Hashmi</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Commercial Evaluator • Rated on 17/03/2025</span>
+                        {/* Questions & Feedbacks Grid */}
+                        <div className="space-y-3 text-start">
+                          <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t("Questions & Feedbacks List")}</h5>
+                          <div className="grid gap-4 md:grid-cols-1">
+                            {dept.questions.map((q, qIdx) => (
+                              <div key={qIdx} className="bg-white p-4 rounded-xl border border-gray-150/80 shadow-xs hover:border-gray-300 transition-colors flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                                <div className="space-y-2 text-start">
+                                  <div className="text-xs font-bold text-gray-800">{q.question}</div>
+                                  <div className="bg-gray-50/30 p-2.5 rounded-lg border border-gray-100 text-xs font-normal text-gray-600">
+                                    <span className="font-bold text-[var(--fnrc-primary-green)] me-1.5">{t("Answer")}:</span>
+                                    {q.answer}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 bg-gray-50/80 px-2.5 py-1 rounded-lg border border-gray-150/60 shadow-xs shrink-0 self-start sm:self-auto">
+                                  <Star className={`h-3 w-3 fill-amber-500 ${q.rating >= 3 ? 'text-amber-500' : 'text-gray-400'}`} />
+                                  <span className={`text-[11px] font-black ${
+                                    q.rating >= 4 ? 'text-emerald-600' : q.rating === 3 ? 'text-amber-600' : 'text-rose-600'
+                                  }`}>
+                                    {q.rating} / 5
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 leading-relaxed font-medium mb-3">
-                        "Financial documentation was spotless. The vendor was very responsive during the negotiation phase. Highly recommend for future procurements."
-                      </p>
-                      <div className="bg-gray-50/50 p-3.5 rounded-lg border border-gray-100">
-                        <div className="space-y-2.5">
-                          <div className="flex justify-between items-center text-xs text-gray-600">
-                            <span className="font-medium">Rate the vendor's communication and responsiveness.</span>
-                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 5</span>
-                          </div>
-                          <div className="flex justify-between items-center text-xs text-gray-600">
-                            <span className="font-medium">Rate the vendor's financial stability.</span>
-                            <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 4</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-
-                <div className="border border-gray-100 rounded-xl p-5 bg-gray-50/50 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h4 className="font-bold text-[var(--fnrc-primary-green)] text-sm mb-1">TEND-2024-112: Network Security Audit</h4>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-semibold">
-                        <span>Tender Date: 05 Sep 2024</span>
-                        <span>Proposal Number: PROP-2024-112-C</span>
-                        <span>Proposal Date: 20 Sep 2024</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
-                      <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                      <span className="text-xs font-bold text-gray-800">2 / 5</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                    "The vendor was unprofessional and unresponsive throughout the project. They missed several critical deadlines and the final audit report was incomplete. Would not recommend for future engagements."
-                  </p>
-                  <div className="mt-4 border-t border-gray-100 pt-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="h-7 w-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">MK</div>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-gray-800">Mohammed Khalid</span>
-                        <span className="text-[10px] text-gray-400 font-semibold">Security Consultant • Rated on 12/11/2024</span>
-                      </div>
-                    </div>
-                    <h5 className="text-xs font-bold text-gray-700 mb-3">Detailed Evaluation</h5>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
-                        <span className="font-medium">How would you rate the vendor's technical capability?</span>
-                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
-                        <span className="font-medium">Did the vendor deliver on time?</span>
-                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 1</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
-                        <span className="font-medium">Rate the vendor's communication and responsiveness.</span>
-                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 1</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
-                        <span className="font-medium">How satisfied are you with the quality of deliverables?</span>
-                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
-                      </div>
-                      <div className="flex justify-between items-center text-xs text-gray-600 bg-white p-2.5 rounded-md border border-gray-100 shadow-sm">
-                        <span className="font-medium">Rate the vendor's adherence to project scope and requirements.</span>
-                        <span className="font-bold text-amber-600 flex items-center gap-1"><Star className="h-3 w-3 fill-amber-500 text-amber-500" /> 2</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
-
       <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
-        <DialogContent className="sm:max-w-4xl bg-white max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-4xl bg-white max-h-[80vh] overflow-y-auto font-sans">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-800">
-              <History className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Audit History
+              <History className={cn("h-5 w-5 text-[var(--fnrc-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
+              {t("Audit History")}
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
@@ -1437,11 +1532,11 @@ export default function AdminProposalDetail() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="text-xs font-bold whitespace-nowrap">Date & Time</TableHead>
-                    <TableHead className="text-xs font-bold">Action</TableHead>
-                    <TableHead className="text-xs font-bold">Name</TableHead>
-                    <TableHead className="text-xs font-bold">Status</TableHead>
-                    <TableHead className="text-xs font-bold">Remarks</TableHead>
+                    <TableHead className="text-xs font-bold whitespace-nowrap">{t("Date & Time")}</TableHead>
+                    <TableHead className="text-xs font-bold">{t("Action")}</TableHead>
+                    <TableHead className="text-xs font-bold">{t("Name")}</TableHead>
+                    <TableHead className="text-xs font-bold">{t("Status")}</TableHead>
+                    <TableHead className="text-xs font-bold">{t("Remarks")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1451,12 +1546,12 @@ export default function AdminProposalDetail() {
                         {log.date}<br />
                         <span className="text-[10px] text-gray-400">{log.time}</span>
                       </TableCell>
-                      <TableCell className="text-xs font-bold text-gray-800">{log.action}</TableCell>
+                      <TableCell className="text-xs font-bold text-gray-800">{t(log.action)}</TableCell>
                       <TableCell className="text-xs font-semibold text-gray-600">{log.name}</TableCell>
                       <TableCell>
                         <StatusBadge status={log.status} />
                       </TableCell>
-                      <TableCell className="text-xs text-gray-500">{log.remarks}</TableCell>
+                      <TableCell className="text-xs text-gray-500">{t(log.remarks)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1467,34 +1562,34 @@ export default function AdminProposalDetail() {
       </Dialog>
 
       <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
-        <DialogContent className="sm:max-w-md bg-white">
+        <DialogContent className="sm:max-w-md bg-white font-sans">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-800">
               <Award className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Generate Rating Link
+              {t("Generate Rating Link")}
             </DialogTitle>
             <DialogDescription className="text-xs text-gray-500">
-              Generate a secure departmental evaluation link to share with other FNRC departments.
+              {t("Generate a secure departmental evaluation link to share with other FNRC departments.")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 text-xs space-y-2">
               <div className="flex justify-between">
-                <span className="font-bold text-gray-400">VENDOR</span>
+                <span className="font-bold text-gray-400">{t("VENDOR")}</span>
                 <span className="font-extrabold text-gray-700">{proposal.vendorName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold text-gray-400">Tender TITLE</span>
+                <span className="font-bold text-gray-400">{t("Tender TITLE")}</span>
                 <span className="font-extrabold text-gray-700 truncate max-w-[200px]">{proposal.tenderTitle}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-bold text-gray-400">PROPOSAL REF</span>
+                <span className="font-bold text-gray-400">{t("PROPOSAL REF")}</span>
                 <span className="font-semibold text-[var(--fnrc-primary-green)]">{proposal.id}</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-700 block">Departmental Rating Link</label>
+              <label className="text-xs font-bold text-gray-700 block">{t("Departmental Rating Link")}</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -1508,15 +1603,14 @@ export default function AdminProposalDetail() {
                   className="text-white text-xs font-bold shrink-0"
                   onClick={() => {
                     navigator.clipboard.writeText(`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&tenderId=${proposal.tenderId}`);
-                    toast.success('Rating link copied to clipboard successfully!');
+                    toast.success(t('Rating link copied to clipboard successfully!'));
                   }}
                 >
-                  Copy Link
+                  {t("Copy Link")}
                 </Button>
               </div>
             </div>
           </div>
-
         </DialogContent>
       </Dialog>
     </div>

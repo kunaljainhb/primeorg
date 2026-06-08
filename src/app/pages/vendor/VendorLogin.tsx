@@ -7,9 +7,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/app/components/ui/tooltip';
 import { useState } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
+import { useTranslation, useLanguage } from '@/app/context/LanguageContext';
 
 export default function VendorLogin() {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
+  const { setLanguage } = useLanguage();
   const [email, setEmail] = useState('vendor@techsolutions.ae');
   const [password, setPassword] = useState('••••••••');
   const [showUAEPass, setShowUAEPass] = useState(false);
@@ -67,7 +70,7 @@ export default function VendorLogin() {
       setIsResetting(false);
       setIsForgotMode(false);
       setForgotStep(1);
-      alert('Password has been reset successfully. Please login with your new password.');
+      alert(t('Password has been reset successfully. Please login with your new password.'));
     }, 2000);
   };
 
@@ -81,7 +84,7 @@ export default function VendorLogin() {
         }}
       />
       <div className="w-full max-w-md space-y-8 relative z-10">
-        <Card className="border-none shadow-xl shadow-black/5">
+        <Card className="border-none shadow-xl shadow-black/5 rounded-card">
           <CardHeader className="space-y-2 pb-6 border-b border-border">
             <div className="flex justify-center mb-4">
               <div className="flex h-24 w-24 items-center justify-center">
@@ -89,10 +92,10 @@ export default function VendorLogin() {
               </div>
             </div>
             <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
-              FNRC Vendor Portal
+              {t("FNRC Vendor Portal")}
             </CardTitle>
-            <CardDescription className="text-center text-base font-medium text-muted-foreground">
-              Sign in to manage your vendor portal
+            <CardDescription className="text-center text-sm font-semibold text-muted-foreground min-h-[40px] px-4">
+              {t("Sign in to manage your vendor portal")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8">
@@ -100,18 +103,18 @@ export default function VendorLogin() {
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-semibold opacity-70">Email Address or Mobile Number</Label>
+                    <Label htmlFor="email" className="text-sm font-semibold opacity-70">{t("Email Address or Mobile Number")}</Label>
                     <div className="relative">
                       <Input
                         id="email"
                         type="text"
-                        placeholder="Email Address or Mobile Number"
+                        placeholder={t("Email Address or Mobile Number")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pl-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all ps-10"
                         required
                       />
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      <div className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400">
                         <Mail className="h-4 w-4" />
                       </div>
                     </div>
@@ -119,16 +122,16 @@ export default function VendorLogin() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Label htmlFor="password" title="Password" className="text-sm font-semibold opacity-70">Password</Label>
+                        <Label htmlFor="password" title="Password" className="text-sm font-semibold opacity-70">{t("Password")}</Label>
                       </div>
                       <Button 
                         type="button"
                         variant="link" 
-                        className="p-0 h-auto text-xs font-medium" 
+                        className="p-0 h-auto text-xs font-semibold cursor-pointer" 
                         style={{ color: 'var(--fnrc-primary-green)' }}
                         onClick={() => setIsForgotMode(true)}
                       >
-                        Forgot password?
+                        {t("Forgot Password?")}
                       </Button>
                     </div>
                     <div className="relative">
@@ -138,17 +141,17 @@ export default function VendorLogin() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pl-10 pr-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all ps-10 pe-10"
                         required
                       />
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      <div className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400">
                         <Lock className="h-4 w-4" />
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        className="absolute end-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                         onClick={() => setShowLoginPassword(!showLoginPassword)}
                       >
                         {showLoginPassword ? (
@@ -163,10 +166,10 @@ export default function VendorLogin() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all text-white"
+                  className="w-full h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all text-white cursor-pointer"
                   style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                 >
-                  Login
+                  {t("Login")}
                 </Button>
 
                 {/* Divider */}
@@ -175,8 +178,8 @@ export default function VendorLogin() {
                     <span className="w-full border-t border-gray-100"></span>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                    <span className="px-4 bg-white text-gray-400 font-medium">
-                      Or continue with
+                    <span className="px-4 bg-white text-gray-400 font-bold">
+                      {t("Or continue with")}
                     </span>
                   </div>
                 </div>
@@ -185,25 +188,25 @@ export default function VendorLogin() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full h-12 border-2 hover:bg-gray-50 text-foreground hover:text-foreground transition-all font-semibold"
+                  className="w-full h-12 border-2 hover:bg-gray-50 text-foreground hover:text-foreground transition-all font-semibold cursor-pointer"
                   onClick={handleUAEPassClick}
                   style={{ borderColor: 'var(--fnrc-border-gray)' }}
                 >
-                  <QrCode className="mr-2 h-5 w-5" />
-                  Login with UAE Pass
+                  <QrCode className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
+                  {t("Login with UAE Pass")}
                 </Button>
 
                 <div className="text-center pt-4 border-t border-gray-50">
-                  <p className="text-sm text-gray-500">
-                    Don't have an account?{' '}
+                  <p className="text-sm text-gray-500 font-semibold">
+                    {t("Don't have an account?")}{' '}
                     <Button
                       type="button"
                       variant="link"
                       onClick={() => navigate('/vendor/register')}
-                      className="p-0 h-auto font-bold underline-offset-4 hover:underline"
+                      className="p-0 h-auto font-bold underline-offset-4 hover:underline cursor-pointer"
                       style={{ color: 'var(--fnrc-primary-green)' }}
                     >
-                      Register here
+                      {t("Register here")}
                     </Button>
                   </p>
                 </div>
@@ -211,32 +214,32 @@ export default function VendorLogin() {
             ) : forgotStep === 1 ? (
               <form onSubmit={handleRequestReset} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="resetIdentifier" className="text-sm font-semibold opacity-70">Email Address or Mobile Number</Label>
+                  <Label htmlFor="resetIdentifier" className="text-sm font-semibold opacity-70">{t("Email Address or Mobile Number")}</Label>
                   <div className="relative">
                     <Input
                       id="resetIdentifier"
                       placeholder="e.g. vendor@company.ae"
                       value={resetData.identifier}
                       onChange={(e) => setResetData({...resetData, identifier: e.target.value})}
-                      className="h-12 bg-gray-50/50 focus:bg-white transition-all pl-10"
+                      className="h-12 bg-gray-50/50 focus:bg-white transition-all ps-10"
                       required
                     />
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <div className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400">
                       <Mail className="h-4 w-4" />
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground pt-1">
-                    Enter your registered email or mobile to receive a reset code.
+                  <p className="text-xs text-muted-foreground pt-1 font-semibold">
+                    {t("Enter your registered email or mobile to receive a reset code.")}
                   </p>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-lg font-semibold shadow-lg text-white"
+                  className="w-full h-12 text-lg font-semibold shadow-lg text-white cursor-pointer"
                   style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                   disabled={isResetting}
                 >
-                  {isResetting ? 'Sending Code...' : 'Send Reset Code'}
+                  {isResetting ? t("Sending Code...") : t("Send Reset Code")}
                 </Button>
 
                 <div className="text-center">
@@ -244,10 +247,10 @@ export default function VendorLogin() {
                     type="button"
                     variant="link"
                     onClick={() => setIsForgotMode(false)}
-                    className="text-sm font-medium"
+                    className="text-sm font-semibold cursor-pointer"
                     style={{ color: 'var(--fnrc-text-muted)' }}
                   >
-                    Back to Login
+                    {t("Back to Login")}
                   </Button>
                 </div>
               </form>
@@ -255,10 +258,10 @@ export default function VendorLogin() {
               <form onSubmit={handleResetPassword} className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="resetCode" className="text-sm font-semibold opacity-70">Reset Code</Label>
+                    <Label htmlFor="resetCode" className="text-sm font-semibold opacity-70">{t("Reset Code")}</Label>
                     <Input
                       id="resetCode"
-                      placeholder="Enter 6-digit code"
+                      placeholder={t("Enter 6-digit code")}
                       value={resetData.code}
                       onChange={(e) => setResetData({...resetData, code: e.target.value})}
                       className="h-12 bg-gray-50/50 focus:bg-white transition-all"
@@ -267,14 +270,14 @@ export default function VendorLogin() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="newPassword" title="New Password" className="text-sm font-semibold opacity-70">New Password</Label>
+                      <Label htmlFor="newPassword" title="New Password" className="text-sm font-semibold opacity-70">{t("New Password")}</Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Info className="h-4 w-4 text-gray-400 cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent side="top">
-                            <p className="max-w-[200px]">Strong password recommendation: Minimum 8 characters, including uppercase, lowercase, numbers, and special characters.</p>
+                            <p className="max-w-[200px] text-xs font-semibold">{t("Strong password recommendation: Minimum 8 characters, including uppercase, lowercase, numbers, and special characters.")}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -286,14 +289,14 @@ export default function VendorLogin() {
                         placeholder="••••••••"
                         value={resetData.newPassword}
                         onChange={(e) => setResetData({...resetData, newPassword: e.target.value})}
-                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pr-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pe-10"
                         required
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        className="absolute end-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                         onClick={() => setShowResetNewPassword(!showResetNewPassword)}
                       >
                         {showResetNewPassword ? (
@@ -306,14 +309,14 @@ export default function VendorLogin() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="confirmNewPassword" title="Confirm Password" className="text-sm font-semibold opacity-70">Confirm Password</Label>
+                      <Label htmlFor="confirmNewPassword" title="Confirm Password" className="text-sm font-semibold opacity-70">{t("Confirm Password")}</Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Info className="h-4 w-4 text-gray-400 cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent side="top">
-                            <p className="max-w-[200px]">Passwords must match.</p>
+                            <p className="max-w-[200px] text-xs font-semibold">{t("Passwords must match.")}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -325,14 +328,14 @@ export default function VendorLogin() {
                         placeholder="••••••••"
                         value={resetData.confirmPassword}
                         onChange={(e) => setResetData({...resetData, confirmPassword: e.target.value})}
-                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pr-10"
+                        className="h-12 bg-gray-50/50 focus:bg-white transition-all pe-10"
                         required
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        className="absolute end-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                         onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
                       >
                         {showResetConfirmPassword ? (
@@ -347,11 +350,11 @@ export default function VendorLogin() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 text-lg font-semibold shadow-lg text-white"
+                  className="w-full h-12 text-lg font-semibold shadow-lg text-white cursor-pointer"
                   style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                   disabled={isResetting}
                 >
-                  {isResetting ? 'Resetting...' : 'Reset Password'}
+                  {isResetting ? t("Resetting...") : t("Reset Password")}
                 </Button>
 
                 <div className="text-center">
@@ -359,10 +362,10 @@ export default function VendorLogin() {
                     type="button"
                     variant="link"
                     onClick={() => setForgotStep(1)}
-                    className="text-sm font-medium"
+                    className="text-sm font-semibold cursor-pointer"
                     style={{ color: 'var(--fnrc-text-muted)' }}
                   >
-                    Resend Code
+                    {t("Resend Code")}
                   </Button>
                 </div>
               </form>
@@ -371,14 +374,14 @@ export default function VendorLogin() {
         </Card>
 
         {/* AuthFooter moved inside the vertical stack */}
-        <AuthFooter />
+        <AuthFooter language={language} setLanguage={setLanguage} t={t} />
       </div>
 
       {/* UAE Pass QR Code Dialog */}
       <Dialog open={showUAEPass} onOpenChange={setShowUAEPass}>
         <DialogContent aria-describedby="uaepass-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-center">Login with UAE Pass</DialogTitle>
+            <DialogTitle className="text-center font-bold text-lg">{t("Login with UAE Pass")}</DialogTitle>
           </DialogHeader>
           <div id="uaepass-dialog-description" className="flex flex-col items-center justify-center space-y-4 py-6">
             {/* QR Code Placeholder */}
@@ -390,11 +393,11 @@ export default function VendorLogin() {
             
             {/* Helper Text */}
             <div className="text-center space-y-2">
-              <p className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                Scan using UAE Pass mobile application
+              <p className="font-bold text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+                {t("Scan using UAE Pass mobile application")}
               </p>
-              <p className="text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
-                {isScanning ? 'Waiting for authentication...' : 'Authentication successful!'}
+              <p className="text-xs font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
+                {isScanning ? t("Waiting for authentication...") : t("Authentication successful!")}
               </p>
             </div>
 
@@ -413,25 +416,41 @@ export default function VendorLogin() {
   );
 }
 
-function AuthFooter() {
+interface AuthFooterProps {
+  language: string;
+  setLanguage: (lang: 'en' | 'ar') => void;
+  t: (key: string) => string;
+}
+
+function AuthFooter({ language, setLanguage, t }: AuthFooterProps) {
   return (
     <footer className="mt-8 text-center space-y-4">
-      <div className="flex items-center justify-center gap-6 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
-        <a href="#" className="hover:underline hover:text-green-700 transition-colors">Terms and Conditions</a>
-        <a href="#" className="hover:underline hover:text-green-700 transition-colors">Privacy Policy</a>
+      <div className="flex items-center justify-center gap-6 text-sm font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
+        <a href="#" className="hover:underline hover:text-green-700 transition-colors">{t("Terms and Conditions")}</a>
+        <a href="#" className="hover:underline hover:text-green-700 transition-colors">{t("Privacy Policy")}</a>
       </div>
       <div className="flex items-center justify-center gap-4">
-        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900 transition-all">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => setLanguage('en')}
+          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'en' ? 'border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900' : 'border-transparent'}`}
+        >
           <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[9px] font-bold">EN</span>
           <span className="text-xs font-semibold">English</span>
         </Button>
         <span className="text-gray-300">|</span>
-        <Button variant="ghost" size="sm" className="gap-2 h-8 px-3 rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => setLanguage('ar')}
+          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'ar' ? 'border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900' : 'border-transparent'}`}
+        >
           <span className="text-xs font-semibold">العربية</span>
         </Button>
       </div>
       <p className="text-[10px] uppercase tracking-widest font-bold opacity-30">
-        © 2026 FNRC Procurement Portal
+        © 2026 {t("FNRC Procurement Portal")}
       </p>
     </footer>
   );

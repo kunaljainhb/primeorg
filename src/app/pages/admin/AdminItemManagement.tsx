@@ -15,6 +15,7 @@ import { ArrowRight, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, 
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -28,6 +29,7 @@ const formatDate = (dateStr?: string | Date) => {
 
 export default function AdminItemManagement() {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -49,8 +51,8 @@ export default function AdminItemManagement() {
     );
     
     return approvedProposals.map((proposal) => {
-      // Logic for status: PROP-104 is mocked as fully received
-      const status = proposal.id === 'PROP-104' ? 'Completed' : 'Pending';
+      // Logic for status: PROP-104 and PROP-108 are mocked as Receiving Completed
+      const status = (proposal.id === 'PROP-104' || proposal.id === 'PROP-108') ? 'Receiving Completed' : 'Receiving Pending';
 
       return {
         tenderId: tender.id,
@@ -106,11 +108,11 @@ export default function AdminItemManagement() {
   const filters = [
     {
       key: 'status',
-      label: 'Inventory Status',
+      label: t('Inventory Status'),
       options: [
-        { label: 'All Statuses', value: 'all' },
-        { label: 'Pending Verification', value: 'pending' },
-        { label: 'Completed Receiving', value: 'completed' },
+        { label: t('All Statuses'), value: 'all' },
+        { label: t('Receiving Pending'), value: 'receiving pending' },
+        { label: t('Receiving Completed'), value: 'receiving completed' },
       ],
       selectedValue: statusFilter,
       onChange: setStatusFilter
@@ -119,7 +121,7 @@ export default function AdminItemManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `Status: ${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`,
+      label: `${t('Status')}: ${t(statusFilter === 'receiving pending' ? 'Receiving Pending' : 'Receiving Completed')}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];
@@ -134,7 +136,7 @@ export default function AdminItemManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Item Management
+            {t("Item Management")}
           </h1>
         </div>
       </div>
@@ -143,14 +145,14 @@ export default function AdminItemManagement() {
       <SearchFilterBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        placeholder="Search items by ID, title, or vendor..."
+        placeholder={t("Search items by ID, title, or vendor...")}
         filters={filters}
         activeChips={activeChips}
         onClearAll={handleClearAll}
       />
 
       {/* Table Section */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden rounded-card">
         <CardContent className="p-0">
           {paginatedItems.length > 0 ? (
             <Table>
@@ -158,41 +160,41 @@ export default function AdminItemManagement() {
                 <TableRow>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('tenderId')}>
                     <div className="flex items-center gap-1.5">
-                      Tender ID
+                      {t("Tender ID")}
                       {sortConfig?.key === 'tenderId' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('tenderTitle')}>
                     <div className="flex items-center gap-1.5">
-                      Tender Title
+                      {t("Tender Title")}
                       {sortConfig?.key === 'tenderTitle' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('proposalId')}>
                     <div className="flex items-center gap-1.5">
-                      Shortlist Proposal ID
+                      {t("Shortlist Proposal ID")}
                       {sortConfig?.key === 'proposalId' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('vendorName')}>
                     <div className="flex items-center gap-1.5">
-                      Vendor Name
+                      {t("Vendor Name")}
                       {sortConfig?.key === 'vendorName' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdAt')}>
                     <div className="flex items-center gap-1.5">
-                      Proposal approved date
+                      {t("Proposal approved date")}
                       {sortConfig?.key === 'createdAt' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
                     <div className="flex items-center gap-1.5">
-                      Receiving Status
+                      {t("Receiving Status")}
                       {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pr-6">Action</TableHead>
+                  <TableHead className="text-end font-bold text-gray-900 text-sm py-4 pe-6">{t("Action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -210,13 +212,13 @@ export default function AdminItemManagement() {
                     <TableCell>
                       <StatusBadge status={item.status} />
                     </TableCell>
-                    <TableCell className="text-right py-3 pr-6">
+                    <TableCell className="text-end py-3 pe-6">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/items/${item.proposalId}`)}
-                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
-                        title="Edit Item Specs"
+                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
+                        title={t("Edit Item Specs")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
@@ -227,9 +229,9 @@ export default function AdminItemManagement() {
             </Table>
           ) : (
             <EmptyState
-              title="No Approved Items Found"
-              description="No inventory items matched your search query. Refine your keywords or clear active filters."
-              actionLabel="Clear Filters"
+              title={t("No Approved Items Found")}
+              description={t("No inventory items matched your search query. Refine your keywords or clear active filters.")}
+              actionLabel={t("Clear Filters")}
               onAction={handleClearAll}
             />
           )}
@@ -237,8 +239,8 @@ export default function AdminItemManagement() {
           {/* Pagination Controls */}
           {true && (
             <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
-              <span className="text-sm text-gray-500 font-medium">
-                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedItems.length)}</span> of <span className="font-bold text-gray-900">{sortedItems.length}</span> entries
+              <span className="text-sm text-gray-500 font-semibold">
+                {t("Showing")} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t("to")} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedItems.length)}</span> {t("of")} <span className="font-bold text-gray-900">{sortedItems.length}</span> {t("entries")}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -246,17 +248,17 @@ export default function AdminItemManagement() {
                   size="sm"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="font-semibold"
+                  className="font-bold cursor-pointer"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className={`h-4 w-4 me-1 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
+                  {t("Previous")}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
                   {Array.from({ length: totalPages }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setCurrentPage(i + 1)}
-                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
+                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors cursor-pointer ${
                         currentPage === i + 1 
                           ? 'bg-[var(--fnrc-primary-green)] text-white' 
                           : 'text-gray-600 hover:bg-gray-200'
@@ -271,10 +273,10 @@ export default function AdminItemManagement() {
                   size="sm"
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="font-semibold"
+                  className="font-bold cursor-pointer"
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  {t("Next")}
+                  <ChevronRight className={`h-4 w-4 ms-1 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
                 </Button>
               </div>
             </div>

@@ -14,12 +14,19 @@ import {
   Download,
   Building2,
   Globe,
+  Lock,
   Eye,
   Briefcase,
-  Brain
+  Brain,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  ArrowUpDown
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { mockTenders, mockProposals, mockERPDocuments } from '@/app/data/mockData';
+import { mockTenders, mockProposals, mockERPDocuments, mockAdminUsers } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import {
   AlertDialog,
@@ -37,6 +44,8 @@ import { Input } from '@/app/components/ui/input';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -45,13 +54,14 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 export default function AdminTenderDetail() {
   const navigate = useNavigate();
   const { tenderId } = useParams();
   const location = useLocation();
+  const { t, language } = useTranslation();
   const tender = mockTenders.find(r => r.id === tenderId) || mockTenders[0];
 
   // Redirect to edit/create page if in draft status
@@ -61,16 +71,26 @@ export default function AdminTenderDetail() {
     }
   }, [tender, navigate]);
 
-  const defaultTab = location.pathname.includes('tab=chats') ? 'chats' : 'overview';
+  const defaultTab = location.pathname.includes('tab=chats')
+    ? 'chats'
+    : location.pathname.includes('tab=proposals')
+    ? 'proposals'
+    : location.pathname.includes('tab=approved')
+    ? 'approved'
+    : 'overview';
 
   const relatedProposals = mockProposals.filter(p => p.tenderId === tender.id);
   const approvedProposals = relatedProposals.filter(p => p.status === 'approved');
 
+  const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
+  const [showTechDialog, setShowTechDialog] = useState(false);
+  const [showCommDialog, setShowCommDialog] = useState(false);
+  const [selectedTechReviewer, setSelectedTechReviewer] = useState('');
+  const [selectedCommReviewer, setSelectedCommReviewer] = useState('');
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeadlineDialog, setShowDeadlineDialog] = useState(false);
   const [newDeadline, setNewDeadline] = useState<string>(tender.submissionDeadline ? String(tender.submissionDeadline).split('T')[0] : '');
-  const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
   const [showAIComparisonDialog, setShowAIComparisonDialog] = useState(false);
   const [isAIAnalyzing, setIsAIAnalyzing] = useState(false);
 
@@ -81,6 +101,49 @@ export default function AdminTenderDetail() {
       setTimeout(() => setIsAIAnalyzing(false), 2500); // Simulate AI loading
     }
   };
+
+  // Sorting and pagination for Proposals Received
+  const [proposalSearchQuery, setProposalSearchQuery] = useState('');
+  const [proposalStatusFilter, setProposalStatusFilter] = useState('all');
+  const [proposalSortConfig, setProposalSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [proposalCurrentPage, setProposalCurrentPage] = useState(1);
+  const proposalItemsPerPage = 5;
+
+  const handleProposalSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (proposalSortConfig && proposalSortConfig.key === key && proposalSortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setProposalSortConfig({ key, direction });
+  };
+
+  const filteredRelatedProposals = relatedProposals.filter(p => {
+    const matchesSearch = p.vendorName.toLowerCase().includes(proposalSearchQuery.toLowerCase());
+    const matchesStatus = proposalStatusFilter === 'all' || p.status === proposalStatusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const sortedProposals = [...filteredRelatedProposals].sort((a, b) => {
+    if (!proposalSortConfig) return 0;
+    const { key, direction } = proposalSortConfig;
+    let aVal = a[key as keyof typeof a];
+    let bVal = b[key as keyof typeof b];
+
+    if (key === 'submissionDate') {
+      aVal = new Date(aVal as string).getTime();
+      bVal = new Date(bVal as string).getTime();
+    }
+
+    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const proposalTotalPages = Math.ceil(sortedProposals.length / proposalItemsPerPage);
+  const paginatedProposals = sortedProposals.slice(
+    (proposalCurrentPage - 1) * proposalItemsPerPage,
+    proposalCurrentPage * proposalItemsPerPage
+  );
 
   // Chat database state for 2-3 vendors
   const [vendorChats, setVendorChats] = useState<Record<string, {
@@ -197,22 +260,52 @@ export default function AdminTenderDetail() {
   };
 
   const handleCloseTender = () => {
-    toast.success('Tender closed successfully');
+    toast.success(t('Tender closed successfully'));
     setShowCloseDialog(false);
     navigate('/admin/tenders');
   };
 
   const handleCancelTender = () => {
-    toast.success('Tender cancelled successfully');
+    toast.success(t('Tender cancelled successfully'));
     setShowCancelDialog(false);
     navigate('/admin/tenders');
   };
 
   const handleChangeDeadline = () => {
     if (newDeadline) {
-      toast.success('Submission deadline updated successfully');
+      toast.success(t('Submission deadline updated successfully'));
       setShowDeadlineDialog(false);
     }
+  };
+// Bulk assign reviewers to selected proposals
+const assignTechnicalReviewer = (reviewerName: string) => {
+  if (selectedProposals.length === 0) {
+    toast.error(t('Please select at least one proposal'));
+    return;
+  }
+  mockProposals.forEach(p => {
+    if (selectedProposals.includes(p.id)) {
+      p.technicalReviewer = reviewerName;
+    }
+  });
+  toast.success(`${reviewerName} assigned as Technical Reviewer`);
+};
+
+const assignCommercialReviewer = (reviewerName: string) => {
+  if (selectedProposals.length === 0) {
+    toast.error(t('Please select at least one proposal'));
+    return;
+  }
+  mockProposals.forEach(p => {
+    if (selectedProposals.includes(p.id)) {
+      p.commercialReviewer = reviewerName;
+    }
+  });
+  toast.success(`${reviewerName} assigned as Commercial Reviewer`);
+};
+  const handleClearSelection = () => {
+    setSelectedProposals([]);
+    toast.success(t('Selection cleared'));
   };
 
   const totalUnreadChats = Object.values(vendorChats).reduce((sum, chat) => sum + chat.unreadCount, 0);
@@ -221,21 +314,21 @@ export default function AdminTenderDetail() {
     <div className="space-y-8 font-sans">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={() => navigate('/admin/tenders')} className="gap-2 text-gray-500 hover:text-gray-900 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Tenders
+          <ArrowLeft className={cn("h-4 w-4", language === 'ar' && "scale-x-[-1]")} />
+          {t('Back to Tenders')}
         </Button>
       </div>
 
-      {/* Header Info Panel */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-8 rounded-card shadow-card border border-gray-100/50">
+      {/* Header Info */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-gray-200">
         <div>
-          <div className="flex flex-wrap items-center gap-3 mb-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
+          <div className="flex flex-wrap items-center gap-3 mb-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight leading-tight">
               {tender.title}
             </h1>
             <StatusBadge status={tender.status} />
           </div>
-          <p className="text-sm font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
+          <p className="text-xs font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
             {tender.id}
           </p>
         </div>
@@ -243,17 +336,17 @@ export default function AdminTenderDetail() {
         <div className="flex flex-wrap items-center gap-3">
           {(tender.status !== 'closed' && tender.status !== 'cancelled') && (
             <>
-              <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 h-10 font-semibold" onClick={() => setShowCancelDialog(true)}>
+              <Button variant="outline" className="border-red-200 text-red-750 hover:bg-red-50 h-9 text-xs font-semibold" onClick={() => setShowCancelDialog(true)}>
                 <XIcon className="mr-1.5 h-4 w-4" />
-                Cancel Tender
+                {t('Cancel Tender')}
               </Button>
-              <Button variant="outline" className="border-amber-200 text-amber-700 hover:bg-amber-50 h-10 font-semibold" onClick={() => setShowDeadlineDialog(true)}>
+              <Button variant="outline" className="border-amber-200 text-amber-750 hover:bg-amber-50 h-9 text-xs font-semibold" onClick={() => setShowDeadlineDialog(true)}>
                 <Clock className="mr-1.5 h-4 w-4" />
-                Extend Deadline
+                {t('Extend Deadline')}
               </Button>
-              <Button className="text-white h-10 px-6 font-semibold shadow-md shadow-green-600/10" style={{ backgroundColor: 'var(--fnrc-success)' }} onClick={() => setShowCloseDialog(true)}>
+              <Button className="text-white h-9 px-5 text-xs font-semibold shadow-md shadow-green-600/10" style={{ backgroundColor: 'var(--fnrc-success)' }} onClick={() => setShowCloseDialog(true)}>
                 <Check className="mr-1.5 h-4 w-4" />
-                Close Tender
+                {t('Close Tender')}
               </Button>
             </>
           )}
@@ -261,161 +354,223 @@ export default function AdminTenderDetail() {
       </div>
 
       <Tabs defaultValue={defaultTab} className="space-y-6">
-        <TabsList className="flex w-full bg-white border border-gray-100 p-1.5 rounded-xl max-w-2xl">
-          <TabsTrigger value="overview" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Tender Overview
+        <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
+          <TabsTrigger 
+            value="overview" 
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t('Tender Overview')}
           </TabsTrigger>
-          <TabsTrigger value="chats" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800 flex items-center gap-1.5">
-            Vendor Chats
+          <TabsTrigger 
+            value="chats" 
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] flex items-center gap-1.5"
+          >
+            {t('Vendor Chats')}
             {totalUnreadChats > 0 && (
               <span className="bg-red-500 text-white font-bold text-[9px] h-4 min-w-4 px-1 flex items-center justify-center rounded-full border-none leading-none animate-pulse">
                 {totalUnreadChats}
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="proposals" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Proposal Received ({relatedProposals.length})
+          <TabsTrigger 
+            value="proposals" 
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t('Proposal Received')} ({relatedProposals.length})
           </TabsTrigger>
-          <TabsTrigger value="approved" className="flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500 hover:text-gray-800">
-            Shortlist Proposal ({approvedProposals.length})
+          <TabsTrigger 
+            value="approved" 
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+          >
+            {t('Approved Proposal Details')} ({approvedProposals.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6 focus:outline-none">
-          {/* Basic Information */}
+          {/* 1. Tender Information */}
           <Card className="border border-gray-100 shadow-sm">
-            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
-                <Building2 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Tender Details
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
+                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                {t('Tender Information')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Tender Category</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {tender.category.map((cat, i) => (
-                      <Badge key={i} variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-none font-semibold text-xs px-3 py-1">
-                        {cat}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</Label>
-                  <p className="text-sm text-gray-800 leading-relaxed font-medium">
-                    {tender.description}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Eligibility Requirements</Label>
-                  <ul className="space-y-2">
-                    {tender.eligibilityCriteria.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2.5 text-sm text-gray-800 font-medium">
-                        <div className="h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+            <CardContent className="pt-1 px-6 pb-6 space-y-4">
+              {/* Service Category */}
+              <div>
+                <span className="font-bold text-sm text-black block mb-1">{t('Service Category')}</span>
+                <div className="text-sm font-medium text-gray-800">
+                  {tender.category.map(c => t(c)).join(', ')}
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Estimated Budget Allocation</Label>
-                  <div className="text-lg font-bold text-gray-900">
-                    AED 500,000.00
-                  </div>
+              {/* Description */}
+              <div className="space-y-1">
+                <span className="font-bold text-sm text-black block">{t('Description')}</span>
+                <p className="text-sm text-gray-800 leading-relaxed font-medium whitespace-pre-line bg-white p-4 border rounded-xl border-gray-100">
+                  {tender.description || '-'}
+                </p>
+              </div>
+
+              {/* Eligibility Criteria */}
+              <div className="space-y-1">
+                <span className="font-bold text-sm text-black block">{t('Eligibility Criteria')}</span>
+                <div className="text-sm text-gray-800 leading-relaxed font-medium bg-white p-4 border rounded-xl border-gray-100">
+                  {tender.eligibilityCriteria && tender.eligibilityCriteria.length > 0 ? (
+                    <ul className="space-y-2">
+                      {tender.eligibilityCriteria.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
+                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0 mt-2" />
+                          <span className="whitespace-pre-line">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    '-'
+                  )}
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Submission Period Deadline</Label>
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-900">
+              </div>
+
+              {/* Budget, Deadline, Tech Proposal */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div>
+                  <span className="font-bold text-sm text-black block mb-1">{t('Estimated Budget')}</span>
+                  <div className="font-medium text-gray-800">{tender.estimatedBudget || t('Not specified')}</div>
+                </div>
+                <div>
+                  <span className="font-bold text-sm text-black block mb-1">{t('Submission Deadline')}</span>
+                  <div className="font-medium text-gray-800 flex items-center gap-1.5">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
                     {formatDate(tender.submissionDeadline)}
                   </div>
                 </div>
+                <div>
+                  <span className="font-bold text-sm text-black block mb-1">{t('Technical Proposal Required')}</span>
+                  <div className="font-medium text-gray-800 capitalize">
+                    {tender.technicalProposalRequired === 'yes' ? t('Yes, Required') : t('No, Not Required')}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Scope of Work */}
+          {/* 2. Scope & Timeline */}
           <Card className="border border-gray-100 shadow-sm">
-            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <Briefcase className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Scope of Work
+                {t('Scope & Timeline')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-8 pt-6">
-              <div className="space-y-2">
-                <p className="text-sm text-gray-800 leading-relaxed font-medium">
-                  {tender.scopeOfWork}
+            <CardContent className="pt-1 px-6 pb-6 space-y-4">
+              {/* Scope of Work */}
+              <div className="space-y-1">
+                <span className="font-bold text-sm text-black block">{t('Scope of Work')}</span>
+                <p className="text-sm text-gray-800 leading-relaxed font-medium whitespace-pre-line bg-white p-4 border rounded-xl border-gray-100">
+                  {tender.scopeOfWork || '-'}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-8 border-t border-gray-100 pt-6">
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Initiation Date</Label>
-                  <div className="font-bold text-sm flex items-center gap-2 text-gray-900">
+              {/* Start & End Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <div>
+                  <span className="font-bold text-sm text-black block mb-1">{t('Project Start Date')}</span>
+                  <div className="font-medium text-gray-800 flex items-center gap-1.5">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    01/06/2026
+                    {tender.projectStartDate ? formatDate(tender.projectStartDate) : t('Not specified')}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Completion Date</Label>
-                  <div className="font-bold text-sm flex items-center gap-2 text-gray-900">
+                <div>
+                  <span className="font-bold text-sm text-black block mb-1">{t('Project End Date')}</span>
+                  <div className="font-medium text-gray-800 flex items-center gap-1.5">
                     <CalendarIcon className="h-4 w-4 text-gray-400" />
-                    31/12/2026
+                    {tender.projectEndDate ? formatDate(tender.projectEndDate) : t('Not specified')}
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2">
-                <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Project Execution Milestones</Label>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    { title: 'Project Initiation', date: '15/06/2026' },
-                    { title: 'Intermediate Progress Review', date: '01/09/2026' },
-                    { title: 'Final Technical Handover', date: '20/12/2026' }
-                  ].map((m, i) => (
-                    <div key={i} className="flex flex-col gap-2 p-5 bg-gray-50 border border-gray-100 rounded-xl hover:border-gray-200 transition-colors">
-                      <span className="text-xs font-bold text-gray-400 tracking-wider">MILESTONE 0{i + 1}</span>
-                      <span className="text-sm font-bold text-gray-900">{m.title}</span>
-                      <span className="text-sm font-semibold text-[var(--fnrc-primary-green)]">{m.date}</span>
-                    </div>
-                  ))}
+              {/* Milestone Details */}
+              {tender.milestones && tender.milestones.length > 0 && (
+                <div className="space-y-2">
+                  <span className="font-bold text-sm text-black block">{t('Milestone Details')}</span>
+                  <div className="space-y-1.5">
+                    {tender.milestones.map((m, i) => (
+                      <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 py-2">
+                        <span className="font-medium text-gray-800">{m.title}</span>
+                        <span className="font-semibold text-[var(--fnrc-primary-green)]">{formatDate(m.date)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* 3. Tender Visibility */}
+          <Card className="border border-gray-100 shadow-sm">
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
+                <Eye className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                {t('Tender Visibility')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-1 px-6 pb-6">
+              <div className="rounded-xl border p-4 bg-gray-50/50 border-gray-100">
+                <div className="flex items-center gap-3">
+                  {tender.visibility === 'open' ? (
+                    <>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+                        <Globe className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-gray-900">{t('Open Tender')}</div>
+                        <p className="text-xs text-muted-foreground italic">{t('This tender is public and visible to all registered vendors across all service categories.')}</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                        <Lock className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-gray-900">{t('Restricted (Service Category)')}</div>
+                        <p className="text-xs text-muted-foreground italic">{t('Only vendors registered under the selected service categories will be able to view and participate.')}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Attachments */}
+          {/* 4. Tender Documents */}
           <Card className="border border-gray-100 shadow-sm">
-            <CardHeader className="pb-4 border-b border-gray-50/80 bg-gray-50/30">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-900">
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                 <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-                Tender Document
+                {t('Tender Documents')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 pt-6">
-              {tender.attachments.map((file, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group">
+            <CardContent className="space-y-3 pt-1 px-6 pb-6">
+              {tender.attachments && tender.attachments.length > 0 ? tender.attachments.map((file, i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors group bg-white">
                   <div className="flex items-center gap-4">
                     <div className="h-10 w-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition-colors">
                       <FileText className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="text-sm font-bold text-gray-900">{file.name}</div>
-                      <div className="text-xs text-gray-500 font-medium mt-0.5">Tender Document Package</div>
+                      <div className="text-xs text-gray-500 font-medium mt-0.5">{t('Tender Document Package')}</div>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2 font-semibold hover:bg-gray-100">
                     <Download className="h-4 w-4" />
-                    Download
+                    {t('Download')}
                   </Button>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground italic p-4 text-center">{t('No attachments uploaded.')}</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -428,7 +583,7 @@ export default function AdminTenderDetail() {
               <CardHeader className="pb-3 border-b border-gray-50">
                 <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
                   <Building2 className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                  Vendor Threads
+                  {t('Vendor Threads')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -441,10 +596,10 @@ export default function AdminTenderDetail() {
                         key={id}
                         onClick={() => handleSelectVendor(id)}
                         className={`p-4 cursor-pointer transition-all flex items-center justify-between hover:bg-gray-50/40 ${
-                          isActive ? 'bg-[var(--fnrc-primary-green)]/[0.04] border-l-4 border-[var(--fnrc-primary-green)]' : ''
+                          isActive ? 'bg-[var(--fnrc-primary-green)]/[0.04] border-s-4 border-[var(--fnrc-primary-green)]' : ''
                         }`}
                       >
-                        <div className="space-y-1 flex-1 min-w-0 pr-2">
+                        <div className="space-y-1 flex-1 min-w-0 pe-2">
                           <div className="flex items-center justify-between">
                             <h4 className="text-xs font-bold text-gray-800 truncate">{chat.vendorName}</h4>
                             <span className="text-[10px] text-gray-400 font-semibold shrink-0">
@@ -452,7 +607,7 @@ export default function AdminTenderDetail() {
                             </span>
                           </div>
                           <p className="text-[11px] text-gray-500 font-semibold truncate">
-                            {lastMsg ? lastMsg.text : 'No conversations yet'}
+                            {lastMsg ? lastMsg.text : t('No conversations yet')}
                           </p>
                         </div>
                         {chat.unreadCount > 0 && (
@@ -485,30 +640,40 @@ export default function AdminTenderDetail() {
                       {vendorChats[activeVendorId].messages.map((msg) => (
                         <div 
                           key={msg.id} 
-                          className={`flex flex-col max-w-[80%] ${msg.sender === 'admin' ? 'align-end ml-auto' : 'align-start mr-auto'}`}
+                          className={cn(
+                            "flex flex-col max-w-[80%]",
+                            msg.sender === 'admin' ? 'align-end ms-auto' : 'align-start me-auto'
+                          )}
                         >
-                          <span className={`text-[10px] font-bold mb-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
-                            {msg.sender === 'admin' ? 'Government Admin' : vendorChats[activeVendorId].vendorName}
+                          <span className={cn(
+                            "text-[10px] font-bold mb-1 text-gray-400",
+                            msg.sender === 'admin' ? 'text-right' : 'text-left'
+                          )}>
+                            {msg.sender === 'admin' ? t('Government Admin') : vendorChats[activeVendorId].vendorName}
                           </span>
                           <div 
-                            className={`p-3 rounded-2xl text-xs font-semibold shadow-2xs relative ${
+                            className={cn(
+                              "p-3 rounded-2xl text-xs font-semibold shadow-2xs relative",
                               msg.sender === 'admin' 
                                 ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' 
                                 : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
-                            }`}
+                            )}
                           >
                             {msg.text}
                           </div>
-                          <span className={`text-[9px] font-semibold mt-1 text-gray-400 ${msg.sender === 'admin' ? 'text-right' : 'text-left'}`}>
+                          <span className={cn(
+                            "text-[9px] font-semibold mt-1 text-gray-400",
+                            msg.sender === 'admin' ? 'text-right' : 'text-left'
+                          )}>
                             {msg.timestamp}
                           </span>
                         </div>
                       ))}
 
                       {vendorTypingState[activeVendorId] && (
-                        <div className="flex flex-col max-w-[80%] align-start mr-auto">
+                        <div className="flex flex-col max-w-[80%] align-start me-auto">
                           <span className="text-[10px] font-bold mb-1 text-gray-400">
-                            {vendorChats[activeVendorId].vendorName} is typing
+                            {vendorChats[activeVendorId].vendorName} {t('is typing')}
                           </span>
                           <div className="bg-white text-gray-800 border border-gray-100 p-3 rounded-2xl rounded-tl-none flex items-center gap-1.5">
                             <span className="h-1.5 w-1.5 bg-gray-300 rounded-full animate-bounce"></span>
@@ -522,7 +687,7 @@ export default function AdminTenderDetail() {
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder={`Type administrative response to ${vendorChats[activeVendorId].vendorName}...`}
+                        placeholder={`${t('Type administrative response to')} ${vendorChats[activeVendorId].vendorName}...`}
                         value={chatInputText}
                         onChange={(e) => setChatInputText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendVendorMessage()}
@@ -533,7 +698,7 @@ export default function AdminTenderDetail() {
                         className="text-white h-10 px-6 font-bold text-xs rounded-xl shrink-0"
                         style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                       >
-                        Send
+                        {t('Send')}
                       </Button>
                     </div>
                   </CardContent>
@@ -541,7 +706,7 @@ export default function AdminTenderDetail() {
               ) : (
                 <div className="p-12 text-center text-sm font-medium text-gray-500 flex flex-col items-center justify-center h-full">
                   <Building2 className="h-8 w-8 text-gray-300 mb-3" />
-                  Select a vendor conversation to begin clarifying requirements.
+                  {t('Select a vendor conversation to begin clarifying requirements.')}
                 </div>
               )}
             </Card>
@@ -553,38 +718,205 @@ export default function AdminTenderDetail() {
           <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-100 p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Vendor proposal bids</h4>
-                <p className="text-[11px] text-gray-400 font-semibold mt-0.5">Select 2 or 3 proposal bids for side-by-side AI Comparison matrix audit</p>
+                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">{t('Vendor proposal bids')}</h4>
+                <p className="text-[11px] text-gray-400 font-semibold mt-0.5">{t('Select 2 or 3 proposal bids for side-by-side AI Comparison matrix audit')}</p>
               </div>
-              <Button
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-9 text-xs transition-all gap-1.5 shadow-md shadow-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
-                disabled={selectedProposals.length < 2 || selectedProposals.length > 3}
-                onClick={handleAIComparison}
-              >
-                <Brain className="h-4 w-4" />
-                AI Compare ({selectedProposals.length})
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled={selectedProposals.length === 0}
+                  onClick={() => setShowTechDialog(true)}
+                >
+                  {t('Assign Tech Reviewer')}
+                </Button>
+                <Button
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled={selectedProposals.length === 0}
+                  onClick={() => setShowCommDialog(true)}
+                >
+                  {t('Assign Commercial Reviewer')}
+                </Button>
+                <Button
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold h-9 text-xs transition-all gap-1.5 shadow-md shadow-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled={selectedProposals.length < 2 || selectedProposals.length > 3}
+                  onClick={handleAIComparison}
+                >
+                  <Brain className="h-4 w-4" />
+                  {t('AI Compare')} ({selectedProposals.length})
+                </Button>
+              </div>
             </div>
+
+            {/* Tech Reviewer Selection Dialog */}
+            <Dialog open={showTechDialog} onOpenChange={setShowTechDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t('Select Technical Reviewer')}</DialogTitle>
+                </DialogHeader>
+                <select
+                  value={selectedTechReviewer}
+                  onChange={e => setSelectedTechReviewer(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">{t('Select a reviewer')}</option>
+                  {mockAdminUsers
+                    .filter(u => u.role === 'technical_department' || u.role === 'reviewer')
+                    .map(u => (
+                      <option key={u.id} value={u.name}>
+                        {u.name}
+                      </option>
+                    ))}
+                </select>
+                <DialogFooter className="sm:justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => setShowTechDialog(false)}>
+                    {t('Cancel')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      assignTechnicalReviewer(selectedTechReviewer);
+                      setShowTechDialog(false);
+                      setSelectedTechReviewer('');
+                    }}
+                    disabled={!selectedTechReviewer}
+                  >
+                    {t('Assign')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Commercial Reviewer Selection Dialog */}
+            <Dialog open={showCommDialog} onOpenChange={setShowCommDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t('Select Commercial Reviewer')}</DialogTitle>
+                </DialogHeader>
+                <select
+                  value={selectedCommReviewer}
+                  onChange={e => setSelectedCommReviewer(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">{t('Select a reviewer')}</option>
+                  {mockAdminUsers
+                    .filter(u => u.role === 'commercial_department' || u.role === 'reviewer')
+                    .map(u => (
+                      <option key={u.id} value={u.name}>
+                        {u.name}
+                      </option>
+                    ))}
+                </select>
+                <DialogFooter className="sm:justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => setShowCommDialog(false)}>
+                    {t('Cancel')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      assignCommercialReviewer(selectedCommReviewer);
+                      setShowCommDialog(false);
+                      setSelectedCommReviewer('');
+                    }}
+                    disabled={!selectedCommReviewer}
+                  >
+                    {t('Assign')}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Proposal search and status filters */}
+            <div className="p-4 px-6 border-b border-gray-100 flex flex-wrap gap-4 items-center bg-white justify-between">
+              <div className="flex flex-wrap gap-3 items-center flex-1 max-w-xl">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <Input
+                    type="text"
+                    placeholder={t('Search by Vendor name...')}
+                    value={proposalSearchQuery}
+                    onChange={(e) => {
+                      setProposalSearchQuery(e.target.value);
+                      setProposalCurrentPage(1);
+                    }}
+                    className="h-9 pl-9 pr-4 text-xs rounded-md border-gray-200"
+                  />
+                </div>
+                <select
+                  value={proposalStatusFilter}
+                  onChange={(e) => {
+                    setProposalStatusFilter(e.target.value);
+                    setProposalCurrentPage(1);
+                  }}
+                  className="h-9 px-3 text-xs rounded-md border border-gray-200 bg-white text-gray-700 outline-none focus:border-[var(--fnrc-primary-green)]"
+                >
+                  <option value="all">{t('All Statuses')}</option>
+                  <option value="submitted">{t('Submitted')}</option>
+                  <option value="technical_review">{t('Technical Review')}</option>
+                  <option value="technical_review_started">{t('Technical Review Started')}</option>
+                  <option value="under_review">{t('Commercial Review Completed')}</option>
+                  <option value="correction_requested">{t('Correction Requested')}</option>
+                  <option value="approved">{t('Approved')}</option>
+                  <option value="rejected">{t('Rejected')}</option>
+                </select>
+              </div>
+              {(proposalSearchQuery || proposalStatusFilter !== 'all') && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setProposalSearchQuery('');
+                    setProposalStatusFilter('all');
+                    setProposalCurrentPage(1);
+                  }}
+                  className="h-9 px-3 text-red-600 hover:text-red-750 hover:bg-red-50 text-xs font-semibold"
+                >
+                  {t('Clear Filters')}
+                </Button>
+              )}
+            </div>
+
             <CardContent className="p-0">
               <Table>
                 <TableHeader className="bg-gray-50/50">
                   <TableRow>
-                    <TableHead className="py-4 pl-6 w-[60px]"></TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Proposal ID</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Vendor Name</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Deadline Date</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4 text-right">Proposal Amount</TableHead>
-                    <TableHead className="font-bold text-gray-900 text-sm py-4">Status</TableHead>
-                    <TableHead className="text-right pr-6 font-bold text-gray-900 text-sm py-4">Action</TableHead>
+                    <TableHead className="py-4 ps-6 w-[60px]"></TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleProposalSort('id')}>
+                      <div className="flex items-center gap-1.5">
+                        {t('Proposal ID')}
+                        {proposalSortConfig?.key === 'id' ? (proposalSortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleProposalSort('vendorName')}>
+                      <div className="flex items-center gap-1.5">
+                        {t('Vendor Name')}
+                        {proposalSortConfig?.key === 'vendorName' ? (proposalSortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleProposalSort('submissionDate')}>
+                      <div className="flex items-center gap-1.5">
+                        {t('Proposal Submission Date')}
+                        {proposalSortConfig?.key === 'submissionDate' ? (proposalSortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors text-right" onClick={() => handleProposalSort('commercialAmount')}>
+                      <div className="flex items-center justify-end gap-1.5">
+                        {t('Proposal Amount')}
+                        {proposalSortConfig?.key === 'commercialAmount' ? (proposalSortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleProposalSort('status')}>
+                      <div className="flex items-center gap-1.5">
+                        {t('Status')}
+                        {proposalSortConfig?.key === 'status' ? (proposalSortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-right pe-6 font-bold text-gray-900 text-sm py-4">{t('Action')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {relatedProposals.map((proposal) => (
+                  {paginatedProposals.map((proposal) => (
                     <TableRow key={proposal.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                      <TableCell className="py-4 pl-6">
+                      <TableCell className="py-4 ps-6">
                         <Checkbox
-                          checked={selectedProposals.includes(proposal.id)}
-                          onCheckedChange={(checked) => handleSelectProposal(proposal.id, checked as boolean)}
+                           checked={selectedProposals.includes(proposal.id)}
+                           onCheckedChange={(checked) => handleSelectProposal(proposal.id, checked as boolean)}
                         />
                       </TableCell>
                       <TableCell className="font-bold text-gray-500">
@@ -598,15 +930,64 @@ export default function AdminTenderDetail() {
                       <TableCell>
                         <StatusBadge status={proposal.status} />
                       </TableCell>
-                      <TableCell className="text-right pr-6">
+                      <TableCell className="text-right pe-6">
                         <Button variant="outline" size="sm" className="font-semibold text-xs" onClick={() => navigate(`/admin/proposals/${proposal.id}`)}>
-                          Review
+                          {t('Review')}
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+
+              {/* Pagination Controls */}
+              {sortedProposals.length > 0 && (
+                <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+                  <span className="text-sm text-gray-500 font-medium">
+                    {t('Showing')} <span className="font-bold text-gray-900">{(proposalCurrentPage - 1) * proposalItemsPerPage + 1}</span> {t('to')} <span className="font-bold text-gray-900">{Math.min(proposalCurrentPage * proposalItemsPerPage, sortedProposals.length)}</span> {t('of')} <span className="font-bold text-gray-900">{sortedProposals.length}</span> {t('entries')}
+                  </span>
+                  {proposalTotalPages > 1 && (
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProposalCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={proposalCurrentPage === 1}
+                        className="font-semibold"
+                      >
+                        <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
+                        {t('Previous')}
+                      </Button>
+                      <div className="flex items-center gap-1 mx-2">
+                        {Array.from({ length: proposalTotalPages }).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setProposalCurrentPage(i + 1)}
+                            className={cn(
+                              "h-8 w-8 rounded-md text-sm font-bold transition-colors",
+                              proposalCurrentPage === i + 1
+                                ? 'bg-[var(--fnrc-primary-green)] text-white'
+                                : 'text-gray-600 hover:bg-gray-200'
+                            )}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setProposalCurrentPage(p => Math.min(proposalTotalPages, p + 1))}
+                        disabled={proposalCurrentPage === proposalTotalPages}
+                        className="font-semibold"
+                      >
+                        {t('Next')}
+                        <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -623,49 +1004,49 @@ export default function AdminTenderDetail() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 flex-1">
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Vendor Name</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('Vendor Name')}</p>
                           <p className="text-sm font-bold text-gray-800">{proposal.vendorName}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Proposal ID</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('Proposal ID')}</p>
                           <p className="text-sm font-bold text-gray-800">{proposal.id}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Deadline Date</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('Deadline Date')}</p>
                           <p className="text-sm font-semibold text-gray-700">{formatDate(proposal.submissionDate)}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Approved Date</p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('Approved Date')}</p>
                           <p className="text-sm font-semibold text-gray-700">
                             {proposal.approvedDate ? formatDate(proposal.approvedDate) : formatDate(new Date())}
                           </p>
                         </div>
                       </div>
                       <Button className="shrink-0 bg-[var(--fnrc-primary-green)] text-white hover:bg-green-700 font-semibold text-xs shadow-md" onClick={() => navigate(`/admin/proposals/${proposal.id}`)}>
-                        Details Audit
+                        {t('Check Details')}
                       </Button>
                     </div>
                   </div>
                   <CardContent className="p-0">
                     <div className="px-6 py-4 border-b border-gray-100 bg-white flex items-center gap-2">
                       <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)] animate-pulse" />
-                      <h3 className="font-bold text-sm text-gray-800">ERP Ledger & LPO Sync Records</h3>
+                      <h3 className="font-bold text-sm text-gray-800">{t('ERP Documents')}</h3>
                     </div>
                     {vendorDocs.length > 0 ? (
                       <Table>
                         <TableHeader className="bg-gray-50/20">
                           <TableRow>
-                            <TableHead className="py-3 pl-6 font-bold text-xs text-gray-600">Document Type</TableHead>
-                            <TableHead className="font-bold text-xs text-gray-600">Sync Date</TableHead>
-                            <TableHead className="font-bold text-xs text-gray-600">ERP Status</TableHead>
-                            <TableHead className="text-right pr-6 font-bold text-xs text-gray-600">Action</TableHead>
+                            <TableHead className="py-3 ps-6 font-bold text-xs text-gray-600">{t('Document Type')}</TableHead>
+                            <TableHead className="font-bold text-xs text-gray-600">{t('Sync Date')}</TableHead>
+                            <TableHead className="font-bold text-xs text-gray-600">{t('ERP Status')}</TableHead>
+                            <TableHead className="text-right pe-6 font-bold text-xs text-gray-600">{t('Action')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {vendorDocs.map((doc) => (
                             <TableRow key={doc.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                              <TableCell className="py-3 pl-6">
-                                <div className="font-bold text-sm text-gray-800">{doc.documentType}</div>
+                              <TableCell className="py-3 ps-6">
+                                <div className="font-bold text-sm text-gray-800">{t(doc.documentType)}</div>
                                 <div className="text-[10px] text-gray-400 font-mono">{doc.documentNumber}</div>
                               </TableCell>
                               <TableCell className="text-sm font-medium text-gray-500">
@@ -674,7 +1055,7 @@ export default function AdminTenderDetail() {
                               <TableCell>
                                 <StatusBadge status={doc.status} />
                               </TableCell>
-                              <TableCell className="text-right pr-6">
+                              <TableCell className="text-right pe-6">
                                 <div className="flex items-center justify-end gap-1">
                                   <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
                                     <Eye className="h-4 w-4" />
@@ -690,7 +1071,7 @@ export default function AdminTenderDetail() {
                       </Table>
                     ) : (
                       <div className="p-8 text-center text-sm font-medium text-gray-500">
-                        No ERP synchronization documents available for this vendor ledger yet.
+                        {t('No ERP synchronization documents available for this vendor ledger yet.')}
                       </div>
                     )}
                   </CardContent>
@@ -699,8 +1080,8 @@ export default function AdminTenderDetail() {
             })
           ) : (
             <EmptyState
-              title="No Approved Vendors"
-              description="No vendors have been approved for this Tender campaign. Complete evaluation scorecard details to shortlist a supplier."
+              title={t('No Approved Vendors')}
+              description={t('No vendors have been approved for this Tender campaign. Complete evaluation scorecard details to shortlist a supplier.')}
             />
           )}
         </TabsContent>
@@ -710,15 +1091,15 @@ export default function AdminTenderDetail() {
       <AlertDialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
         <AlertDialogContent className="rounded-modal p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-gray-900">Close Tender Campaign?</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-bold text-gray-900">{t('Close Tender Campaign?')}</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-gray-500 leading-relaxed">
               Closing this Tender will immediately terminate the proposal submission window. Registered vendors will no longer be able to draft or upload specs.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="font-semibold rounded-lg">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="font-semibold rounded-lg">{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction className="bg-[var(--fnrc-success)] hover:bg-green-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCloseTender}>
-              Confirm Close
+              {t('Confirm Close')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -728,15 +1109,15 @@ export default function AdminTenderDetail() {
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent className="rounded-modal p-8">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-red-600">Cancel Tender Campaign?</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-bold text-red-600">{t('Cancel Tender Campaign?')}</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-gray-500 leading-relaxed font-semibold">
               This action is highly critical. Cancelling this Tender will invalidate all received proposal bids and notify active operators. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="font-semibold rounded-lg">Dismiss</AlertDialogCancel>
+            <AlertDialogCancel className="font-semibold rounded-lg">{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction className="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCancelTender}>
-              Confirm Cancellation
+              {t('Confirm Cancellation')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -746,11 +1127,11 @@ export default function AdminTenderDetail() {
       <Dialog open={showDeadlineDialog} onOpenChange={setShowDeadlineDialog}>
         <DialogContent className="sm:max-w-md p-8" aria-describedby="deadline-dialog-description">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Extend Submission Deadline</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('Extend Submission Deadline')}</DialogTitle>
           </DialogHeader>
           <div id="deadline-dialog-description" className="space-y-4 py-6">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">Choose New Expiry Date *</Label>
+              <Label className="text-sm font-semibold text-gray-700">{t('Choose New Expiry Date *')}</Label>
               <Input
                 type="date"
                 value={newDeadline}
@@ -758,20 +1139,20 @@ export default function AdminTenderDetail() {
                 onChange={(e) => setNewDeadline(e.target.value)}
               />
             </div>
-            <p className="text-xs text-gray-400 font-semibold leading-relaxed">
+            <p className="text-xs text-gray-400 font-semibold leading-relaxed font-arabic-body">
               Once saved, the portal will immediately update the deadline timers on all vendor screens.
             </p>
           </div>
           <DialogFooter className="sm:justify-end gap-2">
             <Button variant="outline" className="font-semibold" onClick={() => setShowDeadlineDialog(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               onClick={handleChangeDeadline}
               className="text-white font-semibold"
               style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
             >
-              Extend Deadline
+              {t('Extend Deadline')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -783,7 +1164,7 @@ export default function AdminTenderDetail() {
           <DialogHeader className="border-b pb-4 mb-4">
             <DialogTitle className="flex items-center gap-2 text-xl font-bold text-purple-750">
               <Brain className="h-5 w-5 text-purple-600" />
-              AI Proposal Audit Engine
+              {t('AI Proposal Audit Engine')}
             </DialogTitle>
           </DialogHeader>
           <div id="ai-dialog-description" className="py-6 space-y-6">
@@ -794,7 +1175,7 @@ export default function AdminTenderDetail() {
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="rounded-xl bg-purple-50/50 p-4 border border-purple-100 text-xs font-semibold text-purple-800 leading-relaxed">
+                <div className="rounded-xl bg-purple-50/50 p-4 border border-purple-100 text-xs font-semibold text-purple-800 leading-relaxed font-arabic-body">
                   AI Summary: The compared bids demonstrate highly competitive commercial structures. TechCorp Solutions is commercial leader but Global InfraGroup provides a longer warrantee period (24 vs 12 months). APEX Systems ranks highest on compliance credentials.
                 </div>
                 
@@ -802,7 +1183,7 @@ export default function AdminTenderDetail() {
                   <Table>
                     <TableHeader className="bg-gray-50">
                       <TableRow>
-                        <TableHead className="font-bold text-xs py-3 pl-4">Audit Criterion</TableHead>
+                        <TableHead className="font-bold text-xs py-3 ps-4">{t('Audit Criterion')}</TableHead>
                         {selectedProposals.map(id => {
                           const prop = relatedProposals.find(p => p.id === id);
                           return (
@@ -813,7 +1194,7 @@ export default function AdminTenderDetail() {
                     </TableHeader>
                     <TableBody>
                       <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs pl-4 py-3 text-gray-700">Commercial Total</TableCell>
+                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Commercial Total')}</TableCell>
                         {selectedProposals.map(id => {
                           const prop = relatedProposals.find(p => p.id === id);
                           return (
@@ -822,13 +1203,13 @@ export default function AdminTenderDetail() {
                         })}
                       </TableRow>
                       <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs pl-4 py-3 text-gray-700">Compliance Match</TableCell>
+                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Compliance Match')}</TableCell>
                         {selectedProposals.map(id => (
                           <TableCell key={id} className="text-center font-semibold text-xs text-emerald-600">100% Match</TableCell>
                         ))}
                       </TableRow>
                       <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs pl-4 py-3 text-gray-700">Risk Assessment</TableCell>
+                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Risk Assessment')}</TableCell>
                         {selectedProposals.map(id => {
                           const isLead = id === 'PROP-101';
                           return (
@@ -844,7 +1225,7 @@ export default function AdminTenderDetail() {
           </div>
           <DialogFooter className="border-t pt-4 sm:justify-end">
             <Button variant="outline" className="font-semibold" onClick={() => setShowAIComparisonDialog(false)}>
-              Close Comparison
+              {t('Close Comparison')}
             </Button>
           </DialogFooter>
         </DialogContent>

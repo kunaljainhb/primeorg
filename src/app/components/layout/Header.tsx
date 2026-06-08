@@ -17,8 +17,11 @@ interface HeaderProps {
   userName?: string;
 }
 
+import { useTranslation } from '@/app/context/LanguageContext';
+
 export function Header({ role, userName }: HeaderProps) {
   const navigate = useNavigate();
+  const { t, language, setLanguage } = useTranslation();
 
   const handleLogout = () => {
     navigate('/');
@@ -50,34 +53,31 @@ export function Header({ role, userName }: HeaderProps) {
             </div>
             <div>
               <div className="text-[16px] font-bold tracking-wide leading-none" style={{ color: 'var(--fnrc-secondary-dark-green)' }}>
-                FNRC
+                {t('FNRC')}
               </div>
               <div className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'var(--fnrc-primary-green)' }}>
-                {role === 'admin' ? 'Admin Portal' : 'Vendor Portal'}
+                {role === 'admin' ? t('Admin Portal') : role === 'vendor' ? t('Vendor Portal') : ''}
               </div>
             </div>
           </Link>
         </div>
 
 
-        {/* Right side - User menu */}
+        {/* Right side - User menu & Language toggle */}
         <div className="flex items-center gap-4">
 
-
-          {role !== 'public' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2 text-sm font-medium hover:bg-gray-100 hover:text-gray-900" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[10px]">EN</span>
-                  English
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="font-medium">English</DropdownMenuItem>
-                <DropdownMenuItem className="font-medium">العربية (Arabic)</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-sm font-medium hover:bg-gray-100 hover:text-gray-900 cursor-pointer" style={{ color: 'var(--fnrc-text-muted)' }}>
+                <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[10px] uppercase font-bold">{language}</span>
+                {language === 'en' ? 'English' : 'العربية'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLanguage('en')} className="font-medium cursor-pointer">English</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage('ar')} className="font-medium cursor-pointer">العربية (Arabic)</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {role === 'public' ? (
             <div className="flex gap-2">
@@ -86,14 +86,14 @@ export function Header({ role, userName }: HeaderProps) {
                 onClick={() => navigate('/vendor/login')}
                 style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
               >
-                Vendor Login
+                {t('Vendor Login')}
               </Button>
               <Button
                 onClick={() => navigate('/admin/login')}
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                 className="text-white hover:opacity-90"
               >
-                Admin Login
+                {t('Admin Login')}
               </Button>
             </div>
           ) : (
@@ -108,11 +108,11 @@ export function Header({ role, userName }: HeaderProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-lg border-gray-100">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('My Account')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-700 focus:bg-red-50/50">
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t('Logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

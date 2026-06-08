@@ -1,15 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { BarChart3, Download, FileText, Calendar, Clock } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 export default function AdminReports() {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-8 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            System Reports & Analytics
+            {t('System Reports & Analytics')}
           </h1>
         </div>
       </div>
@@ -20,7 +23,7 @@ export default function AdminReports() {
           <CardHeader className="border-b border-gray-50 pb-5">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
               <BarChart3 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              Standard Reports
+              {t('Standard Reports')}
             </CardTitle>
 
           </CardHeader>
@@ -29,26 +32,26 @@ export default function AdminReports() {
               <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
                 <div>
                   <div className="font-bold text-gray-800 text-sm">
-                    Vendor Registration Summary
+                    {t('Vendor Registration Summary')}
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    Aggregate total vendor registration applications segmented by operational categories.
+                    {t('Aggregate total vendor registration applications segmented by operational categories.')}
                   </p>
                 </div>
                 <div className="flex gap-2 items-center mt-4">
                   <Select defaultValue="month">
                     <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder="Period" />
+                      <SelectValue placeholder={t('Period')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="quarter">This Quarter</SelectItem>
-                      <SelectItem value="year">This Year</SelectItem>
+                      <SelectItem value="month">{t('This Month')}</SelectItem>
+                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
+                      <SelectItem value="year">{t('This Year')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
                     <Download className="h-3.5 w-3.5" />
-                    Export
+                    {t('Export')}
                   </Button>
                 </div>
               </div>
@@ -56,26 +59,26 @@ export default function AdminReports() {
               <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
                 <div>
                   <div className="font-bold text-gray-800 text-sm">
-                    Tender Activity Report
+                    {t('Tender Activity Report')}
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    Monitor publishing activity, submission volume, and closed/cancelled tender campaigns.
+                    {t('Monitor publishing activity, submission volume, and closed/cancelled tender campaigns.')}
                   </p>
                 </div>
                 <div className="flex gap-2 items-center mt-4">
                   <Select defaultValue="month">
                     <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder="Period" />
+                      <SelectValue placeholder={t('Period')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="quarter">This Quarter</SelectItem>
-                      <SelectItem value="year">This Year</SelectItem>
+                      <SelectItem value="month">{t('This Month')}</SelectItem>
+                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
+                      <SelectItem value="year">{t('This Year')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
                     <Download className="h-3.5 w-3.5" />
-                    Export
+                    {t('Export')}
                   </Button>
                 </div>
               </div>
@@ -83,26 +86,26 @@ export default function AdminReports() {
               <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
                 <div>
                   <div className="font-bold text-gray-800 text-sm">
-                    Proposal Submission Audit
+                    {t('Proposal Submission Audit')}
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    Compare technical and commercial proposal counts and pricing averages per active Tender.
+                    {t('Compare technical and commercial proposal counts and pricing averages per active Tender.')}
                   </p>
                 </div>
                 <div className="flex gap-2 items-center mt-4">
                   <Select defaultValue="month">
                     <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder="Period" />
+                      <SelectValue placeholder={t('Period')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="quarter">This Quarter</SelectItem>
-                      <SelectItem value="year">This Year</SelectItem>
+                      <SelectItem value="month">{t('This Month')}</SelectItem>
+                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
+                      <SelectItem value="year">{t('This Year')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
                     <Download className="h-3.5 w-3.5" />
-                    Export
+                    {t('Export')}
                   </Button>
                 </div>
               </div>
@@ -110,26 +113,26 @@ export default function AdminReports() {
               <div className="rounded-2xl border border-gray-100 p-5 bg-gray-50/20 hover:bg-gray-50/40 transition-colors flex flex-col justify-between h-[180px]">
                 <div>
                   <div className="font-bold text-gray-800 text-sm">
-                    Supplier Success Ratios
+                    {t('Supplier Success Ratios')}
                   </div>
                   <p className="mt-1.5 text-xs text-gray-400 font-medium leading-relaxed">
-                    Audit performance ratings, response rates, and bid-to-award conversion metrics.
+                    {t('Audit performance ratings, response rates, and bid-to-award conversion metrics.')}
                   </p>
                 </div>
                 <div className="flex gap-2 items-center mt-4">
                   <Select defaultValue="month">
                     <SelectTrigger className="w-[120px] rounded-lg border-gray-200 h-9 text-xs">
-                      <SelectValue placeholder="Period" />
+                      <SelectValue placeholder={t('Period')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="month">This Month</SelectItem>
-                      <SelectItem value="quarter">This Quarter</SelectItem>
-                      <SelectItem value="year">This Year</SelectItem>
+                      <SelectItem value="month">{t('This Month')}</SelectItem>
+                      <SelectItem value="quarter">{t('This Quarter')}</SelectItem>
+                      <SelectItem value="year">{t('This Year')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <Button size="sm" variant="outline" className="gap-1 h-9 font-semibold text-xs rounded-lg border-gray-200">
                     <Download className="h-3.5 w-3.5" />
-                    Export
+                    {t('Export')}
                   </Button>
                 </div>
               </div>
@@ -142,7 +145,7 @@ export default function AdminReports() {
           <CardHeader className="border-b border-gray-50 pb-5">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
               <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-              Active System Audit Trail
+              {t('Active System Audit Trail')}
             </CardTitle>
 
           </CardHeader>
@@ -153,12 +156,12 @@ export default function AdminReports() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-gray-800">
-                  Vendor Approved: TechSolutions LLC
+                  {t('Vendor Approved')}: TechSolutions LLC
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 10:30 AM</span>
                   <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 01/02/2026</span>
-                  <span>By: Ahmed Al Mansoori</span>
+                  <span>{t('By')}: Ahmed Al Mansoori</span>
                 </div>
               </div>
             </div>
@@ -169,12 +172,12 @@ export default function AdminReports() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-gray-800">
-                  Tender Published: IT Infrastructure Modernization
+                  {t('Tender Published')}: IT Infrastructure Modernization
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 02:15 PM</span>
                   <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 30/01/2026</span>
-                  <span>By: Fatima Al Hammadi</span>
+                  <span>{t('By')}: Fatima Al Hammadi</span>
                 </div>
               </div>
             </div>
@@ -185,12 +188,12 @@ export default function AdminReports() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm font-bold text-gray-800">
-                  Proposal Approved: PROP-001
+                  {t('Proposal Approved')}: PROP-001
                 </div>
                 <div className="flex items-center gap-3 text-[10px] text-gray-400 font-semibold">
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> 11:00 AM</span>
                   <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> 28/01/2026</span>
-                  <span>By: Mohammed Al Zaabi</span>
+                  <span>{t('By')}: Mohammed Al Zaabi</span>
                 </div>
               </div>
             </div>

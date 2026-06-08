@@ -16,6 +16,7 @@ import { mockVendors } from '@/app/data/mockData';
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -29,6 +30,7 @@ const formatDate = (dateStr?: string | Date) => {
 
 export default function AdminVendorManagement() {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isSyncing, setIsSyncing] = useState(false);
@@ -89,13 +91,13 @@ export default function AdminVendorManagement() {
   const filters = [
     {
       key: 'status',
-      label: 'Status',
+      label: t('Status'),
       options: [
-        { label: 'All', value: 'all' },
-        { label: 'Pending', value: 'pending' },
-        { label: 'Approved', value: 'approved' },
-        { label: 'Rejected', value: 'rejected' },
-        { label: 'Correction Requested', value: 'correction_requested' },
+        { label: t('All'), value: 'all' },
+        { label: t('Pending'), value: 'pending' },
+        { label: t('Approved'), value: 'approved' },
+        { label: t('Rejected'), value: 'rejected' },
+        { label: t('Correction Requested'), value: 'correction_requested' },
       ],
       selectedValue: statusFilter,
       onChange: setStatusFilter,
@@ -104,7 +106,7 @@ export default function AdminVendorManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `Status: ${statusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}`,
+      label: `${t('Status')}: ${t(statusFilter === 'correction_requested' ? 'Correction Requested' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1))}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];
@@ -119,17 +121,17 @@ export default function AdminVendorManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Vendor Management
+            {t("Vendor Management")}
           </h1>
         </div>
         <Button 
           onClick={handleSyncERP} 
           disabled={isSyncing}
-          className="gap-2 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5" 
+          className="gap-2 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fade-in" 
           style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
         >
           <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
-          {isSyncing ? 'Syncing...' : 'Sync from ERP'}
+          {isSyncing ? t('Syncing...') : t('Sync from ERP')}
         </Button>
       </div>
 
@@ -137,14 +139,14 @@ export default function AdminVendorManagement() {
       <SearchFilterBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        placeholder="Search vendors by ID or name..."
+        placeholder={t("Search vendors by ID or name...")}
         filters={filters}
         activeChips={activeChips}
         onClearAll={handleClearAll}
       />
 
       {/* Results Table */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
+      <Card className="border border-gray-100/50 shadow-sm overflow-hidden rounded-card">
         <CardContent className="p-0">
           {paginatedVendors.length > 0 ? (
             <Table>
@@ -152,30 +154,30 @@ export default function AdminVendorManagement() {
                 <TableRow>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
                     <div className="flex items-center gap-1.5">
-                      Vendor ID
+                      {t("Vendor ID")}
                       {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('companyName')}>
                     <div className="flex items-center gap-1.5">
-                      Vendor name
+                      {t("Vendor name")}
                       {sortConfig?.key === 'companyName' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4">Service Category</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4">{t("Service Category")}</TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('registrationDate')}>
                     <div className="flex items-center gap-1.5">
-                      Registration Date
+                      {t("Registration Date")}
                       {sortConfig?.key === 'registrationDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
                     <div className="flex items-center gap-1.5">
-                      Status
+                      {t("Status")}
                       {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">Action</TableHead>
+                  <TableHead className="text-end font-bold text-gray-900 text-sm py-4">{t("Action")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -194,13 +196,13 @@ export default function AdminVendorManagement() {
                     <TableCell>
                       <StatusBadge status={vendor.status} />
                     </TableCell>
-                    <TableCell className="text-right py-3 pr-4">
+                    <TableCell className="text-end py-3 pe-4">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/vendors/${vendor.id}`)}
-                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
-                        title="Review Vendor"
+                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
+                        title={t("Review Vendor")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
@@ -211,9 +213,9 @@ export default function AdminVendorManagement() {
             </Table>
           ) : (
             <EmptyState
-              title="No Vendors Matching Search"
-              description="Refine your criteria or clear active search filter badges above."
-              actionLabel="Clear Filters"
+              title={t("No Vendors Matching Search")}
+              description={t("Refine your criteria or clear active search filter badges above.")}
+              actionLabel={t("Clear Filters")}
               onAction={handleClearAll}
             />
           )}
@@ -221,8 +223,8 @@ export default function AdminVendorManagement() {
           {/* Pagination Controls */}
           {true && (
             <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
-              <span className="text-sm text-gray-500 font-medium">
-                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedVendors.length)}</span> of <span className="font-bold text-gray-900">{sortedVendors.length}</span> entries
+              <span className="text-sm text-gray-500 font-semibold">
+                {t("Showing")} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t("to")} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedVendors.length)}</span> {t("of")} <span className="font-bold text-gray-900">{sortedVendors.length}</span> {t("entries")}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -230,17 +232,17 @@ export default function AdminVendorManagement() {
                   size="sm"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="font-semibold"
+                  className="font-bold cursor-pointer"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className={`h-4 w-4 me-1 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
+                  {t("Previous")}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
                   {Array.from({ length: totalPages }).map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setCurrentPage(i + 1)}
-                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
+                      className={`h-8 w-8 rounded-md text-sm font-bold transition-colors cursor-pointer ${
                         currentPage === i + 1 
                           ? 'bg-[var(--fnrc-primary-green)] text-white' 
                           : 'text-gray-600 hover:bg-gray-200'
@@ -255,10 +257,10 @@ export default function AdminVendorManagement() {
                   size="sm"
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="font-semibold"
+                  className="font-bold cursor-pointer"
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  {t("Next")}
+                  <ChevronRight className={`h-4 w-4 ms-1 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
                 </Button>
               </div>
             </div>

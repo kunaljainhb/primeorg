@@ -4,13 +4,14 @@ import { Button } from '@/app/components/ui/button';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
 import { mockTenders, mockProposals, vendorCategories } from '@/app/data/mockData';
-import { Calendar, ArrowRight, Plus, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { Calendar, Plus, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
+import { useTranslation } from '@/app/context/LanguageContext';
+import { cn } from '@/app/components/ui/utils';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -19,11 +20,12 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 export default function AdminTenderManagement() {
   const navigate = useNavigate();
+  const { t, language } = useTranslation();
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,50 +103,35 @@ export default function AdminTenderManagement() {
   const filters = [
     {
       key: 'status',
-      label: 'Status',
+      label: t('Status'),
       options: [
-        { label: 'All Statuses', value: 'all' },
-        { label: 'Draft', value: 'draft' },
-        { label: 'Open', value: 'published' },
-        { label: 'Closed', value: 'closed' },
+        { label: t('All Statuses'), value: 'all' },
+        { label: t('Draft'), value: 'draft' },
+        { label: t('Open'), value: 'published' },
+        { label: t('Closed'), value: 'closed' },
       ],
       selectedValue: statusFilter || 'all',
       onChange: (val: string) => setStatusFilter(val === 'all' ? '' : val)
-    },
-    {
-      key: 'category',
-      label: 'Category',
-      options: [
-        { label: 'All Categories', value: 'all' },
-        ...vendorCategories.map(cat => ({ label: cat, value: cat }))
-      ],
-      selectedValue: categoryFilters[0] || 'all',
-      onChange: (val: string) => setCategoryFilters(val === 'all' ? [] : [val])
     }
   ];
 
   const activeChips: any[] = [];
   if (statusFilter) {
+    const statusLabel = statusFilter === 'published' ? 'Open' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1);
     activeChips.push({
-      label: `Status: ${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`,
+      label: `${t('Status')}: ${t(statusLabel)}`,
       onRemove: () => setStatusFilter('')
-    });
-  }
-  if (categoryFilters.length > 0) {
-    activeChips.push({
-      label: `Category: ${categoryFilters[0]}`,
-      onRemove: () => setCategoryFilters([])
     });
   }
   if (dateFrom) {
     activeChips.push({
-      label: `Deadline From: ${formatDate(dateFrom)}`,
+      label: `${t('Submission From')}: ${formatDate(dateFrom)}`,
       onRemove: () => setDateFrom('')
     });
   }
   if (dateTo) {
     activeChips.push({
-      label: `Deadline To: ${formatDate(dateTo)}`,
+      label: `${t('Submission To')}: ${formatDate(dateTo)}`,
       onRemove: () => setDateTo('')
     });
   }
@@ -162,7 +149,7 @@ export default function AdminTenderManagement() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-            Tender Management
+            {t('Tender Management')}
           </h1>
         </div>
         <Button
@@ -171,7 +158,7 @@ export default function AdminTenderManagement() {
           style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
         >
           <Plus className="h-4 w-4" />
-          Create New Tender
+          {t('Create New Tender')}
         </Button>
       </div>
 
@@ -180,32 +167,32 @@ export default function AdminTenderManagement() {
         <SearchFilterBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          placeholder="Search by Tender title or ID..."
+          placeholder={t('Search by Tender title or ID...')}
           filters={filters}
           activeChips={activeChips}
           onClearAll={handleClearAll}
-        />
-
-        {/* Date Range Sub-Bar */}
-        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-lg border border-gray-200/60 shadow-sm w-max">
-          <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-          <span className="text-sm font-semibold text-gray-700">Deadline Range:</span>
-          <div className="flex items-center gap-2 ml-2">
-            <Input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="h-8 text-xs rounded-md border-gray-200 w-[130px]"
-            />
-            <span className="text-xs text-gray-400 font-medium px-1">to</span>
-            <Input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="h-8 text-xs rounded-md border-gray-200 w-[130px]"
-            />
+        >
+          {/* Inline Date Range */}
+          <div className="flex items-center gap-2 bg-white px-4 h-12 rounded-input border border-gray-200 shadow-xs">
+            <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+            <span className="text-sm font-semibold text-gray-700">{t('Submission Range')}:</span>
+            <div className="flex items-center gap-2 ms-2">
+              <Input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="h-9 text-xs rounded-md border-gray-200 w-[140px] px-2 bg-transparent"
+              />
+              <span className="text-xs text-gray-400 font-medium px-1">{t('to')}</span>
+              <Input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="h-9 text-xs rounded-md border-gray-200 w-[140px] px-2 bg-transparent"
+              />
+            </div>
           </div>
-        </div>
+        </SearchFilterBar>
       </div>
 
       {/* Table Section */}
@@ -217,43 +204,43 @@ export default function AdminTenderManagement() {
                 <TableRow>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
                     <div className="flex items-center gap-1.5">
-                      Tender ID
+                      {t('Tender ID')}
                       {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('title')}>
                     <div className="flex items-center gap-1.5">
-                      Tender Title
+                      {t('Tender Title')}
                       {sortConfig?.key === 'title' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
 
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdAt')}>
                     <div className="flex items-center gap-1.5">
-                      Created Date
+                      {t('Created Date')}
                       {sortConfig?.key === 'createdAt' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('submissionDeadline')}>
                     <div className="flex items-center gap-1.5">
-                      Deadline
+                      {t('Deadline')}
                       {sortConfig?.key === 'submissionDeadline' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors text-center" onClick={() => handleSort('proposalCount')}>
                     <div className="flex items-center justify-center gap-1.5">
-                      Proposal Count
+                      {t('Proposal Count')}
                       {sortConfig?.key === 'proposalCount' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 text-center">Unread Messages</TableHead>
+                  <TableHead className="font-bold text-gray-900 text-sm py-4 text-center">{t('Unread Messages')}</TableHead>
                   <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
                     <div className="flex items-center gap-1.5">
-                      Status
+                      {t('Status')}
                       {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">Action</TableHead>
+                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4">{t('Action')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -275,7 +262,13 @@ export default function AdminTenderManagement() {
                       <TableCell className="text-center">
                         <Badge
                           variant="secondary"
-                          className={proposalCount > 0 ? "bg-sky-50 text-sky-700 font-bold border border-sky-100 rounded-md" : "bg-gray-50 text-gray-400 border border-gray-100 rounded-md"}
+                          className={cn(
+                            "cursor-pointer rounded-md transition-colors",
+                            proposalCount > 0
+                              ? "bg-sky-50 text-sky-700 font-bold border border-sky-100 hover:bg-sky-100"
+                              : "bg-gray-50 text-gray-400 border border-gray-100 hover:bg-gray-100"
+                          )}
+                          onClick={() => navigate(`/admin/tenders/${tender.id}?tab=proposals`)}
                         >
                           {proposalCount}
                         </Badge>
@@ -304,7 +297,7 @@ export default function AdminTenderManagement() {
                             }
                           }}
                           className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
-                          title="Manage Tender"
+                          title={t('Manage Tender')}
                         >
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
@@ -316,9 +309,9 @@ export default function AdminTenderManagement() {
             </Table>
           ) : (
             <EmptyState
-              title="No Tenders Found"
-              description="No Tender campaigns matched your search or filters. Clear active filters to view all entries."
-              actionLabel="Clear Filters"
+              title={t('No Tenders Found')}
+              description={t('No Tender campaigns matched your search or filters. Clear active filters to view all entries.')}
+              actionLabel={t('Clear Filters')}
               onAction={handleClearAll}
             />
           )}
@@ -327,7 +320,7 @@ export default function AdminTenderManagement() {
           {true && (
             <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
               <span className="text-sm text-gray-500 font-medium">
-                Showing <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedTenders.length)}</span> of <span className="font-bold text-gray-900">{sortedTenders.length}</span> entries
+                {t('Showing')} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t('to')} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedTenders.length)}</span> {t('of')} <span className="font-bold text-gray-900">{sortedTenders.length}</span> {t('entries')}
               </span>
               <div className="flex items-center gap-2">
                 <Button
@@ -337,8 +330,8 @@ export default function AdminTenderManagement() {
                   disabled={currentPage === 1}
                   className="font-semibold"
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
+                  {t('Previous')}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
                   {Array.from({ length: totalPages }).map((_, i) => (
@@ -346,8 +339,8 @@ export default function AdminTenderManagement() {
                       key={i}
                       onClick={() => setCurrentPage(i + 1)}
                       className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
-                        currentPage === i + 1 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                        currentPage === i + 1
+                          ? 'bg-[var(--fnrc-primary-green)] text-white'
                           : 'text-gray-600 hover:bg-gray-200'
                       }`}
                     >
@@ -362,8 +355,8 @@ export default function AdminTenderManagement() {
                   disabled={currentPage === totalPages}
                   className="font-semibold"
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  {t('Next')}
+                  <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
                 </Button>
               </div>
             </div>

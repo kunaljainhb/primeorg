@@ -123,7 +123,6 @@ export function ProposalDetailView({
       
       approved: 3,
       rejected: 3,
-      approved: 3,
       selected: 3
     };
     
