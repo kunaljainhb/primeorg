@@ -1,5 +1,5 @@
 import { useNavigate } from '@/app/context/RouterContext';
-import { Users, FileText, Send, CheckCircle, TrendingUp, MountainSnow, MessageSquare } from 'lucide-react';
+import { Users, FileText, Send, CheckCircle, TrendingUp, MountainSnow, MessageSquare, Bell } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
@@ -7,6 +7,7 @@ import { ScrollArea } from '@/app/components/ui/scroll-area';
 import { Input } from '@/app/components/ui/input';
 import { mockVendors, mockTenders, mockProposals } from '@/app/data/mockData';
 import { useTranslation } from '@/app/context/LanguageContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
 
 import { StatusBadge } from '@/app/components/ui/status-badge';
 
@@ -19,13 +20,69 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="mb-2 text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
-          {t("Admin Portal")}
-        </h1>
-        <p className="text-sm font-medium text-gray-500">
-          {t("FNRC Procurement Management System")}
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="mb-2 text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
+            {t("Admin Portal")}
+          </h1>
+          <p className="text-sm font-medium text-gray-500">
+            {t("FNRC Procurement Management System")}
+          </p>
+        </div>
+
+        {/* Notification Bell Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="relative h-10 w-10 rounded-full border-gray-200 bg-white hover:bg-gray-50 cursor-pointer shadow-sm"
+            >
+              <Bell className="h-5 w-5 text-gray-500" />
+              <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
+                3
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[340px] rounded-xl shadow-lg border-gray-100 p-2">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100 mb-2">
+              <span className="font-bold text-sm text-gray-800">{t('Notifications')}</span>
+              <Badge className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3 New</Badge>
+            </div>
+            <div className="space-y-1 max-h-[300px] overflow-y-auto">
+              <div className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex gap-3 text-start">
+                <div className="h-2 w-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                <div>
+                  <div className="text-xs font-bold text-gray-900">{t('New Vendor Registered')}</div>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-normal">
+                    {t('Techsolutions LLC has completed their vendor registration profile.')}
+                  </p>
+                  <span className="text-[9px] text-gray-400 font-semibold block mt-1">10 minutes ago</span>
+                </div>
+              </div>
+              <div className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex gap-3 text-start">
+                <div className="h-2 w-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                <div>
+                  <div className="text-xs font-bold text-gray-900">{t('Proposal Submitted')}</div>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-normal">
+                    {t('Modern Office Furnishings has submitted a bid proposal for TEND-001.')}
+                  </p>
+                  <span className="text-[9px] text-gray-400 font-semibold block mt-1">1 hour ago</span>
+                </div>
+              </div>
+              <div className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-none flex gap-3 text-start">
+                <div className="h-2 w-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                <div>
+                  <div className="text-xs font-bold text-gray-900">{t('Unread Vendor Message')}</div>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-normal">
+                    {t('You have 2 new clarification questions from TechSolutions LLC.')}
+                  </p>
+                  <span className="text-[9px] text-gray-400 font-semibold block mt-1">2 hours ago</span>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* KPI Cards */}
