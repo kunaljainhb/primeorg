@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@/app/context/RouterContext';
-import { Building2, LogOut, User, Bell, Settings, Menu } from 'lucide-react';
+import { Building2, LogOut, User, Bell, Settings, Menu, MessageSquare } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { useSidebar } from '@/app/context/SidebarContext';
 
@@ -78,6 +78,135 @@ export function Header({ role, userName }: HeaderProps) {
               <DropdownMenuItem onClick={() => setLanguage('ar')} className="font-medium cursor-pointer">العربية (Arabic)</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {role !== 'public' && (
+            <>
+              {/* Messages Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors">
+                    <MessageSquare className="h-5 w-5" />
+                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow-sm">
+                      {role === 'admin' ? 3 : 2}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80 rounded-xl shadow-xl border border-gray-100 p-2 space-y-1 bg-white font-sans text-start">
+                  <DropdownMenuLabel className="flex items-center justify-between font-bold text-sm px-2.5 py-2 text-black">
+                    <span>{t("Recent Messages")}</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  
+                  {role === 'admin' ? (
+                    <>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[13px] text-gray-900">TechSolutions LLC</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">10m ago</span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                          {t("Tender ID")}: TEND-005
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[13px] text-gray-900">Modern Office Furnishings</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">2h ago</span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                          {t("Tender ID")}: TEND-004
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[13px] text-gray-900">Gulf Construction Services</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">1d ago</span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                          {t("Tender ID")}: TEND-001
+                        </div>
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[13px] text-gray-900">{t("FNRC Procurement Board")}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">15m ago</span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                          {t("RFP:")} Supply of IT Hardware for HQ
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[13px] text-gray-900">{t("Procurement Board")}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">3h ago</span>
+                        </div>
+                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                          {t("RFP:")} Office Renovation Project
+                        </div>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Notifications Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors">
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white shadow-sm">
+                      2
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80 rounded-xl shadow-xl border border-gray-100 p-2 space-y-1 bg-white font-sans text-start">
+                  <DropdownMenuLabel className="flex items-center justify-between font-bold text-sm px-2.5 py-2 text-black">
+                    <span>{t("Notifications")}</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  
+                  {role === 'admin' ? (
+                    <>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[12px] text-gray-900">{t("New Registration")}</span>
+                          <span className="text-[9px] text-gray-400">1h ago</span>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium leading-tight">"New vendor registration proposal submitted by Gulf Construction Services."</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[12px] text-gray-900">{t("Verification Alert")}</span>
+                          <span className="text-[9px] text-gray-400">4h ago</span>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium leading-tight">"Document correction pending verification for TechSolutions LLC."</p>
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[12px] text-gray-900">{t("Correction Checklist")}</span>
+                          <span className="text-[9px] text-gray-400">2h ago</span>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium leading-tight">"Your application status has been updated to 'Correction Required'."</p>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-bold text-[12px] text-gray-900">{t("New RFP Campaign")}</span>
+                          <span className="text-[9px] text-gray-400">1d ago</span>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium leading-tight">"New Tender published: Supply of IT Hardware for HQ."</p>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
 
           {role === 'public' ? (
             <div className="flex gap-2">

@@ -66,15 +66,18 @@ function extractParams(path: string): Record<string, string> {
   const tenderMatch = path.match(/\/tenders\/(?:edit\/)?([^/]+)(?:\/|$)/);
   if (tenderMatch && tenderMatch[1] !== 'create') params.tenderId = tenderMatch[1];
   
-  const proposalMatch = path.match(/\/proposals\/([^/]+)(?:\/|$)/);
+  // Extract admin user edit route param (e.g., /admin/users/edit/ADM-001)
+  const adminUserMatch = path.match(/\/admin\/users\/edit\/([^/]+)/);
+  if (adminUserMatch) params.id = adminUserMatch[1];
+
+  // Extract proposalId param (e.g., /vendor/proposals/PROP-102 or /admin/items/PROP-102)
+  const proposalMatch = path.match(/\/(?:proposals|items)\/([^/]+)(?:\/|$)/);
   if (proposalMatch) params.proposalId = proposalMatch[1];
-  
-  const itemMatch = path.match(/\/items\/([^/]+)(?:\/|$)/);
-  if (itemMatch) params.proposalId = itemMatch[1];
-  
+
+  // Extract vendorId param (e.g., /admin/vendors/VEN-001)
   const vendorMatch = path.match(/\/vendors\/([^/]+)(?:\/|$)/);
   if (vendorMatch) params.vendorId = vendorMatch[1];
-  
+
   return params;
 }
 

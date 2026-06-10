@@ -94,7 +94,7 @@ export default function VendorLogin() {
             <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
               {t("FNRC Vendor Portal")}
             </CardTitle>
-            <CardDescription className="text-center text-sm font-semibold text-muted-foreground min-h-[40px] px-4">
+            <CardDescription className="text-center text-sm font-semibold text-muted-foreground px-4">
               {t("Sign in to manage your vendor portal")}
             </CardDescription>
           </CardHeader>
@@ -424,33 +424,39 @@ interface AuthFooterProps {
 
 function AuthFooter({ language, setLanguage, t }: AuthFooterProps) {
   return (
-    <footer className="mt-8 text-center space-y-4">
-      <div className="flex items-center justify-center gap-6 text-sm font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
-        <a href="#" className="hover:underline hover:text-green-700 transition-colors">{t("Terms and Conditions")}</a>
-        <a href="#" className="hover:underline hover:text-green-700 transition-colors">{t("Privacy Policy")}</a>
+    <footer className="fixed bottom-0 left-0 w-full bg-transparent py-4 px-6 flex items-center justify-between text-sm text-gray-500">
+
+      {/* Left side: Terms and Privacy */}
+      <div className="flex items-center gap-4">
+        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Terms and Conditions')}</a>
+        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Privacy Policy')}</a>
       </div>
-      <div className="flex items-center justify-center gap-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+
+      {/* Center: Language selection */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setLanguage('en')}
-          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'en' ? 'border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900' : 'border-transparent'}`}
+          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'en' ? 'border-gray-250 bg-white shadow-xs hover:bg-gray-50 text-gray-900' : 'border-transparent text-gray-400 hover:text-gray-900'}`}
         >
           <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[9px] font-bold">EN</span>
           <span className="text-xs font-semibold">English</span>
         </Button>
-        <span className="text-gray-300">|</span>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <span className="text-gray-200">|</span>
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setLanguage('ar')}
-          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'ar' ? 'border-gray-200 bg-white/50 backdrop-blur-sm shadow-sm hover:shadow-md hover:bg-gray-100 hover:text-gray-900' : 'border-transparent'}`}
+          className={`gap-2 h-8 px-3 rounded-full border transition-all cursor-pointer ${language === 'ar' ? 'border-gray-250 bg-white shadow-xs hover:bg-gray-50 text-gray-900' : 'border-transparent text-gray-400 hover:text-gray-900'}`}
         >
           <span className="text-xs font-semibold">العربية</span>
         </Button>
       </div>
-      <p className="text-[10px] uppercase tracking-widest font-bold opacity-30">
-        © 2026 {t("FNRC Procurement Portal")}
+
+      {/* Right side: Copyright */}
+      <p className="text-xs uppercase tracking-widest font-bold text-gray-350 mb-0">
+        © {new Date().getFullYear()} {t('FNRC Procurement Portal')}
       </p>
     </footer>
   );

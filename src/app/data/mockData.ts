@@ -660,12 +660,12 @@ export const mockVendors: Vendor[] = [
     companyName: 'ABC Trading',
     email: 'info@abctrading.ae',
     category: ['Equipment & Machinery'],
-    status: 'rejected',
+    status: 'correction_requested',
     registrationDate: '2025-10-10',
     tradeLicense: 'TL-456789',
     taxNumber: 'TRN-012345',
     address: 'Ajman, UAE',
-    rejectionReason: 'Incomplete documentation - Trade license expired'
+    rejectionReason: 'Incomplete documentation - Trade license needs renewal'
   },
   {
     id: 'VEN-005',
@@ -702,7 +702,7 @@ export const mockAdminUsers: AdminUser[] = [
     id: 'ADM-003',
     name: 'Mohammed Al Zaabi',
     email: 'mohammed.alzaabi@fnrc.gov.ae',
-    role: 'technical_department',
+    role: 'reviewer',
     status: 'active',
     createdDate: '2026-03-01'
   },
@@ -710,10 +710,17 @@ export const mockAdminUsers: AdminUser[] = [
     id: 'ADM-004',
     name: 'Sarah Al Hosani',
     email: 'sarah.alhosani@fnrc.gov.ae',
-    role: 'commercial_department',
+    role: 'item_manager',
     status: 'active',
     createdDate: '2026-03-15'
   }
+];
+
+// Mock Employees for admin user creation
+export const mockEmployees = [
+  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@fnrc.gov.ae' },
+  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@fnrc.gov.ae' },
+  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@fnrc.gov.ae' },
 ];
 
 // Categories

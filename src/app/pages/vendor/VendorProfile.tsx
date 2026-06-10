@@ -133,27 +133,27 @@ export default function VendorProfile() {
             </Button>
             <Button 
               size="sm"
-              variant={registrationStatus === 'Rejected' ? 'default' : 'outline'}
-              onClick={() => setRegistrationStatus('Rejected')}
+              variant={registrationStatus === 'Pending' ? 'default' : 'outline'}
+              onClick={() => setRegistrationStatus('Pending')}
               className={`h-8 font-semibold text-xs rounded-button transition-all cursor-pointer ${
-                registrationStatus === 'Rejected' 
-                  ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm' 
-                  : 'text-gray-500 border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              {t('Rejected')}
-            </Button>
-            <Button 
-              size="sm"
-              variant={registrationStatus === 'Correction Requested' ? 'default' : 'outline'}
-              onClick={() => setRegistrationStatus('Correction Requested')}
-              className={`h-8 font-semibold text-xs rounded-button transition-all cursor-pointer ${
-                registrationStatus === 'Correction Requested' 
+                registrationStatus === 'Pending' 
                   ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm' 
                   : 'text-gray-500 border-gray-200 hover:bg-gray-50'
               }`}
             >
-              {t('Correction Requested')}
+              {t('Pending')}
+            </Button>
+            <Button 
+              size="sm"
+              variant={registrationStatus === 'Correction Requested' || registrationStatus === 'Correction Required' ? 'default' : 'outline'}
+              onClick={() => setRegistrationStatus('Correction Required')}
+              className={`h-8 font-semibold text-xs rounded-button transition-all cursor-pointer ${
+                registrationStatus === 'Correction Requested' || registrationStatus === 'Correction Required'
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm' 
+                  : 'text-gray-500 border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              {t('Correction Required')}
             </Button>
           </div>
         </div>
@@ -215,308 +215,306 @@ export default function VendorProfile() {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Left Column - Main Info */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Service Categories */}
-              <Card className="shadow-card border-none bg-white">
-                <CardHeader className="pb-2 px-6 pt-5">
-                  <CardTitle className="text-lg font-bold text-black">{t('Service Categories')}</CardTitle>
-                </CardHeader>
-                <CardContent className="px-6 pb-6">
-                  {isEditing ? (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 text-start">
-                      {availableCategories.map(category => (
-                        <div key={category} className="flex items-center space-x-2.5 rtl:space-x-reverse p-2 rounded-lg hover:bg-gray-50/60 transition-colors">
-                          <input
-                            type="checkbox"
-                            id={category}
-                            checked={vendorData.categories.includes(category)}
-                            onChange={() => handleCategoryToggle(category)}
-                            className="h-4 w-4 rounded-[4px] border-gray-300 text-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)]/50 cursor-pointer"
-                          />
-                          <label htmlFor={category} className="text-xs font-semibold text-gray-600 leading-none cursor-pointer">
-                            {t(category)}
-                          </label>
-                        </div>
-                      ))}
+          <div className="space-y-6">
+                {/* Company Details */}
+                <Card className="shadow-card border-none bg-white">
+                  <CardHeader className="px-6 pt-1 pb-0">
+                    <CardTitle className="text-lg font-bold text-black">
+                      {t('Company Details')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-6 pb-4 pt-0">
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label className="text-[14px] text-black font-bold">{t('Company Name (English)')}</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.companyNameEn} onChange={(e) => setVendorData({...vendorData, companyNameEn: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+                        ) : (
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.companyNameEn}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[14px] text-black font-bold">{t('Company Name (Arabic)')}</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.companyNameAr} className="rounded-input h-10 border-gray-200 text-start" onChange={(e) => setVendorData({...vendorData, companyNameAr: e.target.value})} />
+                        ) : (
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.companyNameAr}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[14px] text-black font-bold">{t('Trade License Number')}</Label>
+                        {isEditing ? (
+                          <Input value={vendorData.tradeLicense} onChange={(e) => setVendorData({...vendorData, tradeLicense: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+                        ) : (
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.tradeLicense}</div>
+                        )}
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-[14px] text-black font-bold">{t('License Expiry Date')}</Label>
+                        {isEditing ? (
+                          <Input type="date" value={vendorData.licenseExpiry} onChange={(e) => setVendorData({...vendorData, licenseExpiry: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+                        ) : (
+                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{new Date(vendorData.licenseExpiry).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB')}</div>
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {vendorData.categories.map(category => (
-                        <Badge key={category} variant="secondary" className="bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
-                          {t(category)}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+{/* Contact Information */}
+<Card className="shadow-card border-none bg-white">
+  <CardHeader className="px-6 pt-1 pb-0">
+    <CardTitle className="text-lg font-bold text-black">
+      {t('Contact Info')}
+    </CardTitle>
+  </CardHeader>
+  <CardContent className="px-6 pb-4 pt-0">
+    <div className="grid gap-5">
+      <div className="space-y-1.5">
+        <Label className="text-[14px] text-black font-bold">{t('Office Address')}</Label>
+        {isEditing ? (
+          <Input value={vendorData.address} onChange={(e) => setVendorData({...vendorData, address: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+        ) : (
+          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.address}</div>
+        )}
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('Country')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.country} onChange={(e) => setVendorData({...vendorData, country: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.country}</div>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('State / Emirate')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.stateEmirate} onChange={(e) => setVendorData({...vendorData, stateEmirate: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.stateEmirate}</div>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('City')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.city} onChange={(e) => setVendorData({...vendorData, city: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.city}</div>
+          )}
+        </div>
+      </div>
 
-              {/* Company Details */}
-              <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-5 pb-2">
-                  <CardTitle className="text-lg font-bold text-black">
-                    {t('Company Details')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-6 pb-6 pt-1">
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('Company Name (English)')}</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.companyNameEn} onChange={(e) => setVendorData({...vendorData, companyNameEn: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.companyNameEn}</div>
-                      )}
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('Company Name (Arabic)')}</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.companyNameAr} className="rounded-input h-10 border-gray-200 text-start" onChange={(e) => setVendorData({...vendorData, companyNameAr: e.target.value})} />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.companyNameAr}</div>
-                      )}
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('Trade License Number')}</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.tradeLicense} onChange={(e) => setVendorData({...vendorData, tradeLicense: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.tradeLicense}</div>
-                      )}
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('License Expiry Date')}</Label>
-                      {isEditing ? (
-                        <Input type="date" value={vendorData.licenseExpiry} onChange={(e) => setVendorData({...vendorData, licenseExpiry: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{new Date(vendorData.licenseExpiry).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB')}</div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Contact Information */}
-              <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-5 pb-2">
-                  <CardTitle className="text-lg font-bold text-black">
-                    {t('Contact Info')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-6 pb-6 pt-1">
-                  <div className="grid gap-5">
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('Office Address')}</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.address} onChange={(e) => setVendorData({...vendorData, address: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.address}</div>
-                      )}
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('Country')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.country} onChange={(e) => setVendorData({...vendorData, country: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorData.country)}</div>
-                        )}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('State / Emirate')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.stateEmirate} onChange={(e) => setVendorData({...vendorData, stateEmirate: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorData.stateEmirate)}</div>
-                        )}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('City')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.city} onChange={(e) => setVendorData({...vendorData, city: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorData.city)}</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('Phone Number')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.phone} onChange={(e) => setVendorData({...vendorData, phone: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                            <Phone className="h-4 w-4 text-gray-400 shrink-0" /> 
-                            {vendorData.phone}
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('Fax Number')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.fax} onChange={(e) => setVendorData({...vendorData, fax: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                            <Phone className="h-4 w-4 text-gray-400 shrink-0" /> 
-                            {vendorData.fax}
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[14px] text-black font-bold">{t('Email ID')}</Label>
-                        {isEditing ? (
-                          <Input value={vendorData.email} onChange={(e) => setVendorData({...vendorData, email: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                        ) : (
-                          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                            <Mail className="h-4 w-4 text-gray-400 shrink-0" /> 
-                            {vendorData.email}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label className="text-[14px] text-black font-bold">{t('Website')}</Label>
-                      {isEditing ? (
-                        <Input value={vendorData.website} onChange={(e) => setVendorData({...vendorData, website: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
-                      ) : (
-                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                          <Globe className="h-4 w-4 text-gray-400 shrink-0" /> 
-                          {vendorData.website}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('Phone Number')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.phone} onChange={(e) => setVendorData({...vendorData, phone: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+              <Phone className="h-4 w-4 text-gray-400 shrink-0" /> 
+              {vendorData.phone}
             </div>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('Fax Number')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.fax} onChange={(e) => setVendorData({...vendorData, fax: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+              <Phone className="h-4 w-4 text-gray-400 shrink-0" /> 
+              {vendorData.fax}
+            </div>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-[14px] text-black font-bold">{t('Email ID')}</Label>
+          {isEditing ? (
+            <Input value={vendorData.email} onChange={(e) => setVendorData({...vendorData, email: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+          ) : (
+            <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+              <Mail className="h-4 w-4 text-gray-400 shrink-0" /> 
+              {vendorData.email}
+            </div>
+          )}
+        </div>
+      </div>
 
-            {/* Right Column - Dashboard-style groupings */}
-            <div className="space-y-6 text-start">
+      <div className="space-y-1.5">
+        <Label className="text-[14px] text-black font-bold">{t('Website')}</Label>
+        {isEditing ? (
+          <Input value={vendorData.website} onChange={(e) => setVendorData({...vendorData, website: e.target.value})} className="rounded-input h-10 border-gray-200 text-start" />
+        ) : (
+          <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+            <Globe className="h-4 w-4 text-gray-400 shrink-0" /> 
+            {vendorData.website}
+          </div>
+        )}
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
               {/* Primary Contact Card */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-5 pb-0">
+                <CardHeader className="px-6 pt-1 pb-0">
                   <CardTitle className="text-lg font-bold text-black">
                     {t('Primary Contact')}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="px-6 pb-6 space-y-4 pt-1">
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Name')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.primaryContact.name} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, name: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.primaryContact.name}</div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Job Title')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.primaryContact.jobTitle} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, jobTitle: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                        <Briefcase className="h-4 w-4 text-gray-400 shrink-0" />
-                        {t(vendorData.primaryContact.jobTitle)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Mobile Number')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.primaryContact.mobile} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, mobile: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                        <Phone className="h-4 w-4 text-gray-400 shrink-0" />
-                        {vendorData.primaryContact.mobile}
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Email')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.primaryContact.email} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, email: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
-                        <Mail className="h-4 w-4 text-gray-400 shrink-0" />
-                        {vendorData.primaryContact.email}
-                      </div>
-                    )}
+                <CardContent className="px-6 pb-4 pt-0">
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Name')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.primaryContact.name} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, name: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.primaryContact.name}</div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Job Title')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.primaryContact.jobTitle} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, jobTitle: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                          <Briefcase className="h-4 w-4 text-gray-400 shrink-0" />
+                          {t(vendorData.primaryContact.jobTitle)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Mobile Number')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.primaryContact.mobile} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, mobile: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                          <Phone className="h-4 w-4 text-gray-400 shrink-0" />
+                          {vendorData.primaryContact.mobile}
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Email')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.primaryContact.email} onChange={(e) => setVendorData({...vendorData, primaryContact: {...vendorData.primaryContact, email: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                          <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+                          {vendorData.primaryContact.email}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Financial Info Card */}
               <Card className="shadow-card border-none bg-white">
-                <CardHeader className="px-6 pt-5 pb-2">
+                <CardHeader className="px-6 pt-1 pb-0">
                   <CardTitle className="text-lg font-bold text-black">
                     {t('Financial Info')}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="px-6 pb-6 space-y-4 pt-1">
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Bank Name')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.financialInfo.bankName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankName: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorData.financialInfo.bankName)}</div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Account Holder Name')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.financialInfo.accountHolderName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, accountHolderName: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.accountHolderName}</div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('IBAN')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.financialInfo.bankAccount} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankAccount: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-mono text-xs font-semibold text-gray-700 break-all text-start">{vendorData.financialInfo.bankAccount}</div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('Swift Code')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.financialInfo.swiftCode} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, swiftCode: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.swiftCode}</div>
-                    )}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[14px] text-black font-bold">{t('VAT Registration Number')}</Label>
-                    {isEditing ? (
-                      <Input value={vendorData.financialInfo.vatNumber} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, vatNumber: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
-                    ) : (
-                      <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.vatNumber}</div>
-                    )}
+                <CardContent className="px-6 pb-4 pt-0">
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Bank Name')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.financialInfo.bankName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankName: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorData.financialInfo.bankName)}</div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Account Holder Name')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.financialInfo.accountHolderName} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, accountHolderName: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.accountHolderName}</div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('IBAN')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.financialInfo.bankAccount} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, bankAccount: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-mono text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 break-all text-start">{vendorData.financialInfo.bankAccount}</div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('Swift Code')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.financialInfo.swiftCode} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, swiftCode: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.swiftCode}</div>
+                      )}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[14px] text-black font-bold">{t('VAT Registration Number')}</Label>
+                      {isEditing ? (
+                        <Input value={vendorData.financialInfo.vatNumber} onChange={(e) => setVendorData({...vendorData, financialInfo: {...vendorData.financialInfo, vatNumber: e.target.value}})} className="rounded-input h-10 border-gray-200 text-start" />
+                      ) : (
+                        <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorData.financialInfo.vatNumber}</div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
-            </div>
+
+{/* Service Categories Card */}
+<Card className="shadow-card border-none bg-white">
+  <CardHeader className="pb-0 px-6 pt-1">
+    <CardTitle className="text-lg font-bold text-black">{t('Service Categories')}</CardTitle>
+  </CardHeader>
+  <CardContent className="pt-0 space-y-2">
+    {isEditing ? (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 text-start">
+        {availableCategories.map(category => (
+          <div key={category} className="flex items-center space-x-2.5 rtl:space-x-reverse p-2 rounded-lg hover:bg-gray-50/60 transition-colors">
+            <input
+              type="checkbox"
+              id={category}
+              checked={vendorData.categories.includes(category)}
+              onChange={() => handleCategoryToggle(category)}
+              className="h-4 w-4 rounded-[4px] border-gray-300 text-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)]/50 cursor-pointer"
+            />
+            <label htmlFor={category} className="text-xs font-semibold text-gray-600 leading-none cursor-pointer">
+              {t(category)}
+            </label>
           </div>
+        ))}
+      </div>
+    ) : (
+      <div className="flex flex-wrap gap-2 pt-1">
+        {vendorData.categories.map(category => (
+          <Badge key={category} variant="secondary" className="bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
+            {t(category)}
+          </Badge>
+        ))}
+      </div>
+    )}
+  </CardContent>
+</Card>
+        
 
           {/* Compliance Documents Section */}
           <Card className="shadow-card border-none bg-white">
-            <CardHeader className="px-6 pt-5 pb-2">
+            <CardHeader className="px-6 pt-1 pb-0">
               <div className="flex items-center justify-between gap-4">
-                <CardTitle className="text-lg font-bold text-black text-start">{t('Compliance Documents')}</CardTitle>
-                <Button size="sm" className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
+                <CardTitle className="text-lg font-bold text-black text-start">{t('Vendor Documents')}</CardTitle>
+                <Button size="sm" disabled={!isEditing} className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
                   {t('Upload Document')}
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="px-6 pb-4">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="font-bold text-[13px] text-gray-400 text-start">{t('Document Name')}</TableHead>
+                    
                     <TableHead className="font-bold text-[13px] text-gray-400 text-start">{t('Upload Date')}</TableHead>
                     <TableHead className="font-bold text-[13px] text-gray-400 text-start">{t('Issue Date')}</TableHead>
                     <TableHead className="font-bold text-[13px] text-gray-400 text-start">{t('Expiry Date')}</TableHead>
@@ -536,6 +534,7 @@ export default function VendorProfile() {
                           </div>
                         </div>
                       </TableCell>
+                      
                       <TableCell className="text-[14px] text-gray-500 font-medium text-start">
                         {new Date(doc.uploadDate).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB')}
                       </TableCell>
@@ -595,17 +594,85 @@ export default function VendorProfile() {
               </Table>
             </CardContent>
           </Card>
+
+          {/* Detailed Activity Log Card */}
+          <Card className="shadow-card border-none bg-white">
+            <CardHeader className="px-6 pt-5 pb-3">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-gray-500" />
+                <CardTitle className="text-lg font-bold text-black text-start">{t('Detailed Activity Log')}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 pt-0">
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[220px]">{t('Action')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px]">{t('Performed By')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px]">{t('Date & Time')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Remarks')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[
+                      {
+                        action: 'Profile Approved',
+                        performedBy: 'FNRC Admin',
+                        dateTime: '15/02/2026 - 11:20 AM',
+                        remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.'
+                      },
+                      {
+                        action: 'Resubmitted for Review',
+                        performedBy: 'Vendor',
+                        dateTime: '14/02/2026 - 09:45 AM',
+                        remarks: 'Uploaded readable Trade License copy and updated Swift Code.'
+                      },
+                      {
+                        action: 'Correction Requested',
+                        performedBy: 'FNRC Admin',
+                        dateTime: '12/02/2026 - 04:30 PM',
+                        remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.'
+                      },
+                      {
+                        action: 'Onboarding Submitted',
+                        performedBy: 'Vendor',
+                        dateTime: '10/02/2026 - 02:15 PM',
+                        remarks: 'Registration form submitted with basic company profiles and compliance documents.'
+                      }
+                    ].map((log, idx) => (
+                      <TableRow key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                        <TableCell className="text-start font-medium text-gray-900 text-sm py-4 px-6">
+                          {t(log.action)}
+                        </TableCell>
+                        <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
+                          {log.performedBy === 'Vendor' ? t('Vendor') : log.performedBy}
+                        </TableCell>
+                        <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
+                          {log.dateTime}
+                        </TableCell>
+                        <TableCell className="text-start text-gray-600 text-sm py-4 px-6 leading-relaxed">
+                          {t(log.remarks)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+          </div>
         </TabsContent>
 
         {/* --- CHANGE PASSWORD TAB --- */}
         <TabsContent value="security" className="mt-6 focus-visible:outline-none">
           <Card className="max-w-2xl mx-auto shadow-card border-none bg-white">
-            <CardHeader className="px-6 pt-5 pb-2">
+            <CardHeader className="px-6 pt-1 pb-0">
               <CardTitle className="text-lg font-bold text-black text-start">
                 {t('Change Password')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-6 space-y-5 pt-1 text-start">
+            <CardContent className="px-6 pb-4 space-y-5 pt-0 text-start">
               <div className="space-y-2">
                 <Label htmlFor="current-password">{t('Current Password')}</Label>
                 <Input id="current-password" type="password" placeholder={t('Enter current password')} className="rounded-input h-10 border-gray-200 text-start" />

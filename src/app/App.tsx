@@ -33,6 +33,8 @@ import AdminItemDetail from '@/app/pages/admin/AdminItemDetail';
 import AdminProposalManagement from '@/app/pages/admin/AdminProposalManagement';
 import AdminProposalDetail from '@/app/pages/admin/AdminProposalDetail';
 import AdminUserManagement from '@/app/pages/admin/AdminUserManagement';
+import AdminUserCreate from '@/app/pages/admin/AdminUserCreate';
+import AdminUserEdit from '@/app/pages/admin/AdminUserEdit';
 import AdminMasterData from '@/app/pages/admin/AdminMasterData';
 import AdminReports from '@/app/pages/admin/AdminReports';
 import AdminConfig from '@/app/pages/admin/AdminConfig';
@@ -80,6 +82,8 @@ function AppRoutes() {
   if (path.startsWith('/admin/proposals/')) return <AdminLayout><AdminProposalDetail /></AdminLayout>;
   if (path === '/admin/proposals') return <AdminLayout><AdminProposalManagement /></AdminLayout>;
   if (path === '/admin/users') return <AdminLayout><AdminUserManagement /></AdminLayout>;
+  if (path === '/admin/users/create') return <AdminLayout><AdminUserCreate /></AdminLayout>;
+  if (path.startsWith('/admin/users/edit/')) return <AdminLayout><AdminUserEdit /></AdminLayout>;
   if (path === '/admin/master-data' || path === '/admin/master-data/service-category') return <AdminLayout><AdminMasterData defaultTab="category" /></AdminLayout>;
   if (path === '/admin/master-data/document-type') return <AdminLayout><AdminMasterData defaultTab="doctype" /></AdminLayout>;
   if (path === '/admin/master-data/declaration-context') return <AdminLayout><AdminMasterData defaultTab="declaration" /></AdminLayout>;

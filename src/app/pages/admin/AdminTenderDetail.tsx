@@ -288,6 +288,7 @@ const assignTechnicalReviewer = (reviewerName: string) => {
       p.technicalReviewer = reviewerName;
     }
   });
+  setSelectedProposals([]);
   toast.success(`${reviewerName} assigned as Technical Reviewer`);
 };
 
@@ -301,6 +302,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
       p.commercialReviewer = reviewerName;
     }
   });
+  setSelectedProposals([]);
   toast.success(`${reviewerName} assigned as Commercial Reviewer`);
 };
   const handleClearSelection = () => {

@@ -48,7 +48,7 @@ export function SearchFilterBar({
 
   return (
     <div className={cn("flex flex-col gap-3 w-full", className)}>
-      <div className="flex flex-col md:flex-row gap-3 w-full">
+      <div className="flex flex-col md:flex-row gap-2 w-full">
         {/* Search Input Container */}
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 pointer-events-none" />

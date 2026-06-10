@@ -199,6 +199,44 @@ export default function AdminTenderCreate() {
     navigate('/admin/tenders');
   };
 
+  const renderActionButtons = (className?: string) => {
+    return (
+      <div className={cn("flex items-center gap-3 pb-2", className)}>
+        {step === 1 ? (
+          <Button variant="outline" onClick={() => navigate('/admin/tenders')}>
+            {t('Cancel')}
+          </Button>
+        ) : (
+          <Button variant="outline" onClick={() => setStep(1)}>
+            {t('Back')}
+          </Button>
+        )}
+        
+        <Button variant="outline" onClick={handleSaveDraft}>
+          {t('Save as Draft')}
+        </Button>
+        
+        {step === 1 ? (
+          <Button
+            onClick={() => setStep(2)}
+            className="text-white"
+            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+          >
+            {t('Next')}
+          </Button>
+        ) : (
+          <Button
+            onClick={handlePublish}
+            className="text-white"
+            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+          >
+            {t('Publish Tender')}
+          </Button>
+        )}
+      </div>
+    );
+  };
+
   const renderStepIndicator = () => {
     const steps = [
       { number: 1, label: t('Tender Details') },
@@ -241,39 +279,7 @@ export default function AdminTenderCreate() {
           ))}
         </div>
         
-        <div className="flex items-center gap-3 pb-2">
-          {step === 1 ? (
-            <Button variant="outline" onClick={() => navigate('/admin/tenders')}>
-              {t('Cancel')}
-            </Button>
-          ) : (
-            <Button variant="outline" onClick={() => setStep(1)}>
-              {t('Back')}
-            </Button>
-          )}
-          
-          <Button variant="outline" onClick={handleSaveDraft}>
-            {t('Save as Draft')}
-          </Button>
-          
-          {step === 1 ? (
-            <Button
-              onClick={() => setStep(2)}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              {t('Next')}
-            </Button>
-          ) : (
-            <Button
-              onClick={handlePublish}
-              className="text-white"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-            >
-              {t('Publish Tender')}
-            </Button>
-          )}
-        </div>
+        {renderActionButtons()}
       </div>
     );
   };
@@ -781,6 +787,10 @@ export default function AdminTenderCreate() {
           {renderStep5()}
         </div>
       )}
+
+      <div className="flex justify-end pt-6 border-t border-gray-100">
+        {renderActionButtons("mt-2")}
+      </div>
     </div>
   );
 }

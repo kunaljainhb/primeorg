@@ -31,12 +31,12 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   } else if (normStatus === 'pending' || normStatus === 'under_review' || normStatus === 'submitted' || normStatus === 'technical_review_started' || normStatus === 'commercial_review_started' || normStatus === 'technical_review' || normStatus === 'receiving pending') {
     bgClass = "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400";
     displayLabel = normStatus === 'under_review' ? 'Commercial Review Completed' : normStatus === 'submitted' ? 'Submitted' : normStatus === 'technical_review_started' ? 'Technical Review Started' : normStatus === 'commercial_review_started' ? 'Commercial Review Started' : normStatus === 'technical_review' ? 'Technical Review' : normStatus === 'receiving pending' ? 'Receiving Pending' : 'Pending';
-  } else if (normStatus === 'rejected' || normStatus === 'suspended' || normStatus === 'expired' || normStatus === 'inactive' || normStatus === 'cancelled' || normStatus.includes('rejected')) {
+  } else if (normStatus === 'rejected' || normStatus === 'not verified' || normStatus === 'not_verified' || normStatus === 'suspended' || normStatus === 'blacklisted' || normStatus === 'expired' || normStatus === 'inactive' || normStatus === 'cancelled' || normStatus.includes('rejected')) {
     bgClass = "bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/20 dark:text-rose-400";
-    displayLabel = normStatus === 'suspended' ? 'Suspended' : normStatus === 'expired' ? 'Expired' : normStatus === 'inactive' ? 'Inactive' : normStatus === 'cancelled' ? 'Cancelled' : normStatus.includes('technical') ? 'Technical Rejected' : normStatus.includes('commercial') ? 'Commercial Rejected' : 'Rejected';
-  } else if (normStatus.includes('correction_requested')) {
+    displayLabel = normStatus === 'suspended' ? 'Suspended' : normStatus === 'blacklisted' ? 'Blacklisted' : normStatus === 'expired' ? 'Expired' : normStatus === 'inactive' ? 'Inactive' : normStatus === 'cancelled' ? 'Cancelled' : normStatus.includes('technical') ? 'Technical Rejected' : normStatus.includes('commercial') ? 'Commercial Rejected' : normStatus === 'rejected' ? 'Rejected' : 'Not Verified';
+  } else if (normStatus.includes('correction_requested') || normStatus === 'correction_required' || normStatus === 'correction') {
     bgClass = "bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-950/20 dark:text-orange-400";
-    displayLabel = normStatus.includes('technical') ? 'Technical Correction Requested' : normStatus.includes('commercial') ? 'Commercial Correction Requested' : 'Correction Requested';
+    displayLabel = normStatus.includes('technical') ? 'Technical Correction Requested' : normStatus.includes('commercial') ? 'Commercial Correction Requested' : 'Correction Required';
   } else if (normStatus === 'draft' || normStatus === 'closed') {
     bgClass = "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800/40 dark:text-slate-400";
     displayLabel = normStatus === 'closed' ? 'Closed' : 'Draft';

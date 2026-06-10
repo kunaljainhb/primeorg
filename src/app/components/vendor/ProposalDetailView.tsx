@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table';
+import { useTranslation } from '@/app/context/LanguageContext';
 
 interface ProposalDetailViewProps {
   proposal: {
@@ -48,6 +49,7 @@ export function ProposalDetailView({
   onProposalUpdate
 }: ProposalDetailViewProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Local state for proposal data and resubmission interaction
   const [proposalState, setProposalState] = useState(proposal);
@@ -944,31 +946,31 @@ export function ProposalDetailView({
           <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
             <CardTitle className="text-lg font-bold text-gray-900">Detailed Activity</CardTitle>
           </CardHeader>
-          <CardContent className="!pt-4 px-6 pb-4">
-            <div className="rounded-lg border" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+          <CardContent className="px-6 pb-6 pt-0">
+            <div className="rounded-lg border border-gray-200 overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow style={{ backgroundColor: '#F7F9FC' }}>
-                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Action</TableHead>
-                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Performed By</TableHead>
-                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Date & Time</TableHead>
-                    <TableHead className="text-sm font-bold text-black normal-case tracking-normal">Remarks</TableHead>
+                  <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
+                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Action')}</TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Performed By')}</TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Date & Time')}</TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Remarks')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {activityLog.map((log, idx) => (
-                    <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                      <TableCell className="text-base font-normal text-gray-800">
-                        {log.action}
+                    <TableRow key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                      <TableCell className="text-start font-medium text-gray-900 text-sm py-4 px-6">
+                        {t(log.action)}
                       </TableCell>
-                      <TableCell className="text-base font-normal text-gray-800">
-                        {log.performedBy}
+                      <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
+                        {t(log.performedBy)}
                       </TableCell>
-                      <TableCell className="text-base font-normal text-gray-800">
+                      <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
                         {log.date.includes('-') ? log.date.split('-').reverse().join('/') : new Date(log.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} - {log.time}
                       </TableCell>
-                      <TableCell className="text-base font-normal text-gray-800">
-                        {log.remarks}
+                      <TableCell className="text-start text-gray-600 text-sm py-4 px-6 leading-relaxed">
+                        {t(log.remarks)}
                       </TableCell>
                     </TableRow>
                   ))}

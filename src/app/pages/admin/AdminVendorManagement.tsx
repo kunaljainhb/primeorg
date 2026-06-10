@@ -25,7 +25,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 export default function AdminVendorManagement() {
@@ -34,6 +34,7 @@ export default function AdminVendorManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSync, setLastSync] = useState<string>('01/01/2020 12:00:00');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -46,10 +47,17 @@ export default function AdminVendorManagement() {
     setIsSyncing(true);
     setTimeout(() => {
       setIsSyncing(false);
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      setLastSync(`${day}/${month}/${year} ${hours}:${minutes}:${seconds}`);
       toast.success('Vendors synced successfully from ERP');
     }, 1500);
   };
-
   const filteredVendors = mockVendors.filter(vendor => {
     const matchesSearch = vendor.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           vendor.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -96,8 +104,8 @@ export default function AdminVendorManagement() {
         { label: t('All'), value: 'all' },
         { label: t('Pending'), value: 'pending' },
         { label: t('Approved'), value: 'approved' },
+        { label: t('Correction Required'), value: 'correction_requested' },
         { label: t('Rejected'), value: 'rejected' },
-        { label: t('Correction Requested'), value: 'correction_requested' },
       ],
       selectedValue: statusFilter,
       onChange: setStatusFilter,
@@ -106,7 +114,7 @@ export default function AdminVendorManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `${t('Status')}: ${t(statusFilter === 'correction_requested' ? 'Correction Requested' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1))}`,
+      label: `${t('Status')}: ${t(statusFilter === 'correction_requested' ? 'Correction Required' : statusFilter === 'rejected' ? 'Rejected' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1))}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];
@@ -117,22 +125,27 @@ export default function AdminVendorManagement() {
   };
 
   return (
-    <div className="space-y-8 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
+    <div className="space-y-2 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-gray-100 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
             {t("Vendor Management")}
           </h1>
         </div>
-        <Button 
-          onClick={handleSyncERP} 
-          disabled={isSyncing}
-          className="gap-2 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fade-in" 
-          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-        >
-          <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
-          {isSyncing ? t('Syncing...') : t('Sync from ERP')}
-        </Button>
+          <div className="flex flex-col items-end">
+            <Button
+              onClick={handleSyncERP}
+              disabled={isSyncing}
+              className="gap-2 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fade-in"
+              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            >
+              <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+              {isSyncing ? t('Syncing...') : t('Sync from ERP')}
+            </Button>
+            <span className="text-xs text-gray-500 mt-1">
+              {t('Last Sync')}: {lastSync || '-'}
+            </span>
+          </div>
       </div>
 
       {/* Modern Search and Filter Bar */}

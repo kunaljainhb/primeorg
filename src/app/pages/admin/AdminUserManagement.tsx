@@ -2,9 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/ca
 import { Button } from '@/app/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Badge } from '@/app/components/ui/badge';
-import { Users, Shield, Eye, Mail, Check, Calendar, Activity, Plus, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { Users, Shield, Eye, Mail, Check, Calendar, Activity, Plus, Pencil, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown, Info } from 'lucide-react';
 import { mockAdminUsers, roles } from '@/app/data/mockData';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const ROLE_DISPLAY: Record<string, string> = {
+  SUPER_ADMIN: 'Super Admin',
+  PROCUREMENT_ADMIN: 'Procurement Admin',
+  REVIEWER: 'Reviewer',
+  ITEM_MANAGER: 'Item Manager',
+};
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/app/components/ui/dialog';
 import { Label } from '@/app/components/ui/label';
 import { Input } from '@/app/components/ui/input';
@@ -12,8 +19,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/app/components/ui/sheet';
 import { toast } from 'sonner';
 import { StatusBadge } from '@/app/components/ui/status-badge';
+import { useNavigate } from '@/app/context/RouterContext';
 import { useTranslation } from '@/app/context/LanguageContext';
 import { cn } from '@/app/components/ui/utils';
+import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
+import { EmptyState } from '@/app/components/ui/empty-state';
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -22,7 +32,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 const mockEmployees = [
@@ -33,10 +43,19 @@ const mockEmployees = [
 
 export default function AdminUserManagement() {
   const { t, language } = useTranslation();
+  const navigate = useNavigate();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showUserDrawer, setShowUserDrawer] = useState(false);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -57,7 +76,13 @@ export default function AdminUserManagement() {
     setSortConfig({ key, direction });
   };
 
-  const sortedUsers = [...mockAdminUsers].sort((a, b) => {
+  const filteredUsers = mockAdminUsers.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
     
@@ -79,6 +104,32 @@ export default function AdminUserManagement() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const filters = [
+    {
+      key: 'status',
+      label: t('Status'),
+      options: [
+        { label: t('All Statuses'), value: 'all' },
+        { label: t('Active'), value: 'active' },
+        { label: t('Inactive'), value: 'inactive' }
+      ],
+      selectedValue: statusFilter,
+      onChange: setStatusFilter
+    }
+  ];
+
+  const activeChips = statusFilter !== 'all' ? [
+    {
+      label: `${t('Status')}: ${t(statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1))}`,
+      onRemove: () => setStatusFilter('all')
+    }
+  ] : [];
+
+  const handleClearAll = () => {
+    setSearchQuery('');
+    setStatusFilter('all');
+  };
 
   const handleCreateUser = () => {
     if (!formData.name || !formData.email || !formData.role) {
@@ -126,164 +177,178 @@ export default function AdminUserManagement() {
             {t('User & Roles Management')}
           </h1>
         </div>
-        <Button
-          className="text-white gap-2 shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
-          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-          onClick={() => setShowCreateDialog(true)}
-        >
-          <Plus className="h-4 w-4" />
-          {t('Create Admin User')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="gap-2 border-gray-200 hover:bg-gray-50 text-gray-600 transition-all font-semibold"
+            onClick={() => setShowRoleDialog(true)}
+          >
+            <Info className="h-4 w-4 text-gray-500" />
+            {t('Role Information')}
+          </Button>
+          <Button
+            className="text-white gap-2 shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
+            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            onClick={() => navigate('/admin/users/create')}
+          >
+            <Plus className="h-4 w-4" />
+            {t('Create Admin User')}
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-8">
+        {/* Modern Search and Filter Bar */}
+        <SearchFilterBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder={t('Search by user name...')}
+          filters={filters}
+          activeChips={activeChips}
+          onClearAll={handleClearAll}
+        />
+
         {/* Admin Users Table */}
         <Card className="border border-gray-100/50 shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-gray-50 pb-5">
-            <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <Users className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
-              {t('User Management')}
-            </CardTitle>
-          </CardHeader>
           <CardContent className="p-0">
-            <Table>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Employee ID')}
-                      {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('name')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Name')}
-                      {sortConfig?.key === 'name' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('email')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Email')}
-                      {sortConfig?.key === 'email' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('role')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Role')}
-                      {sortConfig?.key === 'role' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdDate')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Created Date')}
-                      {sortConfig?.key === 'createdDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
-                    <div className="flex items-center gap-1.5">
-                      {t('Status')}
-                      {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pe-6">{t('Action')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedUsers.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0 cursor-pointer" onClick={() => handleViewDetails(user)}>
-                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{user.id}</TableCell>
-                    <TableCell className="font-semibold text-gray-800">{user.name}</TableCell>
-                    <TableCell className="text-gray-500 font-medium">{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="bg-gray-50 text-gray-600 border border-gray-100 rounded-md font-semibold">
-                        {t(user.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-gray-500 font-medium text-xs">
-                      {formatDate(user.createdDate || new Date())}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={user.status} />
-                    </TableCell>
-                    <TableCell className="text-right py-3 pe-6" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" variant="outline" className="h-8 w-8 p-0 justify-center items-center font-semibold" onClick={() => handleEditUser(user)} title={t('Edit User')}>
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            
-            {/* Pagination Controls */}
-            {true && (
-              <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
-                <span className="text-sm text-gray-500 font-medium">
-                  {t('Showing')} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t('to')} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedUsers.length)}</span> {t('of')} <span className="font-bold text-gray-900">{sortedUsers.length}</span> {t('entries')}
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="font-semibold"
-                  >
-                    <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
-                    {t('Previous')}
-                  </Button>
-                  <div className="flex items-center gap-1 mx-2">
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(i + 1)}
-                        className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
-                          currentPage === i + 1 
-                            ? 'bg-[var(--fnrc-primary-green)] text-white' 
-                            : 'text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        {i + 1}
-                      </button>
+            {paginatedUsers.length > 0 ? (
+              <>
+                <Table>
+                  <TableHeader className="bg-gray-50">
+                    <TableRow>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Employee ID')}
+                          {sortConfig?.key === 'id' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('name')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Name')}
+                          {sortConfig?.key === 'name' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('email')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Email')}
+                          {sortConfig?.key === 'email' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('role')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Role')}
+                          {sortConfig?.key === 'role' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('createdDate')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Created Date')}
+                          {sortConfig?.key === 'createdDate' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="font-bold text-gray-900 text-sm py-4 cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('status')}>
+                        <div className="flex items-center gap-1.5">
+                          {t('Status')}
+                          {sortConfig?.key === 'status' ? (sortConfig.direction === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-right font-bold text-gray-900 text-sm py-4 pe-6">{t('Action')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedUsers.map((user) => (
+                      <TableRow key={user.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                        <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{user.id}</TableCell>
+                        <TableCell className="font-semibold text-gray-800">{user.name}</TableCell>
+                        <TableCell className="text-gray-500 font-medium">{user.email}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="bg-gray-50 text-gray-600 border border-gray-100 rounded-md font-semibold">
+                            {ROLE_DISPLAY[user.role] ?? t(user.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-500 font-medium text-xs">
+                          {formatDate(user.createdDate || new Date())}
+                        </TableCell>
+                        <TableCell>
+                          <StatusBadge status={user.status} />
+                        </TableCell>
+                        <TableCell className="text-right py-3 pe-6">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0 justify-center items-center font-semibold"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/users/edit/${user.id}`);
+                            }}
+                            title={t('Edit User')}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+                
+                {/* Pagination Controls */}
+                {true && (
+                  <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50/50">
+                    <span className="text-sm text-gray-500 font-medium">
+                      {t('Showing')} <span className="font-bold text-gray-900">{(currentPage - 1) * itemsPerPage + 1}</span> {t('to')} <span className="font-bold text-gray-900">{Math.min(currentPage * itemsPerPage, sortedUsers.length)}</span> {t('of')} <span className="font-bold text-gray-900">{sortedUsers.length}</span> {t('entries')}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="font-semibold"
+                      >
+                        <ChevronLeft className={cn("h-4 w-4 me-1", language === 'ar' && "scale-x-[-1]")} />
+                        {t('Previous')}
+                      </Button>
+                      <div className="flex items-center gap-1 mx-2">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentPage(i + 1)}
+                            className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
+                              currentPage === i + 1 
+                                ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                                : 'text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="font-semibold"
+                      >
+                        {t('Next')}
+                        <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
+                      </Button>
+                    </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="font-semibold"
-                  >
-                    {t('Next')}
-                    <ChevronRight className={cn("h-4 w-4 ms-1", language === 'ar' && "scale-x-[-1]")} />
-                  </Button>
-                </div>
-              </div>
+                )}
+              </>
+            ) : (
+              <EmptyState
+                title={t('No Users Found')}
+                description={t('No administrative users matched your search or status filter.')}
+                actionLabel={t('Clear Filters')}
+                onAction={handleClearAll}
+              />
             )}
           </CardContent>
         </Card>
 
-        {/* Roles & Permissions */}
-        <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit gap-0">
-          <CardHeader className="border-b border-gray-50 pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <Shield className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
-              {t('Role Permissions Matrix')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {roles.map((role) => (
-              <div key={role.value} className="rounded-xl border border-gray-100 p-4 bg-gray-50/20 hover:bg-gray-50/50 transition-colors flex flex-col justify-between">
-                <div>
-                  <div className="font-bold text-gray-800 text-sm">{t(role.name)}</div>
-                  <div className="mt-1.5 text-xs text-gray-400 font-semibold leading-relaxed">
-                    {t('Privileges')}: {role.permissions.map(p => t(p.split('_').map(word => word === 'and' ? 'and' : word.charAt(0).toUpperCase() + word.slice(1)).join(' '))).join(', ')}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        {/* Roles & Permissions section removed from bottom */}
       </div>
 
       {/* Create User Dialog */}
@@ -294,7 +359,7 @@ export default function AdminUserManagement() {
           </DialogHeader>
           <div id="create-user-dialog-description" className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('Select Employee *')}</Label>
+              <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('Employee Name *')}</Label>
               <Select 
                 value={formData.employeeId} 
                 onValueChange={(value) => {
@@ -315,7 +380,7 @@ export default function AdminUserManagement() {
                 <SelectContent>
                   {mockEmployees.map((emp) => (
                     <SelectItem key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.id})
+                      {emp.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -583,6 +648,64 @@ export default function AdminUserManagement() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Role & Permission Matrix Dialog */}
+      <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
+        <DialogContent className="sm:max-w-md p-6 max-h-[80vh] overflow-y-auto" aria-describedby="role-matrix-dialog-description">
+          <DialogHeader className="pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-lg bg-[var(--fnrc-accent-gold)]/10 flex items-center justify-center">
+                <Shield className="h-4.5 w-4.5 text-[var(--fnrc-accent-gold)]" />
+              </div>
+              <div>
+                <DialogTitle className="text-base font-bold text-gray-900">
+                  {t('Role & Permission Matrix')}
+                </DialogTitle>
+                <DialogDescription className="text-[11px] text-gray-500 font-medium mt-0.5">
+                  {t('Overview of system roles and scopes')}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div id="role-matrix-dialog-description" className="py-4 space-y-4">
+            {roles.map((role) => (
+              <div key={role.value} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100/80 space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 rounded-md bg-white border border-gray-100 flex items-center justify-center shrink-0">
+                    <Shield className="h-3 w-3 text-gray-500" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-800 capitalize">{t(role.name)}</h4>
+                    <p className="text-[9px] text-gray-400 font-semibold">{t('Role Identifier')}: {role.value}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{t('Authorized Scopes')}</div>
+                  <ul className="text-xs text-gray-600 font-medium space-y-1">
+                    {role.permissions.map((permission: string) => (
+                      <li key={permission} className="flex items-center gap-1.5">
+                        <Check className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                        <span>{t(permission.split('_').map((word: string) => word === 'and' ? 'and' : word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}</span>
+                      </li>
+                    ))}
+                    {role.permissions.length === 0 && (
+                      <li className="text-gray-400 italic text-[11px]">{t('No privileges configured.')}</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter className="sm:justify-end border-t border-gray-100 pt-3">
+            <Button variant="outline" size="sm" className="font-semibold text-xs" onClick={() => setShowRoleDialog(false)}>
+              {t('Close')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

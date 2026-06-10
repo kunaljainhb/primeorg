@@ -2,7 +2,7 @@ import { useNavigate, useParams } from '@/app/context/RouterContext';
 import { 
   ArrowLeft, CheckCircle, XCircle, FileText, Star, Ban, Pause, 
   RotateCcw, Building2, MapPin, 
-  Landmark, UserCircle, Download, History
+  Landmark, UserCircle, Download, History, Globe, Phone, Mail, Briefcase, Clock, AlertTriangle
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/app/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
@@ -37,7 +37,7 @@ const formatDate = (dateStr?: string | Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 export default function AdminVendorDetail() {
@@ -49,38 +49,7 @@ export default function AdminVendorDetail() {
   const [remarks, setRemarks] = useState('');
   const [error, setError] = useState('');
   const [showAuditHistory, setShowAuditHistory] = useState(false);
-
-  if (!vendor) {
-    return <div className="p-8 text-center font-bold font-sans">{t("Vendor not found")}</div>;
-  }
-
-  // Comprehensive Vendor Details
-  const vendorDetails = {
-    companyNameAr: 'تيك سوليوشنز ذ.م.م',
-    expiryDate: '2026-12-31',
-    country: 'United Arab Emirates',
-    stateEmirate: 'Dubai',
-    city: 'Dubai',
-    fax: '+971 4 123 4568',
-    website: 'www.techsolutions.ae',
-    primaryContact: {
-      name: 'John Doe',
-      jobTitle: 'Account Manager',
-      mobile: '+971 50 987 6543',
-      email: 'john.doe@techsolutions.ae'
-    },
-    financialInfo: {
-      accountNumber: '100234567890',
-      bankAccountNumber: 'AE12 3456 7890 1234 5678 901',
-      bankName: 'Emirates NBD',
-      accountHolderName: 'TechSolutions LLC',
-      swiftCode: 'EBILAEADXXX',
-      vatNumber: vendor.taxNumber || '100012345600003'
-    }
-  };
-
-  // Sample documents
-  const sampleDocuments = [
+  const [documentsList, setDocumentsList] = useState([
     {
       id: 'DOC-001',
       name: 'Trade License',
@@ -135,7 +104,45 @@ export default function AdminVendorDetail() {
       expiryDate: null,
       status: 'pending'
     }
-  ];
+  ]);
+
+  const toggleDocStatus = (docId: string, newStatus: string) => {
+    setDocumentsList(prev => prev.map(doc => {
+      if (doc.id === docId) {
+        return { ...doc, status: newStatus };
+      }
+      return doc;
+    }));
+  };
+
+  if (!vendor) {
+    return <div className="p-8 text-center font-bold font-sans">{t("Vendor not found")}</div>;
+  }
+
+  // Comprehensive Vendor Details
+  const vendorDetails = {
+    companyNameAr: 'تيك سوليوشنز ذ.م.م',
+    expiryDate: '2026-12-31',
+    country: 'United Arab Emirates',
+    stateEmirate: 'Dubai',
+    city: 'Dubai',
+    fax: '+971 4 123 4568',
+    website: 'www.techsolutions.ae',
+    primaryContact: {
+      name: 'John Doe',
+      jobTitle: 'Account Manager',
+      mobile: '+971 50 987 6543',
+      email: 'john.doe@techsolutions.ae'
+    },
+    financialInfo: {
+      accountNumber: '100234567890',
+      bankAccountNumber: 'AE12 3456 7890 1234 5678 901',
+      bankName: 'Emirates NBD',
+      accountHolderName: 'TechSolutions LLC',
+      swiftCode: 'EBILAEADXXX',
+      vatNumber: vendor.taxNumber || '100012345600003'
+    }
+  };
 
   const handleAction = (action: string) => {
     if (!remarks.trim()) {
@@ -162,173 +169,188 @@ export default function AdminVendorDetail() {
         </Button>
       </div>
 
-      {/* Header card summary */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-8 rounded-card shadow-card border border-gray-100/50">
-        <div>
-          <div className="flex flex-wrap items-center gap-3 mb-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-              {vendor.companyName}
-            </h1>
-            <StatusBadge status={vendor.status} />
+      {/* Profile Overview Header Card */}
+      <Card className="shadow-card border-none bg-white">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-[var(--fnrc-primary-green)]/10 flex items-center justify-center text-[var(--fnrc-primary-green)] shrink-0">
+                <Building2 className="h-8 w-8" strokeWidth={1.5} />
+              </div>
+              <div className="space-y-1 text-start">
+                <h2 className="text-[22px] font-bold text-gray-800 leading-none">
+                  {language === 'ar' ? vendorDetails.companyNameAr : vendor.companyName}
+                </h2>
+                <div className="flex flex-wrap items-center gap-2.5 mt-2">
+                  <StatusBadge status={vendor.status} />
+                  <span className="text-[14px] text-black font-bold">{t('Vendor ID:')} {vendor.id}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-sm font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
-            {vendor.id} • {t("Registered on")} {formatDate(vendor.registrationDate)}
-          </p>
-        </div>
+        </CardContent>
+      </Card>
 
-        <Button 
-          variant="outline" 
-          className="gap-2 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 h-10 font-semibold shadow-xs" 
-          onClick={() => setShowAuditHistory(true)}
-        >
-          <History className={cn("h-4 w-4", language === 'ar' && "scale-x-[-1]")} />
-          {t("Audit History")}
-        </Button>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="space-y-6">
         {/* Company Details */}
-        <Card className="gap-0 overflow-hidden">
-          <CardHeader className="pb-2 border-b border-gray-50">
-            <CardTitle className="text-base font-bold text-gray-900">
+        <Card className="shadow-card border-none bg-white">
+          <CardHeader className="px-6 pt-1 pb-0">
+            <CardTitle className="text-lg font-bold text-black text-start">
               {t("Company Details")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Company Legal Name (English)")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendor.companyName}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold block">{t("Company Legal Name (Arabic)")}</Label>
-              <div className="text-sm font-normal text-gray-800 text-end" dir="rtl">{vendorDetails.companyNameAr}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Trade License Number")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendor.tradeLicense}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Expiry Date")}</Label>
-              <div className="text-sm font-normal text-gray-800">{formatDate(vendorDetails.expiryDate)}</div>
+          <CardContent className="px-6 pb-4 pt-0">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Company Name (English)")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendor.companyName}</div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Company Name (Arabic)")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.companyNameAr}</div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Trade License Number")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendor.tradeLicense}</div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("License Expiry Date")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{new Date(vendorDetails.expiryDate).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB')}</div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Contact Info */}
-        <Card className="gap-0 overflow-hidden">
-          <CardHeader className="pb-2 border-b border-gray-50">
-            <CardTitle className="text-base font-bold text-gray-900">
-              {t("Contact Details & Location")}
+        <Card className="shadow-card border-none bg-white">
+          <CardHeader className="px-6 pt-1 pb-0">
+            <CardTitle className="text-lg font-bold text-black text-start">
+              {t("Contact Info")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
-              <div className="space-y-0 md:col-span-2">
-              <Label className="text-[13px] text-black font-bold">{t("Address")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendor.address}</div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:col-span-2">
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Country")}</Label>
-                <div className="text-sm font-normal text-gray-800">{t(vendorDetails.country)}</div>
+          <CardContent className="px-6 pb-4 pt-0">
+            <div className="grid gap-5">
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Office Address")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendor.address}</div>
               </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("State/Emirate")}</Label>
-                <div className="text-sm font-normal text-gray-800">{t(vendorDetails.stateEmirate)}</div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("Country")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorDetails.country)}</div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("State / Emirate")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorDetails.stateEmirate)}</div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("City")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{t(vendorDetails.city)}</div>
+                </div>
               </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("City")}</Label>
-                <div className="text-sm font-normal text-gray-800">{t(vendorDetails.city)}</div>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:col-span-2">
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Phone Number")}</Label>
-                <div className="text-sm font-normal text-gray-800">+971 4 123 4567</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("Phone Number")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                    <Phone className="h-4 w-4 text-gray-400 shrink-0" />
+                    +971 4 123 4567
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("Fax Number")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                    <Phone className="h-4 w-4 text-gray-400 shrink-0" />
+                    {vendorDetails.fax}
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[14px] text-black font-bold">{t("Email ID")}</Label>
+                  <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                    <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+                    {vendor.email}
+                  </div>
+                </div>
               </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Fax Number")}</Label>
-                <div className="text-sm font-normal text-gray-800">{vendorDetails.fax}</div>
-              </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Business Email")}</Label>
-                <div className="text-sm font-normal text-gray-800">{vendor.email}</div>
-              </div>
-            </div>
 
-            <div className="space-y-0 md:col-span-2">
-              <Label className="text-[13px] text-black font-bold">{t("Website")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendorDetails.website}</div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Website")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                  <Globe className="h-4 w-4 text-gray-400 shrink-0" />
+                  {vendorDetails.website}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Primary Contact */}
-        <Card className="gap-0 overflow-hidden">
-          <CardHeader className="pb-2 border-b border-gray-50">
-            <CardTitle className="text-base font-bold text-gray-900">
+        <Card className="shadow-card border-none bg-white">
+          <CardHeader className="px-6 pt-1 pb-0">
+            <CardTitle className="text-lg font-bold text-black text-start">
               {t("Primary Contact")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-5 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Full Name")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.name}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Job Title")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.jobTitle}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Mobile Number")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.mobile}</div>
-            </div>
-            <div className="space-y-0">
-              <Label className="text-[13px] text-black font-bold">{t("Email")}</Label>
-              <div className="text-sm font-normal text-gray-800">{vendorDetails.primaryContact.email}</div>
+          <CardContent className="px-6 pb-4 pt-0">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Name")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.primaryContact.name}</div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Job Title")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                  <Briefcase className="h-4 w-4 text-gray-400 shrink-0" />
+                  {t(vendorDetails.primaryContact.jobTitle)}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Mobile Number")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                  <Phone className="h-4 w-4 text-gray-400 shrink-0" />
+                  {vendorDetails.primaryContact.mobile}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Email")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 flex items-center gap-2 text-start">
+                  <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+                  {vendorDetails.primaryContact.email}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Financial Info */}
-        <Card className="gap-0 overflow-hidden">
-          <CardHeader className="pb-2 border-b border-gray-50">
-            <CardTitle className="text-base font-bold text-gray-900">
-              {t("Financial Information")}
+        <Card className="shadow-card border-none bg-white">
+          <CardHeader className="px-6 pt-1 pb-0">
+            <CardTitle className="text-lg font-bold text-black text-start">
+              {t("Financial Info")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-5 grid grid-cols-1 gap-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Bank Name")}</Label>
-                <div className="text-sm font-normal text-gray-800">{vendorDetails.financialInfo.bankName}</div>
+          <CardContent className="px-6 pb-4 pt-0">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Bank Name")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.financialInfo.bankName}</div>
               </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Account Holder Name")}</Label>
-                <div className="text-sm font-normal text-gray-800">{vendorDetails.financialInfo.accountHolderName}</div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Account Holder Name")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.financialInfo.accountHolderName}</div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("Account Number")}</Label>
-                <div className="text-sm font-mono font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.accountNumber}</div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("IBAN")}</Label>
+                <div className="font-mono text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 break-all text-start">{vendorDetails.financialInfo.bankAccountNumber}</div>
               </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("IBAN")}</Label>
-                <div className="text-sm font-mono font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.bankAccountNumber}</div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("Swift Code")}</Label>
+                <div className="font-mono text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.financialInfo.swiftCode}</div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("SWIFT code")}</Label>
-                <div className="text-sm font-normal font-mono bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.swiftCode}</div>
-              </div>
-              <div className="space-y-0">
-                <Label className="text-[13px] text-black font-bold">{t("VAT Registration Number (TRN)")}</Label>
-                <div className="text-sm font-normal bg-gray-50 p-3 rounded-xl border border-gray-100">{vendorDetails.financialInfo.vatNumber}</div>
+              <div className="space-y-1.5">
+                <Label className="text-[14px] text-black font-bold">{t("VAT Registration Number")}</Label>
+                <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.financialInfo.vatNumber}</div>
               </div>
             </div>
           </CardContent>
@@ -336,63 +358,66 @@ export default function AdminVendorDetail() {
       </div>
 
       {/* Service Categories Section */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden gap-0">
-        <CardHeader className="pb-4 border-b border-gray-50">
-          <CardTitle className="text-lg font-bold text-gray-900">{t("Service Categories")}</CardTitle>
+      <Card className="shadow-card border-none bg-white">
+        <CardHeader className="pb-0 px-6 pt-1">
+          <CardTitle className="text-lg font-bold text-black text-start">{t("Service Categories")}</CardTitle>
         </CardHeader>
-        <CardContent className="p-6 pt-5">
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="pt-0 space-y-2 px-6 pb-4">
+          <div className="flex flex-wrap gap-2 pt-1">
             {vendor.category.map((cat, idx) => (
-              <Badge key={idx} variant="secondary" className="bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] border-[var(--fnrc-primary-green)]/20 font-semibold px-3 py-1 text-sm">
-                {cat}
+              <Badge key={idx} variant="secondary" className="bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
+                {t(cat)}
               </Badge>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Compliance Documents Section */}
-      <Card className="border border-gray-100/50 shadow-sm overflow-hidden gap-0">
-        <CardHeader className="pb-4 border-b border-gray-50">
-          <CardTitle className="text-lg font-bold text-gray-900">{t("Vendor Documents")}</CardTitle>
+      {/* Vendor Documents Card */}
+      <Card className="shadow-card border-none bg-white">
+        <CardHeader className="px-6 pt-1 pb-0">
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle className="text-lg font-bold text-black text-start">{t("Vendor Documents")}</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent className="p-0 pt-2">
+        <CardContent className="px-6 pb-4">
           <Table>
-            <TableHeader className="bg-gray-50">
+            <TableHeader>
               <TableRow>
-                <TableHead className="font-bold text-gray-900 text-sm py-4 ps-6">{t("Document Name")}</TableHead>
-                <TableHead className="font-bold text-gray-900 text-sm">{t("Upload Date")}</TableHead>
-                <TableHead className="font-bold text-gray-900 text-sm">{t("Issue Date")}</TableHead>
-                <TableHead className="font-bold text-gray-900 text-sm">{t("Expiry Date")}</TableHead>
-                <TableHead className="font-bold text-gray-900 text-sm">{t("Verification Status")}</TableHead>
-                <TableHead className="text-right font-bold text-gray-900 text-sm pe-6">{t("Action")}</TableHead>
+                <TableHead className="font-bold text-[13px] text-gray-400 text-start uppercase">{t("Document Name")}</TableHead>
+                <TableHead className="font-bold text-[13px] text-gray-400 text-start uppercase">{t("Upload Date")}</TableHead>
+                <TableHead className="font-bold text-[13px] text-gray-400 text-start uppercase">{t("Issue Date")}</TableHead>
+                <TableHead className="font-bold text-[13px] text-gray-400 text-start uppercase">{t("Expiry Date")}</TableHead>
+                <TableHead className="font-bold text-[13px] text-gray-400 text-start uppercase">{t("Verification Status")}</TableHead>
+                <TableHead className="text-end font-bold text-[13px] text-gray-400 pe-6 uppercase">{t("Actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sampleDocuments.map((doc) => {
+              {documentsList.map((doc) => {
                 const daysRemaining = getExpiryDays(doc.expiryDate);
+                const normStatus = (doc.status || '').toLowerCase().trim();
                 
                 return (
                   <TableRow key={doc.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                    <TableCell className="py-4 ps-6">
+                    <TableCell className="text-start py-4">
                       <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-gray-400" />
+                        <FileText className="h-5 w-5 text-gray-400 shrink-0" />
                         <div>
-                          <div className="text-sm font-normal text-gray-800">{doc.name}</div>
-                          <div className="text-[10px] font-bold text-gray-400">{doc.fileSize}</div>
+                          <div className="font-semibold text-gray-800 text-[14px]">{t(doc.name)}</div>
+                          <div className="text-[11px] text-gray-400 font-medium">{doc.fileSize}</div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-gray-500">
-                      {formatDate(doc.uploadDate)}
+                    <TableCell className="text-[14px] text-gray-500 font-medium text-start">
+                      {new Date(doc.uploadDate).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB')}
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-gray-500">
-                      {doc.issueDate ? formatDate(doc.issueDate) : '-'}
+                    <TableCell className="text-[14px] text-gray-500 font-medium text-start">
+                      {doc.issueDate ? new Date(doc.issueDate).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB') : '-'}
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-gray-500">
-                      {doc.expiryDate ? formatDate(doc.expiryDate) : '-'}
+                    <TableCell className="text-[14px] text-gray-500 font-medium text-start">
+                      {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB') : '-'}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-start">
                       <div className="flex items-center gap-2">
                         <StatusBadge status={doc.status} />
                         
@@ -419,16 +444,32 @@ export default function AdminVendorDetail() {
                     </TableCell>
                     <TableCell className="text-right pe-6">
                       <div className="flex items-center justify-end gap-2">
-                        {(vendor.status === 'pending' || vendor.status === 'draft') && (
-                          <>
-                            <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-green-200 text-green-700 hover:bg-green-50">
-                              {t("Verify")}
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold border-red-200 text-red-700 hover:bg-red-50">
-                              {t("Not Verified")}
-                            </Button>
-                          </>
-                        )}
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className={cn(
+                            "h-8 text-[10px] font-bold border-green-200 text-green-700 hover:bg-green-50",
+                            normStatus === 'verified' && "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 hover:text-white",
+                            (vendor.status === 'correction_requested' || vendor.status === 'correction' || vendor.status === 'rejected') ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                          )}
+                          onClick={() => toggleDocStatus(doc.id, 'verified')}
+                          disabled={vendor.status === 'correction_requested' || vendor.status === 'correction' || vendor.status === 'rejected'}
+                        >
+                          {t("Verify")}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className={cn(
+                            "h-8 text-[10px] font-bold border-red-200 text-red-700 hover:bg-red-55",
+                            (normStatus === 'rejected' || normStatus === 'not_verified' || normStatus === 'not verified') && "bg-rose-600 text-white border-rose-600 hover:bg-rose-700 hover:text-white",
+                            (vendor.status === 'correction_requested' || vendor.status === 'correction' || vendor.status === 'rejected') ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                          )}
+                          onClick={() => toggleDocStatus(doc.id, 'not_verified')}
+                          disabled={vendor.status === 'correction_requested' || vendor.status === 'correction' || vendor.status === 'rejected'}
+                        >
+                          {t("Not Verify")}
+                        </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
                           <Download className="h-4 w-4" />
                         </Button>
@@ -442,16 +483,46 @@ export default function AdminVendorDetail() {
         </CardContent>
       </Card>
 
-      {/* Administrative Action Card */}
-      {vendor.status !== 'rejected' && vendor.status !== 'blacklisted' && (
-        <Card className="border border-gray-200/60 shadow-sm gap-0 font-sans">
-          <CardHeader className="pb-2 border-b border-gray-50">
-            <CardTitle className="text-base font-bold text-gray-900">{t("Administrative Review Panel")}</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
+      {/* Administrative Review Panel Card */}
+      <Card className="shadow-card border-none bg-white">
+        <CardHeader className="px-6 pt-5 pb-3">
+          <CardTitle className="text-lg font-bold text-black text-start">{t("Administrative Review Panel")}</CardTitle>
+        </CardHeader>
+        <CardContent className="px-6 pb-6 pt-0">
+          {vendor.status === 'correction_requested' || vendor.status === 'correction' ? (
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm font-medium text-start flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-bold text-amber-900">{t("Awaiting Vendor Correction")}</h4>
+                <p className="text-xs text-amber-800 mt-1">
+                  {t("This vendor has been notified to make corrections. No further administrative action can be taken until the vendor resubmits their details.")}
+                </p>
+                {vendor.rejectionReason && (
+                  <p className="text-xs text-amber-900 font-bold mt-2">
+                    {t("Requested Correction Reason:")} <span className="font-normal">{t(vendor.rejectionReason)}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : vendor.status === 'rejected' ? (
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-medium text-start flex items-start gap-3">
+              <XCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-bold text-rose-900">{t("Vendor Registration Rejected")}</h4>
+                <p className="text-xs text-rose-800 mt-1">
+                  {t("This vendor application has been rejected. No further administrative action can be taken.")}
+                </p>
+                {vendor.rejectionReason && (
+                  <p className="text-xs text-rose-950 font-bold mt-2">
+                    {t("Rejection Reason:")} <span className="font-normal">{t(vendor.rejectionReason)}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="remarks" className="font-bold text-sm text-gray-700 flex items-center justify-between">
+              <div className="space-y-2 text-start">
+                <Label htmlFor="remarks" className="font-bold text-[14px] text-black flex items-center justify-between">
                   <span>{t("Administrative Remarks / Review Feedback")}</span>
                   <span className="text-[10px] text-red-500 font-bold uppercase">{t("Required for state change")}</span>
                 </Label>
@@ -469,28 +540,28 @@ export default function AdminVendorDetail() {
               </div>
 
               <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-gray-100">
-                {/* Actions for Pending Status */}
-                {vendor.status === 'pending' && (
+                {/* Actions based on status */}
+                {(vendor.status === 'pending' || vendor.status === 'draft') && (
                   <>
                     <Button
                       variant="outline"
-                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50 h-10 font-bold transition-all"
+                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-55 h-10 font-bold transition-all cursor-pointer"
                       onClick={() => handleAction('correction')}
                     >
                       <RotateCcw className="h-4 w-4" />
-                      {t("Correction Requested")}
+                      {t("Correction Required")}
                     </Button>
                     <Button
                       variant="outline"
-                      className="gap-2 border-red-200 text-red-700 hover:bg-red-55 h-10 font-bold transition-all"
+                      className="gap-2 border-rose-200 text-rose-700 hover:bg-rose-55 h-10 font-bold transition-all cursor-pointer"
                       onClick={() => handleAction('reject')}
                     >
                       <XCircle className="h-4 w-4" />
-                      {t("Reject Application")}
+                      {t("Reject")}
                     </Button>
                     <Button
-                      className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all hover:shadow-lg"
-                      style={{ backgroundColor: 'var(--fnrc-success)' }}
+                      className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all hover:shadow-lg hover:bg-[var(--fnrc-primary-green)]/90 cursor-pointer"
+                      style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
                       onClick={() => handleAction('approve')}
                     >
                       <CheckCircle className="h-4 w-4" />
@@ -499,74 +570,115 @@ export default function AdminVendorDetail() {
                   </>
                 )}
 
-                {/* Actions for Approved Status */}
                 {vendor.status === 'approved' && (
                   <>
                     <Button
                       variant="outline"
-                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-55 h-10 font-bold transition-all"
+                      className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-55 h-10 font-bold transition-all cursor-pointer"
                       onClick={() => handleAction('suspend')}
                     >
                       <Pause className="h-4 w-4" />
-                      {t("Suspend Account")}
+                      {t("Suspend")}
                     </Button>
                     <Button
                       variant="outline"
-                      className="gap-2 border-red-200 text-red-700 hover:bg-red-55 h-10 font-bold transition-all"
+                      className="gap-2 border-rose-200 text-rose-700 hover:bg-rose-55 h-10 font-bold transition-all cursor-pointer"
                       onClick={() => handleAction('blacklist')}
                     >
                       <Ban className="h-4 w-4" />
-                      {t("Blacklist Vendor")}
+                      {t("Blacklist")}
                     </Button>
                   </>
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Audit History Dialog */}
-      <Dialog open={showAuditHistory} onOpenChange={setShowAuditHistory}>
-        <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto font-sans">
-          <DialogHeader className="border-b pb-4 mb-4">
-            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-gray-900">
-              <History className={cn("h-5 w-5 text-[var(--fnrc-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
-              {t("Vendor Audit Trail")}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
+      {/* Detailed Activity Log Card */}
+      <Card id="vendor-audit-trail-section" className="shadow-card border-none bg-white">
+        <CardHeader className="px-6 pt-5 pb-3">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-gray-500" />
+            <CardTitle className="text-lg font-bold text-black text-start">{t("Detailed Activity Log")}</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="px-6 pb-6 pt-0">
+          <div className="rounded-lg border border-gray-200 overflow-hidden">
             <Table>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead className="font-bold text-gray-900 text-xs py-4 ps-4">{t("Date & Time")}</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-xs">{t("Operator")}</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-xs">{t("Role")}</TableHead>
-                  <TableHead className="font-bold text-gray-900 text-xs pe-4">{t("Action Detail")}</TableHead>
+              <TableHeader>
+                <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
+                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[220px] uppercase">{t("Action")}</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px] uppercase">{t("Performed By")}</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px] uppercase">{t("Date & Time")}</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start uppercase">{t("Remarks")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {[
-                  { date: '10/05/2026 14:30', name: 'Ahmed Al Mansoori', role: 'Super Admin', change: 'Vendor application status changed from Pending to Approved. Trade License verified.' },
-                  { date: '08/05/2026 09:15', name: 'Fatima Al Hammadi', role: 'Procurement Admin', change: 'Requested correction for Tax Registration Certificate.' },
-                  { date: '01/05/2026 11:20', name: 'System', role: 'System', change: 'Initial vendor registration submitted.' }
-                ].map((audit, i) => (
-                  <TableRow key={i} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                    <TableCell className="text-xs font-semibold text-gray-500 whitespace-nowrap ps-4 py-3">{audit.date}</TableCell>
-                    <TableCell className="text-sm font-normal text-gray-800">{audit.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="text-[10px] bg-gray-50 text-gray-600 font-bold border border-gray-100 rounded-md">
-                        {t(audit.role)}
-                      </Badge>
+                {(() => {
+                  if (vendor.id === 'VEN-001') {
+                    return [
+                      { action: 'Profile Approved', performedBy: 'FNRC Admin', dateTime: '15/02/2026 - 11:20 AM', remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.' },
+                      { action: 'Resubmitted for Review', performedBy: 'Vendor', dateTime: '14/02/2026 - 09:45 AM', remarks: 'Uploaded readable Trade License copy and updated Swift Code.' },
+                      { action: 'Correction Requested', performedBy: 'FNRC Admin', dateTime: '12/02/2026 - 04:30 PM', remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.' },
+                      { action: 'Onboarding Submitted', performedBy: 'Vendor', dateTime: '10/02/2026 - 02:15 PM', remarks: 'Registration form submitted with basic company profiles and compliance documents.' }
+                    ];
+                  }
+                  
+                  const logs = [];
+                  if (vendor.status === 'correction_requested' || vendor.status === 'correction') {
+                    logs.push({
+                      action: 'Correction Required',
+                      performedBy: 'FNRC Admin',
+                      dateTime: formatDate(vendor.registrationDate) + ' - 04:30 PM',
+                      remarks: vendor.rejectionReason || 'Trade license file is blurry. Swift Code is missing in bank details. Please correct.'
+                    });
+                  } else if (vendor.status === 'rejected') {
+                    logs.push({
+                      action: 'Profile Rejected',
+                      performedBy: 'FNRC Admin',
+                      dateTime: formatDate(vendor.registrationDate) + ' - 03:00 PM',
+                      remarks: vendor.rejectionReason || 'Vendor application does not meet commercial/technical criteria.'
+                    });
+                  } else if (vendor.status === 'approved') {
+                    logs.push({
+                      action: 'Profile Approved',
+                      performedBy: 'FNRC Admin',
+                      dateTime: formatDate(vendor.registrationDate) + ' - 02:00 PM',
+                      remarks: 'All documents verified. Vendor profile approved.'
+                    });
+                  }
+                  
+                  logs.push({
+                    action: 'Onboarding Submitted',
+                    performedBy: 'Vendor',
+                    dateTime: formatDate(vendor.registrationDate) + ' - 10:00 AM',
+                    remarks: 'Initial vendor registration onboarding submitted.'
+                  });
+                  
+                  return logs;
+                })().map((log, idx) => (
+                  <TableRow key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                    <TableCell className="text-start font-medium text-gray-900 text-sm py-4 px-6">
+                      {t(log.action)}
                     </TableCell>
-                    <TableCell className="text-xs font-semibold text-gray-600 leading-relaxed pe-4 py-3">{t(audit.change)}</TableCell>
+                    <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
+                      {log.performedBy === 'Vendor' ? t('Vendor') : log.performedBy}
+                    </TableCell>
+                    <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
+                      {log.dateTime}
+                    </TableCell>
+                    <TableCell className="text-start text-gray-600 text-sm py-4 px-6 leading-relaxed">
+                      {t(log.remarks)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-        </DialogContent>
-      </Dialog>
+        </CardContent>
+      </Card>
     </div>
   );
 }

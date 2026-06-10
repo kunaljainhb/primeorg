@@ -30,8 +30,17 @@ export default function VendorRegistrationStatus() {
   const { t, language } = useTranslation();
   const { setLanguage } = useLanguage();
   
-  // Set default state to 'pending' after initial submission
-  const [status, setStatus] = useState<'pending' | 'approved' | 'rejected' | 'correction'>('pending');
+  // Set default state to 'submitted' after initial submission
+  const handleStatusChange = (newStatus: 'submitted' | 'approved' | 'rejected' | 'correction') => {
+    setStatus(newStatus);
+    if (newStatus === 'correction') {
+      setIsEditing(true);
+      setTradeLicenseStatus('blurry');
+    } else {
+      setIsEditing(false);
+    }
+  };// Files status
+  const [status, setStatus] = useState<'submitted' | 'approved' | 'rejected' | 'correction'>('submitted');
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -54,15 +63,7 @@ export default function VendorRegistrationStatus() {
     category: 'IT Services, Digital Transformation'
   });
 
-  const handleStatusChange = (newStatus: 'pending' | 'approved' | 'rejected' | 'correction') => {
-    setStatus(newStatus);
-    if (newStatus === 'correction') {
-      setIsEditing(true);
-      setTradeLicenseStatus('blurry');
-    } else {
-      setIsEditing(false);
-    }
-  };
+
 
   const handleResubmit = () => {
     if (!companyData.nameEn.trim() || !companyData.nameAr.trim() || !companyData.tradeLicense.trim()) {
@@ -87,16 +88,16 @@ export default function VendorRegistrationStatus() {
 
   const renderStatusCard = () => {
     switch (status) {
-      case 'pending':
+      case 'submitted':
         return (
           <Alert className="border-amber-100 bg-amber-50/50 shadow-card rounded-xl p-5 flex gap-4 transition-all duration-300 text-start">
             <Clock className="h-6 w-6 text-amber-600 animate-spin shrink-0 mt-0.5" />
             <div className="space-y-1">
               <AlertTitle className="text-base font-bold text-amber-900 leading-tight">
-                {t("Registration Under Review (Pending Approval)")}
+                {t("Submitted")}
               </AlertTitle>
               <AlertDescription className="text-sm text-amber-800 leading-relaxed">
-                {t("Your corrected vendor registration application was received and is currently under secondary review by the FNRC procurement board. Email notifications will be sent as soon as a final decision has been logged. Review typically completes in 24-48 hours.")}
+                {t("Your application has been submitted. You will be notified once the action has been taken.")}
               </AlertDescription>
             </div>
           </Alert>
@@ -220,7 +221,7 @@ export default function VendorRegistrationStatus() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 text-start">
           <div>
             <h1 className="text-[32px] font-bold tracking-tight text-gray-800 leading-tight">
-              {t("Registration Lifecycle")}
+              {t("Vendor Details")}
             </h1>
             <p className="text-sm font-medium text-gray-500 mt-1">
               {t("Track review milestones, execute document corrections, and monitor portal compliance")}
