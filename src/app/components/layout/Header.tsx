@@ -149,6 +149,13 @@ export function Header({ role, userName }: HeaderProps) {
                       </DropdownMenuItem>
                     </>
                   )}
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  <DropdownMenuItem 
+                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--fnrc-primary-green)]"
+                    onClick={() => navigate(role === 'admin' ? '/admin/messages' : '/vendor/messages')}
+                  >
+                    {t("View All Messages")}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
@@ -203,6 +210,13 @@ export function Header({ role, userName }: HeaderProps) {
                       </DropdownMenuItem>
                     </>
                   )}
+                  <DropdownMenuSeparator className="bg-gray-100" />
+                  <DropdownMenuItem 
+                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--fnrc-primary-green)]"
+                    onClick={() => navigate(role === 'admin' ? '/admin/notifications' : '/vendor/notifications')}
+                  >
+                    {t("View All Notifications")}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>

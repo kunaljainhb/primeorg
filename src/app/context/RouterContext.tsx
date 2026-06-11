@@ -70,8 +70,8 @@ function extractParams(path: string): Record<string, string> {
   const adminUserMatch = path.match(/\/admin\/users\/edit\/([^/]+)/);
   if (adminUserMatch) params.id = adminUserMatch[1];
 
-  // Extract proposalId param (e.g., /vendor/proposals/PROP-102 or /admin/items/PROP-102)
-  const proposalMatch = path.match(/\/(?:proposals|items)\/([^/]+)(?:\/|$)/);
+  // Extract proposalId param (e.g., /vendor/proposals/PROP-102 or /admin/items/PROP-102 or /vendor/projects/PROP-102)
+  const proposalMatch = path.match(/\/(?:proposals|items|projects)\/([^/]+)(?:\/|$)/);
   if (proposalMatch) params.proposalId = proposalMatch[1];
 
   // Extract vendorId param (e.g., /admin/vendors/VEN-001)

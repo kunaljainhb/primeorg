@@ -40,6 +40,13 @@ import AdminReports from '@/app/pages/admin/AdminReports';
 import AdminConfig from '@/app/pages/admin/AdminConfig';
 import AdminExternalRating from '@/app/pages/admin/AdminExternalRating';
 
+import VendorNotifications from '@/app/pages/vendor/VendorNotifications';
+import VendorMessages from '@/app/pages/vendor/VendorMessages';
+import AdminNotifications from '@/app/pages/admin/AdminNotifications';
+import AdminMessages from '@/app/pages/admin/AdminMessages';
+import VendorProjectList from '@/app/pages/vendor/VendorProjectList';
+import VendorProjectDetail from '@/app/pages/vendor/VendorProjectDetail';
+
 function AppRoutes() {
   const location = useLocation();
   const path = location.pathname;
@@ -65,6 +72,10 @@ function AppRoutes() {
   if (path.startsWith('/vendor/proposals/')) return <VendorLayout><VendorProposalTracking /></VendorLayout>;
   if (path === '/vendor/proposals') return <VendorLayout><VendorProposalList /></VendorLayout>;
   if (path === '/vendor/profile') return <VendorLayout><VendorProfile /></VendorLayout>;
+  if (path === '/vendor/notifications') return <VendorLayout><VendorNotifications /></VendorLayout>;
+  if (path === '/vendor/messages') return <VendorLayout><VendorMessages /></VendorLayout>;
+  if (path === '/vendor/projects') return <VendorLayout><VendorProjectList /></VendorLayout>;
+  if (path.startsWith('/vendor/projects/')) return <VendorLayout><VendorProjectDetail /></VendorLayout>;
 
   // Admin routes without layout
   if (path === '/admin/login') return <AdminLogin />;
@@ -90,6 +101,8 @@ function AppRoutes() {
   if (path === '/admin/master-data/vendor-rating-question') return <AdminLayout><AdminMasterData defaultTab="rubric" /></AdminLayout>;
   if (path === '/admin/reports') return <AdminLayout><AdminReports /></AdminLayout>;
   if (path === '/admin/config') return <AdminLayout><AdminConfig /></AdminLayout>;
+  if (path === '/admin/notifications') return <AdminLayout><AdminNotifications /></AdminLayout>;
+  if (path === '/admin/messages') return <AdminLayout><AdminMessages /></AdminLayout>;
 
   // Default fallback
   return <RoleSelection />;

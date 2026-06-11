@@ -173,19 +173,18 @@ export default function AdminVendorDetail() {
       <Card className="shadow-card border-none bg-white">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-[var(--fnrc-primary-green)]/10 flex items-center justify-center text-[var(--fnrc-primary-green)] shrink-0">
-                <Building2 className="h-8 w-8" strokeWidth={1.5} />
-              </div>
-              <div className="space-y-1 text-start">
+            <div className="flex items-center gap-4 text-start">
+              <div className="space-y-1">
                 <h2 className="text-[22px] font-bold text-gray-800 leading-none">
                   {language === 'ar' ? vendorDetails.companyNameAr : vendor.companyName}
                 </h2>
                 <div className="flex flex-wrap items-center gap-2.5 mt-2">
-                  <StatusBadge status={vendor.status} />
                   <span className="text-[14px] text-black font-bold">{t('Vendor ID:')} {vendor.id}</span>
                 </div>
               </div>
+            </div>
+            <div className="shrink-0">
+              <StatusBadge status={vendor.status} />
             </div>
           </div>
         </CardContent>
@@ -610,7 +609,7 @@ export default function AdminVendorDetail() {
               <TableHeader>
                 <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
                   <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[220px] uppercase">{t("Action")}</TableHead>
-                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px] uppercase">{t("Performed By")}</TableHead>
+                  <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px] uppercase">{t("Role")}</TableHead>
                   <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px] uppercase">{t("Date & Time")}</TableHead>
                   <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start uppercase">{t("Remarks")}</TableHead>
                 </TableRow>
@@ -619,9 +618,9 @@ export default function AdminVendorDetail() {
                 {(() => {
                   if (vendor.id === 'VEN-001') {
                     return [
-                      { action: 'Profile Approved', performedBy: 'FNRC Admin', dateTime: '15/02/2026 - 11:20 AM', remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.' },
+                      { action: 'Profile Approved', performedBy: 'Super Admin', dateTime: '15/02/2026 - 11:20 AM', remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.' },
                       { action: 'Resubmitted for Review', performedBy: 'Vendor', dateTime: '14/02/2026 - 09:45 AM', remarks: 'Uploaded readable Trade License copy and updated Swift Code.' },
-                      { action: 'Correction Requested', performedBy: 'FNRC Admin', dateTime: '12/02/2026 - 04:30 PM', remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.' },
+                      { action: 'Correction Requested', performedBy: 'Super Admin', dateTime: '12/02/2026 - 04:30 PM', remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.' },
                       { action: 'Onboarding Submitted', performedBy: 'Vendor', dateTime: '10/02/2026 - 02:15 PM', remarks: 'Registration form submitted with basic company profiles and compliance documents.' }
                     ];
                   }
@@ -630,21 +629,21 @@ export default function AdminVendorDetail() {
                   if (vendor.status === 'correction_requested' || vendor.status === 'correction') {
                     logs.push({
                       action: 'Correction Required',
-                      performedBy: 'FNRC Admin',
+                      performedBy: 'Super Admin',
                       dateTime: formatDate(vendor.registrationDate) + ' - 04:30 PM',
                       remarks: vendor.rejectionReason || 'Trade license file is blurry. Swift Code is missing in bank details. Please correct.'
                     });
                   } else if (vendor.status === 'rejected') {
                     logs.push({
                       action: 'Profile Rejected',
-                      performedBy: 'FNRC Admin',
+                      performedBy: 'Super Admin',
                       dateTime: formatDate(vendor.registrationDate) + ' - 03:00 PM',
                       remarks: vendor.rejectionReason || 'Vendor application does not meet commercial/technical criteria.'
                     });
                   } else if (vendor.status === 'approved') {
                     logs.push({
                       action: 'Profile Approved',
-                      performedBy: 'FNRC Admin',
+                      performedBy: 'Super Admin',
                       dateTime: formatDate(vendor.registrationDate) + ' - 02:00 PM',
                       remarks: 'All documents verified. Vendor profile approved.'
                     });
@@ -664,7 +663,7 @@ export default function AdminVendorDetail() {
                       {t(log.action)}
                     </TableCell>
                     <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
-                      {log.performedBy === 'Vendor' ? t('Vendor') : log.performedBy}
+                      {t(log.performedBy)}
                     </TableCell>
                     <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
                       {log.dateTime}

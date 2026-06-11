@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { Badge } from '@/app/components/ui/badge';
-import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X, History, Plus, Star } from 'lucide-react';
+import { ArrowLeft, FileText, Check, Download, Clock, Award, ShieldCheck, Users, Briefcase, X, History, Plus, Star, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 import { mockProposals, mockAdminUsers, mockTenders, saveProposalsToStorage } from '@/app/data/mockData';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
@@ -40,6 +40,31 @@ export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
   const { t, language } = useTranslation();
+
+  const getReviewStatusBadge = (status?: string) => {
+    const norm = status || 'pending';
+    const config: Record<string, { label: string; bg: string; text: string }> = {
+      pending: { label: t('Pending'), bg: '#F3F4F6', text: '#6B7280' },
+      submitted: { label: t('Submitted'), bg: '#E0F2FE', text: '#0369A1' },
+      under_review: { label: t('Under Review'), bg: '#DBEAFE', text: '#1E40AF' },
+      technical_review_started: { label: t('Technical Review Started'), bg: '#DBEAFE', text: '#1E40AF' },
+      commercial_review_started: { label: t('Commercial Review Started'), bg: '#DBEAFE', text: '#1E40AF' },
+      approved: { label: t('Approved'), bg: '#D1FAE5', text: '#065F46' },
+      technical_approved: { label: t('Technical Approved'), bg: '#D1FAE5', text: '#065F46' },
+      commercial_approved: { label: t('Commercial Approved'), bg: '#D1FAE5', text: '#065F46' },
+      technical_proposal_resubmits: { label: t('Technical Proposal Resubmits'), bg: '#DBEAFE', text: '#1E40AF' },
+      technical_correction_resubmitted: { label: t('Technical Correction Resubmitted'), bg: '#DBEAFE', text: '#1E40AF' },
+      rejected: { label: t('Rejected'), bg: '#FEE2E2', text: '#991B1B' },
+      correction_requested: { label: t('Correction Requested'), bg: '#FEF3C7', text: '#92400E' }
+    };
+    const c = config[norm] || config.pending;
+    return (
+      <Badge style={{ backgroundColor: c.bg, color: c.text }} className="px-3 py-1 font-semibold rounded-full border-none">
+        {c.label}
+      </Badge>
+    );
+  };
+
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
   const tender = mockTenders.find(r => r.id === proposal.tenderId) || mockTenders[0];
   const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer' || u.role === 'technical_department' || u.role === 'commercial_department');
@@ -103,10 +128,10 @@ export default function AdminProposalDetail() {
     isInitiallyRejected ? 'Mohammed Al Zaabi' : (isInitiallyApproved ? 'Mohammed Al Zaabi' : '')
   );
   const [technicalStatus, setTechnicalStatus] = useState(
-    isInitiallyRejected ? 'approved' : (isInitiallyApproved ? 'approved' : (proposal.technicalStatus || 'pending'))
+    proposal.technicalStatus || (isInitiallyRejected ? 'approved' : (isInitiallyApproved ? 'approved' : 'pending'))
   );
   const [commercialStatus, setCommercialStatus] = useState(
-    isInitiallyRejected ? 'rejected' : (isInitiallyApproved ? 'approved' : (proposal.commercialStatus || 'pending'))
+    proposal.commercialStatus || (isInitiallyRejected ? 'rejected' : (isInitiallyApproved ? 'approved' : 'pending'))
   );
 
   const [showShareModal, setShowShareModal] = useState(false);
@@ -545,33 +570,212 @@ export default function AdminProposalDetail() {
     });
   }
 
+  const getAdminActivityLog = () => {
+    const logs = [
+      {
+        action: 'Proposal Submitted',
+        performedBy: 'Vendor',
+        date: proposal.submissionDate,
+        time: '10:30 AM',
+        remarks: '—'
+      }
+    ];
+
+    if (overallStatus === 'submitted') return logs;
+
+    if (proposal.id === 'PROP-105') {
+      logs.push(
+        {
+          action: 'Commercial Review Started',
+          performedBy: 'Reviewer',
+          date: '2026-04-16',
+          time: '11:00 AM',
+          remarks: 'Commercial proposal under evaluation'
+        },
+        {
+          action: 'Commercial Proposal Approved',
+          performedBy: 'Reviewer',
+          date: '2026-04-18',
+          time: '04:30 PM',
+          remarks: 'Pricing aligned with budget. Recommended for shortlisting'
+        }
+      );
+      return logs;
+    }
+
+    if (overallStatus === 'commercial_review_started') {
+      logs.push({
+        action: 'Technical Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-12',
+        time: '09:00 AM',
+        remarks: 'Technical proposal review initiated'
+      });
+      logs.push({
+        action: 'Commercial Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-16',
+        time: '11:00 AM',
+        remarks: 'Commercial proposal under evaluation'
+      });
+      return logs;
+    }
+
+    if (proposal.technicalReviewer || ['technical_review_started', 'technical_review_completed', 'technical_correction_requested', 'commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'approved', 'selected', 'rejected'].includes(overallStatus)) {
+      logs.push({
+        action: 'Technical Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-12',
+        time: '09:00 AM',
+        remarks: 'Technical proposal review initiated'
+      });
+    }
+
+    if (overallStatus === 'technical_correction_requested') {
+      logs.push({
+        action: 'Technical Correction Requested',
+        performedBy: 'Reviewer',
+        date: '2026-05-18',
+        time: '02:30 PM',
+        remarks: proposal.remarks || 'Clarification needed on failover mechanisms.'
+      });
+      return logs;
+    }
+
+    if (proposal.id === 'PROP-102' && overallStatus === 'technical_review') {
+      logs.push({
+        action: 'Technical Correction Requested',
+        performedBy: 'Reviewer',
+        date: '2026-05-18',
+        time: '02:30 PM',
+        remarks: 'Clarification needed on failover mechanisms.'
+      });
+      logs.push({
+        action: 'Technical Proposal Resubmitted',
+        performedBy: 'Vendor',
+        date: '2026-05-20',
+        time: '06:50 PM',
+        remarks: 'Resubmitted with updated multi-zone failover architecture description and document.'
+      });
+      return logs;
+    }
+
+    if (technicalStatus === 'approved' || ['technical_review_completed', 'commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'approved', 'selected', 'rejected'].includes(overallStatus)) {
+      logs.push({
+        action: 'Technical Proposal Approved',
+        performedBy: 'Reviewer',
+        date: '2026-02-15',
+        time: '02:45 PM',
+        remarks: 'All technical requirements met. Score: 85/100'
+      });
+    }
+
+    if (proposal.commercialReviewer || ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'approved', 'selected', 'rejected'].includes(overallStatus)) {
+      logs.push({
+        action: 'Commercial Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-16',
+        time: '11:00 AM',
+        remarks: 'Commercial proposal under evaluation'
+      });
+    }
+
+    if (overallStatus === 'commercial_correction_requested') {
+      logs.push({
+        action: 'Commercial Correction Requested',
+        performedBy: 'Reviewer',
+        date: '2026-05-18',
+        time: '02:30 PM',
+        remarks: proposal.remarks || 'Clarification needed on pricing model.'
+      });
+      return logs;
+    }
+
+    if (commercialStatus === 'approved' || ['commercial_review_completed', 'approved', 'selected', 'rejected'].includes(overallStatus)) {
+      logs.push({
+        action: 'Commercial Proposal Approved',
+        performedBy: 'Reviewer',
+        date: '2026-02-18',
+        time: '04:30 PM',
+        remarks: 'Pricing aligned with budget. Recommended for shortlisting'
+      });
+    }
+
+    if (overallStatus === 'rejected') {
+      logs.push({
+        action: 'Proposal Rejected',
+        performedBy: 'Procurement Admin',
+        date: '2026-02-20',
+        time: '11:45 AM',
+        remarks: proposalRemark || 'Proposal did not meet requirements'
+      });
+    } else if (['approved', 'selected'].includes(overallStatus)) {
+      logs.push({
+        action: 'Proposal Approved',
+        performedBy: 'Procurement Admin',
+        date: '2026-02-20',
+        time: '10:00 AM',
+        remarks: proposalRemark || 'Selected for final evaluation round'
+      });
+    }
+
+    return logs;
+  };
+
+
+  const isFinal = ['approved', 'selected', 'rejected'].includes(overallStatus);
+  const hasReviewActivity = 
+    (technicalReviewer && technicalReviewer !== '') ||
+    (commercialReviewer && commercialReviewer !== '') ||
+    (technicalStatus && !['pending', 'submitted'].includes(technicalStatus)) ||
+    (commercialStatus && !['pending', 'submitted'].includes(commercialStatus));
+  const isUnderReview = !isFinal && (overallStatus !== 'submitted' || hasReviewActivity);
+
+  let finalLabel = 'Final Decision';
+  if (proposal.id === 'PROP-105') {
+    finalLabel = 'Completed';
+  } else if (overallStatus === 'rejected') {
+    finalLabel = 'Rejected';
+  } else if (['approved', 'selected'].includes(overallStatus)) {
+    finalLabel = 'Approved';
+  }
+
   const timelineStages = [
-    { key: 'submitted', label: t('Submitted'), description: t('Proposal submitted') },
-    { key: 'technical_review', label: t('Tech Review'), description: t('Technical evaluation') },
-    { key: 'commercial_review', label: t('Comm Review'), description: t('Commercial evaluation') },
-    { key: 'decision', label: t('Final Decision'), description: t('Procurement award') },
+    { key: 'submitted', label: t('Submitted') },
+    { key: 'under_review', label: t('Under Review') },
+    { key: 'final_decision', label: t(finalLabel) }
   ];
 
-  const currentStageKey = ['approved', 'approved', 'rejected', 'correction_requested'].includes(overallStatus)
-    ? 'decision'
-    : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
-    ? 'commercial_review'
-    : ['technical_review_started', 'technical_review_completed', 'technical_correction_requested'].includes(overallStatus) || technicalStatus !== 'pending'
-    ? 'technical_review'
-    : 'submitted';
+  let currentStageKey = 'submitted';
+  let completedStageKeys: string[] = [];
 
-  const completedStageKeys = ['approved', 'approved', 'rejected', 'correction_requested'].includes(overallStatus)
-    ? ['submitted', 'technical_review', 'commercial_review']
-    : ['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested'].includes(overallStatus) || commercialStatus !== 'pending'
-    ? ['submitted', 'technical_review']
-    : ['technical_review_started', 'technical_review_completed', 'technical_correction_requested'].includes(overallStatus) || technicalStatus !== 'pending'
-    ? ['submitted']
-    : [];
+  if (overallStatus === 'submitted' && !hasReviewActivity) {
+    currentStageKey = 'submitted';
+    completedStageKeys = [];
+  } else if (isUnderReview) {
+    currentStageKey = 'under_review';
+    completedStageKeys = ['submitted'];
+  } else if (isFinal) {
+    currentStageKey = 'final_decision';
+    completedStageKeys = ['submitted', 'under_review', 'final_decision'];
+  }
+
+  const techCardStatus = overallStatus === 'submitted' 
+    ? 'submitted' 
+    : (!technicalStatus || technicalStatus === 'pending')
+      ? 'technical_review_started'
+      : technicalStatus;
+
+  const commCardStatus = overallStatus === 'submitted' 
+    ? 'submitted' 
+    : (!commercialStatus || commercialStatus === 'pending')
+      ? 'commercial_review_started'
+      : commercialStatus;
 
   return (
     <div className="space-y-6 p-4 font-sans">
       {/* Header back button */}
-      <div className="flex items-center justify-between border-b pb-4 mb-4">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(`/admin/tenders/${proposal.tenderId}`)} className="rounded-full">
             <ArrowLeft className={cn("h-5 w-5", language === 'ar' && "scale-x-[-1]")} />
@@ -583,24 +787,7 @@ export default function AdminProposalDetail() {
             <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>{t("Vendor")}: {proposal.vendorName}</p>
           </div>
         </div>
-        <Button 
-          variant="outline" 
-          className="h-9 font-bold text-xs" 
-          onClick={() => setShowAuditHistory(true)}
-        >
-          <History className={cn("me-2 h-4 w-4 text-[var(--fnrc-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
-          {t("Audit History")}
-        </Button>
       </div>
-
-      {/* Progress Timeline */}
-      <Card className="p-4">
-        <ProgressTimeline 
-          stages={timelineStages}
-          currentStageKey={currentStageKey}
-          completedStageKeys={completedStageKeys}
-        />
-      </Card>
 
       <Tabs defaultValue="summary" className="space-y-6">
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
@@ -610,12 +797,14 @@ export default function AdminProposalDetail() {
           >
             {t("Proposal Summary")}
           </TabsTrigger>
-          <TabsTrigger 
-            value="technical"
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
-          >
-            {t("Technical Proposal")}
-          </TabsTrigger>
+          {tender?.technicalProposalRequired !== 'no' && (
+            <TabsTrigger 
+              value="technical"
+              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            >
+              {t("Technical Proposal")}
+            </TabsTrigger>
+          )}
           <TabsTrigger 
             value="commercial"
             className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
@@ -637,7 +826,12 @@ export default function AdminProposalDetail() {
           {(tender.status === 'published') && (
             <TabsTrigger 
               value="action"
-              disabled={!(technicalStatus === 'approved' && commercialStatus === 'approved') && !['approved', 'approved', 'rejected'].includes(overallStatus)}
+              disabled={
+                !(tender?.technicalProposalRequired === 'no' 
+                  ? commercialStatus === 'approved' 
+                  : (technicalStatus === 'approved' && commercialStatus === 'approved')) 
+                && !['approved', 'approved', 'rejected'].includes(overallStatus)
+              }
               className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
               {t("Proposal Action")}
@@ -646,6 +840,71 @@ export default function AdminProposalDetail() {
         </TabsList>
 
         <TabsContent value="summary" className="space-y-4">
+          {/* Progress Timeline */}
+          <Card className="gap-0 h-auto">
+            <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+              <CardTitle className="text-lg font-bold text-gray-900">{t('Evaluation Progress')}</CardTitle>
+            </CardHeader>
+            <CardContent className="!pt-4 px-6 pb-4">
+              <ProgressTimeline 
+                stages={timelineStages}
+                currentStageKey={currentStageKey}
+                completedStageKeys={completedStageKeys}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Technical and Commercial Review overview cards */}
+          <div className={cn("grid gap-6", tender?.technicalProposalRequired === 'no' ? "grid-cols-1" : "md:grid-cols-2")}>
+            {/* Technical Review Card */}
+            {tender?.technicalProposalRequired !== 'no' && (
+              <Card className="gap-0 h-auto">
+                <CardContent className="p-5 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-full bg-green-50 text-green-600">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                      </div>
+                    </div>
+                    {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                  </div>
+                  {technicalRemark && (
+                    <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                      <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                      <p className="italic font-normal">"{technicalRemark}"</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Commercial Review Card */}
+            <Card className="gap-0 h-auto">
+              <CardContent className="p-5 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
+                      <DollarSign className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
+                    </div>
+                  </div>
+                  {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
+                </div>
+                {commercialRemark && (
+                  <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                    <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                    <p className="italic font-normal">"{commercialRemark}"</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
               <CardTitle className="text-lg font-bold text-black flex items-center justify-between">
@@ -764,8 +1023,48 @@ export default function AdminProposalDetail() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Detailed Activity */}
+          <Card className="mt-6">
+            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
+              <CardTitle className="text-lg font-bold text-gray-900">{t("Detailed Activity")}</CardTitle>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 pt-0">
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Action')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Role')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Date & Time')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Remarks')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {getAdminActivityLog().map((log, idx) => (
+                      <TableRow key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
+                        <TableCell className="text-start font-medium text-gray-900 text-sm py-4 px-6">
+                          {t(log.action)}
+                        </TableCell>
+                        <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
+                          {t(log.performedBy)}
+                        </TableCell>
+                        <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
+                          {log.date.includes('-') ? log.date.split('-').reverse().join('/') : new Date(log.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} - {log.time}
+                        </TableCell>
+                        <TableCell className="text-start text-gray-600 text-sm py-4 px-6 leading-relaxed">
+                          {t(log.remarks)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
+        {tender?.technicalProposalRequired !== 'no' && (
         <TabsContent value="technical" className="space-y-6">
           {/* Technical Approach */}
           <Card>
@@ -774,7 +1073,7 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Technical Approach")}
               </CardTitle>
-              <StatusBadge status={technicalStatus} />
+              <StatusBadge status={technicalStatus === 'approved' ? 'technical_approved' : technicalStatus} />
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -833,10 +1132,6 @@ export default function AdminProposalDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-5">
-              <p className="text-xs font-normal text-gray-500">
-                {t("Specify the Technical Reviewer responsible for evaluating this proposal. The reviewer will be notified to begin technical scoring and compliance assessment.")}
-              </p>
-              
               <div className="max-w-md w-full">
                 <label className="text-sm font-bold text-black block mb-1">{t("Technical Reviewer Name")}</label>
                 <Select value={technicalReviewer} onValueChange={handleSaveTechnicalApproval}>
@@ -853,10 +1148,7 @@ export default function AdminProposalDetail() {
                 </Select>
               </div>
 
-              {/* Remarks + Decision Buttons */}
-              <div className="pt-4 border-t border-gray-200/60 space-y-4">
-                <h4 className="text-sm font-bold text-black block mb-1">{t("Technical Evaluation Decision")}</h4>
-
+              <div className="space-y-4">
                 {/* Remarks textarea */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-black flex items-center gap-1 mb-1">
@@ -864,12 +1156,11 @@ export default function AdminProposalDetail() {
                     <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    placeholder={t("Enter detailed remarks for this technical evaluation (e.g. 'Failover mechanism is insufficient', 'All requirements fully met')...")}
+                    placeholder={t("Enter Remarks")}
                     value={technicalRemark}
                     onChange={(e) => setTechnicalRemark(e.target.value)}
                     className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
                   />
-                  <p className="text-[10px] text-gray-400">{t("Remarks are required and will be visible to the vendor.")}</p>
                 </div>
 
                 {/* Decision buttons */}
@@ -923,6 +1214,7 @@ export default function AdminProposalDetail() {
             </CardContent>
           </Card>
         </TabsContent>
+        )}
 
         <TabsContent value="commercial" className="space-y-6">
           {/* Commercial Details Card */}
@@ -932,7 +1224,7 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Commercial Proposal")}
               </CardTitle>
-              <StatusBadge status={commercialStatus} />
+              <StatusBadge status={commercialStatus === 'approved' ? 'commercial_approved' : commercialStatus} />
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -1011,10 +1303,6 @@ export default function AdminProposalDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-5">
-              <p className="text-xs font-normal text-gray-500">
-                {t("Specify the Commercial Reviewer responsible for evaluating this proposal. The reviewer will be notified to review pricing compliance and LPO preparation.")}
-              </p>
-              
               <div className="max-w-md w-full">
                 <label className="text-sm font-bold text-black block mb-1">{t("Commercial Reviewer Name")}</label>
                 <Select value={commercialReviewer} onValueChange={handleSaveCommercialApproval}>
@@ -1031,10 +1319,7 @@ export default function AdminProposalDetail() {
                 </Select>
               </div>
 
-              {/* Remarks + Decision Buttons */}
-              <div className="pt-4 border-t border-gray-200/60 space-y-4">
-                <h4 className="text-sm font-bold text-black block mb-1">{t("Commercial Evaluation Decision")}</h4>
-
+              <div className="space-y-4">
                 {/* Remarks textarea */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-black flex items-center gap-1 mb-1">
@@ -1042,12 +1327,11 @@ export default function AdminProposalDetail() {
                     <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    placeholder={t("Enter detailed remarks for this commercial evaluation (e.g. 'Pricing exceeds budget by 15%', 'Excellent pricing and payment terms')...")}
+                    placeholder={t("Enter Remarks")}
                     value={commercialRemark}
                     onChange={(e) => setCommercialRemark(e.target.value)}
                     className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
                   />
-                  <p className="text-[10px] text-gray-400">{t("Remarks are required and will be visible to the vendor.")}</p>
                 </div>
 
                 {/* Decision buttons */}
@@ -1301,10 +1585,10 @@ export default function AdminProposalDetail() {
                     {/* Ratings List */}
                     <div className="space-y-4">
                       {[
-                        { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, rating: q1Rating },
+                        { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, rating: q1Rating, isTechnical: true },
                         { label: t("Does the vendor have relevant experience in the required domain?"), value: q2Remark, rating: q2Rating },
                         { label: t("Rate the vendor's financial stability."), value: q3Remark, rating: q3Rating }
-                      ].map((q, i) => (
+                      ].filter(q => !q.isTechnical || tender?.technicalProposalRequired !== 'no').map((q, i) => (
                         <div key={i} className="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-sm font-bold text-black">{q.label}</span>
@@ -1343,10 +1627,10 @@ export default function AdminProposalDetail() {
                       
                       <div className="space-y-4">
                         {[
-                          { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, setter: setQ1Remark, rating: q1Rating, setRating: setQ1Rating },
+                          { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, setter: setQ1Remark, rating: q1Rating, setRating: setQ1Rating, isTechnical: true },
                           { label: t("Does the vendor have relevant experience in the required domain?"), value: q2Remark, setter: setQ2Remark, rating: q2Rating, setRating: setQ2Rating },
                           { label: t("Rate the vendor's financial stability."), value: q3Remark, setter: setQ3Remark, rating: q3Rating, setRating: setQ3Rating }
-                        ].map((q, i) => (
+                        ].filter(q => !q.isTechnical || tender?.technicalProposalRequired !== 'no').map((q, i) => (
                           <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 flex flex-col gap-4">
                             <span className="text-sm font-bold text-black">{q.label}</span>
                             <div className="space-y-1.5">

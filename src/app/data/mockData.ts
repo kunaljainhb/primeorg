@@ -44,8 +44,8 @@ export interface Proposal {
   commercialAmount: number;
   remarks?: string;
   // Enhanced fields for comparison
-  technicalStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested';
-  commercialStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested';
+  technicalStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested' | 'technical_review_started' | 'commercial_review_started';
+  commercialStatus?: 'pending' | 'under_review' | 'approved' | 'rejected' | 'correction_requested' | 'technical_review_started' | 'commercial_review_started';
   deliveryTimeline?: string;
   technicalScore?: number;
   compliance?: string;
@@ -63,6 +63,8 @@ export interface Proposal {
   approvedDate?: string;
   technicalReviewer?: string;
   commercialReviewer?: string;
+  technicalRemark?: string;
+  commercialRemark?: string;
   uploadedDocuments?: { name: string; url: string; remarks: string; uploadedDate: string }[];
 }
 
@@ -241,7 +243,7 @@ export const mockTenders: Tender[] = [
       { title: 'Handover', date: '2026-08-01' }
     ],
     visibility: 'restricted',
-    technicalProposalRequired: 'yes'
+    technicalProposalRequired: 'no'
   },
   {
     id: 'TEND-006',
@@ -333,12 +335,12 @@ const initialProposals: Proposal[] = [
     tenderTitle: 'Supply of IT Hardware for HQ',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
-    status: 'commercial_review_completed',
+    status: 'commercial_review_started',
     submissionDate: '2026-06-01',
     technicalProposal: `1. Executive Summary\nWe propose a comprehensive IT hardware refresh utilizing enterprise-grade Dell Latitude series laptops and Precision workstations.\n\n2. Architecture & Deployment Strategy\n- Staged rollout over 4 weeks to minimize operational disruption.\n- Pre-imaging of all machines with FNRC's custom corporate image (Windows 11 Enterprise + Security Stack).\n- Asset tagging and integration into existing ServiceNow CMDB prior to delivery.\n\n3. Value Addition\nIncluded 3-year ProSupport Plus with Next Business Day onsite service and Accidental Damage Protection.`,
     commercialAmount: 420000,
-    technicalStatus: 'approved',
-    commercialStatus: 'approved',
+    technicalStatus: 'technical_review_started',
+    commercialStatus: 'commercial_review_started',
     technicalReviewer: 'Mohammed Al Zaabi',
     commercialReviewer: 'Sarah Al Hosani',
     paymentTerms: `- 30% Advance Payment upon LPO issuance and contract signing.\n- 50% Milestone Payment upon successful delivery and physical verification of all hardware at FNRC HQ.\n- 20% Final Payment upon completion of user migration, old asset retrieval, and final project sign-off.`
@@ -458,12 +460,12 @@ const initialProposals: Proposal[] = [
     tenderTitle: 'Office Renovation Project',
     vendorId: 'VEN-001',
     vendorName: 'TechSolutions LLC',
-    status: 'approved',
+    status: 'under_review',
     submissionDate: '2026-04-10',
     technicalProposal: 'Modern open-plan office renovation with sustainable materials',
     commercialAmount: 600000,
     remarks: 'Proposal approved for final negotiation.',
-    technicalStatus: 'approved',
+    technicalStatus: 'technical_correction_resubmitted',
     commercialStatus: 'approved',
     deliveryTimeline: '3 months',
     technicalScore: 92,
@@ -564,10 +566,10 @@ export const mockProposals: Proposal[] = (() => {
         });
 
         const p100 = parsed.find(p => p.id === 'PROP-100');
-        if (p100 && p100.status !== 'commercial_review_completed') {
-          p100.status = 'commercial_review_completed';
-          p100.technicalStatus = 'approved';
-          p100.commercialStatus = 'approved';
+        if (p100) {
+          p100.status = 'commercial_review_started';
+          p100.technicalStatus = 'technical_review_started';
+          p100.commercialStatus = 'commercial_review_started';
           p100.technicalReviewer = 'Mohammed Al Zaabi';
           p100.commercialReviewer = 'Sarah Al Hosani';
           needsSave = true;
@@ -597,6 +599,25 @@ export const mockProposals: Proposal[] = (() => {
           }
           if (!p101.technicalProposal || p101.technicalProposal === 'Standard enterprise hardware package') {
             p101.technicalProposal = `1. Technical Proposal Overview\nWe propose standard enterprise hardware package using high-durability modern workstations and ultrabooks.\n\n2. Service & Support SLA\n- 24/7 dedicated support desk access.\n- Staged implementation within 4 weeks.`;
+            updated = true;
+          }
+          if (updated) {
+            needsSave = true;
+          }
+        }
+        const p105 = parsed.find(p => p.id === 'PROP-105');
+        if (p105) {
+          let updated = false;
+          if (p105.status !== 'under_review') {
+            p105.status = 'under_review';
+            updated = true;
+          }
+          if (p105.technicalStatus !== 'technical_correction_resubmitted') {
+            p105.technicalStatus = 'technical_correction_resubmitted';
+            updated = true;
+          }
+          if (p105.commercialStatus !== 'approved') {
+            p105.commercialStatus = 'approved';
             updated = true;
           }
           if (updated) {
@@ -638,11 +659,12 @@ export const mockVendors: Vendor[] = [
     companyName: 'Modern Office Furnishings',
     email: 'info@modernoffice.ae',
     category: ['Equipment & Machinery'],
-    status: 'approved',
+    status: 'rejected',
     registrationDate: '2025-12-01',
     tradeLicense: 'TL-234567',
     taxNumber: 'TRN-890123',
-    address: 'Industrial Area, Sharjah, UAE'
+    address: 'Industrial Area, Sharjah, UAE',
+    rejectionReason: 'Trade license failed compliance requirements and expired validity.'
   },
   {
     id: 'VEN-003',
@@ -823,6 +845,28 @@ export const mockERPDocuments: ERPDocument[] = [
     date: '2026-06-25',
     amount: 395000,
     status: 'pending',
+    fileUrl: '#'
+  },
+  {
+    id: 'DOC-005',
+    tenderId: 'TEND-008',
+    vendorId: 'VEN-001',
+    documentType: 'LPO',
+    documentNumber: 'LPO-2026-088',
+    date: '2026-06-01',
+    amount: 160000,
+    status: 'approved',
+    fileUrl: '#'
+  },
+  {
+    id: 'DOC-006',
+    tenderId: 'TEND-008',
+    vendorId: 'VEN-001',
+    documentType: 'Invoice',
+    documentNumber: 'INV-2026-150',
+    date: '2026-06-10',
+    amount: 160000,
+    status: 'paid',
     fileUrl: '#'
   }
 ];

@@ -7,7 +7,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { Separator } from '@/app/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/app/components/ui/collapsible';
 import { toast } from 'sonner';
-import { mockProposals, saveProposalsToStorage } from '@/app/data/mockData';
+import { mockProposals, saveProposalsToStorage, mockTenders } from '@/app/data/mockData';
 import { ProgressTimeline, TimelineStage } from '@/app/components/ui/progress-timeline';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { Input } from '@/app/components/ui/input';
@@ -32,6 +32,12 @@ interface ProposalDetailViewProps {
     technicalProposal: string;
     remarks?: string;
     paymentTerms?: string;
+    technicalStatus?: string;
+    commercialStatus?: string;
+    technicalReviewer?: string;
+    commercialReviewer?: string;
+    technicalRemark?: string;
+    commercialRemark?: string;
   };
   showBackButton?: boolean;
   backButtonLabel?: string;
@@ -51,8 +57,33 @@ export function ProposalDetailView({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const getReviewStatusBadge = (status?: string) => {
+    const norm = status || 'pending';
+    const config: Record<string, { label: string; bg: string; text: string }> = {
+      pending: { label: t('Pending'), bg: '#F3F4F6', text: '#6B7280' },
+      submitted: { label: t('Submitted'), bg: '#E0F2FE', text: '#0369A1' },
+      under_review: { label: t('Under Review'), bg: '#DBEAFE', text: '#1E40AF' },
+      technical_review_started: { label: t('Technical Review Started'), bg: '#DBEAFE', text: '#1E40AF' },
+      commercial_review_started: { label: t('Commercial Review Started'), bg: '#DBEAFE', text: '#1E40AF' },
+      approved: { label: t('Approved'), bg: '#D1FAE5', text: '#065F46' },
+      technical_approved: { label: t('Technical Approved'), bg: '#D1FAE5', text: '#065F46' },
+      commercial_approved: { label: t('Commercial Approved'), bg: '#D1FAE5', text: '#065F46' },
+      technical_proposal_resubmits: { label: t('Technical Proposal Resubmits'), bg: '#DBEAFE', text: '#1E40AF' },
+      technical_correction_resubmitted: { label: t('Technical Correction Resubmitted'), bg: '#DBEAFE', text: '#1E40AF' },
+      rejected: { label: t('Rejected'), bg: '#FEE2E2', text: '#991B1B' },
+      correction_requested: { label: t('Correction Requested'), bg: '#FEF3C7', text: '#92400E' }
+    };
+    const c = config[norm] || config.pending;
+    return (
+      <Badge style={{ backgroundColor: c.bg, color: c.text }} className="px-3 py-1 font-semibold rounded-full border-none">
+        {c.label}
+      </Badge>
+    );
+  };
+
   // Local state for proposal data and resubmission interaction
   const [proposalState, setProposalState] = useState(proposal);
+  const tender = mockTenders.find(t => t.id === proposalState.tenderId);
   const [editedTechnical, setEditedTechnical] = useState(proposal.technicalProposal);
   const [editedAmount, setEditedAmount] = useState(proposal.commercialAmount);
   const [editedPaymentTerms, setEditedPaymentTerms] = useState(proposal.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)');
@@ -98,6 +129,18 @@ export function ProposalDetailView({
   };
 
   const statusColor = getStatusColor(proposalState.status);
+
+  const techCardStatus = proposalState.status === 'submitted' 
+    ? 'submitted' 
+    : (!proposalState.technicalStatus || proposalState.technicalStatus === 'pending')
+      ? 'technical_review_started'
+      : proposalState.technicalStatus;
+
+  const commCardStatus = proposalState.status === 'submitted' 
+    ? 'submitted' 
+    : (!proposalState.commercialStatus || proposalState.commercialStatus === 'pending')
+      ? 'commercial_review_started'
+      : proposalState.commercialStatus;
 
   // Determine current step index for the 7-stage proposal lifecycle:
   // 1. Proposal Submitted (Index 0)
@@ -219,17 +262,35 @@ export function ProposalDetailView({
 
     if (proposalState.status === 'submitted') return logs;
 
-    if (proposalState.status === 'technical_correction_requested') {
+    if (proposalState.status === 'commercial_review_started') {
       logs.push({
         action: 'Technical Review Started',
-        performedBy: 'Technical Evaluator',
+        performedBy: 'Reviewer',
         date: '2026-02-12',
         time: '09:00 AM',
         remarks: 'Technical proposal review initiated'
       });
       logs.push({
-        action: 'Correction Requested',
-        performedBy: 'Technical Evaluator',
+        action: 'Commercial Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-16',
+        time: '11:00 AM',
+        remarks: 'Commercial proposal under evaluation'
+      });
+      return logs;
+    }
+
+    if (proposalState.status === 'technical_correction_requested') {
+      logs.push({
+        action: 'Technical Review Started',
+        performedBy: 'Reviewer',
+        date: '2026-02-12',
+        time: '09:00 AM',
+        remarks: 'Technical proposal review initiated'
+      });
+      logs.push({
+        action: 'Technical Correction Requested',
+        performedBy: 'Reviewer',
         date: '2026-05-18',
         time: '02:30 PM',
         remarks: proposalState.remarks || 'Clarification needed on failover mechanisms.'
@@ -240,21 +301,21 @@ export function ProposalDetailView({
     if (proposalState.id === 'PROP-102' && proposalState.status === 'technical_review') {
       logs.push({
         action: 'Technical Review Started',
-        performedBy: 'Technical Evaluator',
+        performedBy: 'Reviewer',
         date: '2026-02-12',
         time: '09:00 AM',
         remarks: 'Technical proposal review initiated'
       });
       logs.push({
-        action: 'Correction Requested',
-        performedBy: 'Technical Evaluator',
+        action: 'Technical Correction Requested',
+        performedBy: 'Reviewer',
         date: '2026-05-18',
         time: '02:30 PM',
         remarks: 'Clarification needed on failover mechanisms.'
       });
       logs.push({
         action: 'Technical Proposal Resubmitted',
-        performedBy: 'Vendor (Self)',
+        performedBy: 'Vendor',
         date: '2026-05-20',
         time: '06:50 PM',
         remarks: 'Resubmitted with updated multi-zone failover architecture description and document.'
@@ -262,9 +323,29 @@ export function ProposalDetailView({
       return logs;
     }
 
+    if (proposalState.id === 'PROP-105') {
+      logs.push(
+        {
+          action: 'Commercial Review Started',
+          performedBy: 'Reviewer',
+          date: '2026-04-16',
+          time: '11:00 AM',
+          remarks: 'Commercial proposal under evaluation'
+        },
+        {
+          action: 'Commercial Proposal Approved',
+          performedBy: 'Reviewer',
+          date: '2026-04-18',
+          time: '04:30 PM',
+          remarks: 'Pricing aligned with budget. Recommended for shortlisting'
+        }
+      );
+      return logs;
+    }
+
     logs.push({
       action: 'Technical Review Started',
-      performedBy: 'Technical Evaluator',
+      performedBy: 'Reviewer',
       date: '2026-02-12',
       time: '09:00 AM',
       remarks: 'Technical proposal review initiated'
@@ -275,7 +356,7 @@ export function ProposalDetailView({
     if (proposalState.status === 'rejected') {
       logs.push({
         action: 'Proposal Rejected',
-        performedBy: 'Procurement Manager',
+        performedBy: 'Procurement Admin',
         date: '2026-02-20',
         time: '11:45 AM',
         remarks: proposalState.remarks || 'Proposal did not meet requirements'
@@ -287,28 +368,28 @@ export function ProposalDetailView({
     logs.push(
       {
         action: 'Technical Proposal Approved',
-        performedBy: 'Technical Evaluator',
+        performedBy: 'Reviewer',
         date: '2026-02-15',
         time: '02:45 PM',
         remarks: 'All technical requirements met. Score: 85/100'
       },
       {
         action: 'Commercial Review Started',
-        performedBy: 'Commercial Evaluator',
+        performedBy: 'Reviewer',
         date: '2026-02-16',
         time: '11:00 AM',
         remarks: 'Commercial proposal under evaluation'
       },
       {
         action: 'Commercial Proposal Approved',
-        performedBy: 'Commercial Evaluator',
+        performedBy: 'Reviewer',
         date: '2026-02-18',
         time: '04:30 PM',
         remarks: 'Pricing aligned with budget. Recommended for shortlisting'
       },
       {
         action: 'Proposal Approved',
-        performedBy: 'Procurement Manager',
+        performedBy: 'Procurement Admin',
         date: '2026-02-20',
         time: '10:00 AM',
         remarks: 'Selected for final evaluation round'
@@ -449,8 +530,123 @@ export function ProposalDetailView({
 
   return (
     <div className="space-y-6">
+      {/* SECTION 2: VISUAL STATUS PROGRESS */}
+      {(viewMode === 'all' || viewMode === 'status') && (
+        <Card className="gap-0 h-auto">
+          <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+            <CardTitle className="text-lg font-bold text-gray-900">{t('Evaluation Progress')}</CardTitle>
+          </CardHeader>
+          <CardContent className="!pt-4 px-6 pb-4">
+            {/* Step-based Progress Tracker */}
+            {(() => {
+              const isFinal = ['approved', 'selected', 'rejected'].includes(proposalState.status);
+              const hasReviewActivity = 
+                (proposalState.technicalReviewer && proposalState.technicalReviewer !== '') ||
+                (proposalState.commercialReviewer && proposalState.commercialReviewer !== '') ||
+                (proposalState.technicalStatus && !['pending', 'submitted'].includes(proposalState.technicalStatus)) ||
+                (proposalState.commercialStatus && !['pending', 'submitted'].includes(proposalState.commercialStatus));
+              const isUnderReview = !isFinal && (proposalState.status !== 'submitted' || hasReviewActivity);
+
+              let finalLabel = 'Final Decision';
+              if (proposalState.id === 'PROP-105') {
+                finalLabel = 'Completed';
+              } else if (proposalState.status === 'rejected') {
+                finalLabel = 'Rejected';
+              } else if (['approved', 'selected'].includes(proposalState.status)) {
+                finalLabel = 'Approved';
+              }
+
+              const stages: TimelineStage[] = [
+                { key: 'submitted', label: t('Submitted') },
+                { key: 'under_review', label: t('Under Review') },
+                { key: 'final_decision', label: t(finalLabel) }
+              ];
+
+              let currentStageKey = 'submitted';
+              let completedStageKeys: string[] = [];
+
+              if (proposalState.status === 'submitted' && !hasReviewActivity) {
+                currentStageKey = 'submitted';
+                completedStageKeys = [];
+              } else if (isUnderReview) {
+                currentStageKey = 'under_review';
+                completedStageKeys = ['submitted'];
+              } else if (isFinal) {
+                currentStageKey = 'final_decision';
+                completedStageKeys = ['submitted', 'under_review', 'final_decision'];
+              }
+
+              return (
+                <ProgressTimeline 
+                  stages={stages} 
+                  currentStageKey={currentStageKey} 
+                  completedStageKeys={completedStageKeys} 
+                />
+              );
+            })()}
+
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Technical and Commercial Review overview cards */}
+      {(viewMode === 'all' || viewMode === 'status') && (
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+          {/* Technical Review Card */}
+          {tender?.technicalProposalRequired !== 'no' && (
+            <Card className="gap-0 h-auto">
+              <CardContent className="p-5 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-full bg-green-50 text-green-600">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                    </div>
+                  </div>
+                  {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                </div>
+                {proposalState.technicalRemark && (
+                  <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                    <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                    <p className="italic font-normal">"{proposalState.technicalRemark}"</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Commercial Review Card */}
+          <Card className="gap-0 h-auto">
+            <CardContent className="p-5 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
+                    <DollarSign className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
+                  </div>
+                </div>
+                {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
+              </div>
+              {proposalState.commercialRemark && (
+                <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                  <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                  <p className="italic font-normal">"{proposalState.commercialRemark}"</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* SECTION 1: PROPOSAL SUMMARY (Always show in both) */}
       <Card className="gap-0 h-auto" style={{ borderColor: isRejected ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
+        <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+          <CardTitle className="text-lg font-bold text-gray-900">{t('Proposal Summary')}</CardTitle>
+        </CardHeader>
         <CardContent className="!pt-4 !pb-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div>
@@ -491,6 +687,7 @@ export function ProposalDetailView({
       {(viewMode === 'all' || viewMode === 'submitted') && (
         <div className="space-y-6">
           {/* Technical Proposal Card - conditional editor zone */}
+          {tender?.technicalProposalRequired !== 'no' && (
           <Card className="gap-0 h-auto">
             <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
               <CardTitle className="text-lg font-bold text-gray-900">
@@ -628,6 +825,7 @@ export function ProposalDetailView({
               )}
             </CardContent>
           </Card>
+          )}
 
           {/* Commercial Proposal */}
           <Card className="gap-0 h-auto">
@@ -881,64 +1079,7 @@ export function ProposalDetailView({
         </div>
       )}
 
-      {/* SECTION 2: VISUAL STATUS PROGRESS */}
-      {(viewMode === 'all' || viewMode === 'status') && (
-        <Card className="gap-0 h-auto">
-          <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
-            <CardTitle className="text-lg font-bold text-gray-900">Evaluation Progress</CardTitle>
-          </CardHeader>
-          <CardContent className="!pt-4 px-6 pb-4">
-            {/* Step-based Progress Tracker */}
-            {(() => {
-              const stages: TimelineStage[] = [
-                { key: 'submitted', label: 'Submitted' },
-                { key: 'technical', label: 'Technical Review' },
-                { key: 'commercial', label: 'Commercial Review' },
-                { key: 'final', label: 'Final Decision' }
-              ];
 
-              let currentStageKey = 'submitted';
-              let completedStageKeys: string[] = [];
-
-              const normStatus = proposalState.status;
-              if (normStatus === 'submitted') {
-                currentStageKey = 'submitted';
-                completedStageKeys = [];
-              } else if (['technical_review', 'technical_review_started', 'under_review', 'technical_correction_requested', 'correction_requested'].includes(normStatus)) {
-                currentStageKey = 'technical';
-                completedStageKeys = ['submitted'];
-              } else if (['commercial_review_started', 'commercial_review_completed', 'commercial_correction_requested', 'technical_review_completed'].includes(normStatus)) {
-                currentStageKey = 'commercial';
-                completedStageKeys = ['submitted', 'technical'];
-              } else if (['approved', 'selected', 'rejected'].includes(normStatus)) {
-                currentStageKey = 'final';
-                completedStageKeys = ['submitted', 'technical', 'commercial', 'final'];
-              }
-
-              return (
-                <ProgressTimeline 
-                  stages={stages} 
-                  currentStageKey={currentStageKey} 
-                  completedStageKeys={completedStageKeys} 
-                />
-              );
-            })()}
-
-            {/* Latest Evaluation Remarks integrated here */}
-            {proposalState.remarks && (
-              <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                <div className="flex items-center gap-2 mb-3">
-                  <AlertCircle className="h-4 w-4" style={{ color: 'var(--fnrc-accent-gold)' }} />
-                  <span className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>Latest Evaluation Remarks</span>
-                </div>
-                <div className="rounded-lg p-4" style={{ backgroundColor: '#FEF3C7' }}>
-                  <p className="text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>{proposalState.remarks}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {/* SECTION 3: ACTIVITY & DECISION LOG (ALWAYS VISIBLE) */}
       {(viewMode === 'all' || viewMode === 'status') && (
@@ -952,7 +1093,7 @@ export function ProposalDetailView({
                 <TableHeader>
                   <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
                     <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Action')}</TableHead>
-                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Performed By')}</TableHead>
+                    <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Role')}</TableHead>
                     <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Date & Time')}</TableHead>
                     <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Remarks')}</TableHead>
                   </TableRow>

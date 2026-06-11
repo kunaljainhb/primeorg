@@ -1,5 +1,5 @@
 import { useNavigate } from '@/app/context/RouterContext';
-import { FileText, Send, Bell, User, TrendingUp, Clock, MountainSnow } from 'lucide-react';
+import { FileText, Send, User, TrendingUp, Clock, MountainSnow } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
@@ -173,39 +173,7 @@ export default function VendorDashboard() {
         </Card>
       </div>
 
-      {/* Main Content Row 2 */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent News */}
-        <Card className="text-start">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10">
-                <Bell className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
-              </div>
-              <CardTitle>{t('Recent Portal Alerts')}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="border-l-4 rtl:border-l-0 rtl:border-r-4 pl-4 rtl:pl-0 rtl:pr-4 py-1" style={{ borderColor: 'var(--fnrc-success)' }}>
-                <div className="text-sm font-semibold text-foreground">{t('Proposal Approved!')}</div>
-                <p className="text-sm mt-1 text-muted-foreground">{t('Your proposal for')} <span className="font-semibold text-foreground">TEND-2026-005 (Office Renovation)</span> {t('has been approved for technical review.')}</p>
-                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-success)' }}>{t('Update')}</span>
-              </div>
-              <div className="border-l-4 rtl:border-l-0 rtl:border-r-4 pl-4 rtl:pl-0 rtl:pr-4 py-1" style={{ borderColor: 'var(--fnrc-info)' }}>
-                <div className="text-sm font-semibold text-foreground">{t('New Tender Published: HVAC Systems')}</div>
-                <p className="text-sm mt-1 text-muted-foreground">{t('FNRC has published a new Tender for Annual Maintenance of HVAC Systems. Check eligibility now.')}</p>
-                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-info)' }}>{t('New Tender')}</span>
-              </div>
-              <div className="border-l-4 rtl:border-l-0 rtl:border-r-4 pl-4 rtl:pl-0 rtl:pr-4 py-1" style={{ borderColor: 'var(--fnrc-error)' }}>
-                <div className="text-sm font-semibold text-foreground">{t('Proposal Status Update')}</div>
-                <p className="text-sm mt-1 text-muted-foreground">{t('A decision has been finalized for')} <span className="font-semibold text-foreground">TEND-2026-003</span>{t('. Please check your tracking page.')}</p>
-                <span className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--fnrc-error)' }}>{t('Alert')}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Document Compliance Alert */}
         <DocumentComplianceAlert vendorId="VEN-001" />
       </div>

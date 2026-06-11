@@ -38,6 +38,7 @@ const vendorNavItems: NavItem[] = [
   { name: 'Dashboard', href: '/vendor/dashboard', icon: LayoutDashboard },
   { name: 'Tenders', href: '/vendor/tenders', icon: FileText },
   { name: 'My Proposals', href: '/vendor/proposals', icon: Send },
+  { name: 'My Projects', href: '/vendor/projects', icon: FolderOpen },
   { name: 'Profile', href: '/vendor/profile', icon: User },
 ];
 

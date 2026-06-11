@@ -609,7 +609,7 @@ export default function VendorProfile() {
                   <TableHeader>
                     <TableRow className="bg-[#F8FAFC] border-b border-gray-200">
                       <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[220px]">{t('Action')}</TableHead>
-                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px]">{t('Performed By')}</TableHead>
+                      <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px]">{t('Role')}</TableHead>
                       <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start w-[180px]">{t('Date & Time')}</TableHead>
                       <TableHead className="font-semibold text-gray-900 text-sm py-4 px-6 text-start">{t('Remarks')}</TableHead>
                     </TableRow>
@@ -618,7 +618,7 @@ export default function VendorProfile() {
                     {[
                       {
                         action: 'Profile Approved',
-                        performedBy: 'FNRC Admin',
+                        performedBy: 'Super Admin',
                         dateTime: '15/02/2026 - 11:20 AM',
                         remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.'
                       },
@@ -630,7 +630,7 @@ export default function VendorProfile() {
                       },
                       {
                         action: 'Correction Requested',
-                        performedBy: 'FNRC Admin',
+                        performedBy: 'Super Admin',
                         dateTime: '12/02/2026 - 04:30 PM',
                         remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.'
                       },
@@ -643,16 +643,16 @@ export default function VendorProfile() {
                     ].map((log, idx) => (
                       <TableRow key={idx} className="border-b border-gray-100 last:border-0 hover:bg-gray-50/30 transition-colors">
                         <TableCell className="text-start font-medium text-gray-900 text-sm py-4 px-6">
-                          {t(log.action)}
+                           {t(log.action)}
                         </TableCell>
                         <TableCell className="text-start font-normal text-gray-600 text-sm py-4 px-6">
-                          {log.performedBy === 'Vendor' ? t('Vendor') : log.performedBy}
+                           {t(log.performedBy)}
                         </TableCell>
                         <TableCell className="text-start text-gray-500 font-normal text-sm py-4 px-6">
-                          {log.dateTime}
+                           {log.dateTime}
                         </TableCell>
                         <TableCell className="text-start text-gray-600 text-sm py-4 px-6 leading-relaxed">
-                          {t(log.remarks)}
+                           {t(log.remarks)}
                         </TableCell>
                       </TableRow>
                     ))}

@@ -3,7 +3,7 @@ import { Star, Award, ShieldAlert, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Textarea } from '@/app/components/ui/textarea';
-import { mockProposals } from '@/app/data/mockData';
+import { mockProposals, mockTenders } from '@/app/data/mockData';
 import { useTranslation } from '@/app/context/LanguageContext';
 
 export default function AdminExternalRating() {
@@ -13,6 +13,7 @@ export default function AdminExternalRating() {
   const tenderId = params.get('tenderId');
 
   const proposal = mockProposals.find(p => p.id === proposalId);
+  const tender = mockTenders.find(t => t.id === tenderId || t.id === proposal?.tenderId);
 
   const [q1Remark, setQ1Remark] = useState('');
   const [q2Remark, setQ2Remark] = useState('');
@@ -44,7 +45,8 @@ export default function AdminExternalRating() {
   }
 
   const handleSubmit = () => {
-    if (!q1Remark.trim() || !q2Remark.trim() || !q3Remark.trim()) {
+    const isTechRequired = tender?.technicalProposalRequired !== 'no';
+    if ((isTechRequired && !q1Remark.trim()) || !q2Remark.trim() || !q3Remark.trim()) {
       alert(t('Please enter remarks for all evaluation queries before submitting.'));
       return;
     }
@@ -54,7 +56,7 @@ export default function AdminExternalRating() {
     }
 
     const ratingData = {
-      q1Remark,
+      ...(isTechRequired ? { q1Remark } : {}),
       q2Remark,
       q3Remark,
       comments,
@@ -147,10 +149,10 @@ export default function AdminExternalRating() {
             
             <div className="space-y-4">
               {[
-                { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, setter: setQ1Remark },
+                { label: t("How would you rate the vendor's technical capability?"), value: q1Remark, setter: setQ1Remark, isTechnical: true },
                 { label: t("Does the vendor have relevant experience in the required domain?"), value: q2Remark, setter: setQ2Remark },
                 { label: t("Rate the vendor's financial stability."), value: q3Remark, setter: setQ3Remark }
-              ].map((q, i) => (
+              ].filter(q => !q.isTechnical || tender?.technicalProposalRequired !== 'no').map((q, i) => (
                 <div key={i} className="space-y-2">
                   <label className="text-sm font-bold text-gray-700 block">{q.label}</label>
                   <Textarea
