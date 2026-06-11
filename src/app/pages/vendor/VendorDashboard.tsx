@@ -14,6 +14,16 @@ export default function VendorDashboard() {
   const activeTenders = mockTenders.filter(tender => tender.status === 'published');
   const myProposals = mockProposals.filter(p => p.vendorId === 'VEN-001');
 
+  const getMappedStatus = (status: string): 'submitted' | 'under_review' | 'approved' | 'rejected' => {
+    const norm = (status || '').toLowerCase().trim();
+    if (norm === 'submitted') return 'submitted';
+    if (norm === 'approved' || norm === 'selected') return 'approved';
+    if (norm === 'rejected') return 'rejected';
+    return 'under_review';
+  };
+
+  const underReviewCount = myProposals.filter(p => getMappedStatus(p.status) === 'under_review').length;
+
   return (
     <div className="space-y-8 text-start">
       <div className="flex items-start justify-between">
@@ -73,7 +83,7 @@ export default function VendorDashboard() {
                   {t('Under Review')}
                 </span>
                 <div className="text-3xl font-bold text-gray-800">
-                  1
+                  {underReviewCount}
                 </div>
               </div>
               <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-royal-blue)]/15 to-[var(--fnrc-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
@@ -147,7 +157,7 @@ export default function VendorDashboard() {
                       <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
                         <span>{proposal.id}</span>
                         <span>•</span>
-                        <StatusBadge status={proposal.status} />
+                        <StatusBadge status={getMappedStatus(proposal.status) === 'under_review' ? 'under_review_vendor' : getMappedStatus(proposal.status)} />
                       </div>
                     </div>
                     <Button

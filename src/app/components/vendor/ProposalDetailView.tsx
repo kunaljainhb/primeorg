@@ -57,6 +57,14 @@ export function ProposalDetailView({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const getMappedStatus = (status: string): 'submitted' | 'under_review_vendor' | 'approved' | 'rejected' => {
+    const norm = (status || '').toLowerCase().trim();
+    if (norm === 'submitted') return 'submitted';
+    if (norm === 'approved' || norm === 'selected') return 'approved';
+    if (norm === 'rejected') return 'rejected';
+    return 'under_review_vendor';
+  };
+
   const getReviewStatusBadge = (status?: string) => {
     const norm = status || 'pending';
     const config: Record<string, { label: string; bg: string; text: string }> = {
@@ -665,12 +673,11 @@ export function ProposalDetailView({
             <div>
               <span className="text-sm font-bold text-black block">Status</span>
               <div className="mt-1">
-                <StatusBadge status={proposalState.status} />
+                <StatusBadge status={getMappedStatus(proposalState.status)} />
               </div>
             </div>
           </div>
-          <Separator className="my-4" />
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 mt-4">
             <div>
               <span className="text-sm font-bold text-black block">Proposal Date</span>
               <span className="text-base font-normal text-gray-800 mt-1 block">{new Date(proposalState.submissionDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>

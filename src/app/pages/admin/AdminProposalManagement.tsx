@@ -39,7 +39,10 @@ export default function AdminProposalManagement() {
     const matchesSearch = proposal.vendorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           proposal.tenderTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           proposal.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || proposal.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'under_review' 
+        ? (proposal.status === 'under_review' || proposal.status === 'commercial_review_started')
+        : proposal.status === statusFilter);
     return matchesSearch && matchesStatus;
   });
 
@@ -83,7 +86,7 @@ export default function AdminProposalManagement() {
         { label: t('Submitted'), value: 'submitted' },
         { label: t('Technical Review'), value: 'technical_review' },
         { label: t('Technical Review Started'), value: 'technical_review_started' },
-        { label: t('Commercial Review Completed'), value: 'under_review' },
+        { label: t('Under Review'), value: 'under_review' },
         { label: t('Correction Requested'), value: 'correction_requested' },
         { label: t('Approved'), value: 'approved' },
         { label: t('Rejected'), value: 'rejected' },
@@ -95,7 +98,7 @@ export default function AdminProposalManagement() {
 
   const activeChips = statusFilter !== 'all' ? [
     {
-      label: `${t('Status')}: ${t(statusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}`,
+      label: `${t('Status')}: ${t(statusFilter === 'under_review' ? 'Under Review' : statusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}`,
       onRemove: () => setStatusFilter('all')
     }
   ] : [];

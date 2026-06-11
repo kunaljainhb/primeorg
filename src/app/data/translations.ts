@@ -270,6 +270,8 @@ export const translations: Record<string, string> = {
   "Select a role": "اختر دوراً",
   "Select status": "اختر الحالة",
   "Enter Remarks": "أدخل الملاحظات",
+  "Remarks": "الملاحظات",
+  "Proposal Action": "إجراء المقترح",
 
   // Toast / System Messages
   "Successfully saved": "تم الحفظ بنجاح",
@@ -622,5 +624,11 @@ export const translations: Record<string, string> = {
   "Total Projects": "إجمالي المشاريع",
   "Awarded Budget": "الميزانية الممنوحة",
   "Avg. Performance Rating": "متوسط تقييم الأداء",
-  "View Project": "عرض المشروع"
+  "View Project": "عرض المشروع",
+  "Tender Number - Tender Title": "رقم المناقصة - عنوان المناقصة",
+  "Proposal Date": "تاريخ المقترح",
+  "Commercial Amount": "المبلغ التجاري",
+  "Assign Technical Reviewer": "تعيين مقيم فني",
+  "Assign Commercial Reviewer": "تعيين مقيم تجاري",
+  "AI Comparison": "مقارنة الذكاء الاصطناعي"
 };

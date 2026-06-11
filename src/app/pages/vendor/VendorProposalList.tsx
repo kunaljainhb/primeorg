@@ -35,8 +35,13 @@ export default function VendorProposalList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Dynamically extract statuses present in the vendor's proposals list
-  const availableStatuses = Array.from(new Set(myProposals.map(p => p.status)));
+  const getMappedStatus = (status: string): 'submitted' | 'under_review' | 'approved' | 'rejected' => {
+    const norm = (status || '').toLowerCase().trim();
+    if (norm === 'submitted') return 'submitted';
+    if (norm === 'approved' || norm === 'selected') return 'approved';
+    if (norm === 'rejected') return 'rejected';
+    return 'under_review';
+  };
 
   const clearFilters = () => {
     setSearchQuery('');
@@ -46,7 +51,8 @@ export default function VendorProposalList() {
   const filteredProposals = myProposals.filter(proposal => {
     const matchesSearch = proposal.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           proposal.tenderTitle.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || proposal.status === statusFilter;
+    const mapped = getMappedStatus(proposal.status);
+    const matchesStatus = statusFilter === 'all' || mapped === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -70,7 +76,10 @@ export default function VendorProposalList() {
     let aVal = a[sortColumn];
     let bVal = b[sortColumn];
 
-    if (sortColumn === 'tenderTitle') {
+    if (sortColumn === 'status') {
+      aVal = getMappedStatus(a.status);
+      bVal = getMappedStatus(b.status);
+    } else if (sortColumn === 'tenderTitle') {
       aVal = `${a.tenderId} ${a.tenderTitle}`;
       bVal = `${b.tenderId} ${b.tenderTitle}`;
     } else if (sortColumn === 'submissionDate') {
@@ -105,14 +114,10 @@ export default function VendorProposalList() {
       label: t('Status'),
       options: [
         { label: t('All Statuses'), value: 'all' },
-        ...availableStatuses.map(status => {
-          // Format text elegantly for select options
-          const label = status
-            .split(/_|\s+/)
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
-          return { label: t(label), value: status };
-        })
+        { label: t('Submitted'), value: 'submitted' },
+        { label: t('Under Review'), value: 'under_review' },
+        { label: t('Approved'), value: 'approved' },
+        { label: t('Rejected'), value: 'rejected' }
       ],
       selectedValue: statusFilter,
       onChange: (val) => setStatusFilter(val)
@@ -121,10 +126,7 @@ export default function VendorProposalList() {
 
   const activeChips = [];
   if (statusFilter !== 'all') {
-    const displayLabel = statusFilter
-      .split(/_|\s+/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+    const displayLabel = statusFilter === 'under_review' ? 'Under Review' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1);
     activeChips.push({
       label: `${t('Status:')} ${t(displayLabel)}`,
       onRemove: () => setStatusFilter('all')
@@ -227,7 +229,7 @@ export default function VendorProposalList() {
                   {t('AED')} {proposal.commercialAmount.toLocaleString()}
                 </TableCell>
                 <TableCell className="text-start">
-                  <StatusBadge status={proposal.status} />
+                  <StatusBadge status={getMappedStatus(proposal.status) === 'under_review' ? 'under_review_vendor' : getMappedStatus(proposal.status)} />
                 </TableCell>
                 <TableCell className="text-end pe-6" onClick={(e) => e.stopPropagation()}>
                   <div className="flex justify-end gap-2">

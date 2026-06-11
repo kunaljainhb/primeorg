@@ -16,6 +16,8 @@ import { StatusBadge } from '@/app/components/ui/status-badge';
 import { ProgressTimeline } from '@/app/components/ui/progress-timeline';
 import { useTranslation } from '@/app/context/LanguageContext';
 import { cn } from '@/app/components/ui/utils';
+import { Separator } from '@/app/components/ui/separator';
+
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -40,6 +42,14 @@ export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
   const { t, language } = useTranslation();
+
+  const getMappedStatus = (status: string): 'submitted' | 'under_review_vendor' | 'approved' | 'rejected' => {
+    const norm = (status || '').toLowerCase().trim();
+    if (norm === 'submitted') return 'submitted';
+    if (norm === 'approved' || norm === 'selected') return 'approved';
+    if (norm === 'rejected') return 'rejected';
+    return 'under_review_vendor';
+  };
 
   const getReviewStatusBadge = (status?: string) => {
     const norm = status || 'pending';
@@ -72,13 +82,18 @@ export default function AdminProposalDetail() {
   const isInitiallyRejected = proposal.status === 'rejected';
   const isInitiallyApproved = proposal.status === 'approved';
   const [proposalRemark, setProposalRemark] = useState(
-    isInitiallyRejected
+    proposal.id === 'PROP-101'
+      ? ''
+      : isInitiallyRejected
       ? 'The commercial proposal exceeded the allocated Tender budget limits.'
       : isInitiallyApproved
       ? 'Highly qualified vendor meeting all technical specs and commercial constraints.'
       : ''
   );
   const [overallStatus, setOverallStatus] = useState(proposal.status);
+  const [decisionCompleted, setDecisionCompleted] = useState(
+    proposal.id === 'PROP-101' ? !!proposal.remarks : ['approved', 'selected', 'rejected'].includes(proposal.status)
+  );
   const [q1Remark, setQ1Remark] = useState<string>('');
   const [q2Remark, setQ2Remark] = useState<string>('');
   const [q3Remark, setQ3Remark] = useState<string>('');
@@ -419,17 +434,6 @@ export default function AdminProposalDetail() {
     }
   };
 
-  const handleShortlistVendor = () => {
-    proposal.status = 'approved';
-    setOverallStatus('approved');
-    setTechnicalReviewer('Mohammed Al Zaabi');
-    setCommercialReviewer('Mohammed Al Zaabi');
-    setTechnicalStatus('approved');
-    setCommercialStatus('approved');
-    saveProposalsToStorage(mockProposals);
-    toast.success('Vendor approved successfully! ERP integration active: LPO and Invoice generated.');
-  };
-
   const handleApproveProposalAction = () => {
     if (!proposalRemark.trim()) {
       toast.error('Please enter a remark or justification before approving.');
@@ -438,8 +442,9 @@ export default function AdminProposalDetail() {
     proposal.status = 'approved';
     proposal.remarks = proposalRemark;
     setOverallStatus('approved');
+    setDecisionCompleted(true);
     saveProposalsToStorage(mockProposals);
-    toast.success('Proposal Approved! Shortlist the vendor to proceed to ERP stage.');
+    toast.success('Proposal Approved successfully!');
   };
 
   const handleRejectProposalAction = () => {
@@ -448,13 +453,15 @@ export default function AdminProposalDetail() {
       return;
     }
     proposal.status = 'rejected';
+    proposal.remarks = proposalRemark;
     setOverallStatus('rejected');
+    setDecisionCompleted(true);
     setTechnicalReviewer('Technical Reviewer');
     setCommercialReviewer('Commercial Reviewer');
     setTechnicalStatus('approved');
     setCommercialStatus('rejected');
     saveProposalsToStorage(mockProposals);
-    toast.error('Proposal Rejected! Status updated to Rejected. Remarks saved.');
+    toast.error('Proposal Rejected successfully! Remarks saved.');
   };
 
   const handleCorrectionProposalAction = () => {
@@ -905,121 +912,41 @@ export default function AdminProposalDetail() {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
-              <CardTitle className="text-lg font-bold text-black flex items-center justify-between">
-                <span>{proposal.id}</span>
-                <StatusBadge status={overallStatus} />
-              </CardTitle>
+          <Card className="gap-0 h-auto" style={{ borderColor: overallStatus === 'rejected' ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
+            <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
+              <CardTitle className="text-lg font-bold text-gray-900">{t('Proposal Summary')}</CardTitle>
             </CardHeader>
-            <CardContent className="pt-1 px-6 pb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-bold text-black mb-1 block">{t("Proposal Date")}</p>
-                <p className="text-sm font-normal text-gray-800">{formatDate(proposal.submissionDate)}</p>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-black mb-1 block">{t("Vendor Name")}</p>
-                <p className="text-sm font-normal text-gray-800">{proposal.vendorName}</p>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-black mb-1 block">{t("Tender ID")}</p>
-                <p className="text-sm font-normal text-gray-800">{proposal.tenderId}</p>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-black mb-1 block">{t("Tender Title")}</p>
-                <p className="text-sm font-normal text-gray-800">{proposal.tenderTitle}</p>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-black mb-1 block">{t("Commercial Amount (AED)")}</p>
-                <p className="text-sm font-normal text-[var(--fnrc-primary-green)]">{proposal.commercialAmount.toLocaleString()}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Vendor Clarification Chat */}
-          <Card className="mt-6">
-            <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent flex flex-row items-center justify-between">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Users className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                {t("Vendor Clarifications Chat")}
-              </CardTitle>
-              {unreadCount > 0 && (
-                <Badge 
-                  variant="secondary" 
-                  className="bg-red-500 text-white font-bold text-[10px] px-2.5 py-0.5 rounded-full border-none animate-pulse"
-                >
-                  {unreadCount} {t("Unread")}
-                </Badge>
-              )}
-            </CardHeader>
-            <CardContent className="pt-1 px-6 pb-6 space-y-4" onClick={handleChatFocus}>
-              {/* Message scroll container */}
-              <div className="border border-gray-100 rounded-xl bg-gray-50/30 p-4 h-[300px] overflow-y-auto space-y-3 flex flex-col scrollbar-thin scrollbar-thumb-gray-200">
-                {messages.map((msg) => (
-                  <div 
-                    key={msg.id} 
-                    className={`flex flex-col max-w-[80%] ${msg.sender === 'admin' ? 'align-end ms-auto' : 'align-start me-auto'}`}
+            <CardContent className="!pt-4 !pb-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <span className="text-sm font-bold text-black block">{t('Proposal ID')}</span>
+                  <span 
+                    className="text-base font-normal text-[var(--fnrc-primary-green)] mt-1 block cursor-pointer hover:underline" 
+                    onClick={() => navigate(`/admin/proposals/${proposal.id}`)}
                   >
-                    {/* Sender Label */}
-                    <span className={`text-[10px] font-bold mb-1 text-gray-400 ${msg.sender === 'admin' ? 'text-end' : 'text-start'}`}>
-                      {msg.sender === 'admin' ? t('Government Admin') : proposal.vendorName}
-                    </span>
-                    
-                    {/* Message Bubble */}
-                    <div 
-                      className={`p-3 rounded-2xl text-sm font-medium shadow-sm relative ${
-                        msg.sender === 'admin' 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white rounded-te-none' 
-                          : 'bg-white text-gray-800 border border-gray-100 rounded-ts-none'
-                      }`}
-                    >
-                      {msg.text}
-                      {msg.unread && (
-                        <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                        </span>
-                      )}
-                    </div>
-                    
-                    {/* Timestamp */}
-                    <span className={`text-[9px] font-semibold mt-1 text-gray-400 ${msg.sender === 'admin' ? 'text-end' : 'text-start'}`}>
-                      {msg.timestamp}
-                    </span>
+                    {proposal.id}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-black block">{t('Tender Number - Tender Title')}</span>
+                  <span className="text-base font-normal text-gray-800 mt-1 block">{proposal.tenderId} - {proposal.tenderTitle}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-black block">{t('Status')}</span>
+                  <div className="mt-1">
+                    <StatusBadge status={getMappedStatus(overallStatus)} />
                   </div>
-                ))}
-
-                {isTyping && (
-                  <div className="flex flex-col max-w-[80%] align-start me-auto">
-                    <span className="text-[10px] font-bold mb-1 text-gray-400">
-                      {proposal.vendorName} {t("is typing")}
-                    </span>
-                    <div className="bg-white text-gray-800 border border-gray-100 p-3 rounded-2xl rounded-ts-none flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 bg-gray-300 rounded-full animate-bounce"></span>
-                      <span className="h-1.5 w-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-                      <span className="h-1.5 w-1.5 bg-gray-500 rounded-full animate-bounce delay-200"></span>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
-
-              {/* Message Typing Area */}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder={`${t("Type a message to")} ${proposal.vendorName}...`}
-                  value={newMessageText}
-                  onChange={(e) => setNewMessageText(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-850 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white"
-                />
-                <Button 
-                  onClick={handleSendMessage}
-                  className="text-white h-10 px-6 font-bold text-xs rounded-xl shrink-0"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                >
-                  {t("Send")}
-                </Button>
+              <div className="grid gap-4 md:grid-cols-3 mt-4">
+                <div>
+                  <span className="text-sm font-bold text-black block">{t('Proposal Date')}</span>
+                  <span className="text-base font-normal text-gray-800 mt-1 block">{formatDate(proposal.submissionDate)}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-black block">{t('Commercial Amount')}</span>
+                  <span className="text-base font-normal text-gray-800 mt-1 block">AED {proposal.commercialAmount.toLocaleString()}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -1073,7 +1000,6 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Technical Approach")}
               </CardTitle>
-              <StatusBadge status={technicalStatus === 'approved' ? 'technical_approved' : technicalStatus} />
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -1224,7 +1150,6 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Commercial Proposal")}
               </CardTitle>
-              <StatusBadge status={commercialStatus === 'approved' ? 'commercial_approved' : commercialStatus} />
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
               <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
@@ -1428,80 +1353,52 @@ export default function AdminProposalDetail() {
         {tender.status === 'published' && (
           <TabsContent value="action" className="space-y-6">
             
-            {/* CARD 1: Proposal Action Decision */}
+            {/* CARD 1: Proposal Action */}
             <Card>
               <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
                 <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
                   <Award className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                  {t("Proposal Action Decision")}
+                  {t("Proposal Action")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-1 px-6 pb-6 space-y-4">
-                {overallStatus === 'rejected' ? (
-                  <div className="bg-red-50/50 border border-red-100 p-5 rounded-xl space-y-3.5">
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status="rejected" />
-                      <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
+                {decisionCompleted ? (
+                  overallStatus === 'rejected' ? (
+                    <div className="bg-red-50/50 border border-red-100 p-5 rounded-xl space-y-3.5">
+                      <div className="flex items-center gap-2">
+                        <StatusBadge status="rejected" />
+                        <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
+                        <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                          {proposalRemark || "The commercial proposal exceeded the allocated Tender budget limits."}
+                        </p>
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
-                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
-                        {proposalRemark || "The commercial proposal exceeded the allocated Tender budget limits."}
-                      </p>
+                  ) : (
+                    <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
+                      <div className="flex items-center gap-2">
+                        <StatusBadge status="approved" />
+                        <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
+                        <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
+                          {proposalRemark || "Highly qualified vendor meeting all technical specs and commercial constraints."}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ) : overallStatus === 'approved' ? (
-                  <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-3.5">
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status="approved" />
-                      <span className="text-[10px] text-gray-500 font-bold">{t("Decision Completed")}</span>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
-                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-150 leading-relaxed">
-                        {proposalRemark || "Highly qualified vendor meeting all technical specs and commercial constraints."}
-                      </p>
-                    </div>
-                  </div>
-                ) : overallStatus === 'approved' ? (
-                  // Approved — now offer Shortlist option
-                  <div className="bg-green-50/50 border border-green-100 p-5 rounded-xl space-y-4">
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status="approved" />
-                      <span className="text-[10px] text-gray-500 font-bold">{t("Proposal approved — proceed to shortlisting")}</span>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-sm font-bold text-black mb-1 block">{t("Final Remarks:")}</span>
-                      <p className="text-sm font-normal text-gray-800 bg-white p-3 rounded-lg border border-gray-100 leading-relaxed">
-                        {proposalRemark}
-                      </p>
-                    </div>
-                    <div className="pt-2 border-t border-green-100">
-                      <p className="text-xs text-gray-500 font-medium mb-3">
-                        {t("The proposal has been approved. You can now shortlist this vendor to generate ERP documents (LPO & Invoice).")}
-                      </p>
-                      <Button
-                        onClick={handleShortlistVendor}
-                        className="text-white h-9 px-6 font-bold text-xs flex items-center gap-2"
-                        style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                      >
-                        <Award className="h-4 w-4" />
-                        {t("Shortlist Vendor")}
-                      </Button>
-                    </div>
-                  </div>
+                  )
                 ) : (
                   // Pending decision — show Approve / Reject only
                   <div className="space-y-4">
-                    <p className="text-xs font-normal text-gray-500">
-                      {t("Take a final decision on this vendor's proposal. Approving allows you to then shortlist the vendor for ERP document generation.")}
-                    </p>
                     <div className="space-y-1.5">
-                      <label htmlFor="remark" className="text-sm font-bold text-black block mb-1">{t("Remarks & Decision Comments")} <span className="text-red-500">*</span></label>
+                      <label htmlFor="remark" className="text-sm font-bold text-black block mb-1">{t("Remarks")} <span className="text-red-500">*</span></label>
                       <textarea
                         id="remark"
                         rows={3}
-                        placeholder={t("Enter remarks or justification for this decision...")}
+                        placeholder={t("Enter Remarks")}
                         value={proposalRemark}
                         onChange={(e) => setProposalRemark(e.target.value)}
                         className="w-full p-3 rounded-lg border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
@@ -1514,7 +1411,7 @@ export default function AdminProposalDetail() {
                         style={{ backgroundColor: 'var(--fnrc-success)' }}
                       >
                         <Check className="h-4 w-4" />
-                        {t("Approve Proposal")}
+                        {t("Approve")}
                       </Button>
                       <Button
                         onClick={handleRejectProposalAction}
@@ -1522,7 +1419,7 @@ export default function AdminProposalDetail() {
                         style={{ backgroundColor: '#EF4444' }}
                       >
                         <X className="h-4 w-4" />
-                        {t("Reject Proposal")}
+                        {t("Reject")}
                       </Button>
                     </div>
                   </div>

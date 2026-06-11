@@ -46,6 +46,8 @@ import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
 import { useTranslation } from '@/app/context/LanguageContext';
 import { cn } from '@/app/components/ui/utils';
+import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
+
 
 const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return '-';
@@ -109,6 +111,37 @@ export default function AdminTenderDetail() {
   const [proposalCurrentPage, setProposalCurrentPage] = useState(1);
   const proposalItemsPerPage = 5;
 
+  const proposalFilters = [
+    {
+      key: 'status',
+      label: t('Review Status'),
+      options: [
+        { label: t('All Statuses'), value: 'all' },
+        { label: t('Submitted'), value: 'submitted' },
+        { label: t('Technical Review'), value: 'technical_review' },
+        { label: t('Technical Review Started'), value: 'technical_review_started' },
+        { label: t('Under Review'), value: 'under_review' },
+        { label: t('Correction Requested'), value: 'correction_requested' },
+        { label: t('Approved'), value: 'approved' },
+        { label: t('Rejected'), value: 'rejected' },
+      ],
+      selectedValue: proposalStatusFilter,
+      onChange: setProposalStatusFilter
+    }
+  ];
+
+  const proposalActiveChips = proposalStatusFilter !== 'all' ? [
+    {
+      label: `${t('Status')}: ${t(proposalStatusFilter === 'under_review' ? 'Under Review' : proposalStatusFilter.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))}`,
+      onRemove: () => setProposalStatusFilter('all')
+    }
+  ] : [];
+
+  const handleProposalClearAll = () => {
+    setProposalSearchQuery('');
+    setProposalStatusFilter('all');
+  };
+
   const handleProposalSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (proposalSortConfig && proposalSortConfig.key === key && proposalSortConfig.direction === 'asc') {
@@ -119,7 +152,10 @@ export default function AdminTenderDetail() {
 
   const filteredRelatedProposals = relatedProposals.filter(p => {
     const matchesSearch = p.vendorName.toLowerCase().includes(proposalSearchQuery.toLowerCase());
-    const matchesStatus = proposalStatusFilter === 'all' || p.status === proposalStatusFilter;
+    const matchesStatus = proposalStatusFilter === 'all' || 
+      (proposalStatusFilter === 'under_review' 
+        ? (p.status === 'under_review' || p.status === 'commercial_review_started')
+        : p.status === proposalStatusFilter);
     return matchesSearch && matchesStatus;
   });
 
@@ -338,15 +374,27 @@ const assignCommercialReviewer = (reviewerName: string) => {
         <div className="flex flex-wrap items-center gap-3">
           {(tender.status !== 'closed' && tender.status !== 'cancelled') && (
             <>
-              <Button variant="outline" className="border-red-200 text-red-750 hover:bg-red-50 h-9 text-xs font-semibold" onClick={() => setShowCancelDialog(true)}>
+              <Button 
+                className="text-white h-9 px-4 text-xs font-semibold shadow-md shadow-red-600/10 border-none hover:opacity-90 transition-opacity" 
+                style={{ backgroundColor: 'var(--fnrc-error)' }} 
+                onClick={() => setShowCancelDialog(true)}
+              >
                 <XIcon className="mr-1.5 h-4 w-4" />
                 {t('Cancel Tender')}
               </Button>
-              <Button variant="outline" className="border-amber-200 text-amber-750 hover:bg-amber-50 h-9 text-xs font-semibold" onClick={() => setShowDeadlineDialog(true)}>
+              <Button 
+                className="text-white h-9 px-4 text-xs font-semibold shadow-md shadow-amber-600/10 border-none hover:opacity-90 transition-opacity" 
+                style={{ backgroundColor: 'var(--fnrc-warning)' }} 
+                onClick={() => setShowDeadlineDialog(true)}
+              >
                 <Clock className="mr-1.5 h-4 w-4" />
                 {t('Extend Deadline')}
               </Button>
-              <Button className="text-white h-9 px-5 text-xs font-semibold shadow-md shadow-green-600/10" style={{ backgroundColor: 'var(--fnrc-success)' }} onClick={() => setShowCloseDialog(true)}>
+              <Button 
+                className="text-white h-9 px-5 text-xs font-semibold shadow-md shadow-green-600/10 border-none hover:opacity-90 transition-opacity" 
+                style={{ backgroundColor: 'var(--fnrc-success)' }} 
+                onClick={() => setShowCloseDialog(true)}
+              >
                 <Check className="mr-1.5 h-4 w-4" />
                 {t('Close Tender')}
               </Button>
@@ -725,14 +773,16 @@ const assignCommercialReviewer = (reviewerName: string) => {
               </div>
               <div className="flex items-center gap-2">
                 <Button
-                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed border-none hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: 'var(--fnrc-royal-blue)' }}
                   disabled={selectedProposals.length === 0}
                   onClick={() => setShowTechDialog(true)}
                 >
-                  {t('Assign Tech Reviewer')}
+                  {t('Assign Technical Reviewer')}
                 </Button>
                 <Button
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed border-none hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: 'var(--fnrc-royal-blue)' }}
                   disabled={selectedProposals.length === 0}
                   onClick={() => setShowCommDialog(true)}
                 >
@@ -744,7 +794,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                   onClick={handleAIComparison}
                 >
                   <Brain className="h-4 w-4" />
-                  {t('AI Compare')} ({selectedProposals.length})
+                  {t('AI Comparison')} ({selectedProposals.length})
                 </Button>
               </div>
             </div>
@@ -825,53 +875,19 @@ const assignCommercialReviewer = (reviewerName: string) => {
               </DialogContent>
             </Dialog>
 
-            {/* Proposal search and status filters */}
-            <div className="p-4 px-6 border-b border-gray-100 flex flex-wrap gap-4 items-center bg-white justify-between">
-              <div className="flex flex-wrap gap-3 items-center flex-1 max-w-xl">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                  <Input
-                    type="text"
-                    placeholder={t('Search by Vendor name...')}
-                    value={proposalSearchQuery}
-                    onChange={(e) => {
-                      setProposalSearchQuery(e.target.value);
-                      setProposalCurrentPage(1);
-                    }}
-                    className="h-9 pl-9 pr-4 text-xs rounded-md border-gray-200"
-                  />
-                </div>
-                <select
-                  value={proposalStatusFilter}
-                  onChange={(e) => {
-                    setProposalStatusFilter(e.target.value);
-                    setProposalCurrentPage(1);
-                  }}
-                  className="h-9 px-3 text-xs rounded-md border border-gray-200 bg-white text-gray-700 outline-none focus:border-[var(--fnrc-primary-green)]"
-                >
-                  <option value="all">{t('All Statuses')}</option>
-                  <option value="submitted">{t('Submitted')}</option>
-                  <option value="technical_review">{t('Technical Review')}</option>
-                  <option value="technical_review_started">{t('Technical Review Started')}</option>
-                  <option value="under_review">{t('Commercial Review Completed')}</option>
-                  <option value="correction_requested">{t('Correction Requested')}</option>
-                  <option value="approved">{t('Approved')}</option>
-                  <option value="rejected">{t('Rejected')}</option>
-                </select>
-              </div>
-              {(proposalSearchQuery || proposalStatusFilter !== 'all') && (
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setProposalSearchQuery('');
-                    setProposalStatusFilter('all');
-                    setProposalCurrentPage(1);
-                  }}
-                  className="h-9 px-3 text-red-600 hover:text-red-750 hover:bg-red-50 text-xs font-semibold"
-                >
-                  {t('Clear Filters')}
-                </Button>
-              )}
+            {/* Modern Search and Filter Bar */}
+            <div className="px-6 pb-4 pt-0 border-b border-gray-100 bg-white">
+              <SearchFilterBar
+                searchQuery={proposalSearchQuery}
+                setSearchQuery={(val) => {
+                  setProposalSearchQuery(val);
+                  setProposalCurrentPage(1);
+                }}
+                placeholder={t("Search by Vendor name...")}
+                filters={proposalFilters}
+                activeChips={proposalActiveChips}
+                onClearAll={handleProposalClearAll}
+              />
             </div>
 
             <CardContent className="p-0">
