@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useNavigate, useParams, useLocation } from '@/app/context/RouterContext';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
@@ -23,7 +23,14 @@ import {
   ChevronRight,
   ChevronUp,
   ChevronDown,
-  ArrowUpDown
+  ArrowUpDown,
+  Sparkles,
+  Star,
+  Trophy,
+  DollarSign,
+  TrendingDown,
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { mockTenders, mockProposals, mockERPDocuments, mockAdminUsers } from '@/app/data/mockData';
@@ -65,6 +72,211 @@ export default function AdminTenderDetail() {
   const location = useLocation();
   const { t, language } = useTranslation();
   const tender = mockTenders.find(r => r.id === tenderId) || mockTenders[0];
+
+  const getProposalComparisonData = (p: any) => {
+    if (!p) return {};
+    const isProp100 = p.id === 'PROP-100';
+    const isProp101 = p.id === 'PROP-101';
+    const isProp110 = p.id === 'PROP-110';
+    
+    if (isProp100) {
+      return {
+        techApproach: t("Strong (Detailed enterprise Dell laptop rollout plan)"),
+        scopeCoverage: t("Complete (100% of HQ IT requirements met)"),
+        docs: t("All standard docs, compliance certifications included"),
+        techStrengths: t("Tier-1 reseller certification, experienced deployment team"),
+        techWeaknesses: t("No custom automated data migration scripts"),
+        techAssessment: t("Strong"),
+        techAssessmentBadge: "strong",
+        amount: `AED ${p.commercialAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        costBreakdown: t("Itemized BOQ (Hardware, installation, support)"),
+        paymentTerms: t("30% Advance, 50% Delivery, 20% Final Sign-off"),
+        commStrengths: t("Includes 3-year premium support SLA"),
+        commWeaknesses: t("Higher pricing compared to other bids"),
+        commAssessment: t("Moderate"),
+        commAssessmentBadge: "moderate",
+        duration: t("2 months"),
+        milestones: t("3 standard milestones defined"),
+        timeline: t("4 weeks implementation window"),
+        schedule: t("Aligned with corporate deadlines"),
+        bestInTech: true,
+        bestInComm: false,
+        bestInTimeline: false,
+        score: 88,
+        strengths: [
+          t("Tier-1 reseller status ensures direct manufacturer support."),
+          t("Highly experienced onsite team with government project credentials.")
+        ],
+        considerations: [
+          t("Slightly higher commercial bid compared to market baseline."),
+          t("Lack of automation scripts for data migration.")
+        ]
+      };
+    }
+    if (isProp101) {
+      return {
+        techApproach: t("Moderate (Standard enterprise hardware specification)"),
+        scopeCoverage: t("Complete (All hardware specs covered)"),
+        docs: t("All mandatory certificates and bank guarantee uploaded"),
+        techStrengths: t("24/7 dedicated support desk access"),
+        techWeaknesses: t("Standard hardware brochure only, no custom setup guide"),
+        techAssessment: t("Moderate"),
+        techAssessmentBadge: "moderate",
+        amount: `AED ${p.commercialAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        costBreakdown: t("Consolidated package pricing"),
+        paymentTerms: t("20% Advance, 60% Setup, 20% UAT Sign-off"),
+        commStrengths: t("Extremely balanced pricing under budget"),
+        commWeaknesses: t("Basic support package after warranty"),
+        commAssessment: t("Strong"),
+        commAssessmentBadge: "strong",
+        duration: t("1 month"),
+        milestones: t("3 setup milestones defined"),
+        timeline: t("4 weeks total duration"),
+        schedule: t("Faster than estimated timeline"),
+        bestInTech: false,
+        bestInComm: true,
+        bestInTimeline: true,
+        score: 92,
+        strengths: [
+          t("Highly competitive pricing structure under the Tender budget."),
+          t("Fastest delivery schedule (1 month rollout).")
+        ],
+        considerations: [
+          t("Post-warranty support is basic and may require additional contracts.")
+        ]
+      };
+    }
+    if (isProp110) {
+      return {
+        techApproach: t("Weak (Basic budget hardware specifications)"),
+        scopeCoverage: t("Partial (Does not meet all processor & memory requirements)"),
+        docs: t("Missing ISO security documentation"),
+        techStrengths: t("Very low mobilization cost"),
+        techWeaknesses: t("Lacks tier-1 support service capabilities"),
+        techAssessment: t("Weak"),
+        techAssessmentBadge: "weak",
+        amount: `AED ${p.commercialAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        costBreakdown: t("Lump-sum bid amount"),
+        paymentTerms: t("50% Advance, 50% Delivery"),
+        commStrengths: t("Lowest bid amount among all vendors"),
+        commWeaknesses: t("No warranty support included"),
+        commAssessment: t("Strong"),
+        commAssessmentBadge: "strong",
+        duration: t("3 months"),
+        milestones: t("2 delivery milestones defined"),
+        timeline: t("12 weeks implementation window"),
+        schedule: t("Slower delivery turnaround"),
+        bestInTech: false,
+        bestInComm: false,
+        bestInTimeline: false,
+        score: 65,
+        strengths: [
+          t("Extremely low mobilization cost."),
+          t("Lowest bid amount among all compared vendors.")
+        ],
+        considerations: [
+          t("Weak technical approach and does not meet all memory requirements."),
+          t("No warranty support included.")
+        ]
+      };
+    }
+    
+    // Fallback
+    const hasGoodAmount = p.commercialAmount < 500000;
+    return {
+      techApproach: p.technicalProposal ? p.technicalProposal.substring(0, 100) + '...' : t("Moderate (Standard compliance approach)"),
+      scopeCoverage: t("Complete (Meets basic scope definitions)"),
+      docs: t("All standard documentation uploaded"),
+      techStrengths: t("Experienced local vendor presence"),
+      techWeaknesses: t("Standard response times, no premium SLAs"),
+      techAssessment: t("Moderate"),
+      techAssessmentBadge: "moderate",
+      amount: `AED ${p.commercialAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      costBreakdown: t("Detailed breakdown in proposal attachment"),
+      paymentTerms: p.paymentTerms ? p.paymentTerms.substring(0, 100) + '...' : t("Milestone-based payments"),
+      commStrengths: t("Competitive pricing aligned with estimates"),
+      commWeaknesses: t("Requires higher advance mobilization payment"),
+      commAssessment: hasGoodAmount ? t("Strong") : t("Moderate"),
+      commAssessmentBadge: hasGoodAmount ? "strong" : "moderate",
+      duration: t("2.5 months"),
+      milestones: t("Milestones defined in scope of work"),
+      timeline: t("Standard execution timeline"),
+      schedule: t("Aligned with Tender expectations"),
+      bestInTech: false,
+      bestInComm: false,
+      bestInTimeline: false,
+      score: hasGoodAmount ? 80 : 75,
+      strengths: [
+        t("Compliant with basic Tender specs."),
+        t("Solid local presence.")
+      ],
+      considerations: [
+        t("High mobilization payment requested.")
+      ]
+    };
+  };
+
+  const categories = [
+    {
+      section: t("Technical Evaluation"),
+      color: "bg-teal-50/40 text-teal-850",
+      rows: [
+        { label: t("Technical Approach"), key: "techApproach" },
+        { label: t("Scope Coverage"), key: "scopeCoverage" },
+        { label: t("Supporting Documents"), key: "docs" },
+        { label: t("Technical Strengths"), key: "techStrengths" },
+        { label: t("Technical Weaknesses"), key: "techWeaknesses" },
+        { label: t("Overall Technical Assessment"), key: "techAssessmentBadge", isBadge: true }
+      ]
+    },
+    {
+      section: t("Commercial Evaluation"),
+      color: "bg-emerald-50/40 text-emerald-855",
+      rows: [
+        { label: t("Total Proposal Amount"), key: "amount" },
+        { label: t("Cost Breakdown"), key: "costBreakdown" },
+        { label: t("Payment Terms"), key: "paymentTerms" },
+        { label: t("Commercial Strengths"), key: "commStrengths" },
+        { label: t("Commercial Weaknesses"), key: "commWeaknesses" },
+        { label: t("Overall Commercial Assessment"), key: "commAssessmentBadge", isBadge: true }
+      ]
+    },
+    {
+      section: t("Timeline & Delivery"),
+      color: "bg-indigo-50/40 text-indigo-850",
+      rows: [
+        { label: t("Project Duration"), key: "duration" },
+        { label: t("Key Milestones"), key: "milestones" },
+        { label: t("Delivery Timeline"), key: "timeline" },
+        { label: t("Completion Schedule"), key: "schedule" }
+      ]
+    }
+  ];
+
+  const renderBadge = (value: string) => {
+    if (value === 'strong') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800 border border-green-200 uppercase tracking-wide">
+          {t("Strong")}
+        </span>
+      );
+    }
+    if (value === 'moderate') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-250 uppercase tracking-wide">
+          {t("Moderate")}
+        </span>
+      );
+    }
+    if (value === 'weak') {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200 uppercase tracking-wide">
+          {t("Weak")}
+        </span>
+      );
+    }
+    return value;
+  };
 
   // Redirect to edit/create page if in draft status
   useEffect(() => {
@@ -1178,74 +1390,383 @@ const assignCommercialReviewer = (reviewerName: string) => {
 
       {/* AI Comparison matrix loading modal */}
       <Dialog open={showAIComparisonDialog} onOpenChange={setShowAIComparisonDialog}>
-        <DialogContent className="sm:max-w-3xl p-8" aria-describedby="ai-dialog-description">
-          <DialogHeader className="border-b pb-4 mb-4">
-            <DialogTitle className="flex items-center gap-2 text-xl font-bold text-purple-750">
-              <Brain className="h-5 w-5 text-purple-600" />
-              {t('AI Proposal Audit Engine')}
-            </DialogTitle>
+        <DialogContent className="max-w-[95vw] w-[95vw] md:max-w-[90vw] md:w-[90vw] lg:max-w-[85vw] lg:w-[85vw] max-h-[92vh] overflow-y-auto bg-white border border-gray-150 rounded-xl p-6 md:p-8 scrollbar-thin font-sans">
+          {showAIComparisonDialog && (
+            <>
+              <DialogHeader className="border-b pb-4 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                  <Brain className="h-6 w-6" />
+                </div>
+                <div className="text-start">
+                  <DialogTitle className="text-lg font-black text-gray-900 flex items-center gap-2 flex-wrap">
+                    {t('AI Proposal Comparison')}
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-purple-100 text-purple-800 uppercase tracking-wide">
+                      {t('AI Insights Enabled')}
+                    </span>
+                  </DialogTitle>
+                  <p className="text-xs text-gray-500 font-medium mt-0.5">
+                    {t('Compare vendor proposals and review AI-generated recommendations.')}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col md:items-end text-start md:text-right gap-1 border-t md:border-t-0 pt-3 md:pt-0 shrink-0">
+                <div className="text-xs font-bold text-gray-750">
+                  <span className="uppercase text-gray-400 font-extrabold">{t('Tender')}: </span>
+                  <span>{tender.id} — {tender.title}</span>
+                </div>
+                <div className="text-[10px] text-gray-405 font-bold">
+                  {t('Comparison Date')}: {formatDate(new Date())}
+                </div>
+              </div>
+            </div>
           </DialogHeader>
-          <div id="ai-dialog-description" className="py-6 space-y-6">
+
+          <div id="ai-dialog-description" className="space-y-8">
             {isAIAnalyzing ? (
-              <div className="flex flex-col items-center justify-center space-y-4 py-8">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
-                <p className="text-sm font-bold text-purple-700 animate-pulse">Analyzing technical parameters and commercial pricing matrices...</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="rounded-xl bg-purple-50/50 p-4 border border-purple-100 text-xs font-semibold text-purple-800 leading-relaxed font-arabic-body">
-                  AI Summary: The compared bids demonstrate highly competitive commercial structures. TechCorp Solutions is commercial leader but Global InfraGroup provides a longer warrantee period (24 vs 12 months). APEX Systems ranks highest on compliance credentials.
+              <div className="flex flex-col items-center justify-center space-y-6 py-16">
+                <div className="relative flex items-center justify-center h-16 w-16">
+                  <div className="absolute animate-ping h-8 w-8 rounded-full bg-purple-400 opacity-75"></div>
+                  <div className="relative h-12 w-12 rounded-full bg-purple-650 flex items-center justify-center text-white font-bold animate-pulse">
+                    <Brain className="h-6 w-6" />
+                  </div>
                 </div>
-                
-                <div className="rounded-xl border border-gray-100 overflow-hidden shadow-xs">
-                  <Table>
-                    <TableHeader className="bg-gray-50">
-                      <TableRow>
-                        <TableHead className="font-bold text-xs py-3 ps-4">{t('Audit Criterion')}</TableHead>
-                        {selectedProposals.map(id => {
-                          const prop = relatedProposals.find(p => p.id === id);
-                          return (
-                            <TableHead key={id} className="font-bold text-xs py-3 text-center">{prop?.vendorName}</TableHead>
-                          );
-                        })}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Commercial Total')}</TableCell>
-                        {selectedProposals.map(id => {
-                          const prop = relatedProposals.find(p => p.id === id);
-                          return (
-                            <TableCell key={id} className="text-center font-bold text-xs text-[var(--fnrc-primary-green)]">AED {prop?.commercialAmount.toLocaleString()}</TableCell>
-                          );
-                        })}
-                      </TableRow>
-                      <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Compliance Match')}</TableCell>
-                        {selectedProposals.map(id => (
-                          <TableCell key={id} className="text-center font-semibold text-xs text-emerald-600">100% Match</TableCell>
-                        ))}
-                      </TableRow>
-                      <TableRow className="border-b border-gray-50 last:border-0 hover:bg-gray-50/20">
-                        <TableCell className="font-bold text-xs ps-4 py-3 text-gray-700">{t('Risk Assessment')}</TableCell>
-                        {selectedProposals.map(id => {
-                          const isLead = id === 'PROP-101';
-                          return (
-                            <TableCell key={id} className={`text-center font-semibold text-xs ${isLead ? 'text-emerald-600' : 'text-amber-600'}`}>{isLead ? 'Minimal' : 'Low'}</TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    </TableBody>
-                  </Table>
+                <div className="space-y-2 text-center">
+                  <p className="text-base font-black text-purple-800">{t('AI Analysis in progress...')}</p>
+                  <p className="text-xs text-gray-400 font-semibold max-w-md">{t('Evaluating technical compliance, commercial cost structures, and milestone delivery timelines.')}</p>
                 </div>
               </div>
-            )}
+            ) : (() => {
+              const comparedProposals = selectedProposals.map(id => {
+                const p = relatedProposals.find(item => item.id === id);
+                return {
+                  ...p,
+                  comparison: getProposalComparisonData(p)
+                };
+              });
+
+              // Calculate details for AI Insights
+              const names = comparedProposals.map((p, i) => ({
+                letter: String.fromCharCode(65 + i),
+                name: p.vendorName,
+                id: p.id,
+                amount: p.commercialAmount,
+                isTechLead: p.comparison.bestInTech,
+                isCommLead: p.comparison.bestInComm,
+                isTimelineLead: p.comparison.bestInTimeline
+              }));
+
+              const cheapest = [...names].sort((a, b) => a.amount - b.amount)[0] || names[0];
+              const techLead = names.find(n => n.isTechLead) || names[0];
+              const timelineLead = names.find(n => n.isTimelineLead) || names[0];
+              const bestBalance = names.find(n => n.id === 'PROP-101') || names[0];
+
+              const aiInsights = [
+                {
+                  badge: t("Cost Leader"),
+                  bg: "bg-emerald-50 text-emerald-700 border-emerald-100",
+                  icon: <DollarSign className="h-4 w-4" />,
+                  text: language === 'ar' 
+                    ? `يقدم المورد ${cheapest.letter} (${cheapest.name}) **أقل قيمة تجارية** بعطاء يبلغ AED ${cheapest.amount.toLocaleString()}.`
+                    : `Vendor ${cheapest.letter} (${cheapest.name}) offers the **lowest commercial value** with a bid of AED ${cheapest.amount.toLocaleString()}.`
+                },
+                {
+                  badge: t("Technical Leader"),
+                  bg: "bg-purple-50 text-purple-700 border-purple-100",
+                  icon: <Brain className="h-4 w-4" />,
+                  text: language === 'ar'
+                    ? `يوفر المورد ${techLead.letter} (${techLead.name}) **أقوى نهج فني** مع مواصفات الموزع المعتمد.`
+                    : `Vendor ${techLead.letter} (${techLead.name}) provides the **strongest technical approach** with tier-1 reseller specs.`
+                },
+                {
+                  badge: t("Fastest Delivery"),
+                  bg: "bg-blue-50 text-blue-700 border-blue-100",
+                  icon: <Clock className="h-4 w-4" />,
+                  text: language === 'ar'
+                    ? `يتميز المورد ${timelineLead.letter} (${timelineLead.name}) بـ **أقصر جدول زمني لإكمال المشروع** وهو 4 أسابيع فقط.`
+                    : `Vendor ${timelineLead.letter} (${timelineLead.name}) has the **shortest project completion timeline** of just 4 weeks.`
+                },
+                {
+                  badge: t("AI Recommendation"),
+                  bg: "bg-amber-50 text-amber-700 border-amber-100",
+                  icon: <Sparkles className="h-4 w-4" />,
+                  text: language === 'ar'
+                    ? `يُظهر المورد ${bestBalance.letter} (${bestBalance.name}) **أفضل توازن** بين القدرة الفنية والقيمة التجارية.`
+                    : `Vendor ${bestBalance.letter} (${bestBalance.name}) demonstrates the **best balance** between technical capability and commercial value.`
+                }
+              ];
+
+              return (
+                <div className="space-y-8 text-start">
+                  
+                  {/* Selectable tabs/cards for compared vendors */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {comparedProposals.map((p, idx) => (
+                      <div 
+                        key={p.id} 
+                        className={cn(
+                          "p-4 rounded-xl border transition-all flex flex-col justify-between relative overflow-hidden bg-white shadow-2xs hover:shadow-xs",
+                          p.comparison.bestInTech && p.comparison.bestInComm ? "border-purple-200 bg-purple-50/10" : "border-gray-150"
+                        )}
+                      >
+                        {p.comparison.bestInTech && p.comparison.bestInComm && (
+                          <div className="absolute top-2 right-2 bg-purple-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            AI Choice
+                          </div>
+                        )}
+                        <div>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                            {t('Vendor')} {String.fromCharCode(65 + idx)}
+                          </span>
+                          <h4 className="font-extrabold text-sm text-gray-900 mt-1">{p.vendorName}</h4>
+                          <p className="text-xs font-semibold text-gray-505 mt-0.5">{p.id}</p>
+                        </div>
+                        <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+                          <span className="text-xs font-extrabold text-[var(--fnrc-primary-green)]">
+                            {p.comparison.amount}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                            <span className="text-xs font-black text-gray-700">{p.comparison.score}/100</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Section 1: Proposal Comparison Overview */}
+                  <Card className="border border-gray-150 shadow-2xs overflow-hidden">
+                    <CardHeader className="bg-gray-50/60 py-4 px-6 border-b border-gray-150">
+                      <CardTitle className="text-sm font-black text-gray-900 flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        {t('Section 1: Proposal Comparison Overview')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader className="bg-gray-50/50">
+                            <TableRow>
+                              <TableHead className="font-bold text-xs py-3 ps-6 border-r border-gray-100 min-w-[200px] text-gray-700">
+                                {t('Comparison Category')}
+                              </TableHead>
+                              {comparedProposals.map((p, idx) => (
+                                <TableHead key={p.id} className="font-bold text-xs py-3 text-center border-r border-gray-100 last:border-0 min-w-[240px] text-gray-700">
+                                  {p.vendorName} ({t('Vendor')} {String.fromCharCode(65 + idx)})
+                                </TableHead>
+                              ))}
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody className="divide-y divide-gray-100">
+                            {categories.map((cat, catIdx) => (
+                              <Fragment key={catIdx}>
+                                {/* Category Section Header Row */}
+                                <TableRow className={cn(cat.color, "hover:bg-transparent")}>
+                                  <TableCell colSpan={comparedProposals.length + 1} className="py-2.5 px-6 font-extrabold text-[11px] uppercase tracking-wide border-b border-gray-100">
+                                    {cat.section}
+                                  </TableCell>
+                                </TableRow>
+                                {cat.rows.map((row, rowIdx) => (
+                                  <TableRow key={rowIdx} className="hover:bg-gray-50/20 border-b border-gray-100 last:border-0">
+                                    <TableCell className="py-3 px-6 text-xs font-bold text-gray-750 border-r border-gray-100">
+                                      {row.label}
+                                    </TableCell>
+                                    {comparedProposals.map((p) => {
+                                      const isHighlighted = 
+                                        (cat.section === t("Technical Evaluation") && p.comparison.bestInTech) ||
+                                        (cat.section === t("Commercial Evaluation") && p.comparison.bestInComm) ||
+                                        (cat.section === t("Timeline & Delivery") && p.comparison.bestInTimeline);
+                                      
+                                      const value = p.comparison[row.key as keyof typeof p.comparison];
+
+                                      return (
+                                        <TableCell 
+                                          key={p.id} 
+                                          className={cn(
+                                            "py-3 px-4 text-xs font-medium text-gray-800 border-r border-gray-100 last:border-0",
+                                            isHighlighted && "bg-purple-50/10 font-bold border-l-2 border-l-purple-500"
+                                          )}
+                                        >
+                                          <div className="flex flex-col gap-1">
+                                            {isHighlighted && row.key === 'techApproach' && (
+                                              <span className="text-[9px] text-purple-750 font-extrabold uppercase tracking-wide flex items-center gap-0.5 mb-1 select-none">
+                                                <Sparkles className="h-2.5 w-2.5 text-purple-600" /> {t('Best Tech')}
+                                              </span>
+                                            )}
+                                            {isHighlighted && row.key === 'amount' && (
+                                              <span className="text-[9px] text-emerald-700 font-extrabold uppercase tracking-wide flex items-center gap-0.5 mb-1 select-none">
+                                                <Sparkles className="h-2.5 w-2.5 text-emerald-600" /> {t('Lowest Price')}
+                                              </span>
+                                            )}
+                                            {isHighlighted && row.key === 'duration' && (
+                                              <span className="text-[9px] text-blue-750 font-extrabold uppercase tracking-wide flex items-center gap-0.5 mb-1 select-none">
+                                                <Sparkles className="h-2.5 w-2.5 text-blue-600" /> {t('Best Timeline')}
+                                              </span>
+                                            )}
+                                            {row.isBadge ? renderBadge(value as string) : value}
+                                          </div>
+                                        </TableCell>
+                                      );
+                                    })}
+                                  </TableRow>
+                                ))}
+                              </Fragment>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Section 2: AI Comparative Insights */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                      <Brain className="h-4.5 w-4.5 text-purple-600" />
+                      {t('Section 2: AI Comparative Insights')}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {aiInsights.map((insight, idx) => (
+                        <div 
+                          key={idx} 
+                          className="flex gap-4 p-4 rounded-xl border border-gray-150 bg-white shadow-2xs hover:shadow-xs transition-shadow"
+                        >
+                          <div className={cn("h-10 w-10 shrink-0 rounded-lg flex items-center justify-center", insight.bg)}>
+                            {insight.icon}
+                          </div>
+                          <div className="space-y-1">
+                            <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider text-purple-750">
+                              {insight.badge}
+                            </span>
+                            <p 
+                              className="text-xs font-semibold text-gray-750 leading-relaxed font-arabic-body"
+                              dangerouslySetInnerHTML={{ __html: insight.text }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Section 3: Proposal Strengths & Differentiators */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                      <TrendingDown className="h-4.5 w-4.5 text-teal-600" />
+                      {t('Section 3: Proposal Strengths & Differentiators')}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {comparedProposals.map((p, idx) => (
+                        <Card key={p.id} className="border border-gray-150 shadow-2xs bg-white rounded-xl overflow-hidden">
+                          <CardHeader className="bg-gray-50/50 py-3.5 px-4 border-b border-gray-150">
+                            <CardTitle className="text-xs font-black text-gray-900 flex items-center justify-between">
+                              <span className="truncate max-w-[170px]">{p.vendorName}</span>
+                              <span className="text-[10px] text-gray-400 tracking-wider shrink-0 font-extrabold">
+                                {t('Vendor')} {String.fromCharCode(65 + idx)}
+                              </span>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-4 space-y-4 text-start">
+                            {/* Strengths */}
+                            <div className="space-y-2">
+                              <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide flex items-center gap-1 font-sans">
+                                <Check className="h-3.5 w-3.5" /> {t('Key Strengths')}
+                              </span>
+                              <ul className="space-y-1.5">
+                                {p.comparison.strengths.map((str: string, i: number) => (
+                                  <li key={i} className="text-[11px] font-medium text-gray-700 flex items-start gap-1.5 leading-relaxed font-arabic-body">
+                                    <span className="text-emerald-500 font-bold">•</span>
+                                    <span>{str}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            
+                            {/* Considerations */}
+                            <div className="space-y-2 border-t border-gray-50 pt-3">
+                              <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1 font-sans">
+                                <AlertCircle className="h-3.5 w-3.5 text-amber-500" /> {t('Key Considerations')}
+                              </span>
+                              <ul className="space-y-1.5">
+                                {p.comparison.considerations.map((con: string, i: number) => (
+                                  <li key={i} className="text-[11px] font-medium text-gray-700 flex items-start gap-1.5 leading-relaxed font-arabic-body">
+                                    <span className="text-amber-500 font-bold">•</span>
+                                    <span>{con}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Section 4: AI Recommendation Summary */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                      <Trophy className="h-4.5 w-4.5 text-amber-500" />
+                      {t('Section 4: AI Recommendation Summary')}
+                    </h3>
+                    
+                    <div className="bg-gradient-to-r from-purple-50/50 to-indigo-50/30 border border-purple-100 rounded-2xl p-6 shadow-xs flex flex-col lg:flex-row items-center gap-8">
+                      {/* Score visualization circular progress bar */}
+                      <div className="shrink-0 flex flex-col items-center justify-center bg-white h-32 w-32 rounded-full border border-purple-100 shadow-sm relative">
+                        <div className="absolute inset-2 rounded-full border-4 border-dashed border-purple-100 animate-spin-slow"></div>
+                        <span className="text-3xl font-black text-purple-750">92</span>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-wider">{t('AI Score')}</span>
+                      </div>
+
+                      {/* Summary details */}
+                      <div className="flex-1 space-y-4 text-start">
+                        <div className="flex items-center gap-2.5">
+                          <span className="h-2 w-2 bg-purple-500 rounded-full animate-ping"></span>
+                          <span className="text-xs font-extrabold text-purple-750 uppercase tracking-wider flex items-center gap-1">
+                            <Sparkles className="h-4 w-4 text-purple-600" /> {t('Overall Proposal Suitability Recommendation')}
+                          </span>
+                        </div>
+                        
+                        <p className="text-sm font-bold text-gray-800 leading-relaxed font-arabic-body">
+                          {language === 'ar'
+                            ? `يُنصح بـ **المورد ب (${bestBalance.name})** لأنه يظهر التزاماً فنياً أقوى، وتخطيطاً شاملاً للمراحل الرئيسية للمشروع، مع سرعة فائقة في التسليم (4 أسابيع فقط)، مع الحفاظ على قيمة تجارية تنافسية تقع ضمن حدود الميزانية المخصصة للمناقصة.`
+                            : `**Vendor B (${bestBalance.name})** is recommended because it demonstrates stronger technical compliance, comprehensive milestone planning, and faster project delivery while maintaining competitive commercial value.`
+                          }
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-purple-100/50 text-xs font-bold font-sans">
+                          <div className="space-y-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wide block font-extrabold">{t('Recommended Vendor')}</span>
+                            <span className="text-gray-900 font-black flex items-center gap-1 text-xs sm:text-sm">
+                              <Trophy className="h-3.5 w-3.5 text-amber-500" /> Vendor B ({bestBalance.name})
+                            </span>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wide block font-extrabold">{t('Best Technical Proposal')}</span>
+                            <span className="text-gray-900 font-black flex items-center gap-1 text-xs sm:text-sm">
+                              <ShieldCheck className="h-3.5 w-3.5 text-purple-500" /> Vendor A ({techLead.name})
+                            </span>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-wide block font-extrabold">{t('Best Commercial Proposal')}</span>
+                            <span className="text-gray-900 font-black flex items-center gap-1 text-xs sm:text-sm">
+                              <DollarSign className="h-3.5 w-3.5 text-emerald-500" /> Vendor C ({cheapest.name})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              );
+            })()}
           </div>
-          <DialogFooter className="border-t pt-4 sm:justify-end">
-            <Button variant="outline" className="font-semibold" onClick={() => setShowAIComparisonDialog(false)}>
+          <DialogFooter className="border-t pt-4 sm:justify-end gap-2 mt-8">
+            <Button variant="outline" className="font-bold text-xs h-9" onClick={() => setShowAIComparisonDialog(false)}>
               {t('Close Comparison')}
             </Button>
           </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

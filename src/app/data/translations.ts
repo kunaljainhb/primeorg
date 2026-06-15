@@ -630,5 +630,13 @@ export const translations: Record<string, string> = {
   "Commercial Amount": "المبلغ التجاري",
   "Assign Technical Reviewer": "تعيين مقيم فني",
   "Assign Commercial Reviewer": "تعيين مقيم تجاري",
-  "AI Comparison": "مقارنة الذكاء الاصطناعي"
+  "AI Comparison": "مقارنة الذكاء الاصطناعي",
+  "Under Review Status": "حالة قيد المراجعة",
+  "The overall Under Review stage consists of two parts: Technical and Commercial evaluation": "تتكون مرحلة قيد المراجعة العامة من جزأين: التقييم الفني والتقييم التجاري",
+  "Updated Field": "حقل محدث",
+  "Original Submission": "التقديم الأصلي",
+  "Revision 1": "التعديل 1",
+  "Revision 2": "التعديل 2",
+  "Approach": "النهج"
 };
+

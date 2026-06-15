@@ -599,54 +599,64 @@ export function ProposalDetailView({
 
       {/* Technical and Commercial Review overview cards */}
       {(viewMode === 'all' || viewMode === 'status') && (
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          {/* Technical Review Card */}
-          {tender?.technicalProposalRequired !== 'no' && (
+        <div className="space-y-3">
+          <div className="border-l-4 border-[var(--fnrc-accent-gold)] pl-3">
+            <h2 className="text-lg font-bold text-gray-850">
+              {t('Under Review Status')}
+            </h2>
+            <p className="text-xs text-gray-400 font-semibold mt-0.5">
+              {t('The overall Under Review stage consists of two parts: Technical and Commercial evaluation')}
+            </p>
+          </div>
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            {/* Technical Review Card */}
+            {tender?.technicalProposalRequired !== 'no' && (
+              <Card className="gap-0 h-auto">
+                <CardContent className="p-5 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-full bg-green-50 text-green-600">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                      </div>
+                    </div>
+                    {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                  </div>
+                  {proposalState.technicalRemark && (
+                    <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                      <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                      <p className="italic font-normal">"{proposalState.technicalRemark}"</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Commercial Review Card */}
             <Card className="gap-0 h-auto">
               <CardContent className="p-5 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-full bg-green-50 text-green-600">
-                      <FileText className="h-5 w-5" />
+                    <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
+                      <DollarSign className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                      <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
                     </div>
                   </div>
-                  {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                  {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
                 </div>
-                {proposalState.technicalRemark && (
+                {proposalState.commercialRemark && (
                   <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
                     <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                    <p className="italic font-normal">"{proposalState.technicalRemark}"</p>
+                    <p className="italic font-normal">"{proposalState.commercialRemark}"</p>
                   </div>
                 )}
               </CardContent>
             </Card>
-          )}
-
-          {/* Commercial Review Card */}
-          <Card className="gap-0 h-auto">
-            <CardContent className="p-5 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
-                    <DollarSign className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
-                  </div>
-                </div>
-                {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
-              </div>
-              {proposalState.commercialRemark && (
-                <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
-                  <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                  <p className="italic font-normal">"{proposalState.commercialRemark}"</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          </div>
         </div>
       )}
 

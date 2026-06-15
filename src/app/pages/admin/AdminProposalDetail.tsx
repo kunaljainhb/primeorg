@@ -38,10 +38,86 @@ const formatStatus = (statusStr?: string) => {
     .join(' ');
 };
 
+const getProposalRevisions = (proposal: any) => {
+  const baseAmount = proposal?.commercialAmount || 420000;
+  
+  const defaultRevisions = {
+    latest: {
+      label: 'Revision 2',
+      technicalProposal: proposal?.technicalProposal || "No technical proposal text.",
+      methodology: proposal?.methodology || "No methodology text.",
+      technicalDocs: [
+        'Technical Specification_Latest.pdf',
+        'Implementation Plan_Latest.docx',
+        'System Architecture_Latest.png'
+      ],
+      commercialAmount: baseAmount,
+      commercialBreakdown: [
+        { item: 'Hardware Components & Infrastructure upgrade', amount: Math.round(baseAmount * 0.6) },
+        { item: 'Software Licensing & Cloud setup fees', amount: Math.round(baseAmount * 0.25) },
+        { item: 'Integration, UAT support & handovers', amount: Math.round(baseAmount * 0.15) }
+      ],
+      paymentTerms: proposal?.paymentTerms || 'Milestone-based payments: 20% advance, 40% intermediate, and 40% upon final delivery sign-off.',
+      commercialDoc: 'Commercial Proposal_Latest.pdf',
+      supportingDocs: [
+        { id: 'doc1', name: 'Company Profile.pdf', category: 'Company Profile', date: '2026-05-01', status: 'approved' },
+        { id: 'doc2', name: 'Financial Statements.xlsx', category: 'Financial Statements', date: '2026-04-20', status: 'approved' },
+        { id: 'doc3', name: 'Compliance Certificate.pdf', category: 'Other', date: '2026-03-15', status: 'pending' }
+      ]
+    },
+    rev1: {
+      label: 'Revision 1',
+      technicalProposal: `[Revision 1 - Addressed Review Comments]\n\n` + 
+        (proposal?.id === 'PROP-102'
+          ? `1. Cloud Strategy Overview\nWe recommend a Hybrid Cloud architecture utilizing Microsoft Azure Stack Hub to ensure data sovereignty.\n\n2. Migration Methodology\n- Phase 1: Assessment and Discovery using Azure Migrate.\n- Phase 2: Foundation setup.\n\n3. Redundancy & Continuity\n- Active-Passive Disaster Recovery setup.`
+          : `1. Technical Proposal Overview\nUpdated proposal matching technical compliance guidelines. Focus on enterprise-grade hardware components.`),
+      methodology: "Phased project rollout: Kickoff -> Delivery -> Inspection -> Handover.",
+      technicalDocs: [
+        'Technical Specification_Rev1.pdf',
+        'Implementation Plan_Rev1.docx'
+      ],
+      commercialAmount: Math.round(baseAmount * 1.05),
+      commercialBreakdown: [
+        { item: 'Hardware Components', amount: Math.round(baseAmount * 1.05 * 0.7) },
+        { item: 'Integration & Setup Services', amount: Math.round(baseAmount * 1.05 * 0.3) }
+      ],
+      paymentTerms: 'Payment Terms: 30% advance, 70% upon successful delivery.',
+      commercialDoc: 'Commercial Proposal_Rev1.pdf',
+      supportingDocs: [
+        { id: 'doc1', name: 'Company Profile.pdf', category: 'Company Profile', date: '2026-05-01', status: 'approved' },
+        { id: 'doc2', name: 'Financial Statements.xlsx', category: 'Financial Statements', date: '2026-04-20', status: 'approved' }
+      ]
+    },
+    original: {
+      label: 'Original Submission',
+      technicalProposal: `[Original Submission - Pre-Correction]\n\n` + 
+        (proposal?.id === 'PROP-102'
+          ? `1. Cloud Strategy Overview\nWe propose general virtual server hosting on-premise or in public cloud.\n\n2. Migration Methodology\n- Manual database backup and restore.\n- Reinstallation of applications.\n\n3. Redundancy\n- Manual weekly snapshots.`
+          : `1. Technical Proposal Overview\nInitial concept proposal for the requested services and supply. Standard scope applies.`),
+      methodology: "Standard delivery lifecycle. No onsite support included.",
+      technicalDocs: [
+        'Technical Specification_Original.pdf'
+      ],
+      commercialAmount: Math.round(baseAmount * 1.15),
+      commercialBreakdown: [
+        { item: 'IT Hardware supply bundle', amount: Math.round(baseAmount * 1.15) }
+      ],
+      paymentTerms: 'Payment Terms: 100% advance payment prior to dispatch.',
+      commercialDoc: 'Commercial Proposal_Original.pdf',
+      supportingDocs: [
+        { id: 'doc1', name: 'Company Profile.pdf', category: 'Company Profile', date: '2026-05-01', status: 'approved' }
+      ]
+    }
+  };
+
+  return defaultRevisions;
+};
+
 export default function AdminProposalDetail() {
   const navigate = useNavigate();
   const { proposalId } = useParams();
   const { t, language } = useTranslation();
+  const [selectedRevision, setSelectedRevision] = useState<'latest' | 'rev1' | 'original'>('latest');
 
   const getMappedStatus = (status: string): 'submitted' | 'under_review_vendor' | 'approved' | 'rejected' => {
     const norm = (status || '').toLowerCase().trim();
@@ -78,6 +154,21 @@ export default function AdminProposalDetail() {
   const proposal = mockProposals.find(p => p.id === proposalId) || mockProposals[0];
   const tender = mockTenders.find(r => r.id === proposal.tenderId) || mockTenders[0];
   const reviewers = mockAdminUsers.filter(u => u.role === 'reviewer' || u.role === 'technical_department' || u.role === 'commercial_department');
+
+  const revisions = getProposalRevisions(proposal);
+  const currentRevisionData = revisions[selectedRevision];
+
+  const isFieldUpdated = (fieldName: string) => {
+    if (selectedRevision === 'original') return false;
+    const originalVal = revisions.original[fieldName];
+    const currentVal = currentRevisionData[fieldName];
+    if (typeof originalVal === 'object') {
+      return JSON.stringify(originalVal) !== JSON.stringify(currentVal);
+    }
+    return originalVal !== currentVal;
+  };
+
+
 
   const isInitiallyRejected = proposal.status === 'rejected';
   const isInitiallyApproved = proposal.status === 'approved';
@@ -476,21 +567,9 @@ export default function AdminProposalDetail() {
     saveProposalsToStorage(mockProposals);
     toast.warning('Correction Requested! Vendor has been notified to edit and resubmit.');
   };
-  const technicalDocs = [
-    'Technical Specification.pdf',
-    'Implementation Plan.docx',
-    'System Architecture.png'
-  ];
-  const commercialBreakdown = [
-    { item: 'Hardware', amount: 250000 },
-    { item: 'Software Licenses', amount: 100000 },
-    { item: 'Installation Services', amount: 70000 }
-  ];
-  const supportingDocs = [
-    { id: 'doc1', name: 'Company Profile.pdf', category: 'Company Profile', date: '2026-05-01', status: 'approved' },
-    { id: 'doc2', name: 'Financial Statements.xlsx', category: 'Financial Statements', date: '2026-04-20', status: 'approved' },
-    { id: 'doc3', name: 'Compliance Certificate.pdf', category: 'Other', date: '2026-03-15', status: 'pending' }
-  ];
+  const technicalDocs = currentRevisionData.technicalDocs;
+  const commercialBreakdown = currentRevisionData.commercialBreakdown;
+  const supportingDocs = currentRevisionData.supportingDocs;
 
 
   const getStatusColor = (status: string) => {
@@ -862,54 +941,64 @@ export default function AdminProposalDetail() {
           </Card>
 
           {/* Technical and Commercial Review overview cards */}
-          <div className={cn("grid gap-6", tender?.technicalProposalRequired === 'no' ? "grid-cols-1" : "md:grid-cols-2")}>
-            {/* Technical Review Card */}
-            {tender?.technicalProposalRequired !== 'no' && (
+          <div className="space-y-3">
+            <div className="border-l-4 border-[var(--fnrc-accent-gold)] pl-3">
+              <h2 className="text-lg font-bold text-gray-850">
+                {t('Under Review Status')}
+              </h2>
+              <p className="text-xs text-gray-400 font-semibold mt-0.5">
+                {t('The overall Under Review stage consists of two parts: Technical and Commercial evaluation')}
+              </p>
+            </div>
+            <div className={cn("grid gap-6", tender?.technicalProposalRequired === 'no' ? "grid-cols-1" : "md:grid-cols-2")}>
+              {/* Technical Review Card */}
+              {tender?.technicalProposalRequired !== 'no' && (
+                <Card className="gap-0 h-auto">
+                  <CardContent className="p-5 flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-full bg-green-50 text-green-600">
+                          <FileText className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                        </div>
+                      </div>
+                      {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                    </div>
+                    {technicalRemark && (
+                      <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
+                        <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
+                        <p className="italic font-normal">"{technicalRemark}"</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Commercial Review Card */}
               <Card className="gap-0 h-auto">
                 <CardContent className="p-5 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-full bg-green-50 text-green-600">
-                        <FileText className="h-5 w-5" />
+                      <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
+                        <DollarSign className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 text-base">{t('Technical Status')}</h3>
+                        <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
                       </div>
                     </div>
-                    {getReviewStatusBadge(techCardStatus === 'approved' ? 'technical_approved' : techCardStatus)}
+                    {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
                   </div>
-                  {technicalRemark && (
+                  {commercialRemark && (
                     <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
                       <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                      <p className="italic font-normal">"{technicalRemark}"</p>
+                      <p className="italic font-normal">"{commercialRemark}"</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
-            )}
-
-            {/* Commercial Review Card */}
-            <Card className="gap-0 h-auto">
-              <CardContent className="p-5 flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-full bg-blue-50 text-blue-600">
-                      <DollarSign className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-base">{t('Commercial Status')}</h3>
-                    </div>
-                  </div>
-                  {getReviewStatusBadge(commCardStatus === 'approved' ? 'commercial_approved' : commCardStatus)}
-                </div>
-                {commercialRemark && (
-                  <div className="text-xs text-gray-600 bg-gray-50 p-2.5 rounded-md border border-gray-100 mt-1">
-                    <span className="font-semibold block text-gray-700 mb-0.5">{t('Remarks')}:</span>
-                    <p className="italic font-normal">"{commercialRemark}"</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            </div>
           </div>
 
           <Card className="gap-0 h-auto" style={{ borderColor: overallStatus === 'rejected' ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
@@ -1000,34 +1089,61 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Technical Approach")}
               </CardTitle>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-gray-500">{t("Revision History")}:</span>
+                <Select value={selectedRevision} onValueChange={(val: any) => setSelectedRevision(val)}>
+                  <SelectTrigger className="w-[200px] h-8 border-gray-200 text-xs font-semibold text-gray-750 bg-white rounded-md shadow-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="latest" className="font-semibold text-xs text-gray-700">{t(revisions.latest.label)}</SelectItem>
+                    <SelectItem value="rev1" className="font-semibold text-xs text-gray-700">{t(revisions.rev1.label)}</SelectItem>
+                    <SelectItem value="original" className="font-semibold text-xs text-gray-700">{t(revisions.original.label)}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
-              <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
+              <div className={cn(
+                "p-5 rounded-xl border space-y-4 transition-all duration-300",
+                isFieldUpdated('technicalProposal')
+                  ? "bg-emerald-50/10 border-emerald-200/80 shadow-sm"
+                  : "bg-gray-50/50 border-gray-100"
+              )}>
                 <div>
-                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Executive Summary & Proposal Statement")}</h4>
-                  <p className="text-sm font-normal text-gray-800 leading-relaxed">
-                    {proposal.technicalProposal}
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-sm font-bold text-black block">{t("Approach")}</h4>
+                    {isFieldUpdated('technicalProposal') && (
+                      <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-200 uppercase tracking-wide animate-pulse">
+                        {t("Updated Field")}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm font-normal text-gray-800 leading-relaxed whitespace-pre-line">
+                    {currentRevisionData.technicalProposal}
                   </p>
                 </div>
-                {proposal.methodology && (
-                  <div className="pt-4 border-t border-gray-200/60">
-                    <h4 className="text-sm font-bold text-black mb-1 block">{t("Proposed Methodology & Deployment Strategy")}</h4>
-                    <p className="text-sm font-normal text-gray-855 leading-relaxed">
-                      {proposal.methodology}
-                    </p>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Technical Documents */}
-          <Card>
-            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
+          <Card className={cn(
+            "transition-all duration-300",
+            isFieldUpdated('technicalDocs')
+              ? "bg-emerald-50/10 border-emerald-200/80 shadow-sm"
+              : ""
+          )}>
+            <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold text-black flex items-center gap-2">
                 <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Submitted Technical Documents")}
               </CardTitle>
+              {isFieldUpdated('technicalDocs') && (
+                <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-200 uppercase tracking-wide">
+                  {t("Updated Field")}
+                </span>
+              )}
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -1150,11 +1266,36 @@ export default function AdminProposalDetail() {
                 <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
                 {t("Commercial Proposal")}
               </CardTitle>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-gray-500">{t("Revision History")}:</span>
+                <Select value={selectedRevision} onValueChange={(val: any) => setSelectedRevision(val)}>
+                  <SelectTrigger className="w-[200px] h-8 border-gray-200 text-xs font-semibold text-gray-700 bg-white rounded-md shadow-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="latest" className="font-semibold text-xs text-gray-700">{t(revisions.latest.label)}</SelectItem>
+                    <SelectItem value="rev1" className="font-semibold text-xs text-gray-700">{t(revisions.rev1.label)}</SelectItem>
+                    <SelectItem value="original" className="font-semibold text-xs text-gray-700">{t(revisions.original.label)}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6 space-y-4">
-              <div className="bg-gray-50/50 p-5 rounded-xl border border-gray-100 space-y-4">
+              <div className={cn(
+                "p-5 rounded-xl border space-y-4 transition-all duration-300",
+                isFieldUpdated('commercialBreakdown') || isFieldUpdated('paymentTerms') || isFieldUpdated('commercialDoc')
+                  ? "bg-emerald-50/10 border-emerald-200/80 shadow-sm"
+                  : "bg-gray-50/50 border-gray-100"
+              )}>
                 <div>
-                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Cost Breakdown Details")}</h4>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-sm font-bold text-black block">{t("Cost Breakdown Details")}</h4>
+                    {isFieldUpdated('commercialBreakdown') && (
+                      <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-200 uppercase tracking-wide">
+                        {t("Updated Field")}
+                      </span>
+                    )}
+                  </div>
                   <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
                     <Table>
                       <TableHeader className="bg-gray-50/80">
@@ -1194,19 +1335,33 @@ export default function AdminProposalDetail() {
                 </div>
 
                 <div className="pt-4 border-t border-gray-200/60">
-                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Payment Milestones & Terms")}</h4>
-                  <p className="text-sm text-gray-850 font-normal leading-relaxed whitespace-pre-line bg-white p-4 border rounded-xl border-gray-150">
-                    {proposal.paymentTerms || 'Standard payment terms apply. Milestone-based payments of 20% advance, 40% intermediate, and 40% upon final delivery sign-off.'}
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-sm font-bold text-black block">{t("Payment Milestones & Terms")}</h4>
+                    {isFieldUpdated('paymentTerms') && (
+                      <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-200 uppercase tracking-wide">
+                        {t("Updated Field")}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-855 font-normal leading-relaxed whitespace-pre-line bg-white p-4 border rounded-xl border-gray-150">
+                    {currentRevisionData.paymentTerms}
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200/60">
-                  <h4 className="text-sm font-bold text-black mb-1 block">{t("Commercial Document")}</h4>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-sm font-bold text-black block">{t("Commercial Document")}</h4>
+                    {isFieldUpdated('commercialDoc') && (
+                      <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-200 uppercase tracking-wide">
+                        {t("Updated Field")}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-gray-155 shadow-sm">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-5 w-5 text-red-500" />
                       <div>
-                        <div className="text-xs font-normal text-gray-800">Commercial Proposal.pdf</div>
+                        <div className="text-xs font-normal text-gray-800">{currentRevisionData.commercialDoc}</div>
                         <div className="text-[10px] text-gray-400 font-bold">PDF • 3.1 MB</div>
                       </div>
                     </div>
@@ -1312,11 +1467,40 @@ export default function AdminProposalDetail() {
         </TabsContent>
 
         <TabsContent value="supporting" className="space-y-6">
-          <Card>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">{t("Supporting Documents")}</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-gray-600">{t("Select Revision")}:</span>
+              <Select value={selectedRevision} onValueChange={(val: any) => setSelectedRevision(val)}>
+                <SelectTrigger className="w-[200px] h-9 bg-white border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="latest">{t("Revision 2")}</SelectItem>
+                  <SelectItem value="rev1">{t("Revision 1")}</SelectItem>
+                  <SelectItem value="original">{t("Original Submission")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Card className={cn(
+            "transition-all duration-300",
+            isFieldUpdated('supportingDocs')
+              ? "bg-emerald-50/10 border-emerald-200/80 shadow-sm"
+              : ""
+          )}>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
-                {t("Supporting Documents")}
+              <CardTitle className="text-lg font-bold flex items-center justify-between text-black">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                  {t("Supporting Documents")}
+                </div>
+                {isFieldUpdated('supportingDocs') && (
+                  <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 uppercase tracking-wide text-[10px] font-bold">
+                    {t("Updated Field")}
+                  </Badge>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-1 px-6 pb-6">
