@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from '@/app/context/RouterContext';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
-import { Eye, ArrowUpDown, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, FolderOpen, DollarSign, Star, TrendingUp } from 'lucide-react';
-import { mockProposals, mockVendorReviews } from '@/app/data/mockData';
+import { Eye, ArrowUpDown, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { mockProposals } from '@/app/data/mockData';
 import { SearchFilterBar } from '@/app/components/ui/search-filter-bar';
 import { StatusBadge } from '@/app/components/ui/status-badge';
 import { EmptyState } from '@/app/components/ui/empty-state';
@@ -31,52 +31,25 @@ export default function VendorProjectList() {
   const navigate = useNavigate();
   const { t, language } = useTranslation();
   
-  // Filter for approved proposals belonging to VEN-001 (representing active Vendor)
-  const myProjects = mockProposals.filter(p => p.vendorId === 'VEN-001' && p.status === 'approved');
+  // Filter for proposals belonging to VEN-001 (representing active Vendor)
+  const myProjects = mockProposals.filter(p => p.vendorId === 'VEN-001');
 
-  const getProposalRating = (pId: string, tenderId: string) => {
-    // 1. Local storage rating check
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`external_rating_${pId}`);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed.overallRating === 'number') {
-            return parsed.overallRating;
-          }
-        } catch (e) {}
-      }
-    }
+  const [statusFilter, setStatusFilter] = useState('all');
 
-    // 2. Mock vendor reviews check
-    const reviews = mockVendorReviews.filter(r => r.tenderId === tenderId && r.vendorId === 'VEN-001');
-    if (reviews.length > 0) {
-      const sum = reviews.reduce((acc, curr) => acc + curr.overallRating, 0);
-      return sum / reviews.length;
-    }
-
-    // 3. Fallback rating
-    return 5;
-  };
-
-  // Stats calculations
-  const totalProjects = myProjects.length;
-  const totalApprovedBudget = myProjects.reduce((sum, p) => sum + p.commercialAmount, 0);
-  const averageRating = myProjects.length > 0 
-    ? myProjects.reduce((sum, p) => sum + getProposalRating(p.id, p.tenderId), 0) / myProjects.length
-    : 0;
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const clearFilters = () => {
     setSearchQuery('');
+    setStatusFilter('all');
   };
 
   // Search logic
   const filteredProjects = myProjects.filter(project => {
     const matchesSearch = project.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.tenderTitle.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+    return matchesSearch && matchesStatus;
   });
 
   // Sorting
@@ -136,63 +109,6 @@ export default function VendorProjectList() {
         </h1>
       </div>
 
-      {/* Stats Panel */}
-      <div className="grid gap-6 sm:grid-cols-3">
-        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card border-none shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  {t("Total Projects")}
-                </span>
-                <div className="text-3xl font-bold text-gray-800">
-                  {totalProjects}
-                </div>
-              </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-primary-green)]/15 to-[var(--fnrc-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
-                <FolderOpen className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card border-none shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  {t("Awarded Budget")}
-                </span>
-                <div className="text-3xl font-bold text-gray-800">
-                  {t("AED")} {totalApprovedBudget.toLocaleString()}
-                </div>
-              </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-royal-blue)]/15 to-[var(--fnrc-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
-                <DollarSign className="h-5 w-5 text-[var(--fnrc-royal-blue)]" strokeWidth={1.5} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover group rounded-card border-none shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  {t("Avg. Performance Rating")}
-                </span>
-                <div className="text-3xl font-bold text-gray-800 flex items-center gap-1.5">
-                  {averageRating.toFixed(1)}
-                  <span className="text-sm font-semibold text-gray-450">/ 5.0</span>
-                </div>
-              </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-accent-gold)]/15 to-[var(--fnrc-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
-                <Star className="h-5 w-5 text-[var(--fnrc-accent-gold)] fill-[var(--fnrc-accent-gold)]" strokeWidth={1.5} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Unified Search Bar */}
       <Card className="shadow-card border-none shadow-sm">
@@ -200,9 +116,32 @@ export default function VendorProjectList() {
           <SearchFilterBar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            placeholder={t('Search by Project ID or Tender title...')}
-            filters={[]}
-            activeChips={[]}
+            placeholder={t('Search by Proposal ID or Tender title...')}
+            filters={[
+              {
+                id: 'status',
+                label: t('Status'),
+                options: [
+                  { label: t('All'), value: 'all' },
+                  { label: t('Draft'), value: 'draft' },
+                  { label: t('Submitted'), value: 'submitted' },
+                  { label: t('Under Review'), value: 'under_review' },
+                  { label: t('Approved'), value: 'approved' },
+                  { label: t('Rejected'), value: 'rejected' }
+                ],
+                value: statusFilter,
+                onChange: setStatusFilter
+              }
+            ]}
+            activeChips={
+              statusFilter !== 'all'
+                ? [{
+                    id: 'status',
+                    label: `${t('Status')}: ${t(statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1).replace('_', ' '))}`,
+                    onRemove: () => setStatusFilter('all')
+                  }]
+                : []
+            }
             onClearAll={handleClearFilters}
           />
         </CardContent>
@@ -219,7 +158,7 @@ export default function VendorProjectList() {
                   onClick={() => handleSort('id')}
                 >
                   <div className="flex items-center gap-1.5">
-                    {t('Project ID')}
+                    {t('Proposal ID')}
                     {sortColumn === 'id' ? (sortDirection === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                   </div>
                 </TableHead>
@@ -282,7 +221,7 @@ export default function VendorProjectList() {
                     {t('AED')} {project.commercialAmount.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-start">
-                    <StatusBadge status="approved" />
+                    <StatusBadge status={project.status} />
                   </TableCell>
                   <TableCell className="text-end pe-6" onClick={(e) => e.stopPropagation()}>
                     <div className="flex justify-end">
