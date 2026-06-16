@@ -31,25 +31,21 @@ export default function VendorProjectList() {
   const navigate = useNavigate();
   const { t, language } = useTranslation();
   
-  // Filter for proposals belonging to VEN-001 (representing active Vendor)
-  const myProjects = mockProposals.filter(p => p.vendorId === 'VEN-001');
-
-  const [statusFilter, setStatusFilter] = useState('all');
+  // Filter for approved proposals belonging to VEN-001 (representing active Vendor)
+  const myProjects = mockProposals.filter(p => p.vendorId === 'VEN-001' && p.status === 'approved');
 
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const clearFilters = () => {
     setSearchQuery('');
-    setStatusFilter('all');
   };
 
   // Search logic
   const filteredProjects = myProjects.filter(project => {
     const matchesSearch = project.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           project.tenderTitle.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   // Sorting
@@ -75,9 +71,9 @@ export default function VendorProjectList() {
     if (sortColumn === 'tenderTitle') {
       aVal = `${a.tenderId} ${a.tenderTitle}`;
       bVal = `${b.tenderId} ${b.tenderTitle}`;
-    } else if (sortColumn === 'submissionDate') {
-      aVal = new Date(a.submissionDate || 0).getTime();
-      bVal = new Date(b.submissionDate || 0).getTime();
+    } else if (sortColumn === 'approvedDate') {
+      aVal = new Date(a.approvedDate || 0).getTime();
+      bVal = new Date(b.approvedDate || 0).getTime();
     }
 
     if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
@@ -117,31 +113,8 @@ export default function VendorProjectList() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             placeholder={t('Search by Proposal ID or Tender title...')}
-            filters={[
-              {
-                id: 'status',
-                label: t('Status'),
-                options: [
-                  { label: t('All'), value: 'all' },
-                  { label: t('Draft'), value: 'draft' },
-                  { label: t('Submitted'), value: 'submitted' },
-                  { label: t('Under Review'), value: 'under_review' },
-                  { label: t('Approved'), value: 'approved' },
-                  { label: t('Rejected'), value: 'rejected' }
-                ],
-                value: statusFilter,
-                onChange: setStatusFilter
-              }
-            ]}
-            activeChips={
-              statusFilter !== 'all'
-                ? [{
-                    id: 'status',
-                    label: `${t('Status')}: ${t(statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1).replace('_', ' '))}`,
-                    onRemove: () => setStatusFilter('all')
-                  }]
-                : []
-            }
+            filters={[]}
+            activeChips={[]}
             onClearAll={handleClearFilters}
           />
         </CardContent>
@@ -173,11 +146,11 @@ export default function VendorProjectList() {
                 </TableHead>
                 <TableHead 
                   className="font-bold text-[13px] text-gray-400 cursor-pointer hover:text-gray-700 transition-colors text-start"
-                  onClick={() => handleSort('submissionDate')}
+                  onClick={() => handleSort('approvedDate')}
                 >
                   <div className="flex items-center gap-1.5">
-                    {t('Submission Date')}
-                    {sortColumn === 'submissionDate' ? (sortDirection === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
+                    {t('Approved Date')}
+                    {sortColumn === 'approvedDate' ? (sortDirection === 'asc' ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />) : <ArrowUpDown className="h-3.5 w-3.5 opacity-50" />}
                   </div>
                 </TableHead>
                 <TableHead 
@@ -215,7 +188,7 @@ export default function VendorProjectList() {
                     {project.tenderId} - {project.tenderTitle}
                   </TableCell>
                   <TableCell className="text-[14px] text-gray-500 font-medium text-start">
-                    {formatDate(project.submissionDate, language)}
+                    {formatDate(project.approvedDate, language)}
                   </TableCell>
                   <TableCell className="font-bold text-[14px] text-gray-800 text-start">
                     {t('AED')} {project.commercialAmount.toLocaleString()}

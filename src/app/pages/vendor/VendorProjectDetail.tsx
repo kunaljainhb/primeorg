@@ -58,7 +58,7 @@ export default function VendorProjectDetail() {
 
   // States for Vendor Supporting Documents Upload
   const [docRemarks, setDocRemarks] = useState('');
-  const [selectedDocFile, setSelectedDocFile] = useState<File | null>(null);
+  const [selectedDocFiles, setSelectedDocFiles] = useState<File[]>([]);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,8 +85,8 @@ export default function VendorProjectDetail() {
   };
 
   const handleUploadSupportingDoc = () => {
-    if (!selectedDocFile) {
-      toast.error(t('Please select a document file to upload.'));
+    if (!selectedDocFiles || selectedDocFiles.length === 0) {
+      toast.error(t('Please select at least one document to upload.'));
       return;
     }
     
@@ -98,14 +98,14 @@ export default function VendorProjectDetail() {
       if (targetIdx !== -1) {
         const currentUploadedDocs = mockProposals[targetIdx].uploadedDocuments || [];
         
-        const newDoc = {
-          name: selectedDocFile.name,
+        const newDocs = selectedDocFiles.map(file => ({
+          name: file.name,
           url: '#',
           remarks: docRemarks.trim() || 'No remarks provided.',
           uploadedDate: new Date().toISOString().split('T')[0]
-        };
+        }));
         
-        const updatedDocs = [...currentUploadedDocs, newDoc];
+        const updatedDocs = [...currentUploadedDocs, ...newDocs];
         mockProposals[targetIdx].uploadedDocuments = updatedDocs;
         
         // Save back to localStorage
@@ -115,10 +115,10 @@ export default function VendorProjectDetail() {
         const updatedProposal = { ...mockProposals[targetIdx] };
         setProposal(updatedProposal);
         
-        toast.success(`${t('Supporting document')} "${selectedDocFile.name}" ${t('uploaded successfully!')}`);
+        toast.success(t('Supporting documents uploaded successfully!'));
         
         // Reset form
-        setSelectedDocFile(null);
+        setSelectedDocFiles([]);
         setDocRemarks('');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -381,26 +381,31 @@ export default function VendorProjectDetail() {
                 >
                   <input 
                     type="file" 
+                    multiple
                     ref={fileInputRef} 
                     className="hidden" 
                     onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setSelectedDocFile(e.target.files[0]);
+                      if (e.target.files && e.target.files.length > 0) {
+                        setSelectedDocFiles(Array.from(e.target.files));
                       }
                     }}
                   />
                   <UploadCloud className="h-10 w-10 text-muted-foreground group-hover:scale-110 transition-transform" style={{ color: 'var(--fnrc-primary-green)' }} />
-                  {selectedDocFile ? (
+                  {selectedDocFiles.length > 0 ? (
                     <div className="space-y-1 text-center">
                       <p className="text-sm font-semibold text-gray-800 flex items-center justify-center gap-1">
-                        <Paperclip className="h-4 w-4 shrink-0" /> {selectedDocFile.name}
+                        <Paperclip className="h-4 w-4 shrink-0" /> {selectedDocFiles.length} {t('files selected')}
                       </p>
-                      <p className="text-xs text-muted-foreground">{(selectedDocFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                      <ul className="text-xs text-muted-foreground">
+                        {selectedDocFiles.map((file, i) => (
+                          <li key={i}>{file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</li>
+                        ))}
+                      </ul>
                     </div>
                   ) : (
                     <div className="space-y-1 text-center">
                       <p className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        {t('Click to choose a supporting document')}
+                        {t('Click to choose supporting documents')}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {t('PDF, DOCX, XLSX, JPG, or PNG up to 10MB')}
@@ -427,10 +432,10 @@ export default function VendorProjectDetail() {
                 <div className="flex justify-end">
                   <Button 
                     onClick={handleUploadSupportingDoc} 
-                    disabled={isUploadingDoc || !selectedDocFile}
+                    disabled={isUploadingDoc || selectedDocFiles.length === 0}
                     className="gap-2 font-bold text-white transition-all duration-300 cursor-pointer"
                     style={{ 
-                      backgroundColor: (isUploadingDoc || !selectedDocFile) ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)'
+                      backgroundColor: (isUploadingDoc || selectedDocFiles.length === 0) ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)'
                     }}
                   >
                     {isUploadingDoc ? (
