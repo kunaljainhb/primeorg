@@ -211,6 +211,12 @@ export default function AdminVendorDetail() {
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("Trade License Number")}</Label>
                 <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendor.tradeLicense}</div>
+                {vendor.status === 'pending' && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0"></span>
+                    <span className="text-[12px] text-amber-600 font-medium">{t("Changed from :")} TL-882299</span>
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("License Expiry Date")}</Label>
@@ -334,6 +340,12 @@ export default function AdminVendorDetail() {
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("Bank Name")}</Label>
                 <div className="font-normal text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 text-start">{vendorDetails.financialInfo.bankName}</div>
+                {vendor.status === 'pending' && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0"></span>
+                    <span className="text-[12px] text-amber-600 font-medium">{t("Changed from :")} First Abu Dhabi Bank</span>
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("Account Holder Name")}</Label>
@@ -342,6 +354,12 @@ export default function AdminVendorDetail() {
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("IBAN")}</Label>
                 <div className="font-mono text-[14px] text-gray-700 p-2.5 rounded-lg border border-gray-100/50 bg-gray-50/30 break-all text-start">{vendorDetails.financialInfo.bankAccountNumber}</div>
+                {vendor.status === 'pending' && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0"></span>
+                    <span className="text-[12px] text-amber-600 font-medium">{t("Changed from :")} AE12 0000 0000 0000 0000 000</span>
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label className="text-[14px] text-black font-bold">{t("Swift Code")}</Label>
@@ -616,17 +634,28 @@ export default function AdminVendorDetail() {
               </TableHeader>
               <TableBody>
                 {(() => {
-                  if (vendor.id === 'VEN-001') {
+                  const logs = [];
+                  if (vendor.status === 'pending') {
+                    logs.push({
+                      action: 'Vendor resubmitted again',
+                      performedBy: 'Vendor',
+                      dateTime: formatDate(vendor.registrationDate) + ' - 09:45 AM',
+                      remarks: 'Vendor resubmitted the application with updated Trade License and Bank details.'
+                    });
+                    logs.push({
+                      action: 'FNRC Procurement Admin request for correction',
+                      performedBy: 'FNRC Procurement Admin',
+                      dateTime: formatDate(vendor.registrationDate) + ' - 04:30 PM',
+                      remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.'
+                    });
+                  } else if (vendor.id === 'VEN-001') {
                     return [
                       { action: 'Profile Approved', performedBy: 'Super Admin', dateTime: '15/02/2026 - 11:20 AM', remarks: 'All document corrections are verified and compliant. Vendor profile fully approved.' },
                       { action: 'Resubmitted for Review', performedBy: 'Vendor', dateTime: '14/02/2026 - 09:45 AM', remarks: 'Uploaded readable Trade License copy and updated Swift Code.' },
                       { action: 'Correction Requested', performedBy: 'Super Admin', dateTime: '12/02/2026 - 04:30 PM', remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.' },
-                      { action: 'Onboarding Submitted', performedBy: 'Vendor', dateTime: '10/02/2026 - 02:15 PM', remarks: 'Registration form submitted with basic company profiles and compliance documents.' }
+                      { action: 'First submitted', performedBy: 'Vendor', dateTime: '10/02/2026 - 02:15 PM', remarks: 'Registration form submitted with basic company profiles and compliance documents.' }
                     ];
-                  }
-                  
-                  const logs = [];
-                  if (vendor.status === 'correction_requested' || vendor.status === 'correction') {
+                  } else if (vendor.status === 'correction_requested' || vendor.status === 'correction') {
                     logs.push({
                       action: 'Correction Required',
                       performedBy: 'Super Admin',
@@ -650,7 +679,7 @@ export default function AdminVendorDetail() {
                   }
                   
                   logs.push({
-                    action: 'Onboarding Submitted',
+                    action: 'First submitted',
                     performedBy: 'Vendor',
                     dateTime: formatDate(vendor.registrationDate) + ' - 10:00 AM',
                     remarks: 'Initial vendor registration onboarding submitted.'
