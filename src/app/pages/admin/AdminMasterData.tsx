@@ -77,7 +77,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
       type: 'Compliance',
       lastUpdated: '15/01/2026',
       status: 'Active',
-      content: 'The vendor confirms compliance with all anti-bribery and corruption laws applicable in the UAE and the internal policies of FNRC.'
+      content: 'The vendor confirms compliance with all anti-bribery and corruption laws applicable in the UAE and the internal policies of Prime Organization.'
     }
   ];
 

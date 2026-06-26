@@ -1,11 +1,11 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* FNRC Government Portal Colors */
-  --fnrc-primary-green: #7C9440; /* Primary Olive Green */
-  --fnrc-secondary-dark-green: #5A2F2F; /* Deep Brown / Maroon */
-  --fnrc-accent-gold: #F28C28; /* Mountain Orange */
-  --fnrc-royal-blue: #3D57A6; /* Royal Blue */
+  /* Prime Organization Portal Colors */
+  --fnrc-primary-green: #0A3D91; /* Primary Royal Blue */
+  --fnrc-secondary-dark-green: #05204F; /* Deep Navy Blue */
+  --fnrc-accent-gold: #D4AF37; /* Premium Gold */
+  --fnrc-royal-blue: #FFFFFF; /* Pure White */
   
   --fnrc-text-dark: #2B2B2B;
   --fnrc-text-muted: #6E6E6E;

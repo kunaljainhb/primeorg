@@ -100,14 +100,14 @@ export default function VendorRegister() {
           <CardHeader className="space-y-2 pb-6 border-b border-border">
             <div className="flex justify-center mb-4">
               <div className="flex h-24 w-24 items-center justify-center">
-                <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
+                <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
               </div>
             </div>
             <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
-              {t("FNRC Vendor Registration")}
+              {t("Prime Organization Vendor Registration")}
             </CardTitle>
             <CardDescription className="text-center text-sm font-semibold text-muted-foreground min-h-[40px] px-4">
-              {t("Create your account to access FNRC vendor portal")}
+              {t("Create your account to access Prime Organization vendor portal")}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8">
@@ -423,7 +423,7 @@ function AuthFooter({ language, setLanguage, t }: AuthFooterProps) {
 
       {/* Right side: Copyright */}
       <p className="text-xs uppercase tracking-widest font-bold text-gray-350 mb-0">
-        © {new Date().getFullYear()} {t('FNRC Procurement Portal')}
+        © {new Date().getFullYear()} {t('Prime Organization Procurement Portal')}
       </p>
     </footer>
   );

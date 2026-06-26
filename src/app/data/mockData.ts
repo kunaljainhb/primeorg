@@ -1,4 +1,4 @@
-// Mock data for FNRC Vendor Portal
+// Mock data for Prime Organization Vendor Portal
 
 export interface Tender {
   id: string;
@@ -123,8 +123,8 @@ export const mockTenders: Tender[] = [
     id: 'TEND-001',
     title: 'Supply of IT Hardware for HQ',
     category: ['IT Hardware & Software', 'Equipment & Machinery'],
-    description: 'The Federal National Resource Council (FNRC) is initiating a comprehensive procurement campaign to upgrade the IT infrastructure at our newly constructed headquarters. This Tender covers the supply, installation, and commissioning of high-performance laptops and desktop workstations tailored for demanding administrative and analytical workloads.',
-    scopeOfWork: '1. Supply of 50 enterprise-grade laptops and 20 advanced desktop units.\n2. Full deployment, imaging, and configuration on-site.\n3. Asset tagging and integration with the central FNRC inventory system.\n4. Secure disposal and data wiping of legacy hardware.\n5. Three-year comprehensive on-site warranty and dedicated support SLAs.',
+    description: 'The Federal National Resource Council (Prime Organization) is initiating a comprehensive procurement campaign to upgrade the IT infrastructure at our newly constructed headquarters. This Tender covers the supply, installation, and commissioning of high-performance laptops and desktop workstations tailored for demanding administrative and analytical workloads.',
+    scopeOfWork: '1. Supply of 50 enterprise-grade laptops and 20 advanced desktop units.\n2. Full deployment, imaging, and configuration on-site.\n3. Asset tagging and integration with the central Prime Organization inventory system.\n4. Secure disposal and data wiping of legacy hardware.\n5. Three-year comprehensive on-site warranty and dedicated support SLAs.',
     timeline: '2 months',
     submissionDeadline: '2026-06-15',
     createdAt: '2026-05-01',
@@ -138,7 +138,7 @@ export const mockTenders: Tender[] = [
     ],
     attachments: [
       { name: 'Hardware_Specifications_Annex_A.pdf', url: '#' },
-      { name: 'FNRC_IT_Compliance_Guidelines.pdf', url: '#' },
+      { name: 'Prime Organization_IT_Compliance_Guidelines.pdf', url: '#' },
       { name: 'Pricing_Matrix_Template.xlsx', url: '#' },
       { name: 'Standard_Terms_and_Conditions.pdf', url: '#' }
     ],
@@ -337,13 +337,13 @@ const initialProposals: Proposal[] = [
     vendorName: 'TechSolutions LLC',
     status: 'commercial_review_started',
     submissionDate: '2026-06-01',
-    technicalProposal: `1. Executive Summary\nWe propose a comprehensive IT hardware refresh utilizing enterprise-grade Dell Latitude series laptops and Precision workstations.\n\n2. Architecture & Deployment Strategy\n- Staged rollout over 4 weeks to minimize operational disruption.\n- Pre-imaging of all machines with FNRC's custom corporate image (Windows 11 Enterprise + Security Stack).\n- Asset tagging and integration into existing ServiceNow CMDB prior to delivery.\n\n3. Value Addition\nIncluded 3-year ProSupport Plus with Next Business Day onsite service and Accidental Damage Protection.`,
+    technicalProposal: `1. Executive Summary\nWe propose a comprehensive IT hardware refresh utilizing enterprise-grade Dell Latitude series laptops and Precision workstations.\n\n2. Architecture & Deployment Strategy\n- Staged rollout over 4 weeks to minimize operational disruption.\n- Pre-imaging of all machines with Prime Organization's custom corporate image (Windows 11 Enterprise + Security Stack).\n- Asset tagging and integration into existing ServiceNow CMDB prior to delivery.\n\n3. Value Addition\nIncluded 3-year ProSupport Plus with Next Business Day onsite service and Accidental Damage Protection.`,
     commercialAmount: 420000,
     technicalStatus: 'technical_review_started',
     commercialStatus: 'commercial_review_started',
     technicalReviewer: 'Mohammed Al Zaabi',
     commercialReviewer: 'Sarah Al Hosani',
-    paymentTerms: `- 30% Advance Payment upon LPO issuance and contract signing.\n- 50% Milestone Payment upon successful delivery and physical verification of all hardware at FNRC HQ.\n- 20% Final Payment upon completion of user migration, old asset retrieval, and final project sign-off.`
+    paymentTerms: `- 30% Advance Payment upon LPO issuance and contract signing.\n- 50% Milestone Payment upon successful delivery and physical verification of all hardware at Prime Organization HQ.\n- 20% Final Payment upon completion of user migration, old asset retrieval, and final project sign-off.`
   },
   {
     id: 'PROP-101',
@@ -469,7 +469,7 @@ const initialProposals: Proposal[] = [
     commercialStatus: 'approved',
     deliveryTimeline: '3 months',
     technicalScore: 92,
-    compliance: 'Fully compliant with FNRC building standards',
+    compliance: 'Fully compliant with Prime Organization building standards',
     experience: 'Numerous fit-out projects completed in the region',
     methodology: 'Design-build approach with LEED certification',
     resources: 'Civil, Electrical, and MEP teams',

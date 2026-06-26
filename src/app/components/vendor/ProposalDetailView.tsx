@@ -94,7 +94,7 @@ export function ProposalDetailView({
   const tender = mockTenders.find(t => t.id === proposalState.tenderId);
   const [editedTechnical, setEditedTechnical] = useState(proposal.technicalProposal);
   const [editedAmount, setEditedAmount] = useState(proposal.commercialAmount);
-  const [editedPaymentTerms, setEditedPaymentTerms] = useState(proposal.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)');
+  const [editedPaymentTerms, setEditedPaymentTerms] = useState(proposal.paymentTerms || 'Standard Prime Organization payment terms (30 days upon invoice approval)');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState('Technical_Proposal_v1.pdf');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +104,7 @@ export function ProposalDetailView({
     setProposalState(proposal);
     setEditedTechnical(proposal.technicalProposal);
     setEditedAmount(proposal.commercialAmount);
-    setEditedPaymentTerms(proposal.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)');
+    setEditedPaymentTerms(proposal.paymentTerms || 'Standard Prime Organization payment terms (30 days upon invoice approval)');
     setSelectedFile(null);
     if (proposal.id === 'PROP-102' && proposal.status === 'technical_review') {
       setUploadedFileName('Technical_Proposal_v2.pdf');
@@ -963,7 +963,7 @@ export function ProposalDetailView({
                       variant="outline"
                       onClick={() => {
                         setEditedAmount(proposalState.commercialAmount);
-                        setEditedPaymentTerms(proposalState.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)');
+                        setEditedPaymentTerms(proposalState.paymentTerms || 'Standard Prime Organization payment terms (30 days upon invoice approval)');
                       }}
                       disabled={isSubmitting}
                     >
@@ -1001,7 +1001,7 @@ export function ProposalDetailView({
                     <div>
                       <span className="text-sm font-bold text-black block">Payment Terms</span>
                       <span className="text-base font-normal text-gray-800 mt-1 block">
-                        {proposalState.paymentTerms || 'Standard FNRC payment terms (30 days upon invoice approval)'}
+                        {proposalState.paymentTerms || 'Standard Prime Organization payment terms (30 days upon invoice approval)'}
                       </span>
                     </div>
                   </div>

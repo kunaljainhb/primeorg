@@ -13,7 +13,7 @@ export default function VendorMessages() {
   const [threads, setThreads] = useState([
     {
       id: 1,
-      name: t('FNRC Procurement Board'),
+      name: t('Prime Organization Procurement Board'),
       subtitle: t('Tender: Supply of IT Hardware for HQ'),
       unread: 0,
       time: '10:30 AM',
@@ -92,7 +92,7 @@ export default function VendorMessages() {
           return thread;
         })
       );
-      toast.info('New message received from FNRC');
+      toast.info('New message received from Prime Organization');
     }, 2000);
   };
 
@@ -103,7 +103,7 @@ export default function VendorMessages() {
           <MessageSquare className="h-7 w-7 text-[var(--fnrc-primary-green)]" />
           {t('Messages')}
         </h1>
-        <p className="text-sm text-gray-500 mt-1">{t('Communicate with FNRC procurement and evaluation officers')}</p>
+        <p className="text-sm text-gray-500 mt-1">{t('Communicate with Prime Organization procurement and evaluation officers')}</p>
       </div>
 
       <div className="flex-1 flex border border-gray-200/80 rounded-2xl overflow-hidden bg-white shadow-xs">

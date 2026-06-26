@@ -112,7 +112,7 @@ export default function VendorRegistrationStatus() {
                 {t("Vendor Registration Approved")}
               </AlertTitle>
               <AlertDescription className="text-sm text-emerald-800 leading-relaxed">
-                {t("Congratulations! Your vendor profile has been fully validated and approved by the Federal National Regulatory Commission. Your active vendor number is")} <strong className="font-mono font-bold">VEN-001</strong>. {t("You can now access and participate in open Tenders.")}
+                {t("Congratulations! Your vendor profile has been fully validated and approved by the Prime Organization. Your active vendor number is")} <strong className="font-mono font-bold">VEN-001</strong>. {t("You can now access and participate in open Tenders.")}
               </AlertDescription>
             </div>
           </Alert>

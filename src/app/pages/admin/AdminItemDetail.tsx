@@ -94,7 +94,7 @@ export default function AdminItemDetail() {
       id: Date.now(),
       date: new Date().toLocaleString(language === 'ar' ? 'ar-AE' : 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       receivedQty: items.reduce((sum, item) => sum + item.receivedQty, 0),
-      manager: simulatorRole === 'admin' ? t('FNRC Admin (Simulator)') : t('Item Manager (Simulator)'),
+      manager: simulatorRole === 'admin' ? t('Prime Organization Admin (Simulator)') : t('Item Manager (Simulator)'),
       role: simulatorRole === 'admin' ? t('System Administrator') : t('Inventory Manager'),
       remarks: `[${t(actionType)}] ${simulatorRemark}`
     };
@@ -123,7 +123,7 @@ export default function AdminItemDetail() {
       id: Date.now(),
       date: new Date().toLocaleString(language === 'ar' ? 'ar-AE' : 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       receivedQty: items.reduce((sum, item) => sum + item.receivedQty, 0),
-      manager: simulatorRole === 'admin' ? t('FNRC Admin (Simulator)') : t('Item Manager (Simulator)'),
+      manager: simulatorRole === 'admin' ? t('Prime Organization Admin (Simulator)') : t('Item Manager (Simulator)'),
       role: simulatorRole === 'admin' ? t('System Administrator') : t('Inventory Manager'),
       remarks: `[${t('Standard Update')}] ${remark}`
     };

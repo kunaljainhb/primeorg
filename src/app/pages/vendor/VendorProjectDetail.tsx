@@ -155,7 +155,7 @@ export default function VendorProjectDetail() {
     
     // Fallback mockup rating values for approved projects
     return {
-      q1Remark: 'Excellent work layout matching FNRC green space standards.',
+      q1Remark: 'Excellent work layout matching Prime Organization green space standards.',
       q1Rating: 5,
       q2Remark: 'Vendor has relevant fit-out experience at public offices.',
       q2Rating: 4,
@@ -591,7 +591,7 @@ export default function VendorProjectDetail() {
                     {t('No reviews yet')}
                   </p>
                   <p className="text-sm text-center">
-                    {t('Reviews from FNRC will appear here once your performance is evaluated')}
+                    {t('Reviews from Prime Organization will appear here once your performance is evaluated')}
                   </p>
                 </div>
               )}

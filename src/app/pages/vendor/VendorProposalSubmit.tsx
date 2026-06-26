@@ -106,7 +106,7 @@ export default function VendorProposalSubmit() {
               <RichTextEditor
                 id="technicalDescription"
                 rows={8}
-                placeholder={t("Describe your step-by-step methodology, project milestones, quality assurance practices, and how your team aligns with FNRC expectations...")}
+                placeholder={t("Describe your step-by-step methodology, project milestones, quality assurance practices, and how your team aligns with Prime Organization expectations...")}
                 required
               />
             </div>
@@ -344,7 +344,7 @@ export default function VendorProposalSubmit() {
                 <CheckCircle2 className="h-10 w-10" />
               </div>
               <p className="text-sm text-gray-500 leading-relaxed max-w-xs text-center">
-                {t('Your proposal has been officially registered in the FNRC system. The procurement panel will begin technical evaluation reviews.')}
+                {t('Your proposal has been officially registered in the Prime Organization system. The procurement panel will begin technical evaluation reviews.')}
               </p>
             </div>
           </div>

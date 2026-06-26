@@ -36,12 +36,12 @@ export default function VendorTenderDetail() {
   const [chatMessages, setChatMessages] = useState<any[]>(
     tenderId === 'TEND-001' 
       ? [
-          { sender: 'FNRC Contact', text: 'Hello! I noticed you are viewing the Solar Energy Tender. Do you have any questions regarding the technical specifications?', time: '09:15 AM', isVendor: false },
+          { sender: 'Prime Organization Contact', text: 'Hello! I noticed you are viewing the Solar Energy Tender. Do you have any questions regarding the technical specifications?', time: '09:15 AM', isVendor: false },
           { sender: 'You', text: 'Yes, I was wondering about the site visit schedule mentioned in Section 4.', time: '10:05 AM', isVendor: true },
-          { sender: 'FNRC Contact', text: 'The site visits are scheduled for next Tuesday at 10:00 AM. We will send a formal invite to all interested vendors.', time: '10:30 AM', isVendor: false },
+          { sender: 'Prime Organization Contact', text: 'The site visits are scheduled for next Tuesday at 10:00 AM. We will send a formal invite to all interested vendors.', time: '10:30 AM', isVendor: false },
         ]
       : [
-          { sender: 'FNRC Contact', text: 'Hello! How can I help you with this Tender?', time: '10:30 AM', isVendor: false },
+          { sender: 'Prime Organization Contact', text: 'Hello! How can I help you with this Tender?', time: '10:30 AM', isVendor: false },
         ]
   );
 
@@ -72,7 +72,7 @@ export default function VendorTenderDetail() {
       // Simulate response after 1 second
       setTimeout(() => {
         const response = {
-          sender: 'FNRC Contact',
+          sender: 'Prime Organization Contact',
           text: 'Thank you for your message. We will review and respond shortly.',
           time: new Date().toLocaleTimeString(language === 'ar' ? 'ar-AE' : 'en-US', { hour: '2-digit', minute: '2-digit' }),
           isVendor: false

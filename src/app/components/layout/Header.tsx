@@ -30,7 +30,7 @@ export function Header({ role, userName }: HeaderProps) {
   const { toggle } = useSidebar();
   return (
     <header className="sticky top-0 z-50 w-full border-b shadow-sm relative bg-[#F7F9FC]" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-      {/* FNRC Pattern Strip at the top */}
+      {/* Prime Organization Pattern Strip at the top */}
       <div className="absolute top-0 w-full h-1" style={{ backgroundImage: 'linear-gradient(to right, var(--fnrc-primary-green), var(--fnrc-accent-gold), var(--fnrc-royal-blue))' }} />
 
       <div className="flex h-14 items-center justify-between px-6 pt-1">
@@ -49,11 +49,11 @@ export function Header({ role, userName }: HeaderProps) {
           
           <Link to="/" className="flex items-center gap-3 group">
             <div className="flex h-10 w-10 items-center justify-center transition-transform group-hover:scale-105">
-              <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
+              <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
             </div>
             <div>
               <div className="text-[16px] font-bold tracking-wide leading-none" style={{ color: 'var(--fnrc-secondary-dark-green)' }}>
-                {t('FNRC')}
+                {t('Prime Organization')}
               </div>
               <div className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'var(--fnrc-primary-green)' }}>
                 {role === 'admin' ? t('Admin Portal') : role === 'vendor' ? t('Vendor Portal') : ''}
@@ -131,7 +131,7 @@ export function Header({ role, userName }: HeaderProps) {
                     <>
                       <DropdownMenuItem className="flex flex-col items-start gap-1 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer focus:bg-gray-50 text-start">
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-bold text-[13px] text-gray-900">{t("FNRC Procurement Board")}</span>
+                          <span className="font-bold text-[13px] text-gray-900">{t("Prime Organization Procurement Board")}</span>
                           <span className="text-[10px] text-gray-400 font-semibold">15m ago</span>
                         </div>
                         <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">

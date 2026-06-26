@@ -31,11 +31,11 @@ export default function RoleSelection() {
         <div className="mb-12 text-center">
           <div className="mb-4 flex justify-center">
             <div className="flex h-32 w-32 items-center justify-center">
-              <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
+              <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
             </div>
           </div>
           <h1 className="mb-3 text-3xl font-bold" style={{ color: 'var(--fnrc-primary-green)' }}>
-            {t("Welcome to FNRC Portal")}
+            {t("Welcome to Prime Organization Portal")}
           </h1>
           <p style={{ color: 'var(--fnrc-text-muted)' }} className="text-[15px] font-medium">
             {t("Select your role to continue")}
@@ -53,7 +53,7 @@ export default function RoleSelection() {
               </div>
               <CardTitle className="text-2xl font-bold">{t("Vendor Portal")}</CardTitle>
               <CardDescription className="text-sm font-medium text-gray-500 min-h-[40px]">
-                {t("For registered vendors to participate in FNRC Tenders and submit proposals")}
+                {t("For registered vendors to participate in Prime Organization Tenders and submit proposals")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -66,7 +66,7 @@ export default function RoleSelection() {
               <Button 
                 className="w-full text-white cursor-pointer"
                 style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
-                onClick={() => navigate('/vendor/landing')}
+                onClick={() => navigate('/vendor/login')}
               >
                 {t("Continue as Vendor")}
               </Button>
@@ -82,7 +82,7 @@ export default function RoleSelection() {
               </div>
               <CardTitle className="text-2xl font-bold">{t("Admin Portal")}</CardTitle>
               <CardDescription className="text-sm font-medium text-gray-500 min-h-[40px]">
-                {t("For FNRC internal procurement & administration")}
+                {t("For Prime Organization internal procurement & administration")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -105,7 +105,7 @@ export default function RoleSelection() {
 
         {/* Footer */}
         <div className="mt-12 text-center text-xs font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
-          <p>{t("© 2026 Fujairah Natural Resources Corporation. All rights reserved.")}</p>
+          <p>{t("© 2026 Prime Organization. All rights reserved.")}</p>
         </div>
       </div>
     </div>

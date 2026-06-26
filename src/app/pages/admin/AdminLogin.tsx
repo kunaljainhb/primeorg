@@ -62,7 +62,7 @@ export default function AdminLogin() {
         <CardHeader className="space-y-4 pb-6 border-b border-border">
           <div className="flex justify-center">
             <div className="flex h-20 w-20 items-center justify-center">
-              <img src="/fnrc-logo.png" alt="FNRC Logo" className="h-full w-full object-contain" />
+              <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
             </div>
           </div>
           <CardTitle className="text-center text-2xl font-bold tracking-tight text-foreground">
@@ -71,7 +71,7 @@ export default function AdminLogin() {
           <CardDescription className="text-center text-sm font-semibold min-h-[40px] px-4">
             {isForgotPassword 
               ? t('Enter your registered email address') 
-              : t('Secure access for FNRC procurement team')}
+              : t('Secure access for Prime Organization procurement team')}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-4">

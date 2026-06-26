@@ -7,7 +7,6 @@ import RoleSelection from '@/app/pages/RoleSelection';
 import { VendorLayout, AdminLayout } from '@/app/components/layout/Layouts';
 
 // Vendor Pages
-import VendorLanding from '@/app/pages/vendor/VendorLanding';
 import VendorLogin from '@/app/pages/vendor/VendorLogin';
 import VendorRegister from '@/app/pages/vendor/VendorRegister';
 import VendorProfileSetup from '@/app/pages/vendor/VendorProfileSetup';
@@ -58,7 +57,6 @@ function AppRoutes() {
   if (path.startsWith('/rating/external-review')) return <AdminExternalRating />;
 
   // Vendor routes without layout
-  if (path === '/vendor/landing') return <VendorLanding />;
   if (path === '/vendor/login') return <VendorLogin />;
   if (path === '/vendor/register') return <VendorRegister />;
   if (path === '/vendor/profile-setup') return <VendorProfileSetup />;

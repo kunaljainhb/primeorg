@@ -54,12 +54,12 @@ function LandingHeader() {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => navigate('/vendor/landing')}>
-            <img src="/fnrc-official-logo.png" alt="FNRC Logo" className="h-12 object-contain" />
+            <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-12 object-contain" />
           </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {['About FNRC', 'Vendor Journey', 'Contact Us'].map((item) => (
+            {['About Prime Organization', 'Vendor Journey', 'Contact Us'].map((item) => (
               <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} className="text-sm font-semibold text-[#3D3935] hover:text-[#B59969] transition-colors">
                 {t(item)}
               </a>
@@ -103,7 +103,7 @@ function LandingHeader() {
       {/* Mobile Nav */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-gray-100 px-6 py-4 space-y-4 shadow-xl text-start">
-          {['About FNRC', 'Vendor Journey', 'Contact Us'].map((item) => (
+          {['About Prime Organization', 'Vendor Journey', 'Contact Us'].map((item) => (
             <a key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} className="block text-base font-medium text-[#3D3935]">
               {t(item)}
             </a>
@@ -174,7 +174,7 @@ export default function VendorLanding() {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#E5E7EB] shadow-sm mb-8 text-start">
                 <ShieldCheck className="h-4 w-4 text-[#B59969]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-[#B59969]">{t('Official FNRC Procurement Platform')}</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#B59969]">{t('Official Prime Organization Procurement Platform')}</span>
               </div>
               <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-[#3D3935] leading-[1.1] mb-6 text-start">
                 {t('Supplier & Vendor')} <br/>
@@ -233,11 +233,11 @@ export default function VendorLanding() {
         </div>
       </section>
 
-      {/* Why Choose FNRC */}
+      {/* Why Choose Prime Organization */}
       <section className="py-24 bg-[#FAFAFA]">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-4">{t('Why Choose FNRC')}</h2>
+            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-4">{t('Why Choose Prime Organization')}</h2>
             <p className="text-lg text-gray-600">{t('Experience a world-class enterprise procurement process built on trust, efficiency, and sustainability.')}</p>
           </div>
           
@@ -255,28 +255,28 @@ export default function VendorLanding() {
         </div>
       </section>
 
-      {/* About FNRC Section */}
+      {/* About Prime Organization Section */}
       <section id="about-fnrc" className="py-24 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative rounded-[40px] overflow-hidden h-[500px] shadow-2xl">
               <img 
                 src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop" 
-                alt="FNRC Building" 
+                alt="Prime Organization Building" 
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
             
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B59969]/10 text-[#B59969] text-xs font-bold uppercase tracking-wider mb-6">
-                {t('About FNRC')}
+                {t('About Prime Organization')}
               </div>
               <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-4xl font-extrabold text-[#3D3935] mb-6 leading-tight text-start">
                 {t('Committed to Sustainable Resource Development')}
               </h2>
               <div className="space-y-4 text-lg text-gray-600 mb-8 leading-relaxed text-start">
                 <p>
-                  {t('Fujairah Natural Resources Corporation (FNRC) is an independent government entity established to oversee natural resource management, mineral regulation, and geological research.')}
+                  {t('Fujairah Natural Resources Corporation (Prime Organization) is an independent government entity established to oversee natural resource management, mineral regulation, and geological research.')}
                 </p>
                 <p>
                   {t('We are dedicated to driving sustainable development and economic growth within the Emirate through strategic investment support and strict environmental compliance.')}
@@ -338,11 +338,11 @@ export default function VendorLanding() {
         </div>
       </section>
 
-      {/* Why Partner With FNRC (Dark Premium Section) */}
+      {/* Why Partner With Prime Organization (Dark Premium Section) */}
       <section className="py-24 bg-[#F6EFE7] relative overflow-hidden border-y border-[#E5E7EB]">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-5xl font-extrabold text-[#3D3935] mb-6">{t('Why Partner With FNRC')}</h2>
+            <h2 className="inline-block border-b-2 border-[#B59969] pb-3 text-3xl md:text-5xl font-extrabold text-[#3D3935] mb-6">{t('Why Partner With Prime Organization')}</h2>
             <p className="text-lg text-gray-600">{t('Join a network of leading enterprises contributing to the sustainable development of Fujairah.')}</p>
           </div>
 

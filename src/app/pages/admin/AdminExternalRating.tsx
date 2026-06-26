@@ -36,7 +36,7 @@ export default function AdminExternalRating() {
           </CardHeader>
           <CardContent className="text-center pt-4">
             <p className="text-sm text-gray-605 leading-relaxed">
-              {t('Please contact the FNRC procurement department to receive a valid departmental rating generation link.')}
+              {t('Please contact the Prime Organization procurement department to receive a valid departmental rating generation link.')}
             </p>
           </CardContent>
         </Card>
@@ -60,7 +60,7 @@ export default function AdminExternalRating() {
       q2Remark,
       q3Remark,
       comments,
-      submittedBy: 'FNRC IT Department',
+      submittedBy: 'Prime Organization IT Department',
       submittedAt: new Date().toISOString()
     };
 
@@ -140,7 +140,7 @@ export default function AdminExternalRating() {
             </div>
             <div className="mt-2 sm:mt-0">
               <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">{t('Evaluated By')}</span>
-              <span className="text-xs font-semibold text-gray-600 block mt-0.5">{t('Other FNRC Department')}</span>
+              <span className="text-xs font-semibold text-gray-600 block mt-0.5">{t('Other Prime Organization Department')}</span>
             </div>
           </div>
 

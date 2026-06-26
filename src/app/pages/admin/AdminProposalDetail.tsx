@@ -1934,7 +1934,7 @@ export default function AdminProposalDetail() {
               {t("Generate Rating Link")}
             </DialogTitle>
             <DialogDescription className="text-xs text-gray-500">
-              {t("Generate a secure departmental evaluation link to share with other FNRC departments.")}
+              {t("Generate a secure departmental evaluation link to share with other Prime Organization departments.")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">

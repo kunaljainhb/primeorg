@@ -643,8 +643,8 @@ export default function AdminVendorDetail() {
                       remarks: 'Vendor resubmitted the application with updated Trade License and Bank details.'
                     });
                     logs.push({
-                      action: 'FNRC Procurement Admin request for correction',
-                      performedBy: 'FNRC Procurement Admin',
+                      action: 'Prime Organization Procurement Admin request for correction',
+                      performedBy: 'Prime Organization Procurement Admin',
                       dateTime: formatDate(vendor.registrationDate) + ' - 04:30 PM',
                       remarks: 'Trade license file is unreadable. Swift Code is missing in bank details. Please correct.'
                     });

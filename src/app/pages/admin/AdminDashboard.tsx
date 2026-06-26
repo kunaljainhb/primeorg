@@ -26,7 +26,7 @@ export default function AdminDashboard() {
             {t("Admin Portal")}
           </h1>
           <p className="text-sm font-medium text-gray-500">
-            {t("FNRC Procurement Management System")}
+            {t("Prime Organization Procurement Management System")}
           </p>
         </div>
       </div>
