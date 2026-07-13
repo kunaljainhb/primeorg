@@ -50,8 +50,8 @@ export default function VendorDashboard() {
                   {activeTenders.length}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-primary-green)]/15 to-[var(--fnrc-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
-                <MountainSnow className="h-6 w-6 text-[var(--fnrc-primary-green)] animate-pulse" strokeWidth={1.5} style={{ animationDuration: '3s' }} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-primary-green)]/15 to-[var(--prime-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
+                <MountainSnow className="h-6 w-6 text-[var(--prime-primary-green)] animate-pulse" strokeWidth={1.5} style={{ animationDuration: '3s' }} />
               </div>
             </div>
           </CardContent>
@@ -68,8 +68,8 @@ export default function VendorDashboard() {
                   {myProposals.length}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-accent-gold)]/15 to-[var(--fnrc-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
-                <Send className="h-5 w-5 text-[var(--fnrc-accent-gold)]" strokeWidth={1.5} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-accent-gold)]/15 to-[var(--prime-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Send className="h-5 w-5 text-[var(--prime-accent-gold)]" strokeWidth={1.5} />
               </div>
             </div>
           </CardContent>
@@ -86,8 +86,8 @@ export default function VendorDashboard() {
                   {underReviewCount}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-royal-blue)]/15 to-[var(--fnrc-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
-                <Clock className="h-5 w-5 text-[var(--fnrc-royal-blue)]" strokeWidth={1.5} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-royal-blue)]/15 to-[var(--prime-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Clock className="h-5 w-5 text-[var(--prime-royal-blue)]" strokeWidth={1.5} />
               </div>
             </div>
           </CardContent>
@@ -122,7 +122,7 @@ export default function VendorDashboard() {
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/vendor/tenders/${tender.id}`)}
-                      className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button"
+                      className="border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/10 text-xs rounded-button"
                     >
                       {t('View')}
                     </Button>
@@ -131,7 +131,7 @@ export default function VendorDashboard() {
               })}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
+                className="w-full text-[var(--prime-primary-green)] font-semibold hover:text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/5 text-sm"
                 onClick={() => navigate('/vendor/tenders')}
               >
                 {t('View All Tenders')} {language === 'ar' ? '←' : '→'}
@@ -173,7 +173,7 @@ export default function VendorDashboard() {
               })}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-semibold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm"
+                className="w-full text-[var(--prime-primary-green)] font-semibold hover:text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/5 text-sm"
                 onClick={() => navigate('/vendor/proposals')}
               >
                 {t('View All Proposals')} {language === 'ar' ? '←' : '→'}

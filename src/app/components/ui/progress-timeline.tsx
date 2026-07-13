@@ -38,7 +38,7 @@ export function ProgressTimeline({
           <div 
             className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-out"
             style={{ 
-              backgroundColor: 'var(--fnrc-primary-green)',
+              backgroundColor: 'var(--prime-primary-green)',
               width: `${currentStageIndex >= 0 ? (currentStageIndex / (stages.length - 1)) * 100 : 0}%`,
               boxShadow: '0 0 10px rgba(124, 148, 64, 0.4)'
             }}
@@ -64,14 +64,14 @@ export function ProgressTimeline({
               <div 
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-full border-2 bg-white transition-all duration-300 relative shadow-sm",
-                  isCompleted && "border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)] text-white shadow-md shadow-[var(--fnrc-primary-green)]/20",
-                  isActive && "border-[var(--fnrc-accent-gold)] ring-4 ring-[var(--fnrc-accent-gold)]/20 text-[var(--fnrc-accent-gold)] font-bold scale-110 shadow-md shadow-[var(--fnrc-accent-gold)]/15",
+                  isCompleted && "border-[var(--prime-primary-green)] bg-[var(--prime-primary-green)] text-white shadow-md shadow-[var(--prime-primary-green)]/20",
+                  isActive && "border-[var(--prime-accent-gold)] ring-4 ring-[var(--prime-accent-gold)]/20 text-[var(--prime-accent-gold)] font-bold scale-110 shadow-md shadow-[var(--prime-accent-gold)]/15",
                   !isCompleted && !isActive && "border-gray-200 text-gray-400 group-hover:border-gray-300"
                 )}
               >
                 {/* Active ripple glow animation */}
                 {isActive && (
-                  <div className="absolute inset-0 rounded-full bg-[var(--fnrc-accent-gold)]/10 animate-ping opacity-75 pointer-events-none" style={{ animationDuration: '2s' }} />
+                  <div className="absolute inset-0 rounded-full bg-[var(--prime-accent-gold)]/10 animate-ping opacity-75 pointer-events-none" style={{ animationDuration: '2s' }} />
                 )}
 
                 {/* Content: Check icon for complete, stage icon or step number otherwise */}
@@ -89,8 +89,8 @@ export function ProgressTimeline({
                 <p 
                   className={cn(
                     "text-[11px] sm:text-xs font-black uppercase tracking-wider transition-colors duration-200",
-                    isActive && "text-[var(--fnrc-accent-gold)]",
-                    isCompleted && "text-[var(--fnrc-primary-green)]",
+                    isActive && "text-[var(--prime-accent-gold)]",
+                    isCompleted && "text-[var(--prime-primary-green)]",
                     !isCompleted && !isActive && "text-gray-500 group-hover:text-gray-700"
                   )}
                 >

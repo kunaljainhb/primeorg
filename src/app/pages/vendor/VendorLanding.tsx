@@ -256,7 +256,7 @@ export default function VendorLanding() {
       </section>
 
       {/* About Prime Organization Section */}
-      <section id="about-fnrc" className="py-24 bg-white overflow-hidden">
+      <section id="about-prime" className="py-24 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative rounded-[40px] overflow-hidden h-[500px] shadow-2xl">
@@ -380,7 +380,7 @@ export default function VendorLanding() {
                   </div>
                   <div>
                     <div className="text-sm text-gray-500 font-medium">{t('Email Support')}</div>
-                    <div className="font-bold text-[#3D3935]">vendors@fnrc.gov.ae</div>
+                    <div className="font-bold text-[#3D3935]">vendors@prime.org</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

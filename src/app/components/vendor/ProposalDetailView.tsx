@@ -115,23 +115,23 @@ export function ProposalDetailView({
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      submitted: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
-      technical_review: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
-      technical_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      technical_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      technical_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      submitted: { bg: '#DBEAFE', text: 'var(--prime-info)' },
+      technical_review: { bg: '#DBEAFE', text: 'var(--prime-info)' },
+      technical_review_started: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      technical_review_completed: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      technical_review_approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      technical_review_rejected: { bg: '#FEE2E2', text: 'var(--prime-error)' },
       technical_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
-      under_review: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      commercial_review_approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      commercial_review_rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      under_review: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      commercial_review_started: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      commercial_review_approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      commercial_review_rejected: { bg: '#FEE2E2', text: 'var(--prime-error)' },
       commercial_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
       correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
-      selected: { bg: '#D1FAE5', text: 'var(--fnrc-success)' }
+      approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      rejected: { bg: '#FEE2E2', text: 'var(--prime-error)' },
+      selected: { bg: '#D1FAE5', text: 'var(--prime-success)' }
     };
     return colors[status] || colors.submitted;
   };
@@ -600,7 +600,7 @@ export function ProposalDetailView({
       {/* Technical and Commercial Review overview cards */}
       {(viewMode === 'all' || viewMode === 'status') && (
         <div className="space-y-3">
-          <div className="border-l-4 border-[var(--fnrc-accent-gold)] pl-3">
+          <div className="border-l-4 border-[var(--prime-accent-gold)] pl-3">
             <h2 className="text-lg font-bold text-gray-850">
               {t('Under Review Status')}
             </h2>
@@ -661,7 +661,7 @@ export function ProposalDetailView({
       )}
 
       {/* SECTION 1: PROPOSAL SUMMARY (Always show in both) */}
-      <Card className="gap-0 h-auto" style={{ borderColor: isRejected ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
+      <Card className="gap-0 h-auto" style={{ borderColor: isRejected ? 'var(--prime-border-gray)' : 'var(--prime-primary-green)', borderWidth: '2px' }}>
         <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
           <CardTitle className="text-lg font-bold text-gray-900">{t('Proposal Summary')}</CardTitle>
         </CardHeader>
@@ -670,7 +670,7 @@ export function ProposalDetailView({
             <div>
               <span className="text-sm font-bold text-black block">Proposal ID</span>
               <span 
-                className="text-base font-normal text-[var(--fnrc-primary-green)] mt-1 block cursor-pointer hover:underline" 
+                className="text-base font-normal text-[var(--prime-primary-green)] mt-1 block cursor-pointer hover:underline" 
                 onClick={() => navigate(`/vendor/proposals/${proposalState.id}`)}
               >
                 {proposalState.id}
@@ -720,7 +720,7 @@ export function ProposalDetailView({
                     style={{ 
                       backgroundColor: '#FEF3C7', 
                       borderColor: '#F59E0B', 
-                      color: 'var(--fnrc-text-dark)' 
+                      color: 'var(--prime-text-dark)' 
                     }}
                   >
                     <AlertTriangle className="h-5 w-5 shrink-0 animate-pulse" style={{ color: '#D97706' }} />
@@ -734,17 +734,17 @@ export function ProposalDetailView({
 
                   {/* Textarea for editing Technical Approach */}
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      Modify Technical Approach Statement <span className="text-[var(--fnrc-error)]">*</span>
+                    <label className="text-sm font-semibold block" style={{ color: 'var(--prime-text-dark)' }}>
+                      Modify Technical Approach Statement <span className="text-[var(--prime-error)]">*</span>
                     </label>
                     <textarea
                       value={editedTechnical}
                       onChange={(e) => setEditedTechnical(e.target.value)}
                       rows={8}
-                      className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--fnrc-primary-green)] transition-all bg-white"
+                      className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--prime-primary-green)] transition-all bg-white"
                       style={{ 
-                        borderColor: 'var(--fnrc-border-gray)',
-                        color: 'var(--fnrc-text-dark)',
+                        borderColor: 'var(--prime-border-gray)',
+                        color: 'var(--prime-text-dark)',
                         fontFamily: 'inherit'
                       }}
                       placeholder="Enter detailed technical architecture, multi-zone failover mechanisms, and system configurations here..."
@@ -753,13 +753,13 @@ export function ProposalDetailView({
 
                   {/* File Upload zone */}
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold block" style={{ color: 'var(--fnrc-text-dark)' }}>
-                      Replace Technical Proposal Document <span className="text-[var(--fnrc-text-muted)]">(PDF, Max 10MB)</span>
+                    <label className="text-sm font-semibold block" style={{ color: 'var(--prime-text-dark)' }}>
+                      Replace Technical Proposal Document <span className="text-[var(--prime-text-muted)]">(PDF, Max 10MB)</span>
                     </label>
                     <div 
                       className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-gray-50/50"
                       style={{ 
-                        borderColor: selectedFile ? 'var(--fnrc-primary-green)' : 'var(--fnrc-border-gray)',
+                        borderColor: selectedFile ? 'var(--prime-primary-green)' : 'var(--prime-border-gray)',
                         backgroundColor: '#F7F9FC'
                       }}
                       onClick={() => document.getElementById('technical-file-input')?.click()}
@@ -775,10 +775,10 @@ export function ProposalDetailView({
                           }
                         }}
                       />
-                      <UploadCloud className="h-10 w-10 mb-2" style={{ color: selectedFile ? 'var(--fnrc-primary-green)' : 'var(--fnrc-text-muted)' }} />
+                      <UploadCloud className="h-10 w-10 mb-2" style={{ color: selectedFile ? 'var(--prime-primary-green)' : 'var(--prime-text-muted)' }} />
                       {selectedFile ? (
                         <div className="text-center space-y-1">
-                          <span className="text-sm font-semibold text-[var(--fnrc-primary-green)] flex items-center justify-center gap-1">
+                          <span className="text-sm font-semibold text-[var(--prime-primary-green)] flex items-center justify-center gap-1">
                             <Paperclip className="h-4 w-4" /> {selectedFile.name}
                           </span>
                           <span className="text-xs text-muted-foreground block">
@@ -787,8 +787,8 @@ export function ProposalDetailView({
                         </div>
                       ) : (
                         <div className="text-center space-y-1">
-                          <span className="text-sm font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
-                            Drag and drop or <span className="text-[var(--fnrc-primary-green)] underline">browse</span> to upload file
+                          <span className="text-sm font-medium" style={{ color: 'var(--prime-text-dark)' }}>
+                            Drag and drop or <span className="text-[var(--prime-primary-green)] underline">browse</span> to upload file
                           </span>
                           <span className="text-xs text-muted-foreground block">
                             Recommend uploading: Technical_Proposal_v2.pdf
@@ -812,7 +812,7 @@ export function ProposalDetailView({
                       type="button"
                       className="transition-all active:scale-[0.98] font-semibold text-white shadow-md hover:opacity-95"
                       style={{ 
-                        backgroundColor: 'var(--fnrc-primary-green)',
+                        backgroundColor: 'var(--prime-primary-green)',
                       }}
                       onClick={handleResubmitProposal}
                       disabled={isSubmitting}
@@ -832,7 +832,7 @@ export function ProposalDetailView({
                 <div className="space-y-3">
                   <div>
                     <h4 className="text-sm font-bold text-black block mb-1">Approach</h4>
-                    <div className="rounded-lg border p-4 bg-gray-50" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                    <div className="rounded-lg border p-4 bg-gray-50" style={{ borderColor: 'var(--prime-border-gray)' }}>
                       <p className="text-base font-normal text-gray-800 leading-relaxed whitespace-pre-wrap">
                         {proposalState.technicalProposal}
                       </p>
@@ -860,7 +860,7 @@ export function ProposalDetailView({
                     style={{ 
                       backgroundColor: '#FEF3C7', 
                       borderColor: '#F59E0B', 
-                      color: 'var(--fnrc-text-dark)' 
+                      color: 'var(--prime-text-dark)' 
                     }}
                   >
                     <AlertTriangle className="h-5 w-5 shrink-0 animate-pulse" style={{ color: '#D97706' }} />
@@ -875,33 +875,33 @@ export function ProposalDetailView({
                   {/* Form fields */}
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold block" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Modify Commercial Bid Amount (AED) <span className="text-[var(--fnrc-error)]">*</span>
+                      <label className="text-sm font-semibold block" style={{ color: 'var(--prime-text-dark)' }}>
+                        Modify Commercial Bid Amount (AED) <span className="text-[var(--prime-error)]">*</span>
                       </label>
                       <input
                         type="number"
                         value={editedAmount}
                         onChange={(e) => setEditedAmount(Number(e.target.value))}
-                        className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--fnrc-primary-green)] transition-all bg-white"
+                        className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--prime-primary-green)] transition-all bg-white"
                         style={{ 
-                          borderColor: 'var(--fnrc-border-gray)',
-                          color: 'var(--fnrc-text-dark)'
+                          borderColor: 'var(--prime-border-gray)',
+                          color: 'var(--prime-text-dark)'
                         }}
                         placeholder="Enter modified amount in AED"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold block" style={{ color: 'var(--fnrc-text-dark)' }}>
-                        Modify Payment Terms <span className="text-[var(--fnrc-error)]">*</span>
+                      <label className="text-sm font-semibold block" style={{ color: 'var(--prime-text-dark)' }}>
+                        Modify Payment Terms <span className="text-[var(--prime-error)]">*</span>
                       </label>
                       <textarea
                         value={editedPaymentTerms}
                         onChange={(e) => setEditedPaymentTerms(e.target.value)}
                         rows={3}
-                        className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--fnrc-primary-green)] transition-all bg-white"
+                        className="w-full rounded-lg border p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--prime-primary-green)] transition-all bg-white"
                         style={{ 
-                          borderColor: 'var(--fnrc-border-gray)',
-                          color: 'var(--fnrc-text-dark)',
+                          borderColor: 'var(--prime-border-gray)',
+                          color: 'var(--prime-text-dark)',
                           fontFamily: 'inherit'
                         }}
                         placeholder="Enter payment terms detail..."
@@ -913,11 +913,11 @@ export function ProposalDetailView({
 
                   {/* Live Cost Breakdown Preview */}
                   <div>
-                    <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--fnrc-text-muted)' }}>Updated Cost Breakdown Preview</h4>
-                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                    <h4 className="text-sm font-semibold mb-3" style={{ color: 'var(--prime-text-muted)' }}>Updated Cost Breakdown Preview</h4>
+                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--prime-border-gray)' }}>
                       <Table>
                         <TableHeader className="bg-gray-50/60 backdrop-blur-xs">
-                          <TableRow className="border-b" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                          <TableRow className="border-b" style={{ borderColor: 'var(--prime-border-gray)' }}>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 pl-6 w-[40%]">Description</TableHead>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%]">Unit Price (AED)</TableHead>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-center w-[20%]">Quantity</TableHead>
@@ -947,9 +947,9 @@ export function ProposalDetailView({
                           ))}
                         </TableBody>
                       </Table>
-                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--prime-border-gray)' }}>
                         <span className="font-bold text-sm text-gray-600">Total Proposal Amount</span>
-                        <span className="font-extrabold text-xl text-[var(--fnrc-primary-green)] tracking-tight">
+                        <span className="font-extrabold text-xl text-[var(--prime-primary-green)] tracking-tight">
                           AED {editedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -973,7 +973,7 @@ export function ProposalDetailView({
                       type="button"
                       className="transition-all active:scale-[0.98] font-semibold text-white shadow-md hover:opacity-95"
                       style={{ 
-                        backgroundColor: 'var(--fnrc-primary-green)',
+                        backgroundColor: 'var(--prime-primary-green)',
                       }}
                       onClick={handleResubmitCommercial}
                       disabled={isSubmitting}
@@ -1008,10 +1008,10 @@ export function ProposalDetailView({
                   
                   <div className="mt-6">
                     <h4 className="text-sm font-bold text-black block mb-2">Cost Breakdown</h4>
-                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                    <div className="border rounded-xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md" style={{ borderColor: 'var(--prime-border-gray)' }}>
                       <Table>
                         <TableHeader className="bg-gray-50/60 backdrop-blur-xs">
-                          <TableRow className="border-b" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                          <TableRow className="border-b" style={{ borderColor: 'var(--prime-border-gray)' }}>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 pl-6 w-[40%]">Description</TableHead>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-right w-[20%]">Unit Price (AED)</TableHead>
                             <TableHead className="font-semibold text-xs text-gray-700 py-3.5 text-center w-[20%]">Quantity</TableHead>
@@ -1041,9 +1041,9 @@ export function ProposalDetailView({
                           ))}
                         </TableBody>
                       </Table>
-                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                      <div className="p-5 border-t bg-gray-50/50 flex justify-end items-center gap-6" style={{ borderColor: 'var(--prime-border-gray)' }}>
                         <span className="font-bold text-sm text-gray-600">Total Proposal Amount</span>
-                        <span className="font-extrabold text-xl text-[var(--fnrc-primary-green)] tracking-tight">
+                        <span className="font-extrabold text-xl text-[var(--prime-primary-green)] tracking-tight">
                           AED {proposalState.commercialAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -1063,7 +1063,7 @@ export function ProposalDetailView({
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Technical Document</div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium truncate pr-2">{uploadedFileName}</span>
@@ -1072,7 +1072,7 @@ export function ProposalDetailView({
                     </Button>
                   </div>
                 </div>
-                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Commercial Document</div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium truncate pr-2">Commercial_Proposal_v1.pdf</span>
@@ -1081,7 +1081,7 @@ export function ProposalDetailView({
                     </Button>
                   </div>
                 </div>
-                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="rounded-lg border p-4 flex flex-col gap-3" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Other Supporting Documents</div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium truncate pr-2">Company_Profile.pdf</span>

@@ -57,7 +57,7 @@ export function SearchFilterBar({
             placeholder={placeholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-white border border-gray-200 rounded-input text-[15px] font-normal transition-all duration-150 outline-none focus:border-[var(--fnrc-primary-green)] focus:ring-[3px] focus:ring-[var(--fnrc-primary-green)]/15 placeholder:text-gray-400"
+            className="w-full h-12 pl-12 pr-4 bg-white border border-gray-200 rounded-input text-[15px] font-normal transition-all duration-150 outline-none focus:border-[var(--prime-primary-green)] focus:ring-[3px] focus:ring-[var(--prime-primary-green)]/15 placeholder:text-gray-400"
           />
           {searchQuery && (
             <button
@@ -84,7 +84,7 @@ export function SearchFilterBar({
                       variant="outline"
                       className={cn(
                         "h-12 px-4 rounded-input border border-gray-200 bg-white hover:bg-gray-55 text-[14px] font-medium transition-all gap-2 flex items-center shadow-xs",
-                        isFiltered && "border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)]/5 text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10"
+                        isFiltered && "border-[var(--prime-primary-green)] bg-[var(--prime-primary-green)]/5 text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/10"
                       )}
                     >
                       <SlidersHorizontal className="h-4 w-4" />
@@ -134,14 +134,14 @@ export function SearchFilterBar({
                             }}
                             className={cn(
                               "cursor-pointer font-medium text-[14px] text-gray-700 hover:text-gray-900 focus:text-gray-900 rounded-md px-2.5 py-2 hover:bg-gray-50 focus:bg-gray-50 transition-colors flex items-center gap-2.5",
-                              isChecked && "text-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)]/5 font-semibold"
+                              isChecked && "text-[var(--prime-primary-green)] bg-[var(--prime-primary-green)]/5 font-semibold"
                             )}
                           >
                             <input 
                               type="checkbox" 
                               checked={isChecked} 
                               readOnly 
-                              className="rounded border-gray-300 text-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] h-4 w-4 cursor-pointer" 
+                              className="rounded border-gray-300 text-[var(--prime-primary-green)] focus:ring-[var(--prime-primary-green)] h-4 w-4 cursor-pointer" 
                             />
                             <span className="cursor-pointer">{option.label}</span>
                           </div>
@@ -153,7 +153,7 @@ export function SearchFilterBar({
                             onClick={() => filter.onChange(option.value)}
                             className={cn(
                               "cursor-pointer font-medium text-[14px] text-gray-700 hover:text-gray-900 focus:text-gray-900 rounded-md px-2.5 py-2 hover:bg-gray-55 focus:bg-gray-55 transition-colors",
-                              filter.selectedValue === option.value && "text-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)]/5 font-semibold hover:bg-[var(--fnrc-primary-green)]/8 focus:bg-[var(--fnrc-primary-green)]/8"
+                              filter.selectedValue === option.value && "text-[var(--prime-primary-green)] bg-[var(--prime-primary-green)]/5 font-semibold hover:bg-[var(--prime-primary-green)]/8 focus:bg-[var(--prime-primary-green)]/8"
                             )}
                           >
                             {option.label}
@@ -189,12 +189,12 @@ export function SearchFilterBar({
             <Badge
               key={idx}
               variant="secondary"
-              className="pl-3 pr-1.5 py-1 gap-1.5 rounded-full bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-medium text-xs shadow-xs"
+              className="pl-3 pr-1.5 py-1 gap-1.5 rounded-full bg-[var(--prime-primary-green)]/5 border border-[var(--prime-primary-green)]/15 text-[var(--prime-primary-green)] font-medium text-xs shadow-xs"
             >
               <span>{chip.label}</span>
               <button
                 onClick={chip.onRemove}
-                className="rounded-full p-0.5 hover:bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] transition-colors"
+                className="rounded-full p-0.5 hover:bg-[var(--prime-primary-green)]/10 text-[var(--prime-primary-green)] transition-colors"
               >
                 <X className="h-3 w-3" />
               </button>

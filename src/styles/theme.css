@@ -2,62 +2,62 @@
 
 :root {
   /* Prime Organization Portal Colors */
-  --fnrc-primary-green: #0A3D91; /* Primary Royal Blue */
-  --fnrc-secondary-dark-green: #05204F; /* Deep Navy Blue */
-  --fnrc-accent-gold: #D4AF37; /* Premium Gold */
-  --fnrc-royal-blue: #FFFFFF; /* Pure White */
+  --prime-primary-green: #0A3D91; /* Primary Royal Blue */
+  --prime-secondary-dark-green: #05204F; /* Deep Navy Blue */
+  --prime-accent-gold: #D4AF37; /* Premium Gold */
+  --prime-royal-blue: #FFFFFF; /* Pure White */
   
-  --fnrc-text-dark: #2B2B2B;
-  --fnrc-text-muted: #6E6E6E;
-  --fnrc-border-gray: #D9D9D6;
-  --fnrc-bg-light: #F7F9FC;
-  --fnrc-bg-stone: #D9D9D6;
+  --prime-text-dark: #2B2B2B;
+  --prime-text-muted: #6E6E6E;
+  --prime-border-gray: #D9D9D6;
+  --prime-bg-light: #F7F9FC;
+  --prime-bg-stone: #D9D9D6;
   
-  --fnrc-success: #6B8E23;
-  --fnrc-warning: #D98C00;
-  --fnrc-error: #B23A3A;
-  --fnrc-info: #3D57A6;
+  --prime-success: #6B8E23;
+  --prime-warning: #D98C00;
+  --prime-error: #B23A3A;
+  --prime-info: #3D57A6;
   
   --font-size: 16px;
-  --background: var(--fnrc-bg-light);
-  --foreground: var(--fnrc-text-dark);
+  --background: var(--prime-bg-light);
+  --foreground: var(--prime-text-dark);
   --card: #ffffff;
-  --card-foreground: var(--fnrc-text-dark);
+  --card-foreground: var(--prime-text-dark);
   --popover: #ffffff;
-  --popover-foreground: var(--fnrc-text-dark);
-  --primary: var(--fnrc-primary-green);
+  --popover-foreground: var(--prime-text-dark);
+  --primary: var(--prime-primary-green);
   --primary-foreground: #ffffff;
   --secondary: #ffffff;
-  --secondary-foreground: var(--fnrc-primary-green);
-  --muted: var(--fnrc-bg-stone);
-  --muted-foreground: var(--fnrc-text-muted);
-  --accent: var(--fnrc-accent-gold);
+  --secondary-foreground: var(--prime-primary-green);
+  --muted: var(--prime-bg-stone);
+  --muted-foreground: var(--prime-text-muted);
+  --accent: var(--prime-accent-gold);
   --accent-foreground: #ffffff;
-  --destructive: var(--fnrc-error);
+  --destructive: var(--prime-error);
   --destructive-foreground: #ffffff;
-  --border: var(--fnrc-border-gray);
-  --input: var(--fnrc-border-gray);
+  --border: var(--prime-border-gray);
+  --input: var(--prime-border-gray);
   --input-background: #ffffff;
-  --switch-background: var(--fnrc-border-gray);
+  --switch-background: var(--prime-border-gray);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: var(--fnrc-royal-blue);
+  --ring: var(--prime-royal-blue);
   
-  --chart-1: var(--fnrc-primary-green);
-  --chart-2: var(--fnrc-secondary-dark-green);
-  --chart-3: var(--fnrc-accent-gold);
-  --chart-4: var(--fnrc-royal-blue);
-  --chart-5: var(--fnrc-warning);
+  --chart-1: var(--prime-primary-green);
+  --chart-2: var(--prime-secondary-dark-green);
+  --chart-3: var(--prime-accent-gold);
+  --chart-4: var(--prime-royal-blue);
+  --chart-5: var(--prime-warning);
   --radius: 0.375rem; /* Slight rounded corners */
   
-  --sidebar: var(--fnrc-secondary-dark-green); /* Deep brown sidebar */
+  --sidebar: var(--prime-secondary-dark-green); /* Deep brown sidebar */
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: var(--fnrc-primary-green);
+  --sidebar-primary: var(--prime-primary-green);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--fnrc-accent-gold);
+  --sidebar-accent: var(--prime-accent-gold);
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #4a2727; /* Darker brown for border */
-  --sidebar-ring: var(--fnrc-accent-gold);
+  --sidebar-ring: var(--prime-accent-gold);
 }
 
 .dark {
@@ -67,34 +67,34 @@
   --card-foreground: #F5F5F3;
   --popover: #242424;
   --popover-foreground: #F5F5F3;
-  --primary: var(--fnrc-primary-green);
+  --primary: var(--prime-primary-green);
   --primary-foreground: #ffffff;
   --secondary: #333333;
   --secondary-foreground: #F5F5F3;
   --muted: #333333;
   --muted-foreground: #D9D9D6;
-  --accent: var(--fnrc-accent-gold);
+  --accent: var(--prime-accent-gold);
   --accent-foreground: #ffffff;
-  --destructive: var(--fnrc-error);
+  --destructive: var(--prime-error);
   --destructive-foreground: #ffffff;
   --border: #404040;
   --input: #404040;
-  --ring: var(--fnrc-royal-blue);
+  --ring: var(--prime-royal-blue);
   
-  --chart-1: var(--fnrc-primary-green);
-  --chart-2: var(--fnrc-secondary-dark-green);
-  --chart-3: var(--fnrc-accent-gold);
-  --chart-4: var(--fnrc-royal-blue);
-  --chart-5: var(--fnrc-warning);
+  --chart-1: var(--prime-primary-green);
+  --chart-2: var(--prime-secondary-dark-green);
+  --chart-3: var(--prime-accent-gold);
+  --chart-4: var(--prime-royal-blue);
+  --chart-5: var(--prime-warning);
   
   --sidebar: #1a1a1a;
   --sidebar-foreground: #F5F5F3;
-  --sidebar-primary: var(--fnrc-primary-green);
+  --sidebar-primary: var(--prime-primary-green);
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #333333;
-  --sidebar-accent-foreground: var(--fnrc-accent-gold);
+  --sidebar-accent-foreground: var(--prime-accent-gold);
   --sidebar-border: #404040;
-  --sidebar-ring: var(--fnrc-accent-gold);
+  --sidebar-ring: var(--prime-accent-gold);
 }
 
 @theme inline {
@@ -208,8 +208,8 @@
 
 /* Global Premium Button Hover Contrast Fix */
 /* Only apply white text and brightness filter to filled solid buttons (not custom text-colored, outline, ghost, border, or transparent buttons) */
-button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--fnrc-"]):not([class*="/5"]):not([class*="/10"]),
-.rounded-button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--fnrc-"]):not([class*="/5"]):not([class*="/10"]) {
+button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--prime-"]):not([class*="/5"]):not([class*="/10"]),
+.rounded-button:hover:not(.bg-white):not(.bg-transparent):not(.border):not([class*="ghost"]):not([class*="outline"]):not([class*="link"]):not([class*="text-"]):not([class*="bg-emerald-50"]):not([class*="bg-green-50"]):not([class*="bg-amber-50"]):not([class*="bg-orange-50"]):not([class*="bg-blue-50"]):not([class*="bg-red-50"]):not([class*="bg-[var(--prime-"]):not([class*="/5"]):not([class*="/10"]) {
   filter: brightness(0.90) !important;
   color: #ffffff !important;
   transition: all 0.2s ease-in-out !important;

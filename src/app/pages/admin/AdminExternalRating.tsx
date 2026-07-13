@@ -75,7 +75,7 @@ export default function AdminExternalRating() {
         <Card className="max-w-md w-full border-green-100 shadow-2xl bg-white p-6 space-y-6 text-start">
           <CardHeader className="text-center pb-2">
             <div className="mx-auto h-16 w-16 rounded-full bg-green-50 flex items-center justify-center mb-4 border border-green-100">
-              <CheckCircle className="h-8 w-8 text-[var(--fnrc-success)]" />
+              <CheckCircle className="h-8 w-8 text-[var(--prime-success)]" />
             </div>
             <CardTitle className="text-2xl font-black text-gray-800">{t('Ratings Submitted')}</CardTitle>
             <CardDescription className="text-sm text-gray-500 mt-1">
@@ -100,7 +100,7 @@ export default function AdminExternalRating() {
       {/* Premium Header */}
       <div className="max-w-2xl w-full mb-8 text-center space-y-4">
         <div className="flex items-center justify-center gap-2 mb-1">
-          <Award className="h-7 w-7 text-[var(--fnrc-primary-green)]" />
+          <Award className="h-7 w-7 text-[var(--prime-primary-green)]" />
           <span className="text-lg font-black text-gray-800 tracking-wide uppercase">{t('Federal National Council')}</span>
         </div>
         <h1 className="text-2xl font-black text-gray-800">
@@ -113,7 +113,7 @@ export default function AdminExternalRating() {
           </div>
           <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm flex items-center">
             <span className="text-gray-500 me-2">{t('Proposal ID:')}</span>
-            <span className="text-[var(--fnrc-primary-green)] font-black">{proposal.id}</span>
+            <span className="text-[var(--prime-primary-green)] font-black">{proposal.id}</span>
           </div>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function AdminExternalRating() {
             </div>
             <div className="mt-2 sm:mt-0">
               <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">{t('Proposal ID Reference')}</span>
-              <span className="text-xs font-semibold text-[var(--fnrc-primary-green)] block mt-0.5">{proposal.id}</span>
+              <span className="text-xs font-semibold text-[var(--prime-primary-green)] block mt-0.5">{proposal.id}</span>
             </div>
             <div className="mt-2 sm:mt-0">
               <span className="text-[10px] text-gray-400 font-bold block uppercase tracking-wider">{t('Evaluated By')}</span>
@@ -159,7 +159,7 @@ export default function AdminExternalRating() {
                     placeholder={t('Enter your remarks here...')}
                     value={q.value}
                     onChange={(e) => q.setter(e.target.value)}
-                    className="w-full p-3 rounded-xl border text-sm font-medium focus-visible:ring-[var(--fnrc-primary-green)] bg-white resize-none text-start"
+                    className="w-full p-3 rounded-xl border text-sm font-medium focus-visible:ring-[var(--prime-primary-green)] bg-white resize-none text-start"
                     rows={2}
                   />
                 </div>
@@ -177,7 +177,7 @@ export default function AdminExternalRating() {
               placeholder={t('Provide comments supporting your scores. What did the vendor do exceptionally well, or where do they need improvement?')}
               value={comments}
               onChange={(e) => setComments(e.target.value)}
-              className="w-full p-4 rounded-xl border text-sm font-semibold focus-visible:ring-[var(--fnrc-primary-green)] bg-white resize-none text-start"
+              className="w-full p-4 rounded-xl border text-sm font-semibold focus-visible:ring-[var(--prime-primary-green)] bg-white resize-none text-start"
             />
           </div>
 
@@ -185,7 +185,7 @@ export default function AdminExternalRating() {
           <Button
             onClick={handleSubmit}
             className="w-full text-white h-11 font-extrabold text-sm tracking-wide rounded-xl shadow-lg hover:shadow-xl transition-all"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
           >
             {t('Submit Scorecard Evaluation')}
           </Button>

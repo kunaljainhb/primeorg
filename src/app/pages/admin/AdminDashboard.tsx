@@ -44,8 +44,8 @@ export default function AdminDashboard() {
                   {pendingVendors.length}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-accent-gold)]/15 to-[var(--fnrc-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
-                <Users className="h-5 w-5 text-[var(--fnrc-accent-gold)] animate-pulse" strokeWidth={1.5} style={{ animationDuration: '4s' }} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-accent-gold)]/15 to-[var(--prime-accent-gold)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Users className="h-5 w-5 text-[var(--prime-accent-gold)] animate-pulse" strokeWidth={1.5} style={{ animationDuration: '4s' }} />
               </div>
             </div>
 
@@ -63,8 +63,8 @@ export default function AdminDashboard() {
                   {activeTenders.length}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-primary-green)]/15 to-[var(--fnrc-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
-                <MountainSnow className="h-5 w-5 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-primary-green)]/15 to-[var(--prime-primary-green)]/5 group-hover:scale-105 transition-transform duration-200">
+                <MountainSnow className="h-5 w-5 text-[var(--prime-primary-green)]" strokeWidth={1.5} />
               </div>
             </div>
 
@@ -82,8 +82,8 @@ export default function AdminDashboard() {
                   {mockProposals.length}
                 </div>
               </div>
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--fnrc-royal-blue)]/15 to-[var(--fnrc-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
-                <Send className="h-5 w-5 text-[var(--fnrc-royal-blue)]" strokeWidth={1.5} />
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--prime-royal-blue)]/15 to-[var(--prime-royal-blue)]/5 group-hover:scale-105 transition-transform duration-200">
+                <Send className="h-5 w-5 text-[var(--prime-royal-blue)]" strokeWidth={1.5} />
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
                     size="sm"
                     variant="outline"
                     onClick={() => navigate(`/admin/vendors/${vendor.id}`)}
-                    className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button cursor-pointer"
+                    className="border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/10 text-xs rounded-button cursor-pointer"
                   >
                     {t("Review")}
                   </Button>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
               {pendingVendors.length > 0 && (
                 <Button
                   variant="ghost"
-                  className="w-full text-[var(--fnrc-primary-green)] font-bold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm cursor-pointer"
+                  className="w-full text-[var(--prime-primary-green)] font-bold hover:text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/5 text-sm cursor-pointer"
                   onClick={() => navigate('/admin/vendors')}
                 >
                   {t("View All Vendors")} {t("→")}
@@ -193,7 +193,7 @@ export default function AdminDashboard() {
               ))}
               <Button
                 variant="ghost"
-                className="w-full text-[var(--fnrc-primary-green)] font-bold hover:text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 text-sm cursor-pointer"
+                className="w-full text-[var(--prime-primary-green)] font-bold hover:text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/5 text-sm cursor-pointer"
                 onClick={() => navigate('/admin/tenders')}
               >
                 {t("View All Tenders")} {t("→")}
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                       {proposal.tenderTitle} • AED {proposal.commercialAmount.toLocaleString()}
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className="border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/10 text-xs rounded-button transition-colors cursor-pointer">
+                  <Button size="sm" variant="outline" className="border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/10 text-xs rounded-button transition-colors cursor-pointer">
                     {t("Review")}
                   </Button>
                 </div>
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
         <Card className="flex flex-col h-[500px] rounded-card">
           <CardHeader className="pb-3 border-b border-[#E5E5E5]">
             <CardTitle className="flex items-center gap-2 font-bold">
-              <MessageSquare className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              <MessageSquare className="h-5 w-5 text-[var(--prime-primary-green)]" />
               {t("Active Vendor Chats")}
             </CardTitle>
 
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
               ].map((chat, idx) => (
                 <div
                   key={idx}
-                  className="group flex flex-col gap-3 rounded-xl border border-gray-100 p-4 hover:border-[var(--fnrc-primary-green)]/30 hover:bg-gradient-to-br hover:from-[var(--fnrc-primary-green)]/[0.02] hover:to-transparent cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="group flex flex-col gap-3 rounded-xl border border-gray-100 p-4 hover:border-[var(--prime-primary-green)]/30 hover:bg-gradient-to-br hover:from-[var(--prime-primary-green)]/[0.02] hover:to-transparent cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                   onClick={() => navigate(`/admin/tenders/${chat.tenderId}?tab=chats`)}
                 >
                   <div className="flex items-center justify-between">
@@ -268,12 +268,12 @@ export default function AdminDashboard() {
                         {chat.unread > 0 && (
                           <span className="absolute -top-1 -end-1 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: 'var(--prime-primary-green)' }}></span>
                           </span>
                         )}
                       </div>
                       <div>
-                        <div className="font-bold text-gray-900 text-[15px] group-hover:text-[var(--fnrc-primary-green)] transition-colors">
+                        <div className="font-bold text-gray-900 text-[15px] group-hover:text-[var(--prime-primary-green)] transition-colors">
                           {chat.vendor}
                         </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                         {chat.time}
                       </span>
                       {chat.unread > 0 && (
-                        <Badge className="h-5 min-w-5 rounded-full px-1.5 text-[10px] flex items-center justify-center font-bold shadow-sm" style={{ backgroundColor: 'var(--fnrc-primary-green)', color: 'white' }}>
+                        <Badge className="h-5 min-w-5 rounded-full px-1.5 text-[10px] flex items-center justify-center font-bold shadow-sm" style={{ backgroundColor: 'var(--prime-primary-green)', color: 'white' }}>
                           {chat.unread}
                         </Badge>
                       )}

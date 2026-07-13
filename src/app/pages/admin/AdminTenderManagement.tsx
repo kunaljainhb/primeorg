@@ -154,8 +154,8 @@ export default function AdminTenderManagement() {
         </div>
         <Button
           onClick={() => navigate('/admin/tenders/create')}
-          className="text-white gap-2 shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
-          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+          className="text-white gap-2 shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
+          style={{ backgroundColor: 'var(--prime-primary-green)' }}
         >
           <Plus className="h-4 w-4" />
           {t('Create New Tender')}
@@ -174,7 +174,7 @@ export default function AdminTenderManagement() {
         >
           {/* Inline Date Range */}
           <div className="flex items-center gap-2 bg-white px-4 h-12 rounded-input border border-gray-200 shadow-xs">
-            <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+            <Calendar className="h-4 w-4 text-[var(--prime-primary-green)]" />
             <span className="text-sm font-semibold text-gray-700">{t('Submission Range')}:</span>
             <div className="flex items-center gap-2 ms-2">
               <Input
@@ -247,8 +247,8 @@ export default function AdminTenderManagement() {
                 {paginatedTenders.map((tender) => {
                   const proposalCount = getProposalCount(tender.id);
                   return (
-                    <TableRow key={tender.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                      <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
+                    <TableRow key={tender.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                      <TableCell className="font-bold text-[var(--prime-primary-green)]">
                         {tender.id}
                       </TableCell>
                       <TableCell className="font-semibold text-gray-800">{tender.title}</TableCell>
@@ -296,7 +296,7 @@ export default function AdminTenderManagement() {
                               navigate(`/admin/tenders/${tender.id}`);
                             }
                           }}
-                          className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
+                          className="h-8 w-8 p-0 justify-center items-center border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)] hover:text-white transition-all duration-150 font-semibold"
                           title={t('Manage Tender')}
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -340,7 +340,7 @@ export default function AdminTenderManagement() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
                         currentPage === i + 1
-                          ? 'bg-[var(--fnrc-primary-green)] text-white'
+                          ? 'bg-[var(--prime-primary-green)] text-white'
                           : 'text-gray-600 hover:bg-gray-200'
                       }`}
                     >

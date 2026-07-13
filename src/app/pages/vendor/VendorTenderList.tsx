@@ -140,7 +140,7 @@ export default function VendorTenderList() {
                 className="flex flex-col h-full bg-white shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-200"
               >
                 {/* Visual Accent bar inside cards */}
-                <div className="h-1.5 w-full bg-gradient-to-r from-[var(--fnrc-primary-green)] to-[var(--fnrc-accent-gold)]" />
+                <div className="h-1.5 w-full bg-gradient-to-r from-[var(--prime-primary-green)] to-[var(--prime-accent-gold)]" />
                 
                 <CardContent className="p-6 flex flex-col justify-between flex-1 gap-5">
                   <div className="space-y-3">
@@ -179,18 +179,18 @@ export default function VendorTenderList() {
                     {/* Time details */}
                     <div className="space-y-2 border-t border-gray-100 pt-4">
                       <div className="flex items-center gap-2.5 text-xs text-gray-500 font-medium">
-                        <Calendar className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        <Calendar className="h-4 w-4 text-[var(--prime-primary-green)]" />
                         <span>{t('Deadline:')} {formatDate(tender.submissionDeadline, language)}</span>
                       </div>
                       <div className="flex items-center gap-2.5 text-xs text-gray-500 font-medium">
-                        <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        <Clock className="h-4 w-4 text-[var(--prime-primary-green)]" />
                         <span>{t('Duration:')} {t(tender.timeline)}</span>
                       </div>
                     </div>
 
                     {/* CTA Button */}
                     <Button
-                      className="w-full text-white text-xs font-semibold rounded-button bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 hover:shadow-md transition-all duration-150 py-4.5 gap-2 flex items-center justify-center cursor-pointer"
+                      className="w-full text-white text-xs font-semibold rounded-button bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 hover:shadow-md transition-all duration-150 py-4.5 gap-2 flex items-center justify-center cursor-pointer"
                       onClick={() => navigate(`/vendor/tenders/${tender.id}`)}
                     >
                       {t('View Opportunities')}

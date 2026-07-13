@@ -180,7 +180,7 @@ export default function VendorProfile() {
                   <Button variant="outline" onClick={() => setIsEditing(false)} className="rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
                     {t('Cancel')}
                   </Button>
-                  <Button onClick={handleSave} className="bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green)]/90 rounded-button text-xs font-semibold h-9 px-4 shadow-sm cursor-pointer">
+                  <Button onClick={handleSave} className="bg-[var(--prime-primary-green)] text-white hover:bg-[var(--prime-primary-green)]/90 rounded-button text-xs font-semibold h-9 px-4 shadow-sm cursor-pointer">
                     {t('Save Changes')}
                   </Button>
                 </div>
@@ -200,7 +200,7 @@ export default function VendorProfile() {
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-2xl bg-[var(--fnrc-primary-green)]/10 flex items-center justify-center text-[var(--fnrc-primary-green)]">
+                  <div className="h-16 w-16 rounded-2xl bg-[var(--prime-primary-green)]/10 flex items-center justify-center text-[var(--prime-primary-green)]">
                     <Building2 className="h-8 w-8" strokeWidth={1.5} />
                   </div>
                   <div className="space-y-1">
@@ -478,7 +478,7 @@ export default function VendorProfile() {
               id={category}
               checked={vendorData.categories.includes(category)}
               onChange={() => handleCategoryToggle(category)}
-              className="h-4 w-4 rounded-[4px] border-gray-300 text-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)]/50 cursor-pointer"
+              className="h-4 w-4 rounded-[4px] border-gray-300 text-[var(--prime-primary-green)] focus:ring-[var(--prime-primary-green)]/50 cursor-pointer"
             />
             <label htmlFor={category} className="text-xs font-semibold text-gray-600 leading-none cursor-pointer">
               {t(category)}
@@ -489,7 +489,7 @@ export default function VendorProfile() {
     ) : (
       <div className="flex flex-wrap gap-2 pt-1">
         {vendorData.categories.map(category => (
-          <Badge key={category} variant="secondary" className="bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
+          <Badge key={category} variant="secondary" className="bg-[var(--prime-primary-green)]/5 border border-[var(--prime-primary-green)]/15 text-[var(--prime-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
             {t(category)}
           </Badge>
         ))}
@@ -504,7 +504,7 @@ export default function VendorProfile() {
             <CardHeader className="px-6 pt-1 pb-0">
               <div className="flex items-center justify-between gap-4">
                 <CardTitle className="text-lg font-bold text-black text-start">{t('Vendor Documents')}</CardTitle>
-                <Button size="sm" disabled={!isEditing} className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
+                <Button size="sm" disabled={!isEditing} className="bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">
                   {t('Upload Document')}
                 </Button>
               </div>
@@ -688,7 +688,7 @@ export default function VendorProfile() {
               
               <div className="pt-3 flex justify-end gap-3">
                 <Button variant="outline" className="rounded-button text-xs font-semibold h-9 px-4 cursor-pointer">{t('Reset Form')}</Button>
-                <Button className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 shadow-sm cursor-pointer">
+                <Button className="bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 text-white rounded-button text-xs font-semibold h-9 px-4 shadow-sm cursor-pointer">
                   {t('Update Password')}
                 </Button>
               </div>

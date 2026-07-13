@@ -216,7 +216,7 @@ export default function VendorProposalList() {
                 className="cursor-pointer"
                 onClick={() => navigate(`/vendor/proposals/${proposal.id}`)}
               >
-                <TableCell className="font-bold text-[14px] text-[var(--fnrc-primary-green)] text-start">
+                <TableCell className="font-bold text-[14px] text-[var(--prime-primary-green)] text-start">
                   {proposal.id}
                 </TableCell>
                 <TableCell className="font-semibold text-[14px] text-gray-800 max-w-[280px] truncate text-start">

@@ -134,7 +134,7 @@ export default function AdminUserCreate() {
               <Button type="button" variant="outline" className="font-semibold" onClick={() => navigate('/admin/users')}>
                 {t('Cancel')}
               </Button>
-              <Button type="submit" className="text-white font-semibold" style={{ backgroundColor: 'var(--fnrc-primary-green)' }}>
+              <Button type="submit" className="text-white font-semibold" style={{ backgroundColor: 'var(--prime-primary-green)' }}>
                 {t('Create Account')}
               </Button>
             </div>

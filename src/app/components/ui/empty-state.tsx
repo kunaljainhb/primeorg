@@ -27,15 +27,15 @@ export function EmptyState({
   const getIcon = () => {
     switch (type) {
       case 'tender':
-        return <FileQuestion className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
+        return <FileQuestion className="h-12 w-12 text-[var(--prime-primary-green)]" strokeWidth={1.5} />;
       case 'vendor':
-        return <UserX className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
+        return <UserX className="h-12 w-12 text-[var(--prime-primary-green)]" strokeWidth={1.5} />;
       case 'proposal':
-        return <Send className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
+        return <Send className="h-12 w-12 text-[var(--prime-primary-green)]" strokeWidth={1.5} />;
       case 'document':
-        return <FolderOpen className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
+        return <FolderOpen className="h-12 w-12 text-[var(--prime-primary-green)]" strokeWidth={1.5} />;
       default:
-        return <Inbox className="h-12 w-12 text-[var(--fnrc-primary-green)]" strokeWidth={1.5} />;
+        return <Inbox className="h-12 w-12 text-[var(--prime-primary-green)]" strokeWidth={1.5} />;
     }
   };
 
@@ -47,8 +47,8 @@ export function EmptyState({
       )}
     >
       {/* Decorative Icon Background */}
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--fnrc-primary-green)]/5 mb-6 relative shadow-inner">
-        <div className="absolute inset-0 rounded-full bg-[var(--fnrc-primary-green)]/3 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--prime-primary-green)]/5 mb-6 relative shadow-inner">
+        <div className="absolute inset-0 rounded-full bg-[var(--prime-primary-green)]/3 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
         {getIcon()}
       </div>
 
@@ -62,7 +62,7 @@ export function EmptyState({
       {actionLabel && onAction && (
         <Button
           onClick={onAction}
-          className="text-white px-6 font-medium shadow-md transition-all duration-150 rounded-button bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 hover:shadow-lg active:scale-98"
+          className="text-white px-6 font-medium shadow-md transition-all duration-150 rounded-button bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 hover:shadow-lg active:scale-98"
         >
           {actionLabel}
         </Button>

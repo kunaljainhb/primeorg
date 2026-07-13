@@ -206,8 +206,8 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
         {/* Action Button on the top right next to the title */}
         {defaultTab === 'category' && (
           <Button 
-            className="gap-1 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }} 
+            className="gap-1 text-white shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
+            style={{ backgroundColor: 'var(--prime-primary-green)' }} 
             onClick={() => setShowCategoryDialog(true)}
           >
             <Plus className="h-4 w-4" />
@@ -216,8 +216,8 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
         )}
         {defaultTab === 'doctype' && (
           <Button 
-            className="gap-1 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }} 
+            className="gap-1 text-white shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
+            style={{ backgroundColor: 'var(--prime-primary-green)' }} 
             onClick={() => setShowDocTypeDialog(true)}
           >
             <Plus className="h-4 w-4" />
@@ -226,8 +226,8 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
         )}
         {defaultTab === 'rubric' && (
           <Button 
-            className="gap-1 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }} 
+            className="gap-1 text-white shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 font-semibold" 
+            style={{ backgroundColor: 'var(--prime-primary-green)' }} 
             onClick={handleAddQuery}
           >
             <Plus className="h-4 w-4" />
@@ -257,7 +257,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                 </TableHeader>
                 <TableBody>
                   {filteredCategories.map((category, idx) => (
-                    <TableRow key={idx} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableRow key={idx} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                       <TableCell className="font-normal text-gray-800 text-start">{t(category)}</TableCell>
                       <TableCell className="font-normal text-gray-500 text-sm text-start">
                         {new Date(2025, 0, 1 + idx).toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -285,7 +285,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                     {t('Previous')}
                   </Button>
                   <div className="flex items-center gap-1 mx-2">
-                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--prime-primary-green)] text-white">1</button>
                   </div>
                   <Button variant="outline" size="sm" disabled className="font-semibold">
                     {t('Next')}
@@ -318,8 +318,8 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                 </TableHeader>
                 <TableBody>
                   {filteredDocTypes.map((doc, idx) => (
-                    <TableRow key={idx} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                      <TableCell className="font-normal text-[var(--fnrc-primary-green)] text-start">{t(doc.type)}</TableCell>
+                    <TableRow key={idx} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                      <TableCell className="font-normal text-[var(--prime-primary-green)] text-start">{t(doc.type)}</TableCell>
                       <TableCell className="font-normal text-gray-800 text-start">{t(doc.name)}</TableCell>
                       <TableCell className="text-start">
                         <StatusBadge status={doc.mandatory === 'Yes' ? 'mandatory' : 'optional'} />
@@ -347,7 +347,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                     {t('Previous')}
                   </Button>
                   <div className="flex items-center gap-1 mx-2">
-                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--prime-primary-green)] text-white">1</button>
                   </div>
                   <Button variant="outline" size="sm" disabled className="font-semibold">
                     {t('Next')}
@@ -379,7 +379,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                 </TableHeader>
                 <TableBody>
                   {filteredDeclarations.map((decl, idx) => (
-                    <TableRow key={idx} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableRow key={idx} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                       <TableCell className="font-normal text-gray-800 text-start">{t(decl.title)}</TableCell>
                       <TableCell className="text-xs font-normal text-gray-500 text-start">{decl.lastUpdated}</TableCell>
                       <TableCell className="text-start">
@@ -405,7 +405,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                     {t('Previous')}
                   </Button>
                   <div className="flex items-center gap-1 mx-2">
-                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--prime-primary-green)] text-white">1</button>
                   </div>
                   <Button variant="outline" size="sm" disabled className="font-semibold">
                     {t('Next')}
@@ -437,7 +437,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                 </TableHeader>
                 <TableBody>
                   {filteredQueries.sort((a,b) => a.sequence - b.sequence).map((query, idx) => (
-                    <TableRow key={idx} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableRow key={idx} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                       <TableCell className="font-normal text-gray-400 text-start">{query.sequence}</TableCell>
                       <TableCell className="font-normal text-gray-800 text-xs sm:text-sm text-start">{t(query.question)}</TableCell>
                       <TableCell className="text-start">
@@ -463,7 +463,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
                     {t('Previous')}
                   </Button>
                   <div className="flex items-center gap-1 mx-2">
-                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--fnrc-primary-green)] text-white">1</button>
+                    <button className="h-8 w-8 rounded-md text-sm font-bold transition-colors bg-[var(--prime-primary-green)] text-white">1</button>
                   </div>
                   <Button variant="outline" size="sm" disabled className="font-semibold">
                     {t('Next')}
@@ -514,7 +514,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
             <Button
               onClick={handleAddCategory}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Save Category')}
             </Button>
@@ -584,7 +584,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
             <Button
               onClick={handleAddDocType}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Save Document')}
             </Button>
@@ -686,7 +686,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
             <Button
               onClick={handleSaveEdit}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Save Changes')}
             </Button>
@@ -738,7 +738,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
             </Button>
             <Button
               className="text-white font-semibold px-8"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
               onClick={() => {
                 toast.success(t('Declaration Context updated successfully'));
                 setShowDeclarationDialog(false);
@@ -803,7 +803,7 @@ export default function AdminMasterData({ defaultTab = 'category' }: AdminMaster
             <Button
               onClick={handleSaveQuery}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Save Question')}
             </Button>

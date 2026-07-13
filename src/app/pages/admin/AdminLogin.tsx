@@ -10,7 +10,7 @@ import { useTranslation, useLanguage } from '@/app/context/LanguageContext';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@fnrc.gov.ae');
+  const [email, setEmail] = useState('admin@prime.org');
   const [password, setPassword] = useState('••••••••');
   const { t, language } = useTranslation();
   const { setLanguage } = useLanguage();
@@ -83,7 +83,7 @@ export default function AdminLogin() {
                   <Input
                     id="resetEmail"
                     type="email"
-                    placeholder="admin@fnrc.gov.ae"
+                    placeholder="admin@prime.org"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
                     className="ps-9"
@@ -95,7 +95,7 @@ export default function AdminLogin() {
               <Button 
                 type="submit" 
                 className="w-full text-white font-bold h-11 cursor-pointer"
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                style={{ backgroundColor: 'var(--prime-primary-green)' }}
               >
                 {t('Submit')}
               </Button>
@@ -103,7 +103,7 @@ export default function AdminLogin() {
                 <button
                   type="button"
                   onClick={() => setIsForgotPassword(false)}
-                  className="text-sm font-semibold hover:underline text-[var(--fnrc-primary-green)] flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
+                  className="text-sm font-semibold hover:underline text-[var(--prime-primary-green)] flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                 >
                   <ArrowLeft className={`h-4 w-4 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} /> {t('Back to Login')}
                 </button>
@@ -116,7 +116,7 @@ export default function AdminLogin() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@fnrc.gov.ae"
+                  placeholder="admin@prime.org"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -131,7 +131,7 @@ export default function AdminLogin() {
                       setResetEmail(email);
                       setIsForgotPassword(true);
                     }}
-                    className="text-xs font-semibold hover:underline text-[var(--fnrc-primary-green)] cursor-pointer"
+                    className="text-xs font-semibold hover:underline text-[var(--prime-primary-green)] cursor-pointer"
                   >
                     {t('Forgot Password?')}
                   </button>
@@ -148,11 +148,11 @@ export default function AdminLogin() {
               <Button 
                 type="submit" 
                 className="w-full text-white font-bold h-11 cursor-pointer"
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                style={{ backgroundColor: 'var(--prime-primary-green)' }}
               >
                 {t('Login')}
               </Button>
-              <div className="text-center text-sm pt-2" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <div className="text-center text-sm pt-2" style={{ color: 'var(--prime-text-muted)' }}>
                 <button
                   type="button"
                   onClick={() => navigate('/')}

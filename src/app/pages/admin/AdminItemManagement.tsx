@@ -199,12 +199,12 @@ export default function AdminItemManagement() {
               </TableHeader>
               <TableBody>
                 {paginatedItems.map((item, index) => (
-                  <TableRow key={`${item.tenderId}-${item.proposalId}-${index}`} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
+                  <TableRow key={`${item.tenderId}-${item.proposalId}-${index}`} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableCell className="font-bold text-[var(--prime-primary-green)]">
                       {item.tenderId}
                     </TableCell>
                     <TableCell className="font-semibold text-gray-800 max-w-[200px] truncate">{item.tenderTitle}</TableCell>
-                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{item.proposalId}</TableCell>
+                    <TableCell className="font-bold text-[var(--prime-primary-green)]">{item.proposalId}</TableCell>
                     <TableCell className="font-semibold text-gray-800">{item.vendorName}</TableCell>
                     <TableCell className="text-gray-500 font-medium">
                       {formatDate(item.createdAt)}
@@ -217,7 +217,7 @@ export default function AdminItemManagement() {
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/items/${item.proposalId}`)}
-                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
+                        className="h-8 w-8 p-0 justify-center items-center border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
                         title={t("Edit Item Specs")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -260,7 +260,7 @@ export default function AdminItemManagement() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`h-8 w-8 rounded-md text-sm font-bold transition-colors cursor-pointer ${
                         currentPage === i + 1 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                          ? 'bg-[var(--prime-primary-green)] text-white' 
                           : 'text-gray-600 hover:bg-gray-200'
                       }`}
                     >

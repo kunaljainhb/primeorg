@@ -147,7 +147,7 @@ export default function AdminItemDetail() {
             <ArrowLeft className={`h-5 w-5 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
           </Button>
           <div>
-            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--prime-text-dark)' }}>
               {proposal.vendorName} - {proposal.vendorId}
             </h1>
             <div className="flex items-center gap-2 mt-0.5">
@@ -165,10 +165,10 @@ export default function AdminItemDetail() {
 
       <div className="space-y-6">
         {/* Simulator Card */}
-        <Card className="border-2 border-[var(--fnrc-primary-green)] shadow-md bg-[#F7F9FC]">
+        <Card className="border-2 border-[var(--prime-primary-green)] shadow-md bg-[#F7F9FC]">
           <CardHeader className="pb-3 border-b border-gray-200 mb-4 bg-white rounded-t-xl flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="text-base font-bold flex items-center gap-2 text-[var(--fnrc-primary-green)]">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-[var(--prime-primary-green)]">
                 <Info className="h-5 w-5" />
                 {t('Role Simulator')}
               </CardTitle>
@@ -181,7 +181,7 @@ export default function AdminItemDetail() {
                 variant={simulatorRole === 'admin' ? 'default' : 'outline'} 
                 size="sm"
                 onClick={() => setSimulatorRole('admin')}
-                style={simulatorRole === 'admin' ? { backgroundColor: 'var(--fnrc-primary-green)' } : {}}
+                style={simulatorRole === 'admin' ? { backgroundColor: 'var(--prime-primary-green)' } : {}}
                 className={simulatorRole === 'admin' ? 'text-white font-bold shadow-sm' : 'font-semibold'}
               >
                 {t('Admin Simulator')}
@@ -190,7 +190,7 @@ export default function AdminItemDetail() {
                 variant={simulatorRole === 'manager' ? 'default' : 'outline'} 
                 size="sm"
                 onClick={() => setSimulatorRole('manager')}
-                style={simulatorRole === 'manager' ? { backgroundColor: 'var(--fnrc-primary-green)' } : {}}
+                style={simulatorRole === 'manager' ? { backgroundColor: 'var(--prime-primary-green)' } : {}}
                 className={simulatorRole === 'manager' ? 'text-white font-bold shadow-sm' : 'font-semibold'}
               >
                 {t('Item Manager')}
@@ -249,7 +249,7 @@ export default function AdminItemDetail() {
             <CardDescription className="text-sm">{t('Track received quantities for the approved proposal items')}</CardDescription>
           </CardHeader>
           <CardContent className="p-0 px-6 pb-6">
-            <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+            <div className="border rounded-lg overflow-hidden" style={{ borderColor: 'var(--prime-border-gray)' }}>
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
@@ -257,7 +257,7 @@ export default function AdminItemDetail() {
                     <TableHead className="font-bold text-gray-700 text-end py-3">{t('Price (AED)')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-center py-3">{t('Qty')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-end py-3">{t('Amount (AED)')}</TableHead>
-                    <TableHead className="font-bold text-[var(--fnrc-primary-green)] text-center w-32 py-3">{t('Received Qty')}</TableHead>
+                    <TableHead className="font-bold text-[var(--prime-primary-green)] text-center w-32 py-3">{t('Received Qty')}</TableHead>
                     <TableHead className="font-bold text-gray-700 text-center w-32 py-3">{t('Remaining Qty')}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -275,7 +275,7 @@ export default function AdminItemDetail() {
                           max={item.qty}
                           value={item.receivedQty}
                           onChange={(e) => handleReceivedQtyChange(index, e.target.value)}
-                          className="text-center border-[var(--fnrc-primary-green)] focus-visible:ring-[var(--fnrc-primary-green)] h-9 font-bold"
+                          className="text-center border-[var(--prime-primary-green)] focus-visible:ring-[var(--prime-primary-green)] h-9 font-bold"
                         />
                       </TableCell>
                       <TableCell className="text-center font-bold">
@@ -285,7 +285,7 @@ export default function AdminItemDetail() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow className="bg-gray-50 font-bold border-t-2" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <TableRow className="bg-gray-50 font-bold border-t-2" style={{ borderColor: 'var(--prime-border-gray)' }}>
                     <TableCell colSpan={2} className="text-end text-gray-900 py-3">{t('Grand Total')}</TableCell>
                     <TableCell className="text-center py-3">{totalQty}</TableCell>
                     <TableCell className="text-right py-3">{totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
@@ -315,7 +315,7 @@ export default function AdminItemDetail() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <div className="flex items-center gap-3">
                     <FileText className="h-5 w-5 text-blue-500" />
                     <div>
@@ -327,7 +327,7 @@ export default function AdminItemDetail() {
                     <Download className={`me-2 h-3 w-3 ${language === 'ar' ? 'ms-2 me-0 scale-x-[-1]' : ''}`} /> {t('Download')}
                   </Button>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50/50 transition-colors" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <div className="flex items-center gap-3">
                     <FileText className="h-5 w-5 text-red-500" />
                     <div>
@@ -370,7 +370,7 @@ export default function AdminItemDetail() {
                 <div className="flex justify-end gap-3 pt-2 border-t border-gray-50">
                   <Button 
                     className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all"
-                    style={{ backgroundColor: 'var(--fnrc-success)' }}
+                    style={{ backgroundColor: 'var(--prime-success)' }}
                     onClick={handleUpdate}
                   >
                     <Check className="h-4 w-4" />
@@ -384,9 +384,9 @@ export default function AdminItemDetail() {
 
         {/* Admin Simulator Actions */}
         {simulatorRole === 'admin' && (
-          <Card className="border-2 border-[var(--fnrc-primary-green)] shadow-md bg-[#F7F9FC]">
+          <Card className="border-2 border-[var(--prime-primary-green)] shadow-md bg-[#F7F9FC]">
             <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-[var(--fnrc-primary-green)]">
+              <div className="flex items-center gap-2 text-[var(--prime-primary-green)]">
                 <Info className="h-4 w-4" />
                 <CardTitle className="text-base font-bold">{t('Admin Simulator Actions')}</CardTitle>
               </div>
@@ -404,7 +404,7 @@ export default function AdminItemDetail() {
               <div className="flex gap-3">
                 <Button 
                   className="text-white font-bold gap-2 shadow-md hover:shadow-lg transition-all"
-                  style={{ backgroundColor: 'var(--fnrc-success)' }}
+                  style={{ backgroundColor: 'var(--prime-success)' }}
                   onClick={() => handleSimulatorAction('Goods Received')}
                 >
                   <Check className="h-4 w-4" />
@@ -426,13 +426,13 @@ export default function AdminItemDetail() {
         <Card className="border-2 border-gray-100 shadow-sm">
           <CardHeader className="pb-3 border-b border-gray-50 mb-4">
             <CardTitle className="text-base font-bold flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <Clock className="h-4 w-4 text-[var(--prime-primary-green)]" />
               {t('Detailed History')}
             </CardTitle>
             <CardDescription className="text-sm">{t('Audit trail of all receiving activities')}</CardDescription>
           </CardHeader>
           <CardContent className="p-0 px-6 pb-6">
-            <div className="border rounded-lg overflow-hidden mt-2" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+            <div className="border rounded-lg overflow-hidden mt-2" style={{ borderColor: 'var(--prime-border-gray)' }}>
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
@@ -447,7 +447,7 @@ export default function AdminItemDetail() {
                   {history.map((log) => (
                     <TableRow key={log.id} className="bg-white hover:bg-gray-50/50">
                       <TableCell className="font-medium text-gray-900 text-start">{log.date}</TableCell>
-                      <TableCell className="font-bold text-[var(--fnrc-primary-green)] text-start">{log.receivedQty}</TableCell>
+                      <TableCell className="font-bold text-[var(--prime-primary-green)] text-start">{log.receivedQty}</TableCell>
                       <TableCell className="text-gray-700 font-semibold text-start">{log.manager}</TableCell>
                       <TableCell className="text-gray-500 font-medium text-start">{log.role}</TableCell>
                       <TableCell className="text-gray-600 text-start">{log.remarks}</TableCell>

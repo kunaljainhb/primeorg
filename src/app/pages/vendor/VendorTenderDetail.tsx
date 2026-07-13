@@ -51,7 +51,7 @@ export default function VendorTenderDetail() {
         <ShieldAlert className="h-16 w-16 text-red-500 mb-4" />
         <h2 className="text-xl font-bold text-gray-800">{t('Tender Not Found')}</h2>
         <p className="text-sm text-gray-500 mt-1 mb-6">{t('The Tender you are looking for does not exist.')}</p>
-        <Button onClick={() => navigate('/vendor/tenders')} style={{ backgroundColor: 'var(--fnrc-primary-green)' }} className="text-white">
+        <Button onClick={() => navigate('/vendor/tenders')} style={{ backgroundColor: 'var(--prime-primary-green)' }} className="text-white">
           {t('Back to Tenders')}
         </Button>
       </div>
@@ -114,19 +114,19 @@ export default function VendorTenderDetail() {
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="details" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Tender Details')}
           </TabsTrigger>
           <TabsTrigger 
             value="messages" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Vendor Chat')}
           </TabsTrigger>
           <TabsTrigger 
             value="proposal" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('My Proposal')}
           </TabsTrigger>
@@ -137,7 +137,7 @@ export default function VendorTenderDetail() {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Tender Information')}
               </CardTitle>
             </CardHeader>
@@ -166,7 +166,7 @@ export default function VendorTenderDetail() {
                     <ul className="space-y-2">
                       {tender.eligibilityCriteria.map((item, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0 mt-2" />
+                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--prime-primary-green)] shrink-0 mt-2" />
                           <span className="whitespace-pre-line">{item}</span>
                         </li>
                       ))}
@@ -198,7 +198,7 @@ export default function VendorTenderDetail() {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Briefcase className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <Briefcase className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Scope & Timeline')}
               </CardTitle>
             </CardHeader>
@@ -237,7 +237,7 @@ export default function VendorTenderDetail() {
                     {tender.milestones.map((m, i) => (
                       <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 py-2">
                         <span className="font-medium text-gray-800">{m.title}</span>
-                        <span className="font-semibold text-[var(--fnrc-primary-green)]">{formatDate(m.date, language)}</span>
+                        <span className="font-semibold text-[var(--prime-primary-green)]">{formatDate(m.date, language)}</span>
                       </div>
                     ))}
                   </div>
@@ -250,7 +250,7 @@ export default function VendorTenderDetail() {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Tender Documents')}
               </CardTitle>
             </CardHeader>
@@ -283,7 +283,7 @@ export default function VendorTenderDetail() {
           <Card className="gap-0 h-auto">
             <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <MessageSquare className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                <MessageSquare className="h-5 w-5" style={{ color: 'var(--prime-primary-green)' }} />
                 {t('Tender Discussion')}
               </CardTitle>
             </CardHeader>
@@ -295,7 +295,7 @@ export default function VendorTenderDetail() {
                     <div key={idx} className={`flex ${msg.isVendor ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[70%] rounded-2xl p-4 shadow-sm ${
                         msg.isVendor 
-                          ? `bg-[var(--fnrc-primary-green)] text-white ${language === 'ar' ? 'rounded-tl-none' : 'rounded-tr-none'}` 
+                          ? `bg-[var(--prime-primary-green)] text-white ${language === 'ar' ? 'rounded-tl-none' : 'rounded-tr-none'}` 
                           : `bg-white text-gray-800 border border-gray-100 ${language === 'ar' ? 'rounded-tr-none' : 'rounded-tl-none'}`
                       }`}>
                         <p className="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">
@@ -324,13 +324,13 @@ export default function VendorTenderDetail() {
                         }
                       }}
                       rows={2}
-                      className="resize-none rounded-xl pr-12 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 border-gray-200 text-start"
+                      className="resize-none rounded-xl pr-12 focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)]/30 border-gray-200 text-start"
                     />
                   </div>
                   <Button
                     onClick={handleSendMessage}
-                    className="text-white h-12 w-12 rounded-xl flex items-center justify-center p-0 shrink-0 shadow-md shadow-[var(--fnrc-primary-green)]/10 cursor-pointer"
-                    style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                    className="text-white h-12 w-12 rounded-xl flex items-center justify-center p-0 shrink-0 shadow-md shadow-[var(--prime-primary-green)]/10 cursor-pointer"
+                    style={{ backgroundColor: 'var(--prime-primary-green)' }}
                   >
                     <Send className={`h-5 w-5 ${language === 'ar' ? 'scale-x-[-1]' : ''}`} />
                   </Button>
@@ -359,8 +359,8 @@ export default function VendorTenderDetail() {
                 ) : (
                   <Button
                     size="lg"
-                    className="text-white w-full sm:w-auto font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 cursor-pointer"
-                    style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                    className="text-white w-full sm:w-auto font-semibold shadow-lg shadow-[var(--prime-primary-green)]/15 cursor-pointer"
+                    style={{ backgroundColor: 'var(--prime-primary-green)' }}
                     onClick={() => navigate(`/vendor/tenders/${tender.id}/submit`)}
                   >
                     {t('Submit Proposal')}

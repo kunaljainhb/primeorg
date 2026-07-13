@@ -578,7 +578,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
             </h1>
             <StatusBadge status={tender.status} />
           </div>
-          <p className="text-xs font-semibold tracking-wider text-[var(--fnrc-primary-green)] uppercase">
+          <p className="text-xs font-semibold tracking-wider text-[var(--prime-primary-green)] uppercase">
             {tender.id}
           </p>
         </div>
@@ -588,7 +588,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
             <>
               <Button 
                 className="text-white h-9 px-4 text-xs font-semibold shadow-md shadow-red-600/10 border-none hover:opacity-90 transition-opacity" 
-                style={{ backgroundColor: 'var(--fnrc-error)' }} 
+                style={{ backgroundColor: 'var(--prime-error)' }} 
                 onClick={() => setShowCancelDialog(true)}
               >
                 <XIcon className="mr-1.5 h-4 w-4" />
@@ -596,7 +596,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
               </Button>
               <Button 
                 className="text-white h-9 px-4 text-xs font-semibold shadow-md shadow-amber-600/10 border-none hover:opacity-90 transition-opacity" 
-                style={{ backgroundColor: 'var(--fnrc-warning)' }} 
+                style={{ backgroundColor: 'var(--prime-warning)' }} 
                 onClick={() => setShowDeadlineDialog(true)}
               >
                 <Clock className="mr-1.5 h-4 w-4" />
@@ -604,7 +604,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
               </Button>
               <Button 
                 className="text-white h-9 px-5 text-xs font-semibold shadow-md shadow-green-600/10 border-none hover:opacity-90 transition-opacity" 
-                style={{ backgroundColor: 'var(--fnrc-success)' }} 
+                style={{ backgroundColor: 'var(--prime-success)' }} 
                 onClick={() => setShowCloseDialog(true)}
               >
                 <Check className="mr-1.5 h-4 w-4" />
@@ -619,13 +619,13 @@ const assignCommercialReviewer = (reviewerName: string) => {
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="overview" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Tender Overview')}
           </TabsTrigger>
           <TabsTrigger 
             value="chats" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] flex items-center gap-1.5"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)] flex items-center gap-1.5"
           >
             {t('Vendor Chats')}
             {totalUnreadChats > 0 && (
@@ -636,13 +636,13 @@ const assignCommercialReviewer = (reviewerName: string) => {
           </TabsTrigger>
           <TabsTrigger 
             value="proposals" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Proposal Received')} ({relatedProposals.length})
           </TabsTrigger>
           <TabsTrigger 
             value="approved" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Approved Proposal Details')} ({approvedProposals.length})
           </TabsTrigger>
@@ -653,7 +653,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Tender Information')}
               </CardTitle>
             </CardHeader>
@@ -682,7 +682,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                     <ul className="space-y-2">
                       {tender.eligibilityCriteria.map((item, i) => (
                         <li key={i} className="flex items-start gap-2.5">
-                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--fnrc-primary-green)] shrink-0 mt-2" />
+                          <div className="h-1.5 w-1.5 rounded-full bg-[var(--prime-primary-green)] shrink-0 mt-2" />
                           <span className="whitespace-pre-line">{item}</span>
                         </li>
                       ))}
@@ -720,7 +720,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Briefcase className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <Briefcase className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Scope & Timeline')}
               </CardTitle>
             </CardHeader>
@@ -759,7 +759,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                     {tender.milestones.map((m, i) => (
                       <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 last:border-0 py-2">
                         <span className="font-medium text-gray-800">{m.title}</span>
-                        <span className="font-semibold text-[var(--fnrc-primary-green)]">{formatDate(m.date)}</span>
+                        <span className="font-semibold text-[var(--prime-primary-green)]">{formatDate(m.date)}</span>
                       </div>
                     ))}
                   </div>
@@ -772,7 +772,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Eye className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <Eye className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Tender Visibility')}
               </CardTitle>
             </CardHeader>
@@ -809,7 +809,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           <Card className="border border-gray-100 shadow-sm">
             <CardHeader className="pt-5 pb-1 px-6 border-none bg-transparent">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t('Tender Documents')}
               </CardTitle>
             </CardHeader>
@@ -844,7 +844,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
             <Card className="md:col-span-4 border border-gray-100 shadow-sm">
               <CardHeader className="pb-3 border-b border-gray-50">
                 <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                  <Building2 className="h-4 w-4 text-[var(--prime-primary-green)]" />
                   {t('Vendor Threads')}
                 </CardTitle>
               </CardHeader>
@@ -858,7 +858,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                         key={id}
                         onClick={() => handleSelectVendor(id)}
                         className={`p-4 cursor-pointer transition-all flex items-center justify-between hover:bg-gray-50/40 ${
-                          isActive ? 'bg-[var(--fnrc-primary-green)]/[0.04] border-s-4 border-[var(--fnrc-primary-green)]' : ''
+                          isActive ? 'bg-[var(--prime-primary-green)]/[0.04] border-s-4 border-[var(--prime-primary-green)]' : ''
                         }`}
                       >
                         <div className="space-y-1 flex-1 min-w-0 pe-2">
@@ -893,7 +893,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                 <div className="flex flex-col h-full">
                   <CardHeader className="pb-3 border-b border-gray-50 flex flex-row items-center justify-between">
                     <CardTitle className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                      <Clock className="h-4 w-4 text-[var(--prime-primary-green)]" />
                       {vendorChats[activeVendorId].vendorName}
                     </CardTitle>
                   </CardHeader>
@@ -917,7 +917,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                             className={cn(
                               "p-3 rounded-2xl text-xs font-semibold shadow-2xs relative",
                               msg.sender === 'admin' 
-                                ? 'bg-[var(--fnrc-primary-green)] text-white rounded-tr-none' 
+                                ? 'bg-[var(--prime-primary-green)] text-white rounded-tr-none' 
                                 : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
                             )}
                           >
@@ -953,12 +953,12 @@ const assignCommercialReviewer = (reviewerName: string) => {
                         value={chatInputText}
                         onChange={(e) => setChatInputText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendVendorMessage()}
-                        className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-850 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white"
+                        className="flex-1 h-10 px-4 rounded-xl border border-gray-200 text-sm font-semibold text-gray-850 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)] focus-visible:border-[var(--prime-primary-green)] bg-white"
                       />
                       <Button 
                         onClick={handleSendVendorMessage}
                         className="text-white h-10 px-6 font-bold text-xs rounded-xl shrink-0"
-                        style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                        style={{ backgroundColor: 'var(--prime-primary-green)' }}
                       >
                         {t('Send')}
                       </Button>
@@ -986,7 +986,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
               <div className="flex items-center gap-2">
                 <Button
                   className="text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed border-none hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: 'var(--fnrc-royal-blue)' }}
+                  style={{ backgroundColor: 'var(--prime-royal-blue)' }}
                   disabled={selectedProposals.length === 0}
                   onClick={() => setShowTechDialog(true)}
                 >
@@ -994,7 +994,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                 </Button>
                 <Button
                   className="text-white font-bold h-9 text-xs gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed border-none hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: 'var(--fnrc-royal-blue)' }}
+                  style={{ backgroundColor: 'var(--prime-royal-blue)' }}
                   disabled={selectedProposals.length === 0}
                   onClick={() => setShowCommDialog(true)}
                 >
@@ -1142,7 +1142,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                 </TableHeader>
                 <TableBody>
                   {paginatedProposals.map((proposal) => (
-                    <TableRow key={proposal.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableRow key={proposal.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                       <TableCell className="py-4 ps-6">
                         <Checkbox
                            checked={selectedProposals.includes(proposal.id)}
@@ -1154,7 +1154,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                       </TableCell>
                       <TableCell className="font-bold text-gray-800">{proposal.vendorName}</TableCell>
                       <TableCell className="text-gray-500 font-medium">{formatDate(proposal.submissionDate)}</TableCell>
-                      <TableCell className="text-right font-extrabold text-sm text-[var(--fnrc-primary-green)]">
+                      <TableCell className="text-right font-extrabold text-sm text-[var(--prime-primary-green)]">
                         AED {proposal.commercialAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </TableCell>
                       <TableCell>
@@ -1196,7 +1196,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                             className={cn(
                               "h-8 w-8 rounded-md text-sm font-bold transition-colors",
                               proposalCurrentPage === i + 1
-                                ? 'bg-[var(--fnrc-primary-green)] text-white'
+                                ? 'bg-[var(--prime-primary-green)] text-white'
                                 : 'text-gray-600 hover:bg-gray-200'
                             )}
                           >
@@ -1252,14 +1252,14 @@ const assignCommercialReviewer = (reviewerName: string) => {
                           </p>
                         </div>
                       </div>
-                      <Button className="shrink-0 bg-[var(--fnrc-primary-green)] text-white hover:bg-green-700 font-semibold text-xs shadow-md" onClick={() => navigate(`/admin/proposals/${proposal.id}`)}>
+                      <Button className="shrink-0 bg-[var(--prime-primary-green)] text-white hover:bg-green-700 font-semibold text-xs shadow-md" onClick={() => navigate(`/admin/proposals/${proposal.id}`)}>
                         {t('Check Details')}
                       </Button>
                     </div>
                   </div>
                   <CardContent className="p-0">
                     <div className="px-6 py-4 border-b border-gray-100 bg-white flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)] animate-pulse" />
+                      <FileText className="h-4 w-4 text-[var(--prime-primary-green)] animate-pulse" />
                       <h3 className="font-bold text-sm text-gray-800">{t('ERP Documents')}</h3>
                     </div>
                     {vendorDocs.length > 0 ? (
@@ -1274,7 +1274,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                         </TableHeader>
                         <TableBody>
                           {vendorDocs.map((doc) => (
-                            <TableRow key={doc.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                            <TableRow key={doc.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                               <TableCell className="py-3 ps-6">
                                 <div className="font-bold text-sm text-gray-800">{t(doc.documentType)}</div>
                                 <div className="text-[10px] text-gray-400 font-mono">{doc.documentNumber}</div>
@@ -1287,10 +1287,10 @@ const assignCommercialReviewer = (reviewerName: string) => {
                               </TableCell>
                               <TableCell className="text-right pe-6">
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--prime-primary-green)]">
                                     <Eye className="h-4 w-4" />
                                   </Button>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--prime-primary-green)]">
                                     <Download className="h-4 w-4" />
                                   </Button>
                                 </div>
@@ -1328,7 +1328,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel className="font-semibold rounded-lg">{t('Cancel')}</AlertDialogCancel>
-            <AlertDialogAction className="bg-[var(--fnrc-success)] hover:bg-green-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCloseTender}>
+            <AlertDialogAction className="bg-[var(--prime-success)] hover:bg-green-700 text-white font-semibold rounded-lg shadow-md" onClick={handleCloseTender}>
               {t('Confirm Close')}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -1380,7 +1380,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
             <Button
               onClick={handleChangeDeadline}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Extend Deadline')}
             </Button>
@@ -1523,7 +1523,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                           <p className="text-xs font-semibold text-gray-505 mt-0.5">{p.id}</p>
                         </div>
                         <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
-                          <span className="text-xs font-extrabold text-[var(--fnrc-primary-green)]">
+                          <span className="text-xs font-extrabold text-[var(--prime-primary-green)]">
                             {p.comparison.amount}
                           </span>
                           <div className="flex items-center gap-1.5">
@@ -1539,7 +1539,7 @@ const assignCommercialReviewer = (reviewerName: string) => {
                   <Card className="border border-gray-150 shadow-2xs overflow-hidden">
                     <CardHeader className="bg-gray-50/60 py-4 px-6 border-b border-gray-150">
                       <CardTitle className="text-sm font-black text-gray-900 flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                        <FileText className="h-4 w-4 text-[var(--prime-primary-green)]" />
                         {t('Section 1: Proposal Comparison Overview')}
                       </CardTitle>
                     </CardHeader>

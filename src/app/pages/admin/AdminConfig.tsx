@@ -27,7 +27,7 @@ export default function AdminConfig() {
       <Card className="border border-gray-100/50 shadow-sm overflow-hidden max-w-2xl">
         <CardHeader className="border-b border-gray-50 pb-5">
           <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-            <Bell className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+            <Bell className="h-5 w-5 text-[var(--prime-primary-green)]" />
             {t('Document Expiry Thresholds')}
           </CardTitle>
 
@@ -50,8 +50,8 @@ export default function AdminConfig() {
       <div className="flex justify-end max-w-2xl pt-2">
         <Button
           onClick={handleSave}
-          className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-xl hover:-translate-y-0.5"
-          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+          className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-xl hover:-translate-y-0.5"
+          style={{ backgroundColor: 'var(--prime-primary-green)' }}
         >
           {t('Save Configuration')}
         </Button>

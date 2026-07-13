@@ -574,15 +574,15 @@ export default function AdminProposalDetail() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      submitted: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
-      technical_review: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      submitted: { bg: '#DBEAFE', text: 'var(--prime-info)' },
+      technical_review: { bg: '#DBEAFE', text: 'var(--prime-info)' },
       technical_correction_requested: { bg: '#FEF3C7', text: '#EA580C' },
-      technical_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      commercial_review_started: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      technical_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      rejected: { bg: '#FEE2E2', text: 'var(--fnrc-error)' },
+      technical_review_started: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      commercial_review_started: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      technical_review_completed: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      commercial_review_completed: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      rejected: { bg: '#FEE2E2', text: 'var(--prime-error)' },
       correction_requested: { bg: '#FEF3C7', text: '#F59E0B' },
     };
     return colors[status] || colors.submitted;
@@ -868,9 +868,9 @@ export default function AdminProposalDetail() {
           </Button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>{proposal.id}</h1>
+              <h1 className="mb-2 text-3xl font-semibold" style={{ color: 'var(--prime-text-dark)' }}>{proposal.id}</h1>
             </div>
-            <p className="text-sm font-medium mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>{t("Vendor")}: {proposal.vendorName}</p>
+            <p className="text-sm font-medium mt-1" style={{ color: 'var(--prime-text-muted)' }}>{t("Vendor")}: {proposal.vendorName}</p>
           </div>
         </div>
       </div>
@@ -879,33 +879,33 @@ export default function AdminProposalDetail() {
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="summary"
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t("Proposal Summary")}
           </TabsTrigger>
           {tender?.technicalProposalRequired !== 'no' && (
             <TabsTrigger 
               value="technical"
-              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
             >
               {t("Technical Proposal")}
             </TabsTrigger>
           )}
           <TabsTrigger 
             value="commercial"
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t("Commercial Proposal")}
           </TabsTrigger>
           <TabsTrigger 
             value="supporting"
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t("Supporting Documents")}
           </TabsTrigger>
           <TabsTrigger 
             value="feedback"
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t("Vendor Feedback")}
           </TabsTrigger>
@@ -918,7 +918,7 @@ export default function AdminProposalDetail() {
                   : (technicalStatus === 'approved' && commercialStatus === 'approved')) 
                 && !['approved', 'approved', 'rejected'].includes(overallStatus)
               }
-              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
+              className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
               {t("Proposal Action")}
             </TabsTrigger>
@@ -942,7 +942,7 @@ export default function AdminProposalDetail() {
 
           {/* Technical and Commercial Review overview cards */}
           <div className="space-y-3">
-            <div className="border-l-4 border-[var(--fnrc-accent-gold)] pl-3">
+            <div className="border-l-4 border-[var(--prime-accent-gold)] pl-3">
               <h2 className="text-lg font-bold text-gray-850">
                 {t('Under Review Status')}
               </h2>
@@ -1001,7 +1001,7 @@ export default function AdminProposalDetail() {
             </div>
           </div>
 
-          <Card className="gap-0 h-auto" style={{ borderColor: overallStatus === 'rejected' ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)', borderWidth: '2px' }}>
+          <Card className="gap-0 h-auto" style={{ borderColor: overallStatus === 'rejected' ? 'var(--prime-border-gray)' : 'var(--prime-primary-green)', borderWidth: '2px' }}>
             <CardHeader className="border-b border-gray-100 pt-4 px-6 !pb-2">
               <CardTitle className="text-lg font-bold text-gray-900">{t('Proposal Summary')}</CardTitle>
             </CardHeader>
@@ -1010,7 +1010,7 @@ export default function AdminProposalDetail() {
                 <div>
                   <span className="text-sm font-bold text-black block">{t('Proposal ID')}</span>
                   <span 
-                    className="text-base font-normal text-[var(--fnrc-primary-green)] mt-1 block cursor-pointer hover:underline" 
+                    className="text-base font-normal text-[var(--prime-primary-green)] mt-1 block cursor-pointer hover:underline" 
                     onClick={() => navigate(`/admin/proposals/${proposal.id}`)}
                   >
                     {proposal.id}
@@ -1086,7 +1086,7 @@ export default function AdminProposalDetail() {
           <Card>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <Briefcase className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t("Technical Approach")}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -1136,7 +1136,7 @@ export default function AdminProposalDetail() {
           )}>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold text-black flex items-center gap-2">
-                <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t("Submitted Technical Documents")}
               </CardTitle>
               {isFieldUpdated('technicalDocs') && (
@@ -1148,7 +1148,7 @@ export default function AdminProposalDetail() {
             <CardContent className="pt-1 px-6 pb-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {technicalDocs.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-[var(--fnrc-primary-green)] transition-all bg-white">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-[var(--prime-primary-green)] transition-all bg-white">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-blue-500" />
                       <div>
@@ -1156,7 +1156,7 @@ export default function AdminProposalDetail() {
                         <div className="text-[9px] text-muted-foreground font-bold">PDF • 1.8 MB</div>
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--prime-primary-green)]">
                       <Download className="h-4 w-4" />
                     </Button>
                   </div>
@@ -1169,7 +1169,7 @@ export default function AdminProposalDetail() {
           <Card>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <ShieldCheck className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t("Technical Approval Matrix")}
               </CardTitle>
             </CardHeader>
@@ -1201,7 +1201,7 @@ export default function AdminProposalDetail() {
                     placeholder={t("Enter Remarks")}
                     value={technicalRemark}
                     onChange={(e) => setTechnicalRemark(e.target.value)}
-                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
+                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--prime-primary-green)] focus:ring-[var(--prime-primary-green)] font-normal text-gray-800"
                   />
                 </div>
 
@@ -1216,7 +1216,7 @@ export default function AdminProposalDetail() {
                         : 'border-green-200 text-green-700 hover:bg-green-50/50 bg-white'
                     }`}
                     style={{ 
-                      backgroundColor: technicalStatus === 'approved' ? 'var(--fnrc-success)' : undefined
+                      backgroundColor: technicalStatus === 'approved' ? 'var(--prime-success)' : undefined
                     }}
                   >
                     <Check className={`h-4 w-4 ${technicalStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
@@ -1263,7 +1263,7 @@ export default function AdminProposalDetail() {
           <Card>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <Briefcase className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <Briefcase className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t("Commercial Proposal")}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -1327,7 +1327,7 @@ export default function AdminProposalDetail() {
                     </Table>
                     <div className="p-4 border-t border-gray-200 bg-gray-50/50 flex justify-end items-center gap-6">
                       <span className="font-bold text-sm text-black">{t("Total Proposal Amount")}</span>
-                      <span className="font-bold text-lg text-[var(--fnrc-primary-green)]">
+                      <span className="font-bold text-lg text-[var(--prime-primary-green)]">
                         AED {commercialBreakdown.reduce((sum, item) => sum + item.amount, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
@@ -1365,7 +1365,7 @@ export default function AdminProposalDetail() {
                         <div className="text-[10px] text-gray-400 font-bold">PDF • 3.1 MB</div>
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--fnrc-primary-green)]">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-[var(--prime-primary-green)]">
                       <Download className="h-4 w-4" />
                     </Button>
                   </div>
@@ -1378,7 +1378,7 @@ export default function AdminProposalDetail() {
           <Card>
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                <ShieldCheck className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <ShieldCheck className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t("Commercial Approval Matrix")}
               </CardTitle>
             </CardHeader>
@@ -1410,7 +1410,7 @@ export default function AdminProposalDetail() {
                     placeholder={t("Enter Remarks")}
                     value={commercialRemark}
                     onChange={(e) => setCommercialRemark(e.target.value)}
-                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--fnrc-primary-green)] focus:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
+                    className="min-h-[90px] text-sm border-gray-200 bg-white resize-none focus:border-[var(--prime-primary-green)] focus:ring-[var(--prime-primary-green)] font-normal text-gray-800"
                   />
                 </div>
 
@@ -1425,7 +1425,7 @@ export default function AdminProposalDetail() {
                         : 'border-green-200 text-green-700 hover:bg-green-50/50 bg-white'
                     }`}
                     style={{ 
-                      backgroundColor: commercialStatus === 'approved' ? 'var(--fnrc-success)' : undefined
+                      backgroundColor: commercialStatus === 'approved' ? 'var(--prime-success)' : undefined
                     }}
                   >
                     <Check className={`h-4 w-4 ${commercialStatus === 'approved' ? 'text-white' : 'text-green-600'}`} />
@@ -1493,7 +1493,7 @@ export default function AdminProposalDetail() {
             <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
               <CardTitle className="text-lg font-bold flex items-center justify-between text-black">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                  <FileText className="h-4 w-4 text-[var(--prime-primary-green)]" />
                   {t("Supporting Documents")}
                 </div>
                 {isFieldUpdated('supportingDocs') && (
@@ -1522,7 +1522,7 @@ export default function AdminProposalDetail() {
                         {formatDate(doc.date)}
                       </TableCell>
                       <TableCell className="text-right pe-4 py-3">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--prime-primary-green)]">
                           <Download className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -1541,7 +1541,7 @@ export default function AdminProposalDetail() {
             <Card>
               <CardHeader className="border-none bg-transparent pt-5 pb-1 px-6">
                 <CardTitle className="text-lg font-bold flex items-center gap-2 text-black">
-                  <Award className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                  <Award className="h-4 w-4 text-[var(--prime-primary-green)]" />
                   {t("Proposal Action")}
                 </CardTitle>
               </CardHeader>
@@ -1585,14 +1585,14 @@ export default function AdminProposalDetail() {
                         placeholder={t("Enter Remarks")}
                         value={proposalRemark}
                         onChange={(e) => setProposalRemark(e.target.value)}
-                        className="w-full p-3 rounded-lg border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                        className="w-full p-3 rounded-lg border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)] focus-visible:border-[var(--prime-primary-green)] bg-white resize-none"
                       />
                     </div>
                     <div className="flex gap-3">
                       <Button
                         onClick={handleApproveProposalAction}
                         className="text-white h-9 px-6 font-bold text-xs flex items-center gap-2"
-                        style={{ backgroundColor: 'var(--fnrc-success)' }}
+                        style={{ backgroundColor: 'var(--prime-success)' }}
                       >
                         <Check className="h-4 w-4" />
                         {t("Approve")}
@@ -1627,7 +1627,7 @@ export default function AdminProposalDetail() {
                       </div>
                       <div className="text-sm">
                         <span className="font-bold text-black me-2 text-xs">{t("PROPOSAL ID:")}</span>
-                        <span className="text-[var(--fnrc-primary-green)] font-normal">{proposal.id}</span>
+                        <span className="text-[var(--prime-primary-green)] font-normal">{proposal.id}</span>
                       </div>
                     </div>
                   </div>
@@ -1635,7 +1635,7 @@ export default function AdminProposalDetail() {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      className="text-xs font-bold border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-colors h-9 flex items-center gap-1.5 shadow-sm"
+                      className="text-xs font-bold border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)] hover:text-white transition-colors h-9 flex items-center gap-1.5 shadow-sm"
                       onClick={() => setShowShareModal(true)}
                     >
                       <Award className="h-3.5 w-3.5" />
@@ -1720,14 +1720,14 @@ export default function AdminProposalDetail() {
                                 placeholder={t("Enter your answer here...")}
                                 value={q.value}
                                 onChange={(e) => q.setter(e.target.value)}
-                                className="w-full text-sm resize-none focus-visible:ring-[var(--fnrc-primary-green)] font-normal text-gray-800"
+                                className="w-full text-sm resize-none focus-visible:ring-[var(--prime-primary-green)] font-normal text-gray-800"
                                 rows={2}
                               />
                             </div>
                             <div className="flex items-center gap-3">
                               <label className="text-xs font-bold text-black uppercase tracking-wide">{t("Rating (out of 5)")}</label>
                               <Select value={q.rating ? q.rating.toString() : ''} onValueChange={(val) => q.setRating(Number(val))}>
-                                <SelectTrigger className="w-32 h-9 border-gray-200 font-bold focus:ring-[var(--fnrc-primary-green)] text-gray-800">
+                                <SelectTrigger className="w-32 h-9 border-gray-200 font-bold focus:ring-[var(--prime-primary-green)] text-gray-800">
                                   <SelectValue placeholder={t("Select")} />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1759,7 +1759,7 @@ export default function AdminProposalDetail() {
                           placeholder={t("Enter specific remarks regarding this vendor's performance...")}
                           value={ratingRemark}
                           onChange={(e) => setRatingRemark(e.target.value)}
-                          className="w-full p-4 rounded-xl border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)] focus-visible:border-[var(--fnrc-primary-green)] bg-white resize-none"
+                          className="w-full p-4 rounded-xl border border-gray-200 text-sm font-normal text-gray-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)] focus-visible:border-[var(--prime-primary-green)] bg-white resize-none"
                         />
                       </div>
 
@@ -1767,7 +1767,7 @@ export default function AdminProposalDetail() {
                         <Button
                           onClick={handleSaveRatings}
                           className="text-white h-10 px-8 font-bold text-sm flex items-center gap-2 rounded-xl"
-                          style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                          style={{ backgroundColor: 'var(--prime-primary-green)' }}
                         >
                           <Check className="h-4 w-4" />
                           {t("Save Ratings")}
@@ -1826,13 +1826,13 @@ export default function AdminProposalDetail() {
                         {/* Department & Evaluator Info */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex items-center gap-3 text-start">
-                            <div className="h-9 w-9 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] flex items-center justify-center text-xs font-black shadow-xs">
+                            <div className="h-9 w-9 rounded-full bg-[var(--prime-primary-green)]/10 text-[var(--prime-primary-green)] flex items-center justify-center text-xs font-black shadow-xs">
                               {dept.avatar}
                             </div>
                             <div className="space-y-0.5 text-start">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-extrabold text-gray-900">{dept.evaluator}</span>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)] border border-[var(--fnrc-primary-green)]/10">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--prime-primary-green)]/10 text-[var(--prime-primary-green)] border border-[var(--prime-primary-green)]/10">
                                   {dept.department}
                                 </span>
                               </div>
@@ -1859,7 +1859,7 @@ export default function AdminProposalDetail() {
                                 <div className="space-y-2 text-start">
                                   <div className="text-xs font-bold text-gray-800">{q.question}</div>
                                   <div className="bg-gray-50/30 p-2.5 rounded-lg border border-gray-100 text-xs font-normal text-gray-600">
-                                    <span className="font-bold text-[var(--fnrc-primary-green)] me-1.5">{t("Answer")}:</span>
+                                    <span className="font-bold text-[var(--prime-primary-green)] me-1.5">{t("Answer")}:</span>
                                     {q.answer}
                                   </div>
                                 </div>
@@ -1888,7 +1888,7 @@ export default function AdminProposalDetail() {
         <DialogContent className="sm:max-w-4xl bg-white max-h-[80vh] overflow-y-auto font-sans">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-800">
-              <History className={cn("h-5 w-5 text-[var(--fnrc-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
+              <History className={cn("h-5 w-5 text-[var(--prime-primary-green)]", language === 'ar' && "scale-x-[-1]")} />
               {t("Audit History")}
             </DialogTitle>
           </DialogHeader>
@@ -1930,7 +1930,7 @@ export default function AdminProposalDetail() {
         <DialogContent className="sm:max-w-md bg-white font-sans">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-800">
-              <Award className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              <Award className="h-5 w-5 text-[var(--prime-primary-green)]" />
               {t("Generate Rating Link")}
             </DialogTitle>
             <DialogDescription className="text-xs text-gray-500">
@@ -1949,7 +1949,7 @@ export default function AdminProposalDetail() {
               </div>
               <div className="flex justify-between">
                 <span className="font-bold text-gray-400">{t("PROPOSAL REF")}</span>
-                <span className="font-semibold text-[var(--fnrc-primary-green)]">{proposal.id}</span>
+                <span className="font-semibold text-[var(--prime-primary-green)]">{proposal.id}</span>
               </div>
             </div>
 
@@ -1964,7 +1964,7 @@ export default function AdminProposalDetail() {
                 />
                 <Button
                   size="sm"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                  style={{ backgroundColor: 'var(--prime-primary-green)' }}
                   className="text-white text-xs font-bold shrink-0"
                   onClick={() => {
                     navigator.clipboard.writeText(`${window.location.origin}/rating/external-review?proposalId=${proposal.id}&tenderId=${proposal.tenderId}`);

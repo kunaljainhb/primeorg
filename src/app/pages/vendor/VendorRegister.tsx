@@ -228,7 +228,7 @@ export default function VendorRegister() {
                 type="submit"
                 disabled={false}
                 className="w-full h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all text-white cursor-pointer"
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                style={{ backgroundColor: 'var(--prime-primary-green)' }}
               >
                 {t("Create Account")}
               </Button>
@@ -251,7 +251,7 @@ export default function VendorRegister() {
                 variant="outline"
                 className="w-full h-12 border-2 hover:bg-gray-50 text-foreground hover:text-foreground transition-all font-semibold cursor-pointer"
                 onClick={handleUAEPassClick}
-                style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                style={{ borderColor: 'var(--prime-border-gray)' }}
               >
                 <QrCode className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
                 {t("Register Via UAE Pass")}
@@ -265,7 +265,7 @@ export default function VendorRegister() {
                     variant="link"
                     onClick={() => navigate('/vendor/login')}
                     className="p-0 h-auto font-bold underline-offset-4 hover:underline cursor-pointer"
-                    style={{ color: 'var(--fnrc-primary-green)' }}
+                    style={{ color: 'var(--prime-primary-green)' }}
                   >
                     {t("Login here")}
                   </Button>
@@ -310,7 +310,7 @@ export default function VendorRegister() {
 
             <Button
               className="w-full h-12 text-lg font-semibold text-white shadow-lg cursor-pointer"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
               onClick={handleVerifyOTP}
               disabled={isVerifying || verificationSuccess}
             >
@@ -334,7 +334,7 @@ export default function VendorRegister() {
                 {t("Didn't receive the code?")}{' '}
                 <button 
                   className="font-bold hover:underline cursor-pointer" 
-                  style={{ color: 'var(--fnrc-primary-green)' }}
+                  style={{ color: 'var(--prime-primary-green)' }}
                   onClick={() => alert(t('OTP Resent'))}
                 >
                   {t("Resend OTP")}
@@ -353,18 +353,18 @@ export default function VendorRegister() {
           </DialogHeader>
           <div id="uaepass-register-description" className="flex flex-col items-center justify-center space-y-4 py-6">
             {/* QR Code Placeholder */}
-            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-center">
-                <QrCode className="mx-auto h-48 w-48" style={{ color: 'var(--fnrc-text-muted)' }} />
+                <QrCode className="mx-auto h-48 w-48" style={{ color: 'var(--prime-text-muted)' }} />
               </div>
             </div>
             
             {/* Helper Text */}
             <div className="text-center space-y-2">
-              <p className="font-bold text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+              <p className="font-bold text-sm" style={{ color: 'var(--prime-text-dark)' }}>
                 {t("Scan using UAE Pass mobile application")}
               </p>
-              <p className="text-xs font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <p className="text-xs font-semibold" style={{ color: 'var(--prime-text-muted)' }}>
                 {isScanning ? t("Waiting for authentication...") : t("Authentication successful!")}
               </p>
             </div>
@@ -372,9 +372,9 @@ export default function VendorRegister() {
             {/* Loading indicator */}
             {isScanning && (
               <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '0ms' }}></div>
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '150ms' }}></div>
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '300ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '0ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '150ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '300ms' }}></div>
               </div>
             )}
           </div>
@@ -395,8 +395,8 @@ function AuthFooter({ language, setLanguage, t }: AuthFooterProps) {
     <footer className="fixed bottom-0 left-0 w-full bg-transparent py-4 px-6 flex items-center justify-between text-sm text-gray-500">
       {/* Left side: Terms and Privacy */}
       <div className="flex items-center gap-4">
-        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Terms and Conditions')}</a>
-        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Privacy Policy')}</a>
+        <a href="#" className="hover:text-[var(--prime-primary-green)] transition-colors hover:underline">{t('Terms and Conditions')}</a>
+        <a href="#" className="hover:text-[var(--prime-primary-green)] transition-colors hover:underline">{t('Privacy Policy')}</a>
       </div>
 
       {/* Center: Language selection */}

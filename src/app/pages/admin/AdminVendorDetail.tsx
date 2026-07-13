@@ -382,7 +382,7 @@ export default function AdminVendorDetail() {
         <CardContent className="pt-0 space-y-2 px-6 pb-4">
           <div className="flex flex-wrap gap-2 pt-1">
             {vendor.category.map((cat, idx) => (
-              <Badge key={idx} variant="secondary" className="bg-[var(--fnrc-primary-green)]/5 border border-[var(--fnrc-primary-green)]/15 text-[var(--fnrc-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
+              <Badge key={idx} variant="secondary" className="bg-[var(--prime-primary-green)]/5 border border-[var(--prime-primary-green)]/15 text-[var(--prime-primary-green)] font-semibold text-xs px-3 py-1 rounded-full shadow-2xs">
                 {t(cat)}
               </Badge>
             ))}
@@ -415,7 +415,7 @@ export default function AdminVendorDetail() {
                 const normStatus = (doc.status || '').toLowerCase().trim();
                 
                 return (
-                  <TableRow key={doc.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                  <TableRow key={doc.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
                     <TableCell className="text-start py-4">
                       <div className="flex items-center gap-3">
                         <FileText className="h-5 w-5 text-gray-400 shrink-0" />
@@ -487,7 +487,7 @@ export default function AdminVendorDetail() {
                         >
                           {t("Not Verify")}
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--fnrc-primary-green)]">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[var(--prime-primary-green)]">
                           <Download className="h-4 w-4" />
                         </Button>
                       </div>
@@ -546,7 +546,7 @@ export default function AdminVendorDetail() {
                 <Textarea
                   id="remarks"
                   placeholder={t("Enter detailed feedback remarks for the vendor regarding this decision campaign...")}
-                  className={`min-h-[100px] resize-none rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 ${error ? 'border-red-500 focus-visible:ring-red-200' : ''}`}
+                  className={`min-h-[100px] resize-none rounded-xl border-gray-200 focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)]/30 ${error ? 'border-red-500 focus-visible:ring-red-200' : ''}`}
                   value={remarks}
                   onChange={(e) => {
                     setRemarks(e.target.value);
@@ -577,8 +577,8 @@ export default function AdminVendorDetail() {
                       {t("Reject")}
                     </Button>
                     <Button
-                      className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all hover:shadow-lg hover:bg-[var(--fnrc-primary-green)]/90 cursor-pointer"
-                      style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                      className="gap-2 text-white h-10 px-6 font-bold shadow-md shadow-green-600/10 transition-all hover:shadow-lg hover:bg-[var(--prime-primary-green)]/90 cursor-pointer"
+                      style={{ backgroundColor: 'var(--prime-primary-green)' }}
                       onClick={() => handleAction('approve')}
                     >
                       <CheckCircle className="h-4 w-4" />

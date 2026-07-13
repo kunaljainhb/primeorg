@@ -22,7 +22,7 @@ export default function AdminReports() {
         <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
           <CardHeader className="border-b border-gray-50 pb-5">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <BarChart3 className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              <BarChart3 className="h-5 w-5 text-[var(--prime-primary-green)]" />
               {t('Standard Reports')}
             </CardTitle>
 
@@ -144,14 +144,14 @@ export default function AdminReports() {
         <Card className="border border-gray-100/50 shadow-sm overflow-hidden h-fit">
           <CardHeader className="border-b border-gray-50 pb-5">
             <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-              <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
+              <FileText className="h-5 w-5" style={{ color: 'var(--prime-accent-gold)' }} />
               {t('Active System Audit Trail')}
             </CardTitle>
 
           </CardHeader>
           <CardContent className="pt-6 space-y-4">
             <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--prime-primary-green)] flex items-center justify-center shrink-0">
                 <FileText className="h-4 w-4" />
               </div>
               <div className="space-y-1">
@@ -167,7 +167,7 @@ export default function AdminReports() {
             </div>
 
             <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--prime-primary-green)] flex items-center justify-center shrink-0">
                 <FileText className="h-4 w-4" />
               </div>
               <div className="space-y-1">
@@ -183,7 +183,7 @@ export default function AdminReports() {
             </div>
 
             <div className="rounded-xl border border-gray-100 p-4 hover:bg-gray-50/50 transition-colors flex gap-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--fnrc-primary-green)] flex items-center justify-center shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-emerald-50 text-[var(--prime-primary-green)] flex items-center justify-center shrink-0">
                 <FileText className="h-4 w-4" />
               </div>
               <div className="space-y-1">

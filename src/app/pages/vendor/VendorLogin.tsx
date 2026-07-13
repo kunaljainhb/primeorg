@@ -128,7 +128,7 @@ export default function VendorLogin() {
                         type="button"
                         variant="link" 
                         className="p-0 h-auto text-xs font-semibold cursor-pointer" 
-                        style={{ color: 'var(--fnrc-primary-green)' }}
+                        style={{ color: 'var(--prime-primary-green)' }}
                         onClick={() => setIsForgotMode(true)}
                       >
                         {t("Forgot Password?")}
@@ -167,7 +167,7 @@ export default function VendorLogin() {
                 <Button 
                   type="submit" 
                   className="w-full h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all text-white cursor-pointer"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                  style={{ backgroundColor: 'var(--prime-primary-green)' }}
                 >
                   {t("Login")}
                 </Button>
@@ -190,7 +190,7 @@ export default function VendorLogin() {
                   variant="outline"
                   className="w-full h-12 border-2 hover:bg-gray-50 text-foreground hover:text-foreground transition-all font-semibold cursor-pointer"
                   onClick={handleUAEPassClick}
-                  style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                  style={{ borderColor: 'var(--prime-border-gray)' }}
                 >
                   <QrCode className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
                   {t("Login with UAE Pass")}
@@ -204,7 +204,7 @@ export default function VendorLogin() {
                       variant="link"
                       onClick={() => navigate('/vendor/register')}
                       className="p-0 h-auto font-bold underline-offset-4 hover:underline cursor-pointer"
-                      style={{ color: 'var(--fnrc-primary-green)' }}
+                      style={{ color: 'var(--prime-primary-green)' }}
                     >
                       {t("Register here")}
                     </Button>
@@ -236,7 +236,7 @@ export default function VendorLogin() {
                 <Button 
                   type="submit" 
                   className="w-full h-12 text-lg font-semibold shadow-lg text-white cursor-pointer"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                  style={{ backgroundColor: 'var(--prime-primary-green)' }}
                   disabled={isResetting}
                 >
                   {isResetting ? t("Sending Code...") : t("Send Reset Code")}
@@ -248,7 +248,7 @@ export default function VendorLogin() {
                     variant="link"
                     onClick={() => setIsForgotMode(false)}
                     className="text-sm font-semibold cursor-pointer"
-                    style={{ color: 'var(--fnrc-text-muted)' }}
+                    style={{ color: 'var(--prime-text-muted)' }}
                   >
                     {t("Back to Login")}
                   </Button>
@@ -351,7 +351,7 @@ export default function VendorLogin() {
                 <Button 
                   type="submit" 
                   className="w-full h-12 text-lg font-semibold shadow-lg text-white cursor-pointer"
-                  style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                  style={{ backgroundColor: 'var(--prime-primary-green)' }}
                   disabled={isResetting}
                 >
                   {isResetting ? t("Resetting...") : t("Reset Password")}
@@ -363,7 +363,7 @@ export default function VendorLogin() {
                     variant="link"
                     onClick={() => setForgotStep(1)}
                     className="text-sm font-semibold cursor-pointer"
-                    style={{ color: 'var(--fnrc-text-muted)' }}
+                    style={{ color: 'var(--prime-text-muted)' }}
                   >
                     {t("Resend Code")}
                   </Button>
@@ -385,18 +385,18 @@ export default function VendorLogin() {
           </DialogHeader>
           <div id="uaepass-dialog-description" className="flex flex-col items-center justify-center space-y-4 py-6">
             {/* QR Code Placeholder */}
-            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="flex h-64 w-64 items-center justify-center rounded-lg border-2" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-center">
-                <QrCode className="mx-auto h-48 w-48" style={{ color: 'var(--fnrc-text-muted)' }} />
+                <QrCode className="mx-auto h-48 w-48" style={{ color: 'var(--prime-text-muted)' }} />
               </div>
             </div>
             
             {/* Helper Text */}
             <div className="text-center space-y-2">
-              <p className="font-bold text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+              <p className="font-bold text-sm" style={{ color: 'var(--prime-text-dark)' }}>
                 {t("Scan using UAE Pass mobile application")}
               </p>
-              <p className="text-xs font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <p className="text-xs font-semibold" style={{ color: 'var(--prime-text-muted)' }}>
                 {isScanning ? t("Waiting for authentication...") : t("Authentication successful!")}
               </p>
             </div>
@@ -404,9 +404,9 @@ export default function VendorLogin() {
             {/* Loading indicator */}
             {isScanning && (
               <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '0ms' }}></div>
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '150ms' }}></div>
-                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--fnrc-primary-green)', animationDelay: '300ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '0ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '150ms' }}></div>
+                <div className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: 'var(--prime-primary-green)', animationDelay: '300ms' }}></div>
               </div>
             )}
           </div>
@@ -428,8 +428,8 @@ function AuthFooter({ language, setLanguage, t }: AuthFooterProps) {
 
       {/* Left side: Terms and Privacy */}
       <div className="flex items-center gap-4">
-        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Terms and Conditions')}</a>
-        <a href="#" className="hover:text-[var(--fnrc-primary-green)] transition-colors hover:underline">{t('Privacy Policy')}</a>
+        <a href="#" className="hover:text-[var(--prime-primary-green)] transition-colors hover:underline">{t('Terms and Conditions')}</a>
+        <a href="#" className="hover:text-[var(--prime-primary-green)] transition-colors hover:underline">{t('Privacy Policy')}</a>
       </div>
 
       {/* Center: Language selection */}

@@ -112,7 +112,7 @@ export default function VendorProposalSubmit() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="technicalDoc" className="text-sm font-bold text-gray-700">{t('Technical Document *')}</Label>
-              <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+              <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--prime-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
                 <input 
                   id="technicalDoc" 
                   type="file" 
@@ -157,14 +157,14 @@ export default function VendorProposalSubmit() {
                             placeholder={t('e.g. Core Hardware, Service Integration...')}
                             value={item.description}
                             onChange={(e) => updateCostItem(item.id, 'description', e.target.value)}
-                            className="h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2 text-start"
+                            className="h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)]/30 px-2 text-start"
                             required
                           />
                         </TableCell>
                         <TableCell className="py-3">
                           <Input 
                             type="number"
-                            className="text-end h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2"
+                            className="text-end h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)]/30 px-2"
                             placeholder="0.00"
                             min={0}
                             value={item.unitPrice || ''}
@@ -175,7 +175,7 @@ export default function VendorProposalSubmit() {
                         <TableCell className="py-3">
                           <Input 
                             type="number"
-                            className="text-end h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--fnrc-primary-green)]/30 px-2"
+                            className="text-end h-10 text-sm border-0 shadow-none bg-transparent rounded-none focus-visible:ring-1 focus-visible:ring-[var(--prime-primary-green)]/30 px-2"
                             placeholder="1"
                             min={1}
                             step={1}
@@ -212,7 +212,7 @@ export default function VendorProposalSubmit() {
                           size="sm"
                           className="gap-2 font-semibold hover:-translate-y-0.5 transition-transform cursor-pointer"
                           onClick={addCostItem}
-                          style={{ color: 'var(--fnrc-primary-green)', borderColor: 'var(--fnrc-primary-green)' }}
+                          style={{ color: 'var(--prime-primary-green)', borderColor: 'var(--prime-primary-green)' }}
                         >
                           <Plus className="h-4 w-4" />
                           {t('Add Service Row')}
@@ -220,10 +220,10 @@ export default function VendorProposalSubmit() {
                       </TableCell>
                     </TableRow>
                     <TableRow className="bg-transparent border-t border-gray-200 hover:bg-transparent">
-                      <TableCell colSpan={3} className="font-bold text-end text-gray-900 py-4" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <TableCell colSpan={3} className="font-bold text-end text-gray-900 py-4" style={{ color: 'var(--prime-text-dark)' }}>
                         {t('Total Amount')}
                       </TableCell>
-                      <TableCell className="text-end font-extrabold text-base text-[var(--fnrc-primary-green)] py-4 pe-2">
+                      <TableCell className="text-end font-extrabold text-base text-[var(--prime-primary-green)] py-4 pe-2">
                         {t('AED')} {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </TableCell>
                       <TableCell />
@@ -247,7 +247,7 @@ export default function VendorProposalSubmit() {
 
             <div className="space-y-2">
               <Label htmlFor="commercialDoc" className="text-sm font-bold text-gray-700">{t('Commercial Document *')}</Label>
-              <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
+              <div className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-xl p-5 hover:bg-gray-50/50 hover:border-[var(--prime-primary-green)]/40 transition-all duration-200 flex flex-col items-center justify-center text-center">
                 <input 
                   id="commercialDoc" 
                   type="file" 
@@ -325,7 +325,7 @@ export default function VendorProposalSubmit() {
           <Button
             type="submit"
             className="text-white font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
           >
             {t('Submit Proposal')}
           </Button>
@@ -355,7 +355,7 @@ export default function VendorProposalSubmit() {
                 navigate('/vendor/proposals');
               }}
               className="text-white w-full h-11 font-semibold shadow-md cursor-pointer"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Go to Proposal Panel')}
             </Button>

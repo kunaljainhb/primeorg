@@ -112,7 +112,7 @@ export default function AdminMessages() {
     <div className="h-[calc(100vh-140px)] min-h-[500px] flex flex-col font-sans max-w-6xl mx-auto text-start">
       <div className="mb-4">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <MessageSquare className="h-7 w-7 text-[var(--fnrc-primary-green)]" />
+          <MessageSquare className="h-7 w-7 text-[var(--prime-primary-green)]" />
           {t('Messages')}
         </h1>
         <p className="text-sm text-gray-500 mt-1">{t('Procurement Communications and Clarification Center')}</p>
@@ -130,7 +130,7 @@ export default function AdminMessages() {
                 key={thread.id}
                 onClick={() => setActiveThreadId(thread.id)}
                 className={`p-4 cursor-pointer hover:bg-gray-55/70 transition-colors flex items-start justify-between gap-3 ${
-                  thread.id === activeThreadId ? 'bg-gradient-to-r from-[var(--fnrc-primary-green)]/[0.04] to-transparent border-l-4 border-l-[var(--fnrc-primary-green)] rtl:border-l-0 rtl:border-r-4 rtl:border-r-[var(--fnrc-primary-green)]' : ''
+                  thread.id === activeThreadId ? 'bg-gradient-to-r from-[var(--prime-primary-green)]/[0.04] to-transparent border-l-4 border-l-[var(--prime-primary-green)] rtl:border-l-0 rtl:border-r-4 rtl:border-r-[var(--prime-primary-green)]' : ''
                 }`}
               >
                 <div className="min-w-0 flex-1 space-y-1">
@@ -147,7 +147,7 @@ export default function AdminMessages() {
                 <div className="text-right shrink-0 flex flex-col items-end gap-1.5">
                   <span className="text-[10px] text-gray-400 font-semibold">{thread.time}</span>
                   {thread.unread > 0 && (
-                    <Badge className="h-5 min-w-5 rounded-full px-1.5 text-[10px] flex items-center justify-center font-bold" style={{ backgroundColor: 'var(--fnrc-primary-green)', color: 'white' }}>
+                    <Badge className="h-5 min-w-5 rounded-full px-1.5 text-[10px] flex items-center justify-center font-bold" style={{ backgroundColor: 'var(--prime-primary-green)', color: 'white' }}>
                       {thread.unread}
                     </Badge>
                   )}
@@ -177,14 +177,14 @@ export default function AdminMessages() {
                   className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`flex items-end gap-2 max-w-[75%] ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-3xs ${isMe ? 'bg-[var(--fnrc-primary-green)] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-3xs ${isMe ? 'bg-[var(--prime-primary-green)] text-white' : 'bg-gray-200 text-gray-600'}`}>
                       {isMe ? 'A' : 'V'}
                     </div>
                     <div className="space-y-1">
                       <div
                         className={`p-3.5 rounded-2xl text-sm leading-relaxed shadow-3xs ${
                           isMe
-                            ? 'bg-[var(--fnrc-primary-green)] text-white rounded-br-none'
+                            ? 'bg-[var(--prime-primary-green)] text-white rounded-br-none'
                             : 'bg-white text-gray-800 rounded-bl-none border border-gray-150'
                         }`}
                       >
@@ -209,11 +209,11 @@ export default function AdminMessages() {
               value={typedMessage}
               onChange={e => setTypedMessage(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-              className="flex-1 focus-visible:ring-[var(--fnrc-primary-green)] bg-gray-50/50"
+              className="flex-1 focus-visible:ring-[var(--prime-primary-green)] bg-gray-50/50"
             />
             <Button
               onClick={handleSendMessage}
-              className="bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 text-white cursor-pointer px-4"
+              className="bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 text-white cursor-pointer px-4"
             >
               <Send className="h-4 w-4" />
             </Button>

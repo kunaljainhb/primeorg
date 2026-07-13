@@ -36,9 +36,9 @@ const formatDate = (dateStr?: string | Date) => {
 };
 
 const mockEmployees = [
-  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@fnrc.gov.ae' },
-  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@fnrc.gov.ae' },
-  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@fnrc.gov.ae' }
+  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@prime.org' },
+  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@prime.org' },
+  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@prime.org' }
 ];
 
 export default function AdminUserManagement() {
@@ -187,8 +187,8 @@ export default function AdminUserManagement() {
             {t('Role Information')}
           </Button>
           <Button
-            className="text-white gap-2 shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            className="text-white gap-2 shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5"
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
             onClick={() => navigate('/admin/users/create')}
           >
             <Plus className="h-4 w-4" />
@@ -257,8 +257,8 @@ export default function AdminUserManagement() {
                   </TableHeader>
                   <TableBody>
                     {paginatedUsers.map((user) => (
-                      <TableRow key={user.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                        <TableCell className="font-bold text-[var(--fnrc-primary-green)]">{user.id}</TableCell>
+                      <TableRow key={user.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                        <TableCell className="font-bold text-[var(--prime-primary-green)]">{user.id}</TableCell>
                         <TableCell className="font-semibold text-gray-800">{user.name}</TableCell>
                         <TableCell className="text-gray-500 font-medium">{user.email}</TableCell>
                         <TableCell>
@@ -315,7 +315,7 @@ export default function AdminUserManagement() {
                             onClick={() => setCurrentPage(i + 1)}
                             className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
                               currentPage === i + 1 
-                                ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                                ? 'bg-[var(--prime-primary-green)] text-white' 
                                 : 'text-gray-600 hover:bg-gray-200'
                             }`}
                           >
@@ -442,7 +442,7 @@ export default function AdminUserManagement() {
             <Button
               onClick={handleCreateUser}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Create Account')}
             </Button>
@@ -472,7 +472,7 @@ export default function AdminUserManagement() {
               <Input
                 id="edit-email"
                 type="email"
-                placeholder="user@fnrc.gov.ae"
+                placeholder="user@prime.org"
                 value={formData.email}
                 className="rounded-xl border-gray-200"
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -513,7 +513,7 @@ export default function AdminUserManagement() {
             <Button
               onClick={handleUpdateUser}
               className="text-white font-semibold"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t('Update Account')}
             </Button>
@@ -526,11 +526,11 @@ export default function AdminUserManagement() {
         <SheetContent className="w-[450px] sm:w-[540px] overflow-y-auto border-l border-gray-105">
           <SheetHeader className="pb-5 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[var(--fnrc-primary-green)]/10 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-xl bg-[var(--prime-primary-green)]/10 flex items-center justify-center">
                 {selectedUser?.name ? (
-                  <Users className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                  <Users className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 ) : (
-                  <Shield className="h-5 w-5 text-[var(--fnrc-accent-gold)]" />
+                  <Shield className="h-5 w-5 text-[var(--prime-accent-gold)]" />
                 )}
               </div>
               <div>
@@ -601,7 +601,7 @@ export default function AdminUserManagement() {
                   {getUserPermissions(selectedUser.role).map((permission: string) => (
                     <div key={permission} className="flex items-center gap-2 p-2.5 rounded-lg border border-gray-150 bg-white">
                       <div className="h-5 w-5 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                        <Check className="h-3 w-3 text-[var(--fnrc-success)]" />
+                        <Check className="h-3 w-3 text-[var(--prime-success)]" />
                       </div>
                       <span className="text-xs font-bold text-gray-700 capitalize">{t(permission.split('_').map((word: string) => word === 'and' ? 'and' : word.charAt(0).toUpperCase() + word.slice(1)).join(' '))}</span>
                     </div>
@@ -654,8 +654,8 @@ export default function AdminUserManagement() {
         <DialogContent className="sm:max-w-md p-6 max-h-[80vh] overflow-y-auto" aria-describedby="role-matrix-dialog-description">
           <DialogHeader className="pb-3 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-[var(--fnrc-accent-gold)]/10 flex items-center justify-center">
-                <Shield className="h-4.5 w-4.5 text-[var(--fnrc-accent-gold)]" />
+              <div className="h-9 w-9 rounded-lg bg-[var(--prime-accent-gold)]/10 flex items-center justify-center">
+                <Shield className="h-4.5 w-4.5 text-[var(--prime-accent-gold)]" />
               </div>
               <div>
                 <DialogTitle className="text-base font-bold text-gray-900">

@@ -73,12 +73,12 @@ export function ReviewVendorModal({ open, onClose, vendorName, tenderTitle }: Re
                   : ''
               }`}
               style={{
-                color: star <= value ? 'var(--fnrc-accent-gold)' : 'var(--fnrc-border-gray)'
+                color: star <= value ? 'var(--prime-accent-gold)' : 'var(--prime-border-gray)'
               }}
             />
           </button>
         ))}
-        <span className="ml-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
+        <span className="ml-2 text-sm" style={{ color: 'var(--prime-text-muted)' }}>
           {value > 0 ? `${value}/5` : 'Not rated'}
         </span>
       </div>
@@ -97,14 +97,14 @@ export function ReviewVendorModal({ open, onClose, vendorName, tenderTitle }: Re
           <div className="p-4 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span style={{ color: 'var(--fnrc-text-muted)' }}>Vendor Name:</span>
-                <div className="font-medium mt-1" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <span style={{ color: 'var(--prime-text-muted)' }}>Vendor Name:</span>
+                <div className="font-medium mt-1" style={{ color: 'var(--prime-text-dark)' }}>
                   {vendorName}
                 </div>
               </div>
               <div>
-                <span style={{ color: 'var(--fnrc-text-muted)' }}>Tender Reference:</span>
-                <div className="font-medium mt-1" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <span style={{ color: 'var(--prime-text-muted)' }}>Tender Reference:</span>
+                <div className="font-medium mt-1" style={{ color: 'var(--prime-text-dark)' }}>
                   {tenderTitle}
                 </div>
               </div>
@@ -139,15 +139,15 @@ export function ReviewVendorModal({ open, onClose, vendorName, tenderTitle }: Re
           {overallRating > 0 && (
             <div className="p-4 rounded-lg" style={{ backgroundColor: '#F7F9FC' }}>
               <div className="flex items-center justify-between">
-                <span className="font-medium" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <span className="font-medium" style={{ color: 'var(--prime-text-dark)' }}>
                   Overall Rating
                 </span>
                 <div className="flex items-center gap-2">
                   <Star 
                     className="h-5 w-5 fill-current" 
-                    style={{ color: 'var(--fnrc-accent-gold)' }} 
+                    style={{ color: 'var(--prime-accent-gold)' }} 
                   />
-                  <span className="font-medium text-lg" style={{ color: 'var(--fnrc-text-dark)' }}>
+                  <span className="font-medium text-lg" style={{ color: 'var(--prime-text-dark)' }}>
                     {overallRating.toFixed(2)} / 5
                   </span>
                 </div>
@@ -175,7 +175,7 @@ export function ReviewVendorModal({ open, onClose, vendorName, tenderTitle }: Re
           <Button
             onClick={handleSubmit}
             className="text-white"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
           >
             Submit Review
           </Button>

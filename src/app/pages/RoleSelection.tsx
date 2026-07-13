@@ -34,10 +34,10 @@ export default function RoleSelection() {
               <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
             </div>
           </div>
-          <h1 className="mb-3 text-3xl font-bold" style={{ color: 'var(--fnrc-primary-green)' }}>
+          <h1 className="mb-3 text-3xl font-bold" style={{ color: 'var(--prime-primary-green)' }}>
             {t("Welcome to Prime Organization Portal")}
           </h1>
-          <p style={{ color: 'var(--fnrc-text-muted)' }} className="text-[15px] font-medium">
+          <p style={{ color: 'var(--prime-text-muted)' }} className="text-[15px] font-medium">
             {t("Select your role to continue")}
           </p>
         </div>
@@ -45,11 +45,11 @@ export default function RoleSelection() {
         {/* Role Cards */}
         <div className="grid gap-8 md:grid-cols-2">
           {/* Vendor Portal */}
-          <Card className="border-2 transition-all hover:shadow-lg rounded-card" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+          <Card className="border-2 transition-all hover:shadow-lg rounded-card" style={{ borderColor: 'var(--prime-border-gray)' }}>
             <CardHeader className="space-y-4">
               <div className="relative flex h-14 w-14 items-center justify-center rounded-xl overflow-hidden">
-                <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-primary-green)', opacity: 0.1 }}></div>
-                <Building2 className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-primary-green)' }} />
+                <div className="absolute inset-0" style={{ backgroundColor: 'var(--prime-primary-green)', opacity: 0.1 }}></div>
+                <Building2 className="h-8 w-8 relative z-10" style={{ color: 'var(--prime-primary-green)' }} />
               </div>
               <CardTitle className="text-2xl font-bold">{t("Vendor Portal")}</CardTitle>
               <CardDescription className="text-sm font-medium text-gray-500 min-h-[40px]">
@@ -57,7 +57,7 @@ export default function RoleSelection() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="space-y-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <div className="space-y-2 text-sm font-medium" style={{ color: 'var(--prime-text-muted)' }}>
                 <p>• {t("View and respond to Tenders")}</p>
                 <p>• {t("Submit technical and commercial proposals")}</p>
                 <p>• {t("Track proposal status")}</p>
@@ -65,7 +65,7 @@ export default function RoleSelection() {
               </div>
               <Button 
                 className="w-full text-white cursor-pointer"
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                style={{ backgroundColor: 'var(--prime-primary-green)' }}
                 onClick={() => navigate('/vendor/login')}
               >
                 {t("Continue as Vendor")}
@@ -74,11 +74,11 @@ export default function RoleSelection() {
           </Card>
 
           {/* Admin Portal */}
-          <Card className="border-2 transition-all hover:shadow-lg rounded-card" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+          <Card className="border-2 transition-all hover:shadow-lg rounded-card" style={{ borderColor: 'var(--prime-border-gray)' }}>
             <CardHeader className="space-y-4">
               <div className="relative flex h-14 w-14 items-center justify-center rounded-xl overflow-hidden">
-                <div className="absolute inset-0" style={{ backgroundColor: 'var(--fnrc-accent-gold)', opacity: 0.1 }}></div>
-                <Shield className="h-8 w-8 relative z-10" style={{ color: 'var(--fnrc-accent-gold)' }} />
+                <div className="absolute inset-0" style={{ backgroundColor: 'var(--prime-accent-gold)', opacity: 0.1 }}></div>
+                <Shield className="h-8 w-8 relative z-10" style={{ color: 'var(--prime-accent-gold)' }} />
               </div>
               <CardTitle className="text-2xl font-bold">{t("Admin Portal")}</CardTitle>
               <CardDescription className="text-sm font-medium text-gray-500 min-h-[40px]">
@@ -86,7 +86,7 @@ export default function RoleSelection() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="space-y-2 text-sm font-medium" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <div className="space-y-2 text-sm font-medium" style={{ color: 'var(--prime-text-muted)' }}>
                 <p>• {t("Manage vendor registrations and approvals")}</p>
                 <p>• {t("Create and manage Tenders")}</p>
                 <p>• {t("Review and evaluate proposals")}</p>
@@ -94,7 +94,7 @@ export default function RoleSelection() {
               </div>
               <Button 
                 className="w-full text-white cursor-pointer"
-                style={{ backgroundColor: 'var(--fnrc-accent-gold)' }}
+                style={{ backgroundColor: 'var(--prime-accent-gold)' }}
                 onClick={() => navigate('/admin/login')}
               >
                 {t("Continue as Admin")}
@@ -104,7 +104,7 @@ export default function RoleSelection() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center text-xs font-semibold" style={{ color: 'var(--fnrc-text-muted)' }}>
+        <div className="mt-12 text-center text-xs font-semibold" style={{ color: 'var(--prime-text-muted)' }}>
           <p>{t("© 2026 Prime Organization. All rights reserved.")}</p>
         </div>
       </div>

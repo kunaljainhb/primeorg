@@ -85,8 +85,8 @@ export function Sidebar({ role }: SidebarProps) {
     <aside
       className={`${collapsed ? 'w-16' : 'w-72'} fixed start-0 top-14 h-[calc(100vh-3.5rem)] border-e shadow-sm overflow-hidden`}
       style={{
-        backgroundColor: 'var(--fnrc-secondary-dark-green)',
-        borderColor: 'var(--fnrc-secondary-dark-green)',
+        backgroundColor: 'var(--prime-secondary-dark-green)',
+        borderColor: 'var(--prime-secondary-dark-green)',
         transition: 'width 0.2s ease',
       }}
     >
@@ -129,7 +129,7 @@ export function Sidebar({ role }: SidebarProps) {
                 )}
                 style={
                   isActive
-                    ? { backgroundColor: 'var(--fnrc-accent-gold)' }
+                    ? { backgroundColor: 'var(--prime-accent-gold)' }
                     : {}
                 }
               >

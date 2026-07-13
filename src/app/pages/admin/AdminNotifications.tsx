@@ -99,7 +99,7 @@ export default function AdminNotifications() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Bell className="h-7 w-7 text-[var(--fnrc-primary-green)]" />
+            <Bell className="h-7 w-7 text-[var(--prime-primary-green)]" />
             {t('Notifications')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">{t('Procurement Alerts and System Event Notifications')}</p>
@@ -121,7 +121,7 @@ export default function AdminNotifications() {
           variant={filter === 'all' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setFilter('all')}
-          className={`text-xs font-semibold rounded-full px-4 cursor-pointer ${filter === 'all' ? 'bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green)]/90' : 'text-gray-550'}`}
+          className={`text-xs font-semibold rounded-full px-4 cursor-pointer ${filter === 'all' ? 'bg-[var(--prime-primary-green)] text-white hover:bg-[var(--prime-primary-green)]/90' : 'text-gray-550'}`}
         >
           {t('All')} ({notifications.length})
         </Button>
@@ -129,7 +129,7 @@ export default function AdminNotifications() {
           variant={filter === 'unread' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setFilter('unread')}
-          className={`text-xs font-semibold rounded-full px-4 cursor-pointer ${filter === 'unread' ? 'bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green)]/90' : 'text-gray-550'}`}
+          className={`text-xs font-semibold rounded-full px-4 cursor-pointer ${filter === 'unread' ? 'bg-[var(--prime-primary-green)] text-white hover:bg-[var(--prime-primary-green)]/90' : 'text-gray-550'}`}
         >
           {t('Unread')} ({notifications.filter(n => n.unread).length})
         </Button>
@@ -164,7 +164,7 @@ export default function AdminNotifications() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleMarkAsRead(n.id)}
-                      className="text-[11px] h-7 px-2.5 font-bold text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/5 cursor-pointer rounded-md"
+                      className="text-[11px] h-7 px-2.5 font-bold text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/5 cursor-pointer rounded-md"
                     >
                       {t('Mark as read')}
                     </Button>

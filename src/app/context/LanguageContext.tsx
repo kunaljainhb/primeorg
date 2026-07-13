@@ -14,14 +14,14 @@ const LanguageContext = createContext<LanguageContextProps | undefined>(undefine
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('fnrc_lang');
+    const saved = localStorage.getItem('prime_lang');
     return (saved === 'ar' || saved === 'en') ? saved : 'en';
   });
 
   const dir = language === 'ar' ? 'rtl' : 'ltr';
 
   useEffect(() => {
-    localStorage.setItem('fnrc_lang', language);
+    localStorage.setItem('prime_lang', language);
     document.documentElement.lang = language;
     document.documentElement.dir = dir;
     

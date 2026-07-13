@@ -140,9 +140,9 @@ export default function VendorProjectDetail() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      paid: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      pending: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      paid: { bg: '#DBEAFE', text: 'var(--prime-info)' },
       delivered: { bg: '#E0E7FF', text: '#6366F1' }
     };
     return colors[status] || colors.pending;
@@ -183,7 +183,7 @@ export default function VendorProjectDetail() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--prime-text-dark)' }}>
             {proposal.id}
           </h1>
         </div>
@@ -194,20 +194,20 @@ export default function VendorProjectDetail() {
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="submitted" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Proposal Details')}
           </TabsTrigger>
 
           <TabsTrigger 
             value="documents" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Documents')}
           </TabsTrigger>
           <TabsTrigger 
             value="reviews" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Reviews')}
           </TabsTrigger>
@@ -231,40 +231,40 @@ export default function VendorProjectDetail() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-start">
-                <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                <FileText className="h-5 w-5" style={{ color: 'var(--prime-primary-green)' }} />
                 {t('ERP Documents')}
               </CardTitle>
               <CardDescription className="text-start">{t('LPO, Invoices, and other ERP synced documents (Read-only)')}</CardDescription>
             </CardHeader>
             <CardContent>
               {erpDocuments.length > 0 ? (
-                <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--prime-border-gray)' }}>
                   <Table>
                     <TableHeader>
                       <TableRow style={{ backgroundColor: '#F7F9FC' }}>
-                        <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Document Type')}</TableHead>
-                        <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Document Number')}</TableHead>
-                        <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Date')}</TableHead>
-                        <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Amount')}</TableHead>
-                        <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Status')}</TableHead>
-                        <TableHead className="font-semibold text-end pe-6" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Action')}</TableHead>
+                        <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Document Type')}</TableHead>
+                        <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Document Number')}</TableHead>
+                        <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Date')}</TableHead>
+                        <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Amount')}</TableHead>
+                        <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Status')}</TableHead>
+                        <TableHead className="font-semibold text-end pe-6" style={{ color: 'var(--prime-text-dark)' }}>{t('Action')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {erpDocuments.map((doc) => {
                         const statusColor = getStatusColor(doc.status);
                         return (
-                          <TableRow key={doc.id} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                            <TableCell className="font-medium text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
+                          <TableRow key={doc.id} style={{ borderColor: 'var(--prime-border-gray)' }}>
+                            <TableCell className="font-medium text-start" style={{ color: 'var(--prime-text-dark)' }}>
                               {t(doc.documentType)}
                             </TableCell>
-                            <TableCell className="text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
+                            <TableCell className="text-start" style={{ color: 'var(--prime-text-dark)' }}>
                               {doc.documentNumber}
                             </TableCell>
-                            <TableCell className="text-start" style={{ color: 'var(--fnrc-text-muted)' }}>
+                            <TableCell className="text-start" style={{ color: 'var(--prime-text-muted)' }}>
                               {formatDate(doc.date, language)}
                             </TableCell>
-                            <TableCell className="text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
+                            <TableCell className="text-start" style={{ color: 'var(--prime-text-dark)' }}>
                               {doc.amount ? `${t('AED')} ${doc.amount.toLocaleString()}` : '-'}
                             </TableCell>
                             <TableCell className="text-start">
@@ -289,9 +289,9 @@ export default function VendorProjectDetail() {
                   </Table>
                 </div>
               ) : (
-                <div className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  <FileText className="h-12 w-12 mx-auto mb-4 animate-bounce" style={{ color: 'var(--fnrc-border-gray)' }} />
-                  <p className="text-lg font-medium mb-2 text-center" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <div className="py-12 text-center" style={{ color: 'var(--prime-text-muted)' }}>
+                  <FileText className="h-12 w-12 mx-auto mb-4 animate-bounce" style={{ color: 'var(--prime-border-gray)' }} />
+                  <p className="text-lg font-medium mb-2 text-center" style={{ color: 'var(--prime-text-dark)' }}>
                     {t('No documents available')}
                   </p>
                   <p className="text-sm text-center">
@@ -306,7 +306,7 @@ export default function VendorProjectDetail() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-start">
-                <UploadCloud className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                <UploadCloud className="h-5 w-5" style={{ color: 'var(--prime-primary-green)' }} />
                 {t('Vendor Supporting Documents')}
               </CardTitle>
               <CardDescription className="text-start">
@@ -316,32 +316,32 @@ export default function VendorProjectDetail() {
             <CardContent className="space-y-6">
               {/* List of uploaded supporting documents */}
               <div>
-                <h3 className="text-sm font-semibold mb-3 text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <h3 className="text-sm font-semibold mb-3 text-start" style={{ color: 'var(--prime-text-dark)' }}>
                   {t('Uploaded Supporting Documents')}
                 </h3>
                 
                 {proposal.uploadedDocuments && proposal.uploadedDocuments.length > 0 ? (
-                  <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div className="rounded-lg border overflow-hidden" style={{ borderColor: 'var(--prime-border-gray)' }}>
                     <Table>
                       <TableHeader>
                         <TableRow style={{ backgroundColor: '#F7F9FC' }}>
-                          <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Document Name')}</TableHead>
-                          <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Uploaded Date')}</TableHead>
-                          <TableHead className="font-semibold text-start" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Remarks')}</TableHead>
-                          <TableHead className="font-semibold text-end pe-6" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Actions')}</TableHead>
+                          <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Document Name')}</TableHead>
+                          <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Uploaded Date')}</TableHead>
+                          <TableHead className="font-semibold text-start" style={{ color: 'var(--prime-text-dark)' }}>{t('Remarks')}</TableHead>
+                          <TableHead className="font-semibold text-end pe-6" style={{ color: 'var(--prime-text-dark)' }}>{t('Actions')}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {proposal.uploadedDocuments.map((doc, idx) => (
-                          <TableRow key={idx} style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-                            <TableCell className="font-medium flex items-center gap-2 text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
-                              <Paperclip className="h-4 w-4 shrink-0" style={{ color: 'var(--fnrc-primary-green)' }} />
+                          <TableRow key={idx} style={{ borderColor: 'var(--prime-border-gray)' }}>
+                            <TableCell className="font-medium flex items-center gap-2 text-start" style={{ color: 'var(--prime-text-dark)' }}>
+                              <Paperclip className="h-4 w-4 shrink-0" style={{ color: 'var(--prime-primary-green)' }} />
                               <span>{doc.name}</span>
                             </TableCell>
-                            <TableCell className="text-start" style={{ color: 'var(--fnrc-text-muted)' }}>
+                            <TableCell className="text-start" style={{ color: 'var(--prime-text-muted)' }}>
                               {formatDate(doc.uploadedDate, language)}
                             </TableCell>
-                            <TableCell className="text-sm text-start" style={{ color: 'var(--fnrc-text-dark)' }}>
+                            <TableCell className="text-sm text-start" style={{ color: 'var(--prime-text-dark)' }}>
                               {t(doc.remarks)}
                             </TableCell>
                             <TableCell className="text-end pe-6">
@@ -356,7 +356,7 @@ export default function VendorProjectDetail() {
                     </Table>
                   </div>
                 ) : (
-                  <div className="py-8 text-center rounded-lg border border-dashed" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div className="py-8 text-center rounded-lg border border-dashed" style={{ borderColor: 'var(--prime-border-gray)' }}>
                     <Paperclip className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm font-medium text-muted-foreground text-center">
                       {t('No supporting documents uploaded yet')}
@@ -369,7 +369,7 @@ export default function VendorProjectDetail() {
 
               {/* Upload Section */}
               <div className="space-y-4 text-start">
-                <h3 className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--prime-text-dark)' }}>
                   {t('Upload New Supporting Document')}
                 </h3>
                 
@@ -377,7 +377,7 @@ export default function VendorProjectDetail() {
                 <div 
                   onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50/50 transition-all flex flex-col items-center justify-center gap-2 group" 
-                  style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                  style={{ borderColor: 'var(--prime-border-gray)' }}
                 >
                   <input 
                     type="file" 
@@ -390,7 +390,7 @@ export default function VendorProjectDetail() {
                       }
                     }}
                   />
-                  <UploadCloud className="h-10 w-10 text-muted-foreground group-hover:scale-110 transition-transform" style={{ color: 'var(--fnrc-primary-green)' }} />
+                  <UploadCloud className="h-10 w-10 text-muted-foreground group-hover:scale-110 transition-transform" style={{ color: 'var(--prime-primary-green)' }} />
                   {selectedDocFiles.length > 0 ? (
                     <div className="space-y-1 text-center">
                       <p className="text-sm font-semibold text-gray-800 flex items-center justify-center gap-1">
@@ -404,7 +404,7 @@ export default function VendorProjectDetail() {
                     </div>
                   ) : (
                     <div className="space-y-1 text-center">
-                      <p className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--prime-text-dark)' }}>
                         {t('Click to choose supporting documents')}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -424,7 +424,7 @@ export default function VendorProjectDetail() {
                     value={docRemarks} 
                     onChange={(e) => setDocRemarks(e.target.value)}
                     className="min-h-[80px] text-start"
-                    style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                    style={{ borderColor: 'var(--prime-border-gray)' }}
                   />
                 </div>
 
@@ -435,7 +435,7 @@ export default function VendorProjectDetail() {
                     disabled={isUploadingDoc || selectedDocFiles.length === 0}
                     className="gap-2 font-bold text-white transition-all duration-300 cursor-pointer"
                     style={{ 
-                      backgroundColor: (isUploadingDoc || selectedDocFiles.length === 0) ? 'var(--fnrc-border-gray)' : 'var(--fnrc-primary-green)'
+                      backgroundColor: (isUploadingDoc || selectedDocFiles.length === 0) ? 'var(--prime-border-gray)' : 'var(--prime-primary-green)'
                     }}
                   >
                     {isUploadingDoc ? (
@@ -461,14 +461,14 @@ export default function VendorProjectDetail() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-start">
-                <Award className="h-5 w-5" style={{ color: 'var(--fnrc-accent-gold)' }} />
+                <Award className="h-5 w-5" style={{ color: 'var(--prime-accent-gold)' }} />
                 {t('Performance Reviews')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {displayRating ? (
                 <div className="space-y-6">
-                  <div className="rounded-lg border p-6 bg-white" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+                  <div className="rounded-lg border p-6 bg-white" style={{ borderColor: 'var(--prime-border-gray)' }}>
                     <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
                       <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider text-start">
                         {t('Reviewed by')} {getReviewerRoleName(displayRating.submittedBy || 'Admin')} {t('on')} {formatDate(displayRating.submittedAt, language)}
@@ -528,7 +528,7 @@ export default function VendorProjectDetail() {
                     <div 
                       key={review.id} 
                       className="rounded-lg border p-6 bg-white" 
-                      style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                      style={{ borderColor: 'var(--prime-border-gray)' }}
                     >
                       <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
                         <div className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider text-start">
@@ -585,9 +585,9 @@ export default function VendorProjectDetail() {
                   ))}
                 </div>
               ) : (
-                <div className="py-12 text-center" style={{ color: 'var(--fnrc-text-muted)' }}>
-                  <Award className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--fnrc-border-gray)' }} />
-                  <p className="text-lg font-medium mb-2 text-center" style={{ color: 'var(--fnrc-text-dark)' }}>
+                <div className="py-12 text-center" style={{ color: 'var(--prime-text-muted)' }}>
+                  <Award className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--prime-border-gray)' }} />
+                  <p className="text-lg font-medium mb-2 text-center" style={{ color: 'var(--prime-text-dark)' }}>
                     {t('No reviews yet')}
                   </p>
                   <p className="text-sm text-center">

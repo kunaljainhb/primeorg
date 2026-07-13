@@ -707,7 +707,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     id: 'ADM-001',
     name: 'Ahmed Al Mansoori',
-    email: 'ahmed.almansoori@fnrc.gov.ae',
+    email: 'ahmed.almansoori@prime.org',
     role: 'super_admin',
     status: 'active',
     createdDate: '2026-01-10'
@@ -715,7 +715,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     id: 'ADM-002',
     name: 'Fatima Al Hammadi',
-    email: 'fatima.alhammadi@fnrc.gov.ae',
+    email: 'fatima.alhammadi@prime.org',
     role: 'procurement_admin',
     status: 'active',
     createdDate: '2026-02-15'
@@ -723,7 +723,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     id: 'ADM-003',
     name: 'Mohammed Al Zaabi',
-    email: 'mohammed.alzaabi@fnrc.gov.ae',
+    email: 'mohammed.alzaabi@prime.org',
     role: 'reviewer',
     status: 'active',
     createdDate: '2026-03-01'
@@ -731,7 +731,7 @@ export const mockAdminUsers: AdminUser[] = [
   {
     id: 'ADM-004',
     name: 'Sarah Al Hosani',
-    email: 'sarah.alhosani@fnrc.gov.ae',
+    email: 'sarah.alhosani@prime.org',
     role: 'item_manager',
     status: 'active',
     createdDate: '2026-03-15'
@@ -740,9 +740,9 @@ export const mockAdminUsers: AdminUser[] = [
 
 // Mock Employees for admin user creation
 export const mockEmployees = [
-  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@fnrc.gov.ae' },
-  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@fnrc.gov.ae' },
-  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@fnrc.gov.ae' },
+  { id: 'EMP-001', name: 'John Doe', email: 'john.doe@prime.org' },
+  { id: 'EMP-002', name: 'Jane Smith', email: 'jane.smith@prime.org' },
+  { id: 'EMP-003', name: 'Ahmed Ali', email: 'ahmed.ali@prime.org' },
 ];
 
 // Categories

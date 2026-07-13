@@ -176,8 +176,8 @@ export default function AdminProposalManagement() {
               </TableHeader>
               <TableBody>
                 {paginatedProposals.map((proposal) => (
-                  <TableRow key={proposal.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
+                  <TableRow key={proposal.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableCell className="font-bold text-[var(--prime-primary-green)]">
                       {proposal.id}
                     </TableCell>
                     <TableCell className="font-semibold text-gray-800 max-w-[200px] truncate">{proposal.tenderId} - {proposal.tenderTitle}</TableCell>
@@ -196,7 +196,7 @@ export default function AdminProposalManagement() {
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/proposals/${proposal.id}`)}
-                        className="gap-1 border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold"
+                        className="gap-1 border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)] hover:text-white transition-all duration-150 font-semibold"
                       >
                         {t("Review")}
                         <ArrowRight className={cn("h-3.5 w-3.5", language === 'ar' && "scale-x-[-1]")} />
@@ -239,7 +239,7 @@ export default function AdminProposalManagement() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`h-8 w-8 rounded-md text-sm font-bold transition-colors ${
                         currentPage === i + 1 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                          ? 'bg-[var(--prime-primary-green)] text-white' 
                           : 'text-gray-600 hover:bg-gray-200'
                       }`}
                     >

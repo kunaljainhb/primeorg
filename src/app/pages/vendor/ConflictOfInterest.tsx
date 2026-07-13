@@ -14,7 +14,7 @@ export default function ConflictOfInterest() {
         <Button
           type="button"
           onClick={() => navigate(-1)}
-          className="bg-[var(--fnrc-primary-green)] text-white hover:bg-[var(--fnrc-primary-green-dark)]"
+          className="bg-[var(--prime-primary-green)] text-white hover:bg-[var(--prime-primary-green-dark)]"
         >
           {t('Back')}
         </Button>

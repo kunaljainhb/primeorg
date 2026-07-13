@@ -29,9 +29,9 @@ export function Header({ role, userName }: HeaderProps) {
 
   const { toggle } = useSidebar();
   return (
-    <header className="sticky top-0 z-50 w-full border-b shadow-sm relative bg-[#F7F9FC]" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
+    <header className="sticky top-0 z-50 w-full border-b shadow-sm relative bg-[#F7F9FC]" style={{ borderColor: 'var(--prime-border-gray)' }}>
       {/* Prime Organization Pattern Strip at the top */}
-      <div className="absolute top-0 w-full h-1" style={{ backgroundImage: 'linear-gradient(to right, var(--fnrc-primary-green), var(--fnrc-accent-gold), var(--fnrc-royal-blue))' }} />
+      <div className="absolute top-0 w-full h-1" style={{ backgroundImage: 'linear-gradient(to right, var(--prime-primary-green), var(--prime-accent-gold), var(--prime-royal-blue))' }} />
 
       <div className="flex h-14 items-center justify-between px-6 pt-1">
 
@@ -52,10 +52,10 @@ export function Header({ role, userName }: HeaderProps) {
               <img src="/prime-logo.png" alt="Prime Organization Logo" className="h-full w-full object-contain" />
             </div>
             <div>
-              <div className="text-[16px] font-bold tracking-wide leading-none" style={{ color: 'var(--fnrc-secondary-dark-green)' }}>
+              <div className="text-[16px] font-bold tracking-wide leading-none" style={{ color: 'var(--prime-secondary-dark-green)' }}>
                 {t('Prime Organization')}
               </div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'var(--fnrc-primary-green)' }}>
+              <div className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'var(--prime-primary-green)' }}>
                 {role === 'admin' ? t('Admin Portal') : role === 'vendor' ? t('Vendor Portal') : ''}
               </div>
             </div>
@@ -68,7 +68,7 @@ export function Header({ role, userName }: HeaderProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-sm font-medium hover:bg-gray-100 hover:text-gray-900 cursor-pointer" style={{ color: 'var(--fnrc-text-muted)' }}>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-sm font-medium hover:bg-gray-100 hover:text-gray-900 cursor-pointer" style={{ color: 'var(--prime-text-muted)' }}>
                 <span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-[10px] uppercase font-bold">{language}</span>
                 {language === 'en' ? 'English' : 'العربية'}
               </Button>
@@ -104,7 +104,7 @@ export function Header({ role, userName }: HeaderProps) {
                           <span className="font-bold text-[13px] text-gray-900">TechSolutions LLC</span>
                           <span className="text-[10px] text-gray-400 font-semibold">10m ago</span>
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                        <div className="text-[10px] font-bold text-[var(--prime-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
                           {t("Tender ID")}: TEND-005
                         </div>
                       </DropdownMenuItem>
@@ -113,7 +113,7 @@ export function Header({ role, userName }: HeaderProps) {
                           <span className="font-bold text-[13px] text-gray-900">Modern Office Furnishings</span>
                           <span className="text-[10px] text-gray-400 font-semibold">2h ago</span>
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                        <div className="text-[10px] font-bold text-[var(--prime-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
                           {t("Tender ID")}: TEND-004
                         </div>
                       </DropdownMenuItem>
@@ -122,7 +122,7 @@ export function Header({ role, userName }: HeaderProps) {
                           <span className="font-bold text-[13px] text-gray-900">Gulf Construction Services</span>
                           <span className="text-[10px] text-gray-400 font-semibold">1d ago</span>
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                        <div className="text-[10px] font-bold text-[var(--prime-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
                           {t("Tender ID")}: TEND-001
                         </div>
                       </DropdownMenuItem>
@@ -134,7 +134,7 @@ export function Header({ role, userName }: HeaderProps) {
                           <span className="font-bold text-[13px] text-gray-900">{t("Prime Organization Procurement Board")}</span>
                           <span className="text-[10px] text-gray-400 font-semibold">15m ago</span>
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                        <div className="text-[10px] font-bold text-[var(--prime-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
                           {t("RFP:")} Supply of IT Hardware for HQ
                         </div>
                       </DropdownMenuItem>
@@ -143,7 +143,7 @@ export function Header({ role, userName }: HeaderProps) {
                           <span className="font-bold text-[13px] text-gray-900">{t("Procurement Board")}</span>
                           <span className="text-[10px] text-gray-400 font-semibold">3h ago</span>
                         </div>
-                        <div className="text-[10px] font-bold text-[var(--fnrc-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
+                        <div className="text-[10px] font-bold text-[var(--prime-primary-green)] bg-green-50 px-1.5 py-0.5 rounded mt-1">
                           {t("RFP:")} Office Renovation Project
                         </div>
                       </DropdownMenuItem>
@@ -151,7 +151,7 @@ export function Header({ role, userName }: HeaderProps) {
                   )}
                   <DropdownMenuSeparator className="bg-gray-100" />
                   <DropdownMenuItem 
-                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--fnrc-primary-green)]"
+                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--prime-primary-green)]"
                     onClick={() => navigate(role === 'admin' ? '/admin/messages' : '/vendor/messages')}
                   >
                     {t("View All Messages")}
@@ -212,7 +212,7 @@ export function Header({ role, userName }: HeaderProps) {
                   )}
                   <DropdownMenuSeparator className="bg-gray-100" />
                   <DropdownMenuItem 
-                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--fnrc-primary-green)]"
+                    className="flex justify-center p-2 rounded-lg hover:bg-gray-55 cursor-pointer focus:bg-gray-50 text-center font-bold text-xs text-[var(--prime-primary-green)]"
                     onClick={() => navigate(role === 'admin' ? '/admin/notifications' : '/vendor/notifications')}
                   >
                     {t("View All Notifications")}
@@ -227,13 +227,13 @@ export function Header({ role, userName }: HeaderProps) {
               <Button
                 variant="outline"
                 onClick={() => navigate('/vendor/login')}
-                style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+                style={{ borderColor: 'var(--prime-primary-green)', color: 'var(--prime-primary-green)' }}
               >
                 {t('Vendor Login')}
               </Button>
               <Button
                 onClick={() => navigate('/admin/login')}
-                style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+                style={{ backgroundColor: 'var(--prime-primary-green)' }}
                 className="text-white hover:opacity-90"
               >
                 {t('Admin Login')}
@@ -243,11 +243,11 @@ export function Header({ role, userName }: HeaderProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2.5 px-2.5 py-1.5 hover:bg-gray-100/80 rounded-full transition-all duration-150 outline-none">
-                  <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[var(--fnrc-primary-green)] text-white shadow-sm font-bold text-sm">
+                  <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[var(--prime-primary-green)] text-white shadow-sm font-bold text-sm">
                     {(userName || 'U').charAt(0)}
                     <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse" />
                   </div>
-                  <span className="text-[14px] font-medium hidden sm:inline-block" style={{ color: 'var(--fnrc-text-dark)' }}>{userName || 'User'}</span>
+                  <span className="text-[14px] font-medium hidden sm:inline-block" style={{ color: 'var(--prime-text-dark)' }}>{userName || 'User'}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-lg border-gray-100">

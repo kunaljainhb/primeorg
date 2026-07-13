@@ -39,7 +39,7 @@ export function DocumentComplianceAlert({ vendorId }: { vendorId: string }) {
     <Card className="border-red-100">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--fnrc-error)' }}>
+          <CardTitle className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--prime-error)' }}>
             <AlertTriangle className="h-4 w-4" />
             Document Compliance Alert
           </CardTitle>
@@ -52,14 +52,14 @@ export function DocumentComplianceAlert({ vendorId }: { vendorId: string }) {
         {complianceIssues.map((issue) => (
           <div key={issue.id} className="flex items-center justify-between gap-2 border-b last:border-0 pb-2 last:pb-0">
             <div className="min-w-0">
-              <div className="text-xs font-medium truncate" style={{ color: 'var(--fnrc-text-dark)' }}>{issue.name}</div>
-              <div className="text-[10px]" style={{ color: 'var(--fnrc-text-muted)' }}>{issue.documentType}</div>
+              <div className="text-xs font-medium truncate" style={{ color: 'var(--prime-text-dark)' }}>{issue.name}</div>
+              <div className="text-[10px]" style={{ color: 'var(--prime-text-muted)' }}>{issue.documentType}</div>
             </div>
             <div className="text-right shrink-0">
               {issue.severity === 'expired' ? (
                 <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-none text-[10px] h-5">Expired</Badge>
               ) : (
-                <div className="flex items-center gap-1 text-[10px] font-medium" style={{ color: issue.severity === 'critical' ? 'var(--fnrc-error)' : 'var(--fnrc-warning)' }}>
+                <div className="flex items-center gap-1 text-[10px] font-medium" style={{ color: issue.severity === 'critical' ? 'var(--prime-error)' : 'var(--prime-warning)' }}>
                   <Clock className="h-3 w-3" />
                   {issue.daysLeft} days
                 </div>

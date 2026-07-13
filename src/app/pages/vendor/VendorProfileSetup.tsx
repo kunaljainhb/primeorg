@@ -73,7 +73,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <Building className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <Building className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t("Company Details")}
               </CardTitle>
             </CardHeader>
@@ -103,7 +103,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <MapPin className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <MapPin className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t("Contact Information")}
               </CardTitle>
             </CardHeader>
@@ -166,7 +166,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <User className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <User className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t("Primary Contact")}
               </CardTitle>
             </CardHeader>
@@ -205,7 +205,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <Landmark className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <Landmark className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t("Financial Information")}
               </CardTitle>
             </CardHeader>
@@ -243,7 +243,7 @@ export default function VendorProfileSetup() {
 <Card>
   <CardHeader className="border-b border-gray-50 pb-2">
     <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-      <ListFilter className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+      <ListFilter className="h-5 w-5 text-[var(--prime-primary-green)]" />
       {t("Service Categories")}
     </CardTitle>
   </CardHeader>
@@ -275,7 +275,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <FileText className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+                <FileText className="h-5 w-5 text-[var(--prime-primary-green)]" />
                 {t("Required Documents")}
               </CardTitle>
             </CardHeader>
@@ -285,7 +285,7 @@ export default function VendorProfileSetup() {
                 <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="tradeLicenseDoc" className="text-sm font-bold text-gray-900">{t("Valid Trade License *")}</Label>
-                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--prime-primary-green)]/40 transition-colors flex items-center justify-between">
                       <input id="tradeLicenseDoc" type="file" accept=".pdf,.docx" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={(e) => {
                         const file = e.target.files?.[0] || null;
                         setTradeLicenseFile(file);
@@ -319,7 +319,7 @@ export default function VendorProfileSetup() {
                   <div className="space-y-2">
                     <Label htmlFor="taxCertificate" className="text-sm font-bold text-gray-900">{t("Tax Registration Certificate (TRN) *")}</Label>
 
-                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--prime-primary-green)]/40 transition-colors flex items-center justify-between">
                       <input id="taxCertificate" type="file" accept=".pdf,.docx" required className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={(e) => {
                         const file = e.target.files?.[0] || null;
                         setTaxCertificateFile(file);
@@ -352,7 +352,7 @@ export default function VendorProfileSetup() {
                 <div className="grid gap-5 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="companyProfile" className="text-sm font-bold text-gray-900">{t("Corporate Capability Profile")}</Label>
-                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--fnrc-primary-green)]/40 transition-colors flex items-center justify-between">
+                    <div className="relative group cursor-pointer border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-[var(--prime-primary-green)]/40 transition-colors flex items-center justify-between">
                       <input id="companyProfile" type="file" accept=".pdf,.docx" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={(e) => {
                         const file = e.target.files?.[0] || null;
                         setCompanyProfileFile(file);
@@ -386,7 +386,7 @@ export default function VendorProfileSetup() {
           <Card>
             <CardHeader className="border-b border-gray-50 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-900">
-                <ClipboardCheck className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                <ClipboardCheck className="h-5 w-5" style={{ color: 'var(--prime-primary-green)' }} />
                 {t("Legal Declarations & Policies")}
               </CardTitle>
             </CardHeader>
@@ -475,8 +475,8 @@ export default function VendorProfileSetup() {
             </Button>
             <Button 
               type="submit"
-              className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--fnrc-primary-green)]/15 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              className="text-white h-11 px-8 font-semibold shadow-lg shadow-[var(--prime-primary-green)]/15 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               {t("Submit for Verification")}
             </Button>

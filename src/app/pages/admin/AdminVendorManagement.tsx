@@ -136,8 +136,8 @@ export default function AdminVendorManagement() {
             <Button
               onClick={handleSyncERP}
               disabled={isSyncing}
-              className="gap-2 text-white shadow-md shadow-[var(--fnrc-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fade-in"
-              style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+              className="gap-2 text-white shadow-md shadow-[var(--prime-primary-green)]/15 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fade-in"
+              style={{ backgroundColor: 'var(--prime-primary-green)' }}
             >
               <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
               {isSyncing ? t('Syncing...') : t('Sync from ERP')}
@@ -195,8 +195,8 @@ export default function AdminVendorManagement() {
               </TableHeader>
               <TableBody>
                 {paginatedVendors.map((vendor) => (
-                  <TableRow key={vendor.id} className="hover:bg-[var(--fnrc-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
-                    <TableCell className="font-bold text-[var(--fnrc-primary-green)]">
+                  <TableRow key={vendor.id} className="hover:bg-[var(--prime-primary-green)]/[0.04] transition-colors border-b border-gray-100 last:border-0">
+                    <TableCell className="font-bold text-[var(--prime-primary-green)]">
                       {vendor.id}
                     </TableCell>
                     <TableCell className="font-semibold text-gray-800">{vendor.companyName}</TableCell>
@@ -214,7 +214,7 @@ export default function AdminVendorManagement() {
                         size="sm"
                         variant="outline"
                         onClick={() => navigate(`/admin/vendors/${vendor.id}`)}
-                        className="h-8 w-8 p-0 justify-center items-center border-[var(--fnrc-primary-green)] text-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
+                        className="h-8 w-8 p-0 justify-center items-center border-[var(--prime-primary-green)] text-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)] hover:text-white transition-all duration-150 font-semibold cursor-pointer"
                         title={t("Review Vendor")}
                       >
                         <Pencil className="h-3.5 w-3.5" />
@@ -257,7 +257,7 @@ export default function AdminVendorManagement() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`h-8 w-8 rounded-md text-sm font-bold transition-colors cursor-pointer ${
                         currentPage === i + 1 
-                          ? 'bg-[var(--fnrc-primary-green)] text-white' 
+                          ? 'bg-[var(--prime-primary-green)] text-white' 
                           : 'text-gray-600 hover:bg-gray-200'
                       }`}
                     >

@@ -164,9 +164,9 @@ export default function VendorProposalTracking() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
-      pending: { bg: '#FEF3C7', text: 'var(--fnrc-warning)' },
-      approved: { bg: '#D1FAE5', text: 'var(--fnrc-success)' },
-      paid: { bg: '#DBEAFE', text: 'var(--fnrc-info)' },
+      pending: { bg: '#FEF3C7', text: 'var(--prime-warning)' },
+      approved: { bg: '#D1FAE5', text: 'var(--prime-success)' },
+      paid: { bg: '#DBEAFE', text: 'var(--prime-info)' },
       delivered: { bg: '#E0E7FF', text: '#6366F1' }
     };
     return colors[status] || colors.pending;
@@ -186,14 +186,14 @@ export default function VendorProposalTracking() {
       {proposal.id === 'PROP-102' && (
         <div 
           className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border bg-white shadow-sm"
-          style={{ borderColor: 'var(--fnrc-border-gray)' }}
+          style={{ borderColor: 'var(--prime-border-gray)' }}
         >
           <div className="flex gap-3">
             <div className="p-2 rounded-lg bg-orange-50 text-orange-600 shrink-0">
               <AlertTriangle className="h-5 w-5" />
             </div>
             <div className="space-y-1">
-              <div className="text-sm font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>{t('Demo Simulator Tool')}</div>
+              <div className="text-sm font-semibold" style={{ color: 'var(--prime-text-dark)' }}>{t('Demo Simulator Tool')}</div>
               <p className="text-xs text-gray-500">
                 {t('Easily simulate review decisions and test the Technical Correction and resubmission workflow.')}
               </p>
@@ -213,7 +213,7 @@ export default function VendorProposalTracking() {
               size="sm"
               variant={proposal.status === 'technical_review' ? 'default' : 'outline'}
               onClick={() => handleStatusSimulate('technical_review')}
-              style={proposal.status === 'technical_review' ? { backgroundColor: 'var(--fnrc-primary-green)', color: 'white' } : { borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+              style={proposal.status === 'technical_review' ? { backgroundColor: 'var(--prime-primary-green)', color: 'white' } : { borderColor: 'var(--prime-primary-green)', color: 'var(--prime-primary-green)' }}
               className="h-8 text-xs px-3 font-semibold transition-all hover:opacity-90"
             >
               {t('Set to Under Review (Technical)')}
@@ -224,7 +224,7 @@ export default function VendorProposalTracking() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--fnrc-text-dark)' }}>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--prime-text-dark)' }}>
             {proposal.id}
           </h1>
         </div>
@@ -235,13 +235,13 @@ export default function VendorProposalTracking() {
         <TabsList className="flex w-full border-b border-gray-200 gap-8 overflow-x-auto overflow-y-hidden bg-transparent scrollbar-hide">
           <TabsTrigger 
             value="submitted" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Proposal Details')}
           </TabsTrigger>
           <TabsTrigger 
             value="status" 
-            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--fnrc-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--fnrc-primary-green)]"
+            className="relative py-4 text-sm font-semibold whitespace-nowrap transition-all data-[state=active]:text-[var(--prime-primary-green)] text-gray-500 hover:text-gray-800 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-transparent data-[state=active]:after:bg-[var(--prime-primary-green)]"
           >
             {t('Proposal Status')}
           </TabsTrigger>

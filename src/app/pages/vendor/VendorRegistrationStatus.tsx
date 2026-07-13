@@ -441,25 +441,25 @@ export default function VendorRegistrationStatus() {
         <Card className="border-none shadow-card bg-white text-start">
           <CardHeader className="pb-3 px-6 pt-6">
             <CardTitle className="text-base font-bold flex items-center gap-2 text-gray-800">
-              <HelpCircle className="h-5 w-5 text-[var(--fnrc-primary-green)]" />
+              <HelpCircle className="h-5 w-5 text-[var(--prime-primary-green)]" />
               {t("Support Information Details")}
             </CardTitle>
             <CardDescription className="text-xs text-gray-400 font-medium">{t("If you have any questions regarding your registration correction checklist, please reach out to our support team.")}</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 px-6 pb-6 pt-1">
             <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
-              <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                <Mail className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <div className="p-2 rounded-full bg-[var(--prime-primary-green)]/10 text-[var(--prime-primary-green)]">
+                <Mail className="h-4 w-4 text-[var(--prime-primary-green)]" />
               </div>
               <div>
                 <div className="text-[10px] uppercase font-bold text-gray-400 font-medium">{t("Email Support")}</div>
-                <div className="text-sm font-semibold text-gray-700">vendor.support@fnrc.gov.ae</div>
+                <div className="text-sm font-semibold text-gray-700">vendor.support@prime.org</div>
               </div>
             </div>
             
             <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
-              <div className="p-2 rounded-full bg-[var(--fnrc-primary-green)]/10 text-[var(--fnrc-primary-green)]">
-                <Phone className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <div className="p-2 rounded-full bg-[var(--prime-primary-green)]/10 text-[var(--prime-primary-green)]">
+                <Phone className="h-4 w-4 text-[var(--prime-primary-green)]" />
               </div>
               <div>
                 <div className="text-[10px] uppercase font-bold text-gray-400 font-medium">{t("Phone Support")}</div>
@@ -473,7 +473,7 @@ export default function VendorRegistrationStatus() {
         {status === 'approved' && (
           <div className="flex justify-center gap-4 pt-2">
             <Button
-              className="text-white px-8 font-semibold shadow hover:shadow-md transition-all rounded-button bg-[var(--fnrc-primary-green)] hover:bg-[var(--fnrc-primary-green)]/90 cursor-pointer"
+              className="text-white px-8 font-semibold shadow hover:shadow-md transition-all rounded-button bg-[var(--prime-primary-green)] hover:bg-[var(--prime-primary-green)]/90 cursor-pointer"
               onClick={() => navigate('/vendor/dashboard')}
             >
               {t("Go to Vendor Dashboard")}

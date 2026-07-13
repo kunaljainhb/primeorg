@@ -220,7 +220,7 @@ export default function AdminTenderCreate() {
           <Button
             onClick={() => setStep(2)}
             className="text-white"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
           >
             {t('Next')}
           </Button>
@@ -228,7 +228,7 @@ export default function AdminTenderCreate() {
           <Button
             onClick={handlePublish}
             className="text-white"
-            style={{ backgroundColor: 'var(--fnrc-primary-green)' }}
+            style={{ backgroundColor: 'var(--prime-primary-green)' }}
           >
             {t('Publish Tender')}
           </Button>
@@ -252,7 +252,7 @@ export default function AdminTenderCreate() {
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold ${
                     step >= s.number
-                      ? 'border-[var(--fnrc-primary-green)] bg-[var(--fnrc-primary-green)] text-white'
+                      ? 'border-[var(--prime-primary-green)] bg-[var(--prime-primary-green)] text-white'
                       : 'border-gray-300 bg-white text-gray-400'
                   }`}
                 >
@@ -261,7 +261,7 @@ export default function AdminTenderCreate() {
                 <div 
                   className={`mt-2 text-xs font-medium text-center whitespace-nowrap ${
                     step >= s.number
-                      ? 'text-[var(--fnrc-primary-green)]'
+                      ? 'text-[var(--prime-primary-green)]'
                       : 'text-gray-400'
                   }`}
                 >
@@ -271,7 +271,7 @@ export default function AdminTenderCreate() {
               {idx < 1 && (
                 <div
                   className={`mx-4 h-0.5 w-16 mb-6 ${
-                    step > s.number ? 'bg-[var(--fnrc-primary-green)]' : 'bg-gray-300'
+                    step > s.number ? 'bg-[var(--prime-primary-green)]' : 'bg-gray-300'
                   }`}
                 />
               )}
@@ -391,7 +391,7 @@ export default function AdminTenderCreate() {
                 htmlFor="tech-yes"
                 className={cn(
                   "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
-                  formData.technicalProposalRequired === 'yes' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+                  formData.technicalProposalRequired === 'yes' ? 'border-[var(--prime-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
                 )}
               >
                 <RadioGroupItem value="yes" id="tech-yes" />
@@ -401,7 +401,7 @@ export default function AdminTenderCreate() {
                 htmlFor="tech-no"
                 className={cn(
                   "flex items-center space-x-3 border rounded-lg px-4 py-3 cursor-pointer transition-colors flex-1",
-                  formData.technicalProposalRequired === 'no' ? 'border-[var(--fnrc-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
+                  formData.technicalProposalRequired === 'no' ? 'border-[var(--prime-primary-green)] bg-green-50/30' : 'border-gray-200 hover:bg-gray-50'
                 )}
               >
                 <RadioGroupItem value="no" id="tech-no" />
@@ -481,7 +481,7 @@ export default function AdminTenderCreate() {
               size="sm"
               variant="outline"
               onClick={addMilestone}
-              style={{ borderColor: 'var(--fnrc-primary-green)', color: 'var(--fnrc-primary-green)' }}
+              style={{ borderColor: 'var(--prime-primary-green)', color: 'var(--prime-primary-green)' }}
             >
               <Plus className="mr-2 h-4 w-4" />
               {t('Add Milestone')}
@@ -521,15 +521,15 @@ export default function AdminTenderCreate() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <div className="rounded-lg border-2 border-dashed p-8 text-center" style={{ borderColor: 'var(--fnrc-border-gray)' }}>
-            <Upload className="mx-auto h-12 w-12 mb-4" style={{ color: 'var(--fnrc-text-muted)' }} />
+          <div className="rounded-lg border-2 border-dashed p-8 text-center" style={{ borderColor: 'var(--prime-border-gray)' }}>
+            <Upload className="mx-auto h-12 w-12 mb-4" style={{ color: 'var(--prime-text-muted)' }} />
             <label htmlFor="file-upload" className="cursor-pointer">
-              <span className="font-medium" style={{ color: 'var(--fnrc-primary-green)' }}>
+              <span className="font-medium" style={{ color: 'var(--prime-primary-green)' }}>
                 {t('Click to upload')}
               </span>{' '}
-              <span style={{ color: 'var(--fnrc-text-muted)' }}>{t('or drag and drop')}</span>
+              <span style={{ color: 'var(--prime-text-muted)' }}>{t('or drag and drop')}</span>
             </label>
-            <p className="mt-2 text-sm" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="mt-2 text-sm" style={{ color: 'var(--prime-text-muted)' }}>
               {t('PDF, DOC, DOCX, XLS, XLSX up to 10MB')}
             </p>
             <input
@@ -549,13 +549,13 @@ export default function AdminTenderCreate() {
                 <div
                   key={index}
                   className="flex items-center justify-between rounded-lg border p-3"
-                  style={{ borderColor: 'var(--fnrc-border-gray)' }}
+                  style={{ borderColor: 'var(--prime-border-gray)' }}
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5" style={{ color: 'var(--fnrc-primary-green)' }} />
+                    <FileText className="h-5 w-5" style={{ color: 'var(--prime-primary-green)' }} />
                     <div>
                       <div className="text-sm font-medium">{file.name}</div>
-                      <div className="text-xs" style={{ color: 'var(--fnrc-text-muted)' }}>{file.size}</div>
+                      <div className="text-xs" style={{ color: 'var(--prime-text-muted)' }}>{file.size}</div>
                     </div>
                   </div>
                   <Button
@@ -590,7 +590,7 @@ export default function AdminTenderCreate() {
             <RadioGroupItem value="open" id="open" className="mt-1" />
             <div className="space-y-1">
               <Label htmlFor="open" className="flex items-center gap-2 text-base cursor-pointer font-bold">
-                <Globe className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+                <Globe className="h-4 w-4 text-[var(--prime-primary-green)]" />
                 {t('Open Tender')}
               </Label>
               <p className="text-sm text-muted-foreground">
@@ -625,10 +625,10 @@ export default function AdminTenderCreate() {
         <div className="space-y-4">
           <div>
             <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
-              <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <FileText className="h-4 w-4 text-[var(--prime-primary-green)]" />
               {t('Basic Information')}
             </h3>
-            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Tender Title')}</span>
@@ -668,10 +668,10 @@ export default function AdminTenderCreate() {
 
           <div>
             <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
-              <CalendarIcon className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <CalendarIcon className="h-4 w-4 text-[var(--prime-primary-green)]" />
               {t('Scope & Timeline')}
             </h3>
-            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="rounded-lg border p-4 space-y-4" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="text-sm">
                 <span className="font-bold text-xs uppercase text-muted-foreground tracking-wider">{t('Scope of Work')}</span>
                 <div className="mt-1 text-gray-700 whitespace-pre-line leading-relaxed">{formData.scopeOfWork || '-'}</div>
@@ -708,10 +708,10 @@ export default function AdminTenderCreate() {
 
           <div>
             <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
-              <Eye className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <Eye className="h-4 w-4 text-[var(--prime-primary-green)]" />
               {t('Tender Visibility')}
             </h3>
-            <div className="rounded-lg border p-4" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="rounded-lg border p-4" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               <div className="flex items-center gap-3">
                 {formData.visibility === 'open' ? (
                   <>
@@ -740,10 +740,10 @@ export default function AdminTenderCreate() {
 
           <div>
             <h3 className="mb-1.5 font-bold flex items-center gap-2 text-black">
-              <FileText className="h-4 w-4 text-[var(--fnrc-primary-green)]" />
+              <FileText className="h-4 w-4 text-[var(--prime-primary-green)]" />
               {t('Attachments')}
             </h3>
-            <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: 'var(--fnrc-border-gray)', backgroundColor: '#F7F9FC' }}>
+            <div className="rounded-lg border p-4 space-y-2" style={{ borderColor: 'var(--prime-border-gray)', backgroundColor: '#F7F9FC' }}>
               {formData.attachments.length > 0 ? (
                 <div className="grid gap-2">
                   {formData.attachments.map((file, i) => (
@@ -767,7 +767,7 @@ export default function AdminTenderCreate() {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <h1 className="mb-2 text-xl font-bold" style={{ color: 'var(--fnrc-text-dark)' }}>
+        <h1 className="mb-2 text-xl font-bold" style={{ color: 'var(--prime-text-dark)' }}>
           {tenderId ? t('Edit Draft Tender') : t('Create New Tender')}
         </h1>
       </div>

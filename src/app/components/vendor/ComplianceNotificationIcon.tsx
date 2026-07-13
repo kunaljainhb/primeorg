@@ -72,21 +72,21 @@ export function ComplianceNotificationIcon({ vendorId }: ComplianceNotificationI
         <button className="relative inline-flex items-center justify-center focus:outline-none">
           <AlertCircle 
             className="h-6 w-6" 
-            style={{ color: 'var(--fnrc-error)' }} 
+            style={{ color: 'var(--prime-error)' }} 
           />
           <span 
             className="absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white"
-            style={{ backgroundColor: 'var(--fnrc-error)' }}
+            style={{ backgroundColor: 'var(--prime-error)' }}
           />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-96" align="start">
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold" style={{ color: 'var(--fnrc-text-dark)' }}>
+            <h4 className="font-semibold" style={{ color: 'var(--prime-text-dark)' }}>
               Document Compliance Alerts
             </h4>
-            <p className="text-sm mt-1" style={{ color: 'var(--fnrc-text-muted)' }}>
+            <p className="text-sm mt-1" style={{ color: 'var(--prime-text-muted)' }}>
               {alerts.length} document{alerts.length !== 1 ? 's' : ''} requiring attention
             </p>
           </div>
@@ -98,7 +98,7 @@ export function ComplianceNotificationIcon({ vendorId }: ComplianceNotificationI
               switch (alert.severity) {
                 case 'expired':
                   bgColor = '#FEE2E2';
-                  textColor = 'var(--fnrc-error)';
+                  textColor = 'var(--prime-error)';
                   break;
                 case 'critical':
                   bgColor = '#FED7AA';
@@ -106,7 +106,7 @@ export function ComplianceNotificationIcon({ vendorId }: ComplianceNotificationI
                   break;
                 case 'warning':
                   bgColor = '#FEF3C7';
-                  textColor = 'var(--fnrc-warning)';
+                  textColor = 'var(--prime-warning)';
                   break;
               }
 
@@ -122,7 +122,7 @@ export function ComplianceNotificationIcon({ vendorId }: ComplianceNotificationI
                     borderBottomColor: 'transparent'
                   }}
                 >
-                  <div className="font-medium text-sm" style={{ color: 'var(--fnrc-text-dark)' }}>
+                  <div className="font-medium text-sm" style={{ color: 'var(--prime-text-dark)' }}>
                     {alert.document.name}
                   </div>
                   <div className="text-xs mt-1" style={{ color: textColor }}>
@@ -137,7 +137,7 @@ export function ComplianceNotificationIcon({ vendorId }: ComplianceNotificationI
             className="w-full"
             onClick={() => navigate('/vendor/profile')}
             style={{
-              backgroundColor: 'var(--fnrc-primary-green)',
+              backgroundColor: 'var(--prime-primary-green)',
               color: 'white'
             }}
           >
